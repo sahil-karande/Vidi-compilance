@@ -1,17 +1,22 @@
-# Environment variables
-.env
-
-# Python
-__pycache__/
-*.pyc
+# Virtual Environment
 venv/
 .venv/
+env/
 
-# Node.js
-node_modules/
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
 
-# Vector Database
-vectordb/
+# IDE settings
+.vscode/
+.idea/
 
-# Logs
-*.log
+# Environment Variables / Credentials
+.env
+
+# Docker & Databases
+chroma_data/
+vector_db_data/

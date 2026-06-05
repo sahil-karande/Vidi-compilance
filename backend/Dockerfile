@@ -1,9 +1,9 @@
 # ─────────────────────────────────────────────────────────────
-#  RegIQ — Backend Dockerfile
+#  Vidi — Backend Dockerfile
 #  Multi-stage build: keeps final image lean
 # ─────────────────────────────────────────────────────────────
 
-FROM python:3.11-slim AS base
+FROM python:3.11.17-slim AS base
 
 # System deps needed for PyMuPDF, pytesseract, and sentence-transformers
 RUN apt-get update && apt-get install -y \
