@@ -22,7 +22,7 @@ import time
 import argparse
 from pathlib import Path
 from datetime import datetime
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urljoin, urlparse, quote, urlunparse
 
 import requests
 from bs4 import BeautifulSoup
@@ -60,13 +60,16 @@ CORPUS_CONFIG = {
     "gst": {
         "output_dir": DATA_DIR / "gst",
         "seed_urls": [
-            # Central Tax notifications
+            # GST rates — static HTML, always works
             "https://cbic-gst.gov.in/gst-goods-services-rates.html",
-            "https://cbic-gst.gov.in/CBEC-GST/fetchNotifications.action?lang=en&notfType=CT",
-            # Circulars
-            "https://cbic-gst.gov.in/CBEC-GST/fetchCirculars.action?lang=en&notfType=CT",
-            # GST Council notifications
-            "https://cbic-gst.gov.in/gst-notification-list.html",
+            # CBIC GST homepage — has "What's New" / advisory PDFs
+            "https://cbic-gst.gov.in/index.html",
+            # Central Excise notifications (static page with PDF links)
+            "https://cbic-gst.gov.in/central-excise-702.html",
+            # GST Council — CGST notifications listing (static)
+            "https://gstcouncil.gov.in/cgst-tax-notification",
+            # GST Council — circulars listing (static)
+            "https://gstcouncil.gov.in/cgst-circulars",
         ],
         # Fallback: direct PDF listing pages
         "fallback_urls": [
@@ -152,6 +155,18 @@ def make_request(url: str, session: requests.Session, retries: int = MAX_RETRIES
 #  PDF Link Extraction
 # ─────────────────────────────────────────────────────────────
 
+def _encode_url(url: str) -> str:
+    """
+    Safely encode a URL so that spaces and special characters in the path
+    are percent-encoded (e.g. spaces → %20), while preserving already-encoded
+    sequences and the scheme/host/query/fragment parts.
+    """
+    parsed = urlparse(url)
+    # quote() with safe="/:%@!$&'()*+,;=" preserves valid URL characters
+    encoded_path = quote(parsed.path, safe="/:%@!$&'()*+,;=")
+    return urlunparse(parsed._replace(path=encoded_path))
+
+
 def extract_pdf_links(html: str, base_url: str) -> list[dict]:
     """
     Parse HTML and extract all PDF links with metadata.
@@ -168,8 +183,8 @@ def extract_pdf_links(html: str, base_url: str) -> list[dict]:
         if not href.lower().endswith(".pdf"):
             continue
 
-        # Build absolute URL
-        absolute_url = urljoin(base_url, href)
+        # Build absolute URL and encode spaces/special chars
+        absolute_url = _encode_url(urljoin(base_url, href))
 
         # Skip duplicates
         if absolute_url in seen_urls:
@@ -261,7 +276,10 @@ def download_pdf(url: str, output_dir: Path, filename: str,
         logger.debug(f"Already exists, skipping: {filename}")
         return True
 
-    response = make_request(url, session)
+    # Encode URL to handle spaces and special characters in the path
+    safe_url = _encode_url(url)
+
+    response = make_request(safe_url, session)
     if response is None:
         return False
 
@@ -398,7 +416,7 @@ def scrape_corpus(corpus: str, limit: int = None):
             href = a["href"]
             if any(kw in href.lower() for kw in
                    ["notification", "circular", "notification", "act", "rule",
-                    "page=", "offset=", "year=", "2023", "2024", "2025"]):
+                    "page=", "offset=", "year=", "2023", "2024", "2025", "2026"]):
                 sub_url = urljoin(seed_url, href)
                 if sub_url not in seen_urls and sub_url.startswith("http"):
                     sub_links.append(sub_url)
