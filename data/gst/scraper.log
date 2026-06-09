@@ -607,3 +607,160 @@ Step 2: Downloading 39 PDFs...
 2026-06-09 18:18:19 | INFO     |    📋 Index:     C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\gst/index.csv
 2026-06-09 18:18:19 | INFO     |    💾 Total size: 74.9 MB
 2026-06-09 18:18:19 | INFO     | ============================================================
+2026-06-10 00:02:40 | INFO     | Logs → C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\gst\scraper.log
+2026-06-10 00:02:40 | INFO     | ============================================================
+2026-06-10 00:02:40 | INFO     | Vidi Scraper — Corpus: GST
+2026-06-10 00:02:40 | INFO     | Description: GST notifications, circulars, and rate schedules
+2026-06-10 00:02:40 | INFO     | Output: C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\gst
+2026-06-10 00:02:40 | INFO     | Seed URLs: 5
+2026-06-10 00:02:40 | INFO     | ============================================================
+2026-06-10 00:02:40 | INFO     | Step 1: Crawling 5 seed URLs...
+2026-06-10 00:02:40 | INFO     |   Crawling: https://cbic-gst.gov.in/gst-goods-services-rates.html
+2026-06-10 00:02:40 | INFO     | Waiting 5.94 seconds before requesting link...
+2026-06-10 00:02:47 | WARNING  | Connection dropped/Timed out on https://cbic-gst.gov.in/gst-goods-services-rates.html. Cooling down for 30s... (Attempt 1/3)
+2026-06-10 00:03:18 | INFO     |   Found 15 new PDF links (15 total)
+2026-06-10 00:03:19 | INFO     | Waiting 6.27 seconds before requesting link...
+2026-06-10 00:03:46 | WARNING  | Connection dropped/Timed out on https://cbic-gst.gov.in/pdf/Advisory%20No.%2009_2026%20dated%20050626_HSNS_%20for%20filing%20Sealing_De%20sealing%20request.pdf. Cooling down for 30s... (Attempt 1/3)
+2026-06-10 00:04:35 | INFO     | Waiting 8.54 seconds before requesting link...
+2026-06-10 00:04:52 | INFO     | Waiting 4.46 seconds before requesting link...
+2026-06-10 00:05:18 | WARNING  | Connection dropped/Timed out on https://cbic-gst.gov.in/pdf/AdvisoryNo.%2007_2026HSNSAMENDMENT%20DECLARATION.pdf. Cooling down for 30s... (Attempt 1/3)
+2026-06-10 00:05:53 | INFO     | Waiting 8.96 seconds before requesting link...
+2026-06-10 00:06:03 | INFO     | Waiting 5.16 seconds before requesting link...
+2026-06-10 00:06:09 | INFO     |   Crawling: https://cbic-gst.gov.in/index.html
+2026-06-10 00:06:09 | INFO     | Waiting 5.75 seconds before requesting link...
+2026-06-10 00:06:36 | WARNING  | Connection dropped/Timed out on https://cbic-gst.gov.in/index.html. Cooling down for 30s... (Attempt 1/3)
+2026-06-10 00:07:07 | INFO     |   Found 14 new PDF links (29 total)
+2026-06-10 00:07:07 | INFO     | Waiting 5.31 seconds before requesting link...
+2026-06-10 00:07:20 | INFO     | Waiting 8.70 seconds before requesting link...
+2026-06-10 00:07:39 | INFO     | Waiting 6.41 seconds before requesting link...
+2026-06-10 00:07:52 | INFO     | Waiting 7.01 seconds before requesting link...
+2026-06-10 00:08:20 | WARNING  | Connection dropped/Timed out on https://cbic-gst.gov.in/contactus.html. Cooling down for 30s... (Attempt 1/3)
+2026-06-10 00:09:10 | WARNING  | Connection dropped/Timed out on https://cbic-gst.gov.in/contactus.html. Cooling down for 60s... (Attempt 2/3)
+2026-06-10 00:10:11 | INFO     | Waiting 5.95 seconds before requesting link...
+2026-06-10 00:10:18 | INFO     |   Crawling: https://cbic-gst.gov.in/central-excise-702.html
+2026-06-10 00:10:18 | INFO     | Waiting 4.40 seconds before requesting link...
+2026-06-10 00:10:43 | WARNING  | Connection dropped/Timed out on https://cbic-gst.gov.in/central-excise-702.html. Cooling down for 30s... (Attempt 1/3)
+2026-06-10 00:13:13 | WARNING  | Connection dropped/Timed out on https://cbic-gst.gov.in/central-excise-702.html. Cooling down for 60s... (Attempt 2/3)
+2026-06-10 00:14:15 | WARNING  | HTTP 404 on https://cbic-gst.gov.in/central-excise-702.html (attempt 3/3)
+2026-06-10 00:14:15 | ERROR    | Failed after 3 attempts: https://cbic-gst.gov.in/central-excise-702.html
+2026-06-10 00:14:15 | WARNING  |   Failed to fetch: https://cbic-gst.gov.in/central-excise-702.html
+2026-06-10 00:14:15 | INFO     |   Crawling: https://gstcouncil.gov.in/cgst-tax-notification
+2026-06-10 00:14:15 | INFO     | Waiting 5.05 seconds before requesting link...
+2026-06-10 00:14:22 | INFO     |   Found 24 new PDF links (53 total)
+2026-06-10 00:14:22 | INFO     | Waiting 4.51 seconds before requesting link...
+2026-06-10 00:14:28 | INFO     | Waiting 8.82 seconds before requesting link...
+2026-06-10 00:14:38 | INFO     | Waiting 7.49 seconds before requesting link...
+2026-06-10 00:14:46 | INFO     | Waiting 8.42 seconds before requesting link...
+2026-06-10 00:14:56 | INFO     |     Sub-page https://gstcouncil.gov.in/recruitment-rules: +2 PDFs
+2026-06-10 00:14:56 | INFO     | Waiting 8.11 seconds before requesting link...
+2026-06-10 00:15:05 | INFO     |     Sub-page https://gstcouncil.gov.in/circularsadvisory: +3 PDFs
+2026-06-10 00:15:05 | INFO     |   Crawling: https://gstcouncil.gov.in/cgst-circulars
+2026-06-10 00:15:05 | INFO     | Waiting 8.18 seconds before requesting link...
+2026-06-10 00:15:14 | INFO     |   Found 10 new PDF links (68 total)
+2026-06-10 00:15:14 | INFO     | Waiting 5.77 seconds before requesting link...
+2026-06-10 00:15:21 | INFO     | Waiting 4.02 seconds before requesting link...
+2026-06-10 00:15:26 | INFO     | Waiting 4.01 seconds before requesting link...
+2026-06-10 00:15:31 | INFO     | Waiting 7.19 seconds before requesting link...
+2026-06-10 00:15:39 | INFO     | Waiting 4.26 seconds before requesting link...
+2026-06-10 00:15:44 | INFO     | 
+Total PDF links collected: 68
+2026-06-10 00:15:44 | INFO     | 
+Step 2: Downloading 68 PDFs...
+2026-06-10 00:15:44 | DEBUG    | Already exists, skipping: 01062019-GST-An-Update.pdf
+2026-06-10 00:15:44 | INFO     | Waiting 4.22 seconds before requesting link...
+2026-06-10 00:15:50 | WARNING  | HTTP 404 on https://cbic-gst.gov.in/pdf/ovw-short.pdf (attempt 1/3)
+2026-06-10 00:15:56 | WARNING  | HTTP 404 on https://cbic-gst.gov.in/pdf/ovw-short.pdf (attempt 2/3)
+2026-06-10 00:16:26 | WARNING  | Connection dropped/Timed out on https://cbic-gst.gov.in/pdf/ovw-short.pdf. Cooling down for 90s... (Attempt 3/3)
+2026-06-10 00:16:26 | ERROR    | Failed after 3 attempts: https://cbic-gst.gov.in/pdf/ovw-short.pdf
+2026-06-10 00:16:26 | DEBUG    | Already exists, skipping: Advisory_20No._2009_2026_20dated_20050626_HSNS__20for_20filing_20Sealing_De_20sealing_20request.pdf
+2026-06-10 00:16:26 | DEBUG    | Already exists, skipping: Introduction_of_2FA.pdf
+2026-06-10 00:16:26 | DEBUG    | Already exists, skipping: AdvisoryNo_2008_20of_202026_CE_20Declaration_Change_20_Addition_disposal_20of_20machines.pdf
+2026-06-10 00:16:26 | DEBUG    | Already exists, skipping: AdvisoryNo._2007_2026HSNSAMENDMENT_20DECLARATION.pdf
+2026-06-10 00:16:26 | DEBUG    | Already exists, skipping: DuePayment.pdf
+2026-06-10 00:16:26 | DEBUG    | Already exists, skipping: AdvisoryNo.06of2026dated12.03.26onfilingofHSNSReturns_RET-01.pdf
+2026-06-10 00:16:26 | DEBUG    | Already exists, skipping: ADVISORY_05-2026_CE_PMT_01.pdf
+2026-06-10 00:16:26 | DEBUG    | Already exists, skipping: HSNS_Declaration_filing_procedure.pdf
+2026-06-10 00:16:26 | INFO     | Waiting 5.31 seconds before requesting link...
+2026-06-10 00:16:35 | DEBUG    | Downloaded (3707.3 KB): ADVISORY_03-2026_CE_DECLARATION.pdf
+2026-06-10 00:16:35 | DEBUG    | Already exists, skipping: HSNS_Advisory_Helpdesk_01-2026.pdf
+2026-06-10 00:16:35 | INFO     | Waiting 4.54 seconds before requesting link...
+2026-06-10 00:16:41 | DEBUG    | Downloaded (327.3 KB): Advisory022026.pdf
+2026-06-10 00:16:41 | INFO     | Waiting 6.75 seconds before requesting link...
+2026-06-10 00:16:49 | DEBUG    | Downloaded (239.8 KB): Helpdesk-Advisory-8-2025-29072025.pdf
+2026-06-10 00:16:49 | DEBUG    | Already exists, skipping: procedure-locate-e-payment-challan.pdf
+2026-06-10 00:16:49 | INFO     | Waiting 7.49 seconds before requesting link...
+2026-06-10 00:16:58 | DEBUG    | Downloaded (701.7 KB): Circular-No-250-2025.pdf
+2026-06-10 00:16:58 | DEBUG    | Already exists, skipping: Circular-No-249-2025.pdf
+2026-06-10 00:16:58 | DEBUG    | Already exists, skipping: ins-gst-no-03-2025.pdf
+2026-06-10 00:16:58 | DEBUG    | Already exists, skipping: gst-ct-11-2025.pdf
+2026-06-10 00:16:58 | DEBUG    | Already exists, skipping: cir-cgst-246-03-2025.pdf
+2026-06-10 00:16:58 | DEBUG    | Already exists, skipping: ins-gst-02-2025.pdf
+2026-06-10 00:16:58 | DEBUG    | Already exists, skipping: GST-Circular.pdf
+2026-06-10 00:16:58 | DEBUG    | Already exists, skipping: Circular-55thGSTC-Services.pdf
+2026-06-10 00:16:58 | INFO     | Waiting 4.38 seconds before requesting link...
+2026-06-10 00:17:23 | WARNING  | Connection dropped/Timed out on https://cbic-gst.gov.in/pdf/Circular-Services-Co-insurance-Re-insurance.pdf. Cooling down for 30s... (Attempt 1/3)
+2026-06-10 00:17:55 | DEBUG    | Downloaded (185.1 KB): Circular-Services-Co-insurance-Re-insurance.pdf
+2026-06-10 00:17:55 | INFO     | Waiting 4.79 seconds before requesting link...
+2026-06-10 00:18:00 | DEBUG    | Downloaded (216.9 KB): NN-31-2024-Eng.pdf
+2026-06-10 00:18:01 | INFO     | Waiting 8.18 seconds before requesting link...
+2026-06-10 00:18:29 | WARNING  | Connection dropped/Timed out on https://cbic-gst.gov.in/pdf/NN-31-2024-Hindiss.pdf. Cooling down for 30s... (Attempt 1/3)
+2026-06-10 00:19:00 | WARNING  | HTTP 404 on https://cbic-gst.gov.in/pdf/NN-31-2024-Hindiss.pdf (attempt 2/3)
+2026-06-10 00:19:11 | WARNING  | HTTP 404 on https://cbic-gst.gov.in/pdf/NN-31-2024-Hindiss.pdf (attempt 3/3)
+2026-06-10 00:19:11 | ERROR    | Failed after 3 attempts: https://cbic-gst.gov.in/pdf/NN-31-2024-Hindiss.pdf
+2026-06-10 00:19:11 | INFO     | Waiting 8.91 seconds before requesting link...
+2026-06-10 00:19:41 | WARNING  | Connection dropped/Timed out on https://cbic-gst.gov.in/pdf/NN-30-2024-Eng.pdf. Cooling down for 30s... (Attempt 1/3)
+2026-06-10 00:20:32 | WARNING  | Connection dropped/Timed out on https://cbic-gst.gov.in/pdf/NN-30-2024-Eng.pdf. Cooling down for 60s... (Attempt 2/3)
+2026-06-10 00:21:33 | DEBUG    | Downloaded (192.0 KB): NN-30-2024-Eng.pdf
+2026-06-10 00:21:33 | INFO     | Waiting 5.81 seconds before requesting link...
+2026-06-10 00:21:59 | WARNING  | Connection dropped/Timed out on https://cbic-gst.gov.in/pdf/NN-30-2024-Hindi.pdf. Cooling down for 30s... (Attempt 1/3)
+2026-06-10 00:22:31 | DEBUG    | Downloaded (365.8 KB): NN-30-2024-Hindi.pdf
+2026-06-10 00:22:31 | INFO     | Waiting 7.51 seconds before requesting link...
+2026-06-10 00:22:40 | DEBUG    | Downloaded (818.2 KB): circular-239-33-2024-GST.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: consti-amend-act.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: gst-ct-11-2025.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: gst-ct-11h-2025.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: gst-ct-10-2025.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: gst-ct-10h-2025.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: 09-2025-ct-eng.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: 09-2025-ct-hin.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: ct-08-2025.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: ct-08h-2025.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: ct-07-2025.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: ct-07h-2025.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: 06-2025-ct-eng.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: 06-2025-ct-hin.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: 05-2025-ct-eng.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: 05-2025-ct-hin.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: 04-2025-ct-eng.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: 04-2025-ct-hin.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: 03-2025-ct-eng.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: 03-2025-ct-hin.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: 02-2025-ct-eng.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: 02-2025-ct-hin.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: first_discussion_paper_on_gst.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: cea-rpt-rnr.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: comments-dor-1st-discn-paper-01012010.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: gazette_gsr_no_58_js_rr_gst_council.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: recruitment-rules.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: advisory_in_case_of_tobacco_products.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: advisory.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: document_1.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: circular-no-250-2025_1.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: circular-no-249-2025.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: circular-no-248-05-2025.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: circular-no-10h-2025.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: circular-no-247-04-2025.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: cir-cgst-246-03-2025.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: cir-245022025-cgst.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: cir-244012025-cgst.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: circular-no-243-2024.pdf
+2026-06-10 00:22:40 | DEBUG    | Already exists, skipping: circular-no-242-2024.pdf
+2026-06-10 00:22:40 | INFO     | 
+============================================================
+2026-06-10 00:22:40 | INFO     | SCRAPING COMPLETE — GST
+2026-06-10 00:22:40 | INFO     |    ✓ Downloaded: 66 PDFs
+2026-06-10 00:22:40 | INFO     |    ✗ Failed:     2 PDFs
+2026-06-10 00:22:40 | INFO     |    📁 Saved to:  C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\gst
+2026-06-10 00:22:40 | INFO     |    📋 Index:     C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\gst/index.csv
+2026-06-10 00:22:40 | INFO     |    💾 Total size: 81.5 MB
+2026-06-10 00:22:40 | INFO     | ============================================================
