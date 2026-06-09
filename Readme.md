@@ -224,5 +224,5 @@ This project is proprietary. All rights reserved.
 ---
 
 <p align="center">
-  Built with ❤️ by the Vidi team
+  Built by Sahil Karande
 </p>
