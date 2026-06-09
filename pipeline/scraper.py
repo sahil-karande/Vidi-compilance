@@ -54,18 +54,16 @@ MAX_RETRIES = 3
 # ─────────────────────────────────────────────────────────────
 
 CORPUS_CONFIG = {
-    "gst": {
+  "gst": {
         "output_dir": DATA_DIR / "gst",
         "seed_urls": [
-            # GST rates — static HTML, always works
-            "https://cbic-gst.gov.in/gst-goods-services-rates.html",
-            # CBIC GST homepage — has "What's New" / advisory PDFs
-            "https://cbic-gst.gov.in/index.html",
-            # Central Excise notifications (static page with PDF links)
-            "https://cbic-gst.gov.in/central-excise-702.html",
-            # GST Council — CGST notifications listing (static)
+            # Comment these out so your scraper skips the broken server:
+            # "https://cbic-gst.gov.in/gst-goods-services-rates.html",
+            # "https://cbic-gst.gov.in/index.html",
+            # "https://cbic-gst.gov.in/central-excise-702.html",
+            
+            # Keep ONLY the working GST Council links:
             "https://gstcouncil.gov.in/cgst-tax-notification",
-            # GST Council — circulars listing (static)
             "https://gstcouncil.gov.in/cgst-circulars",
         ],
         # Fallback: direct PDF listing pages
