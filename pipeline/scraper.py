@@ -20,11 +20,12 @@ import re
 import csv
 import time
 import argparse
+import random
+import requests
 from pathlib import Path
 from datetime import datetime
 from urllib.parse import urljoin, urlparse, quote, urlunparse
 
-import requests
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 from loguru import logger
@@ -38,16 +39,13 @@ DATA_DIR = BASE_DIR / "data"
 
 # Request settings
 HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/120.0.0.0 Safari/537.36"
-    ),
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-    "Accept-Language": "en-US,en;q=0.5",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Accept-Encoding": "gzip, deflate, br",
+    "Connection": "keep-alive"
 }
-DELAY_BETWEEN_REQUESTS = 1.5   # seconds — be polite to govt servers
-TIMEOUT = 30                    # seconds per request
+TIMEOUT = 20  # seconds per request
 MAX_RETRIES = 3
 
 # ─────────────────────────────────────────────────────────────
@@ -56,7 +54,6 @@ MAX_RETRIES = 3
 # ─────────────────────────────────────────────────────────────
 
 CORPUS_CONFIG = {
-
     "gst": {
         "output_dir": DATA_DIR / "gst",
         "seed_urls": [
@@ -77,7 +74,6 @@ CORPUS_CONFIG = {
         ],
         "description": "GST notifications, circulars, and rate schedules",
     },
-
     "rbi": {
         "output_dir": DATA_DIR / "rbi",
         "seed_urls": [
@@ -87,7 +83,6 @@ CORPUS_CONFIG = {
         ],
         "description": "RBI Master Directions, circulars, and notifications",
     },
-
     "sebi": {
         "output_dir": DATA_DIR / "sebi",
         "seed_urls": [
@@ -96,7 +91,6 @@ CORPUS_CONFIG = {
         ],
         "description": "SEBI circulars and master circulars",
     },
-
     "mca": {
         "output_dir": DATA_DIR / "mca",
         "seed_urls": [
@@ -126,26 +120,44 @@ def setup_logger(output_dir: Path):
 # ─────────────────────────────────────────────────────────────
 
 def make_request(url: str, session: requests.Session, retries: int = MAX_RETRIES):
-    """GET request with retry logic and polite delay."""
+    """GET request mimicking human patterns with dynamic delays and robust backoffs."""
+    
+    # Add this line right here to make sure spaces never hit the internet unencoded
+    url = _encode_url(url) 
+    
+    # 1. FIXED SPEED: Introduce a dynamic sleep block before execution
+    delay = random.uniform(4, 9)
+    
+    logger.info(f"Waiting {delay:.2f} seconds before requesting link...")
+    time.sleep(delay)
+
     for attempt in range(1, retries + 1):
         try:
             response = session.get(url, headers=HEADERS, timeout=TIMEOUT)
+            
+            # If server indicates rate limits
+            if response.status_code in [403, 429]:
+                wait_time = 20 * attempt
+                logger.warning(f"Rate limited (HTTP {response.status_code}) on {url}. Backing off for {wait_time}s...")
+                time.sleep(wait_time)
+                continue
+                
             response.raise_for_status()
-            time.sleep(DELAY_BETWEEN_REQUESTS)
             return response
+
         except requests.exceptions.HTTPError as e:
             logger.warning(f"HTTP {e.response.status_code} on {url} (attempt {attempt}/{retries})")
-        except requests.exceptions.ConnectionError:
-            logger.warning(f"Connection error on {url} (attempt {attempt}/{retries})")
-        except requests.exceptions.Timeout:
-            logger.warning(f"Timeout on {url} (attempt {attempt}/{retries})")
+            if attempt < retries:
+                time.sleep(5 * attempt)
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+            wait_time = 30 * attempt
+            logger.warning(f"Connection dropped/Timed out on {url}. Cooling down for {wait_time}s... (Attempt {attempt}/{retries})")
+            if attempt < retries:
+                time.sleep(wait_time)
         except Exception as e:
             logger.warning(f"Unexpected error on {url}: {e} (attempt {attempt}/{retries})")
-
-        if attempt < retries:
-            wait = attempt * 3
-            logger.debug(f"Waiting {wait}s before retry...")
-            time.sleep(wait)
+            if attempt < retries:
+                time.sleep(5 * attempt)
 
     logger.error(f"Failed after {retries} attempts: {url}")
     return None
@@ -162,7 +174,6 @@ def _encode_url(url: str) -> str:
     sequences and the scheme/host/query/fragment parts.
     """
     parsed = urlparse(url)
-    # quote() with safe="/:%@!$&'()*+,;=" preserves valid URL characters
     encoded_path = quote(parsed.path, safe="/:%@!$&'()*+,;=")
     return urlunparse(parsed._replace(path=encoded_path))
 
@@ -214,14 +225,10 @@ def extract_pdf_links(html: str, base_url: str) -> list[dict]:
 def extract_circular_metadata(url: str, title: str, context: str) -> dict:
     """
     Extract circular_no and date from URL or title using regex.
-    Examples:
-        notfctn-01-central-tax-english-2017 → circular_no: CT-01/2017
-        Circular No. 45/19/2018-GST          → circular_no: 45/19/2018
     """
     circular_no = "unknown"
     date_str = "unknown"
 
-    # Try to extract circular/notification number from URL
     url_patterns = [
         r"notfctn-(\d+)-.*?-(\d{4})",   # notfctn-01-central-tax-2017
         r"circular[_-](\d+)[_-](\d{4})", # circular_45_2018
@@ -233,7 +240,6 @@ def extract_circular_metadata(url: str, title: str, context: str) -> dict:
             circular_no = f"{match.group(1)}/{match.group(2)}"
             break
 
-    # Try to extract from title
     title_patterns = [
         r"(?:circular|notification)\s*no\.?\s*(\d+[/\-]\d+[/\-]?\d*)",
         r"no\.?\s*(\d+/\d+)",
@@ -246,7 +252,6 @@ def extract_circular_metadata(url: str, title: str, context: str) -> dict:
                 circular_no = match.group(1)
             break
 
-    # Try to extract date
     date_patterns = [
         r"(\d{1,2}[./-]\d{1,2}[./-]\d{4})",      # DD/MM/YYYY
         r"(\d{4}[./-]\d{1,2}[./-]\d{1,2})",      # YYYY-MM-DD
@@ -268,7 +273,7 @@ def extract_circular_metadata(url: str, title: str, context: str) -> dict:
 
 def download_pdf(url: str, output_dir: Path, filename: str,
                  session: requests.Session) -> bool:
-    """Download a single PDF. Returns True on success."""
+    """Download a single PDF via make_request pipeline."""
     output_path = output_dir / filename
 
     # Skip if already downloaded
@@ -276,10 +281,8 @@ def download_pdf(url: str, output_dir: Path, filename: str,
         logger.debug(f"Already exists, skipping: {filename}")
         return True
 
-    # Encode URL to handle spaces and special characters in the path
-    safe_url = _encode_url(url)
-
-    response = make_request(safe_url, session)
+    # safe_url conversion handled inside make_request naturally
+    response = make_request(url, session)
     if response is None:
         return False
 
@@ -305,14 +308,11 @@ def download_pdf(url: str, output_dir: Path, filename: str,
 
 def sanitize_filename(url: str, title: str, index: int) -> str:
     """Generate a clean, unique filename from URL or title."""
-    # Try to use the PDF filename from URL
     url_filename = Path(urlparse(url).path).name
     if url_filename.lower().endswith(".pdf") and len(url_filename) > 5:
-        # Clean it up
         name = re.sub(r"[^\w\-.]", "_", url_filename)
         return name[:100]
 
-    # Fall back to sanitized title
     clean_title = re.sub(r"[^\w\s-]", "", title)
     clean_title = re.sub(r"\s+", "_", clean_title.strip())[:60]
     return f"{index:04d}_{clean_title}.pdf" if clean_title else f"doc_{index:04d}.pdf"
@@ -485,14 +485,14 @@ def scrape_corpus(corpus: str, limit: int = None):
     # ── Step 4: Summary ───────────────────────────────────────
     logger.info("\n" + "=" * 60)
     logger.info(f"SCRAPING COMPLETE — {corpus.upper()}")
-    logger.info(f"  ✓ Downloaded: {success_count} PDFs")
-    logger.info(f"  ✗ Failed:     {fail_count} PDFs")
-    logger.info(f"  📁 Saved to:  {output_dir}")
-    logger.info(f"  📋 Index:     {output_dir}/index.csv")
+    logger.info(f"   ✓ Downloaded: {success_count} PDFs")
+    logger.info(f"   ✗ Failed:     {fail_count} PDFs")
+    logger.info(f"   📁 Saved to:  {output_dir}")
+    logger.info(f"   📋 Index:     {output_dir}/index.csv")
 
     # Check total data size
     total_size = sum(f.stat().st_size for f in output_dir.glob("*.pdf")) / (1024 * 1024)
-    logger.info(f"  💾 Total size: {total_size:.1f} MB")
+    logger.info(f"   💾 Total size: {total_size:.1f} MB")
     logger.info("=" * 60)
 
     return success_count
