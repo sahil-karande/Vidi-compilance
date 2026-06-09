@@ -58,9 +58,9 @@ CORPUS_CONFIG = {
         "output_dir": DATA_DIR / "gst",
         "seed_urls": [
             # Comment these out so your scraper skips the broken server:
-            # "https://cbic-gst.gov.in/gst-goods-services-rates.html",
-            # "https://cbic-gst.gov.in/index.html",
-            # "https://cbic-gst.gov.in/central-excise-702.html",
+             "https://cbic-gst.gov.in/gst-goods-services-rates.html",
+             "https://cbic-gst.gov.in/index.html",
+             "https://cbic-gst.gov.in/central-excise-702.html",
             
             # Keep ONLY the working GST Council links:
             "https://gstcouncil.gov.in/cgst-tax-notification",
