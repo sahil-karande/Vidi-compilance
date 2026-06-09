@@ -1,0 +1,80 @@
+2026-06-09 16:34:56 | INFO     | Logs → C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\gst\scraper.log
+2026-06-09 16:34:56 | INFO     | ============================================================
+2026-06-09 16:34:56 | INFO     | Vidi Scraper — Corpus: GST
+2026-06-09 16:34:56 | INFO     | Description: GST notifications, circulars, and rate schedules
+2026-06-09 16:34:56 | INFO     | Output: C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\gst
+2026-06-09 16:34:56 | INFO     | Seed URLs: 4
+2026-06-09 16:34:56 | INFO     | Limit: 5 PDFs (test mode)
+2026-06-09 16:34:56 | INFO     | ============================================================
+2026-06-09 16:34:56 | INFO     | Created index: C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\gst\index.csv
+2026-06-09 16:34:56 | INFO     | Step 1: Crawling 4 seed URLs...
+2026-06-09 16:34:56 | INFO     |   Crawling: https://cbic-gst.gov.in/gst-goods-services-rates.html
+2026-06-09 16:34:58 | WARNING  | Connection error on https://cbic-gst.gov.in/gst-goods-services-rates.html (attempt 1/3)
+2026-06-09 16:34:58 | DEBUG    | Waiting 3s before retry...
+2026-06-09 16:35:55 | INFO     | Logs → C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\gst\scraper.log
+2026-06-09 16:35:55 | INFO     | ============================================================
+2026-06-09 16:35:55 | INFO     | Vidi Scraper — Corpus: GST
+2026-06-09 16:35:55 | INFO     | Description: GST notifications, circulars, and rate schedules
+2026-06-09 16:35:55 | INFO     | Output: C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\gst
+2026-06-09 16:35:55 | INFO     | Seed URLs: 4
+2026-06-09 16:35:55 | INFO     | Limit: 5 PDFs (test mode)
+2026-06-09 16:35:55 | INFO     | ============================================================
+2026-06-09 16:35:55 | INFO     | Step 1: Crawling 4 seed URLs...
+2026-06-09 16:35:55 | INFO     |   Crawling: https://cbic-gst.gov.in/gst-goods-services-rates.html
+2026-06-09 16:35:58 | INFO     |   Found 15 new PDF links (15 total)
+2026-06-09 16:36:03 | INFO     |   Crawling: https://cbic-gst.gov.in/CBEC-GST/fetchNotifications.action?lang=en&notfType=CT
+2026-06-09 16:36:04 | WARNING  | HTTP 404 on https://cbic-gst.gov.in/CBEC-GST/fetchNotifications.action?lang=en&notfType=CT (attempt 1/3)
+2026-06-09 16:36:04 | DEBUG    | Waiting 3s before retry...
+2026-06-09 16:36:08 | WARNING  | HTTP 404 on https://cbic-gst.gov.in/CBEC-GST/fetchNotifications.action?lang=en&notfType=CT (attempt 2/3)
+2026-06-09 16:36:08 | DEBUG    | Waiting 6s before retry...
+2026-06-09 16:36:15 | WARNING  | Connection error on https://cbic-gst.gov.in/CBEC-GST/fetchNotifications.action?lang=en&notfType=CT (attempt 3/3)
+2026-06-09 16:36:15 | ERROR    | Failed after 3 attempts: https://cbic-gst.gov.in/CBEC-GST/fetchNotifications.action?lang=en&notfType=CT
+2026-06-09 16:36:15 | WARNING  |   Failed to fetch: https://cbic-gst.gov.in/CBEC-GST/fetchNotifications.action?lang=en&notfType=CT
+2026-06-09 16:36:15 | INFO     |   Crawling: https://cbic-gst.gov.in/CBEC-GST/fetchCirculars.action?lang=en&notfType=CT
+2026-06-09 16:36:16 | WARNING  | HTTP 404 on https://cbic-gst.gov.in/CBEC-GST/fetchCirculars.action?lang=en&notfType=CT (attempt 1/3)
+2026-06-09 16:36:16 | DEBUG    | Waiting 3s before retry...
+2026-06-09 16:36:20 | WARNING  | HTTP 404 on https://cbic-gst.gov.in/CBEC-GST/fetchCirculars.action?lang=en&notfType=CT (attempt 2/3)
+2026-06-09 16:36:20 | DEBUG    | Waiting 6s before retry...
+2026-06-09 16:36:28 | WARNING  | HTTP 404 on https://cbic-gst.gov.in/CBEC-GST/fetchCirculars.action?lang=en&notfType=CT (attempt 3/3)
+2026-06-09 16:36:28 | ERROR    | Failed after 3 attempts: https://cbic-gst.gov.in/CBEC-GST/fetchCirculars.action?lang=en&notfType=CT
+2026-06-09 16:36:28 | WARNING  |   Failed to fetch: https://cbic-gst.gov.in/CBEC-GST/fetchCirculars.action?lang=en&notfType=CT
+2026-06-09 16:36:28 | INFO     |   Crawling: https://cbic-gst.gov.in/gst-notification-list.html
+2026-06-09 16:36:29 | WARNING  | HTTP 404 on https://cbic-gst.gov.in/gst-notification-list.html (attempt 1/3)
+2026-06-09 16:36:29 | DEBUG    | Waiting 3s before retry...
+2026-06-09 16:36:33 | WARNING  | HTTP 404 on https://cbic-gst.gov.in/gst-notification-list.html (attempt 2/3)
+2026-06-09 16:36:33 | DEBUG    | Waiting 6s before retry...
+2026-06-09 16:36:40 | WARNING  | HTTP 404 on https://cbic-gst.gov.in/gst-notification-list.html (attempt 3/3)
+2026-06-09 16:36:40 | ERROR    | Failed after 3 attempts: https://cbic-gst.gov.in/gst-notification-list.html
+2026-06-09 16:36:40 | WARNING  |   Failed to fetch: https://cbic-gst.gov.in/gst-notification-list.html
+2026-06-09 16:36:40 | INFO     | 
+Total PDF links collected: 15
+2026-06-09 16:36:40 | INFO     | Limiting to 5 PDFs for test run
+2026-06-09 16:36:40 | INFO     | 
+Step 2: Downloading 5 PDFs...
+2026-06-09 16:36:44 | DEBUG    | Downloaded (1846.6 KB): 01062019-GST-An-Update.pdf
+2026-06-09 16:36:45 | WARNING  | HTTP 404 on https://cbic-gst.gov.in/pdf/ovw-short.pdf (attempt 1/3)
+2026-06-09 16:36:45 | DEBUG    | Waiting 3s before retry...
+2026-06-09 16:36:49 | WARNING  | HTTP 404 on https://cbic-gst.gov.in/pdf/ovw-short.pdf (attempt 2/3)
+2026-06-09 16:36:49 | DEBUG    | Waiting 6s before retry...
+2026-06-09 16:36:56 | WARNING  | Connection error on https://cbic-gst.gov.in/pdf/ovw-short.pdf (attempt 3/3)
+2026-06-09 16:36:56 | ERROR    | Failed after 3 attempts: https://cbic-gst.gov.in/pdf/ovw-short.pdf
+2026-06-09 16:36:57 | WARNING  | Connection error on https://cbic-gst.gov.in/pdf/Advisory No. 09_2026 dated 050626_HSNS_ for filing Sealing_De sealing request.pdf (attempt 1/3)
+2026-06-09 16:36:57 | DEBUG    | Waiting 3s before retry...
+2026-06-09 16:37:21 | DEBUG    | Downloaded (7249.0 KB): Advisory_No._09_2026_dated_050626_HSNS__for_filing_Sealing_De_sealing_request.pdf
+2026-06-09 16:37:22 | WARNING  | Connection error on https://cbic-gst.gov.in/pdf/Introduction_of_2FA.pdf (attempt 1/3)
+2026-06-09 16:37:22 | DEBUG    | Waiting 3s before retry...
+2026-06-09 16:37:27 | WARNING  | Connection error on https://cbic-gst.gov.in/pdf/Introduction_of_2FA.pdf (attempt 2/3)
+2026-06-09 16:37:27 | DEBUG    | Waiting 6s before retry...
+2026-06-09 16:37:35 | DEBUG    | Downloaded (367.8 KB): Introduction_of_2FA.pdf
+2026-06-09 16:37:37 | WARNING  | Connection error on https://cbic-gst.gov.in/pdf/AdvisoryNo 08 of 2026_CE Declaration_Change _Addition_disposal of machines.pdf (attempt 1/3)
+2026-06-09 16:37:37 | DEBUG    | Waiting 3s before retry...
+2026-06-09 16:37:54 | DEBUG    | Downloaded (4024.4 KB): AdvisoryNo_08_of_2026_CE_Declaration_Change__Addition_disposal_of_machines.pdf
+2026-06-09 16:37:54 | INFO     | 
+============================================================
+2026-06-09 16:37:54 | INFO     | SCRAPING COMPLETE — GST
+2026-06-09 16:37:54 | INFO     |   ✓ Downloaded: 4 PDFs
+2026-06-09 16:37:54 | INFO     |   ✗ Failed:     1 PDFs
+2026-06-09 16:37:54 | INFO     |   📁 Saved to:  C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\gst
+2026-06-09 16:37:54 | INFO     |   📋 Index:     C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\gst/index.csv
+2026-06-09 16:37:54 | INFO     |   💾 Total size: 13.2 MB
+2026-06-09 16:37:54 | INFO     | ============================================================
