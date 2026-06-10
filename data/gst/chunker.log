@@ -1,0 +1,263 @@
+2026-06-10 09:08:53 | INFO     | ============================================================
+2026-06-10 09:08:53 | INFO     | Vidi Chunker — Corpus: GST
+2026-06-10 09:08:53 | INFO     | PDFs found:   5
+2026-06-10 09:08:53 | INFO     | Chunk size:   ~512 tokens (2048 chars)
+2026-06-10 09:08:53 | INFO     | Overlap:      ~50 tokens  (200 chars)
+2026-06-10 09:08:53 | INFO     | OCR fallback: enabled (threshold: 100 chars)
+2026-06-10 09:08:53 | INFO     | Limit:        5 PDFs (test mode)
+2026-06-10 09:08:53 | INFO     | ============================================================
+2026-06-10 09:08:53 | INFO     | Loaded 66 entries from index.csv
+2026-06-10 09:08:53 | DEBUG    | Processing: 01062019-GST-An-Update.pdf
+2026-06-10 09:08:53 | DEBUG    |   PyMuPDF: 31215 chars extracted from 01062019-GST-An-Update.pdf
+2026-06-10 09:08:53 | DEBUG    |   ✓ 17 chunks from 01062019-GST-An-Update.pdf (pymupdf)
+2026-06-10 09:08:53 | DEBUG    | Processing: 02-2025-ct-eng.pdf
+2026-06-10 09:08:54 | DEBUG    |   PyMuPDF: 1994 chars extracted from 02-2025-ct-eng.pdf
+2026-06-10 09:08:54 | DEBUG    |   ✓ 1 chunks from 02-2025-ct-eng.pdf (pymupdf)
+2026-06-10 09:08:54 | DEBUG    | Processing: 02-2025-ct-hin.pdf
+2026-06-10 09:08:54 | DEBUG    |   PyMuPDF: 1496 chars extracted from 02-2025-ct-hin.pdf
+2026-06-10 09:08:54 | DEBUG    |   ✓ 1 chunks from 02-2025-ct-hin.pdf (pymupdf)
+2026-06-10 09:08:54 | DEBUG    | Processing: 03-2025-ct-eng.pdf
+2026-06-10 09:08:54 | DEBUG    |   PyMuPDF: 944 chars extracted from 03-2025-ct-eng.pdf
+2026-06-10 09:08:54 | DEBUG    |   ✓ 1 chunks from 03-2025-ct-eng.pdf (pymupdf)
+2026-06-10 09:08:54 | DEBUG    | Processing: 03-2025-ct-hin.pdf
+2026-06-10 09:08:54 | DEBUG    |   PyMuPDF: 735 chars extracted from 03-2025-ct-hin.pdf
+2026-06-10 09:08:54 | DEBUG    |   ✓ 1 chunks from 03-2025-ct-hin.pdf (pymupdf)
+2026-06-10 09:08:54 | INFO     | 
+============================================================
+2026-06-10 09:08:54 | INFO     | CHUNKING COMPLETE — GST
+2026-06-10 09:08:54 | INFO     |   ✓ PDFs processed:    5/5
+2026-06-10 09:08:54 | INFO     |   ✗ Failed/empty:      0
+2026-06-10 09:08:54 | INFO     |   📄 PyMuPDF used:     5 PDFs
+2026-06-10 09:08:54 | INFO     |   🔍 OCR used:         0 PDFs
+2026-06-10 09:08:54 | INFO     |   🧩 Total chunks:     21
+2026-06-10 09:08:54 | INFO     |   📏 Avg chunk size:   1841.5 chars
+2026-06-10 09:08:54 | INFO     |   💾 Saved to:         C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\gst\chunks.json
+2026-06-10 09:08:54 | INFO     | ============================================================
+2026-06-10 09:09:34 | INFO     | ============================================================
+2026-06-10 09:09:34 | INFO     | Vidi Chunker — Corpus: GST
+2026-06-10 09:09:34 | INFO     | PDFs found:   65
+2026-06-10 09:09:34 | INFO     | Chunk size:   ~512 tokens (2048 chars)
+2026-06-10 09:09:34 | INFO     | Overlap:      ~50 tokens  (200 chars)
+2026-06-10 09:09:34 | INFO     | OCR fallback: enabled (threshold: 100 chars)
+2026-06-10 09:09:34 | INFO     | ============================================================
+2026-06-10 09:09:34 | INFO     | Loaded 66 entries from index.csv
+2026-06-10 09:09:34 | DEBUG    | Processing: 01062019-GST-An-Update.pdf
+2026-06-10 09:09:34 | DEBUG    |   PyMuPDF: 31215 chars extracted from 01062019-GST-An-Update.pdf
+2026-06-10 09:09:34 | DEBUG    |   ✓ 17 chunks from 01062019-GST-An-Update.pdf (pymupdf)
+2026-06-10 09:09:34 | DEBUG    | Processing: 02-2025-ct-eng.pdf
+2026-06-10 09:09:34 | DEBUG    |   PyMuPDF: 1994 chars extracted from 02-2025-ct-eng.pdf
+2026-06-10 09:09:34 | DEBUG    |   ✓ 1 chunks from 02-2025-ct-eng.pdf (pymupdf)
+2026-06-10 09:09:34 | DEBUG    | Processing: 02-2025-ct-hin.pdf
+2026-06-10 09:09:34 | DEBUG    |   PyMuPDF: 1496 chars extracted from 02-2025-ct-hin.pdf
+2026-06-10 09:09:34 | DEBUG    |   ✓ 1 chunks from 02-2025-ct-hin.pdf (pymupdf)
+2026-06-10 09:09:34 | DEBUG    | Processing: 03-2025-ct-eng.pdf
+2026-06-10 09:09:34 | DEBUG    |   PyMuPDF: 944 chars extracted from 03-2025-ct-eng.pdf
+2026-06-10 09:09:34 | DEBUG    |   ✓ 1 chunks from 03-2025-ct-eng.pdf (pymupdf)
+2026-06-10 09:09:34 | DEBUG    | Processing: 03-2025-ct-hin.pdf
+2026-06-10 09:09:34 | DEBUG    |   PyMuPDF: 735 chars extracted from 03-2025-ct-hin.pdf
+2026-06-10 09:09:34 | DEBUG    |   ✓ 1 chunks from 03-2025-ct-hin.pdf (pymupdf)
+2026-06-10 09:09:34 | DEBUG    | Processing: 04-2025-ct-eng.pdf
+2026-06-10 09:09:34 | DEBUG    |   PyMuPDF: 943 chars extracted from 04-2025-ct-eng.pdf
+2026-06-10 09:09:34 | DEBUG    |   ✓ 1 chunks from 04-2025-ct-eng.pdf (pymupdf)
+2026-06-10 09:09:34 | DEBUG    | Processing: 04-2025-ct-hin.pdf
+2026-06-10 09:09:34 | DEBUG    |   PyMuPDF: 724 chars extracted from 04-2025-ct-hin.pdf
+2026-06-10 09:09:34 | DEBUG    |   ✓ 1 chunks from 04-2025-ct-hin.pdf (pymupdf)
+2026-06-10 09:09:34 | DEBUG    | Processing: 05-2025-ct-eng.pdf
+2026-06-10 09:09:34 | DEBUG    |   PyMuPDF: 996 chars extracted from 05-2025-ct-eng.pdf
+2026-06-10 09:09:34 | DEBUG    |   ✓ 1 chunks from 05-2025-ct-eng.pdf (pymupdf)
+2026-06-10 09:09:34 | DEBUG    | Processing: 05-2025-ct-hin.pdf
+2026-06-10 09:09:34 | DEBUG    |   PyMuPDF: 802 chars extracted from 05-2025-ct-hin.pdf
+2026-06-10 09:09:34 | DEBUG    |   ✓ 1 chunks from 05-2025-ct-hin.pdf (pymupdf)
+2026-06-10 09:09:34 | DEBUG    | Processing: 06-2025-ct-eng.pdf
+2026-06-10 09:09:34 | DEBUG    |   PyMuPDF: 1042 chars extracted from 06-2025-ct-eng.pdf
+2026-06-10 09:09:34 | DEBUG    |   ✓ 1 chunks from 06-2025-ct-eng.pdf (pymupdf)
+2026-06-10 09:09:34 | DEBUG    | Processing: 06-2025-ct-hin.pdf
+2026-06-10 09:09:34 | DEBUG    |   PyMuPDF: 811 chars extracted from 06-2025-ct-hin.pdf
+2026-06-10 09:09:34 | DEBUG    |   ✓ 1 chunks from 06-2025-ct-hin.pdf (pymupdf)
+2026-06-10 09:09:34 | DEBUG    | Processing: 09-2025-ct-eng.pdf
+2026-06-10 09:09:34 | DEBUG    |   PyMuPDF: 1231 chars extracted from 09-2025-ct-eng.pdf
+2026-06-10 09:09:34 | DEBUG    |   ✓ 1 chunks from 09-2025-ct-eng.pdf (pymupdf)
+2026-06-10 09:09:34 | DEBUG    | Processing: 09-2025-ct-hin.pdf
+2026-06-10 09:09:34 | DEBUG    |   PyMuPDF: 992 chars extracted from 09-2025-ct-hin.pdf
+2026-06-10 09:09:34 | DEBUG    |   ✓ 1 chunks from 09-2025-ct-hin.pdf (pymupdf)
+2026-06-10 09:09:34 | DEBUG    | Processing: advisory.pdf
+2026-06-10 09:09:34 | DEBUG    |   PyMuPDF only got 0 chars (<100) from advisory.pdf → trying OCR...
+2026-06-10 09:09:34 | WARNING  | pytesseract not installed. Install: pip install pytesseract Pillow
+2026-06-10 09:09:34 | WARNING  |   Both methods failed for advisory.pdf (PyMuPDF: 0, OCR: 0 chars)
+2026-06-10 09:09:34 | WARNING  |   Skipping (no usable text): advisory.pdf
+2026-06-10 09:09:34 | DEBUG    | Processing: Advisory022026.pdf
+2026-06-10 09:09:34 | DEBUG    |   PyMuPDF: 1915 chars extracted from Advisory022026.pdf
+2026-06-10 09:09:34 | DEBUG    |   ✓ 1 chunks from Advisory022026.pdf (pymupdf)
+2026-06-10 09:09:34 | DEBUG    | Processing: ADVISORY_03-2026_CE_DECLARATION.pdf
+2026-06-10 09:09:34 | DEBUG    |   PyMuPDF: 10530 chars extracted from ADVISORY_03-2026_CE_DECLARATION.pdf
+2026-06-10 09:09:34 | DEBUG    |   ✓ 6 chunks from ADVISORY_03-2026_CE_DECLARATION.pdf (pymupdf)
+2026-06-10 09:09:34 | DEBUG    | Processing: ADVISORY_05-2026_CE_PMT_01.pdf
+2026-06-10 09:09:34 | DEBUG    |   PyMuPDF: 6907 chars extracted from ADVISORY_05-2026_CE_PMT_01.pdf
+2026-06-10 09:09:34 | DEBUG    |   ✓ 4 chunks from ADVISORY_05-2026_CE_PMT_01.pdf (pymupdf)
+2026-06-10 09:09:34 | DEBUG    | Processing: Advisory_20No._2009_2026_20dated_20050626_HSNS__20for_20filing_20Sealing_De_20sealing_20request.pdf
+2026-06-10 09:09:34 | DEBUG    |   PyMuPDF: 11346 chars extracted from Advisory_20No._2009_2026_20dated_20050626_HSNS__20for_20filing_20Sealing_De_20sealing_20request.pdf
+2026-06-10 09:09:34 | DEBUG    |   ✓ 6 chunks from Advisory_20No._2009_2026_20dated_20050626_HSNS__20for_20filing_20Sealing_De_20sealing_20request.pdf (pymupdf)
+2026-06-10 09:09:34 | DEBUG    | Processing: advisory_in_case_of_tobacco_products.pdf
+2026-06-10 09:09:34 | DEBUG    |   PyMuPDF: 1975 chars extracted from advisory_in_case_of_tobacco_products.pdf
+2026-06-10 09:09:34 | DEBUG    |   ✓ 1 chunks from advisory_in_case_of_tobacco_products.pdf (pymupdf)
+2026-06-10 09:09:34 | DEBUG    | Processing: Advisory_No._09_2026_dated_050626_HSNS__for_filing_Sealing_De_sealing_request.pdf
+2026-06-10 09:09:34 | DEBUG    |   PyMuPDF: 11346 chars extracted from Advisory_No._09_2026_dated_050626_HSNS__for_filing_Sealing_De_sealing_request.pdf
+2026-06-10 09:09:34 | DEBUG    |   ✓ 6 chunks from Advisory_No._09_2026_dated_050626_HSNS__for_filing_Sealing_De_sealing_request.pdf (pymupdf)
+2026-06-10 09:09:34 | DEBUG    | Processing: AdvisoryNo.06of2026dated12.03.26onfilingofHSNSReturns_RET-01.pdf
+2026-06-10 09:09:34 | DEBUG    |   PyMuPDF: 12194 chars extracted from AdvisoryNo.06of2026dated12.03.26onfilingofHSNSReturns_RET-01.pdf
+2026-06-10 09:09:34 | DEBUG    |   ✓ 7 chunks from AdvisoryNo.06of2026dated12.03.26onfilingofHSNSReturns_RET-01.pdf (pymupdf)
+2026-06-10 09:09:34 | DEBUG    | Processing: AdvisoryNo._2007_2026HSNSAMENDMENT_20DECLARATION.pdf
+2026-06-10 09:09:34 | DEBUG    |   PyMuPDF: 12781 chars extracted from AdvisoryNo._2007_2026HSNSAMENDMENT_20DECLARATION.pdf
+2026-06-10 09:09:34 | DEBUG    |   ✓ 7 chunks from AdvisoryNo._2007_2026HSNSAMENDMENT_20DECLARATION.pdf (pymupdf)
+2026-06-10 09:09:34 | DEBUG    | Processing: AdvisoryNo_08_of_2026_CE_Declaration_Change__Addition_disposal_of_machines.pdf
+2026-06-10 09:09:34 | DEBUG    |   PyMuPDF: 11900 chars extracted from AdvisoryNo_08_of_2026_CE_Declaration_Change__Addition_disposal_of_machines.pdf
+2026-06-10 09:09:34 | DEBUG    |   ✓ 7 chunks from AdvisoryNo_08_of_2026_CE_Declaration_Change__Addition_disposal_of_machines.pdf (pymupdf)
+2026-06-10 09:09:34 | DEBUG    | Processing: AdvisoryNo_2008_20of_202026_CE_20Declaration_Change_20_Addition_disposal_20of_20machines.pdf
+2026-06-10 09:09:34 | DEBUG    |   PyMuPDF: 11900 chars extracted from AdvisoryNo_2008_20of_202026_CE_20Declaration_Change_20_Addition_disposal_20of_20machines.pdf
+2026-06-10 09:09:34 | DEBUG    |   ✓ 7 chunks from AdvisoryNo_2008_20of_202026_CE_20Declaration_Change_20_Addition_disposal_20of_20machines.pdf (pymupdf)
+2026-06-10 09:09:34 | DEBUG    | Processing: cea-rpt-rnr.pdf
+2026-06-10 09:09:35 | DEBUG    |   PyMuPDF: 205715 chars extracted from cea-rpt-rnr.pdf
+2026-06-10 09:09:35 | DEBUG    |   ✓ 109 chunks from cea-rpt-rnr.pdf (pymupdf)
+2026-06-10 09:09:35 | DEBUG    | Processing: cir-244012025-cgst.pdf
+2026-06-10 09:09:35 | DEBUG    |   PyMuPDF: 3064 chars extracted from cir-244012025-cgst.pdf
+2026-06-10 09:09:35 | DEBUG    |   ✓ 2 chunks from cir-244012025-cgst.pdf (pymupdf)
+2026-06-10 09:09:35 | DEBUG    | Processing: cir-245022025-cgst.pdf
+2026-06-10 09:09:35 | DEBUG    |   PyMuPDF: 19918 chars extracted from cir-245022025-cgst.pdf
+2026-06-10 09:09:35 | DEBUG    |   ✓ 11 chunks from cir-245022025-cgst.pdf (pymupdf)
+2026-06-10 09:09:35 | DEBUG    | Processing: cir-cgst-246-03-2025.pdf
+2026-06-10 09:09:35 | DEBUG    |   PyMuPDF: 7932 chars extracted from cir-cgst-246-03-2025.pdf
+2026-06-10 09:09:35 | DEBUG    |   ✓ 5 chunks from cir-cgst-246-03-2025.pdf (pymupdf)
+2026-06-10 09:09:35 | DEBUG    | Processing: circular-239-33-2024-GST.pdf
+2026-06-10 09:09:35 | DEBUG    |   PyMuPDF: 7657 chars extracted from circular-239-33-2024-GST.pdf
+2026-06-10 09:09:35 | DEBUG    |   ✓ 5 chunks from circular-239-33-2024-GST.pdf (pymupdf)
+2026-06-10 09:09:35 | DEBUG    | Processing: Circular-55thGSTC-Services.pdf
+2026-06-10 09:09:35 | DEBUG    |   PyMuPDF only got 0 chars (<100) from Circular-55thGSTC-Services.pdf → trying OCR...
+2026-06-10 09:09:35 | WARNING  | pytesseract not installed. Install: pip install pytesseract Pillow
+2026-06-10 09:09:35 | WARNING  |   Both methods failed for Circular-55thGSTC-Services.pdf (PyMuPDF: 0, OCR: 0 chars)
+2026-06-10 09:09:35 | WARNING  |   Skipping (no usable text): Circular-55thGSTC-Services.pdf
+2026-06-10 09:09:35 | DEBUG    | Processing: circular-no-10h-2025.pdf
+2026-06-10 09:09:35 | DEBUG    |   PyMuPDF: 5969 chars extracted from circular-no-10h-2025.pdf
+2026-06-10 09:09:35 | DEBUG    |   ✓ 4 chunks from circular-no-10h-2025.pdf (pymupdf)
+2026-06-10 09:09:35 | DEBUG    | Processing: circular-no-242-2024.pdf
+2026-06-10 09:09:35 | DEBUG    |   PyMuPDF: 11436 chars extracted from circular-no-242-2024.pdf
+2026-06-10 09:09:35 | DEBUG    |   ✓ 6 chunks from circular-no-242-2024.pdf (pymupdf)
+2026-06-10 09:09:35 | DEBUG    | Processing: circular-no-243-2024.pdf
+2026-06-10 09:09:35 | DEBUG    |   PyMuPDF: 15372 chars extracted from circular-no-243-2024.pdf
+2026-06-10 09:09:35 | DEBUG    |   ✓ 9 chunks from circular-no-243-2024.pdf (pymupdf)
+2026-06-10 09:09:35 | DEBUG    | Processing: circular-no-247-04-2025.pdf
+2026-06-10 09:09:35 | DEBUG    |   PyMuPDF only got 0 chars (<100) from circular-no-247-04-2025.pdf → trying OCR...
+2026-06-10 09:09:35 | WARNING  | pytesseract not installed. Install: pip install pytesseract Pillow
+2026-06-10 09:09:35 | WARNING  |   Both methods failed for circular-no-247-04-2025.pdf (PyMuPDF: 0, OCR: 0 chars)
+2026-06-10 09:09:35 | WARNING  |   Skipping (no usable text): circular-no-247-04-2025.pdf
+2026-06-10 09:09:35 | DEBUG    | Processing: circular-no-248-05-2025.pdf
+2026-06-10 09:09:35 | DEBUG    |   PyMuPDF: 6551 chars extracted from circular-no-248-05-2025.pdf
+2026-06-10 09:09:35 | DEBUG    |   ✓ 4 chunks from circular-no-248-05-2025.pdf (pymupdf)
+2026-06-10 09:09:35 | DEBUG    | Processing: Circular-No-249-2025.pdf
+2026-06-10 09:09:35 | DEBUG    |   PyMuPDF: 3373 chars extracted from Circular-No-249-2025.pdf
+2026-06-10 09:09:35 | DEBUG    |   ✓ 2 chunks from Circular-No-249-2025.pdf (pymupdf)
+2026-06-10 09:09:35 | DEBUG    | Processing: Circular-No-250-2025.pdf
+2026-06-10 09:09:35 | DEBUG    |   PyMuPDF: 4468 chars extracted from Circular-No-250-2025.pdf
+2026-06-10 09:09:35 | DEBUG    |   ✓ 3 chunks from Circular-No-250-2025.pdf (pymupdf)
+2026-06-10 09:09:35 | DEBUG    | Processing: circular-no-250-2025_1.pdf
+2026-06-10 09:09:35 | DEBUG    |   PyMuPDF: 4468 chars extracted from circular-no-250-2025_1.pdf
+2026-06-10 09:09:35 | DEBUG    |   ✓ 3 chunks from circular-no-250-2025_1.pdf (pymupdf)
+2026-06-10 09:09:35 | DEBUG    | Processing: Circular-Services-Co-insurance-Re-insurance.pdf
+2026-06-10 09:09:35 | DEBUG    |   PyMuPDF: 3064 chars extracted from Circular-Services-Co-insurance-Re-insurance.pdf
+2026-06-10 09:09:35 | DEBUG    |   ✓ 2 chunks from Circular-Services-Co-insurance-Re-insurance.pdf (pymupdf)
+2026-06-10 09:09:35 | DEBUG    | Processing: comments-dor-1st-discn-paper-01012010.pdf
+2026-06-10 09:09:35 | DEBUG    |   PyMuPDF: 26039 chars extracted from comments-dor-1st-discn-paper-01012010.pdf
+2026-06-10 09:09:35 | DEBUG    |   ✓ 14 chunks from comments-dor-1st-discn-paper-01012010.pdf (pymupdf)
+2026-06-10 09:09:35 | DEBUG    | Processing: consti-amend-act.pdf
+2026-06-10 09:09:36 | DEBUG    |   PyMuPDF: 15488 chars extracted from consti-amend-act.pdf
+2026-06-10 09:09:36 | DEBUG    |   ✓ 9 chunks from consti-amend-act.pdf (pymupdf)
+2026-06-10 09:09:36 | DEBUG    | Processing: ct-07-2025.pdf
+2026-06-10 09:09:36 | DEBUG    |   PyMuPDF: 5692 chars extracted from ct-07-2025.pdf
+2026-06-10 09:09:36 | DEBUG    |   ✓ 3 chunks from ct-07-2025.pdf (pymupdf)
+2026-06-10 09:09:36 | DEBUG    | Processing: ct-07h-2025.pdf
+2026-06-10 09:09:36 | DEBUG    |   PyMuPDF: 5165 chars extracted from ct-07h-2025.pdf
+2026-06-10 09:09:36 | DEBUG    |   ✓ 3 chunks from ct-07h-2025.pdf (pymupdf)
+2026-06-10 09:09:36 | DEBUG    | Processing: ct-08-2025.pdf
+2026-06-10 09:09:36 | DEBUG    |   PyMuPDF: 1528 chars extracted from ct-08-2025.pdf
+2026-06-10 09:09:36 | DEBUG    |   ✓ 1 chunks from ct-08-2025.pdf (pymupdf)
+2026-06-10 09:09:36 | DEBUG    | Processing: ct-08h-2025.pdf
+2026-06-10 09:09:36 | DEBUG    |   PyMuPDF: 1275 chars extracted from ct-08h-2025.pdf
+2026-06-10 09:09:36 | DEBUG    |   ✓ 1 chunks from ct-08h-2025.pdf (pymupdf)
+2026-06-10 09:09:36 | DEBUG    | Processing: document_1.pdf
+2026-06-10 09:09:36 | DEBUG    |   PyMuPDF: 4060 chars extracted from document_1.pdf
+2026-06-10 09:09:36 | DEBUG    |   ✓ 3 chunks from document_1.pdf (pymupdf)
+2026-06-10 09:09:36 | DEBUG    | Processing: DuePayment.pdf
+2026-06-10 09:09:36 | DEBUG    |   PyMuPDF only got 0 chars (<100) from DuePayment.pdf → trying OCR...
+2026-06-10 09:09:36 | WARNING  | pytesseract not installed. Install: pip install pytesseract Pillow
+2026-06-10 09:09:36 | WARNING  |   Both methods failed for DuePayment.pdf (PyMuPDF: 0, OCR: 0 chars)
+2026-06-10 09:09:36 | WARNING  |   Skipping (no usable text): DuePayment.pdf
+2026-06-10 09:09:36 | DEBUG    | Processing: first_discussion_paper_on_gst.pdf
+2026-06-10 09:09:36 | DEBUG    |   PyMuPDF: 69788 chars extracted from first_discussion_paper_on_gst.pdf
+2026-06-10 09:09:36 | DEBUG    |   ✓ 38 chunks from first_discussion_paper_on_gst.pdf (pymupdf)
+2026-06-10 09:09:36 | DEBUG    | Processing: gazette_gsr_no_58_js_rr_gst_council.pdf
+2026-06-10 09:09:36 | DEBUG    |   PyMuPDF only got 0 chars (<100) from gazette_gsr_no_58_js_rr_gst_council.pdf → trying OCR...
+2026-06-10 09:09:36 | WARNING  | pytesseract not installed. Install: pip install pytesseract Pillow
+2026-06-10 09:09:36 | WARNING  |   Both methods failed for gazette_gsr_no_58_js_rr_gst_council.pdf (PyMuPDF: 0, OCR: 0 chars)
+2026-06-10 09:09:36 | WARNING  |   Skipping (no usable text): gazette_gsr_no_58_js_rr_gst_council.pdf
+2026-06-10 09:09:36 | DEBUG    | Processing: GST-Circular.pdf
+2026-06-10 09:09:36 | DEBUG    |   PyMuPDF only got 0 chars (<100) from GST-Circular.pdf → trying OCR...
+2026-06-10 09:09:36 | WARNING  | pytesseract not installed. Install: pip install pytesseract Pillow
+2026-06-10 09:09:36 | WARNING  |   Both methods failed for GST-Circular.pdf (PyMuPDF: 0, OCR: 0 chars)
+2026-06-10 09:09:36 | WARNING  |   Skipping (no usable text): GST-Circular.pdf
+2026-06-10 09:09:36 | DEBUG    | Processing: gst-ct-10-2025.pdf
+2026-06-10 09:09:36 | DEBUG    |   PyMuPDF: 3862 chars extracted from gst-ct-10-2025.pdf
+2026-06-10 09:09:36 | DEBUG    |   ✓ 2 chunks from gst-ct-10-2025.pdf (pymupdf)
+2026-06-10 09:09:36 | DEBUG    | Processing: gst-ct-10h-2025.pdf
+2026-06-10 09:09:36 | DEBUG    |   PyMuPDF: 3099 chars extracted from gst-ct-10h-2025.pdf
+2026-06-10 09:09:36 | DEBUG    |   ✓ 2 chunks from gst-ct-10h-2025.pdf (pymupdf)
+2026-06-10 09:09:36 | DEBUG    | Processing: gst-ct-11-2025.pdf
+2026-06-10 09:09:36 | DEBUG    |   PyMuPDF: 3059 chars extracted from gst-ct-11-2025.pdf
+2026-06-10 09:09:36 | DEBUG    |   ✓ 2 chunks from gst-ct-11-2025.pdf (pymupdf)
+2026-06-10 09:09:36 | DEBUG    | Processing: gst-ct-11h-2025.pdf
+2026-06-10 09:09:36 | DEBUG    |   PyMuPDF: 2654 chars extracted from gst-ct-11h-2025.pdf
+2026-06-10 09:09:36 | DEBUG    |   ✓ 2 chunks from gst-ct-11h-2025.pdf (pymupdf)
+2026-06-10 09:09:36 | DEBUG    | Processing: Helpdesk-Advisory-8-2025-29072025.pdf
+2026-06-10 09:09:36 | DEBUG    |   PyMuPDF: 3393 chars extracted from Helpdesk-Advisory-8-2025-29072025.pdf
+2026-06-10 09:09:36 | DEBUG    |   ✓ 2 chunks from Helpdesk-Advisory-8-2025-29072025.pdf (pymupdf)
+2026-06-10 09:09:36 | DEBUG    | Processing: HSNS_Advisory_Helpdesk_01-2026.pdf
+2026-06-10 09:09:36 | DEBUG    |   PyMuPDF: 12132 chars extracted from HSNS_Advisory_Helpdesk_01-2026.pdf
+2026-06-10 09:09:36 | DEBUG    |   ✓ 7 chunks from HSNS_Advisory_Helpdesk_01-2026.pdf (pymupdf)
+2026-06-10 09:09:36 | DEBUG    | Processing: HSNS_Declaration_filing_procedure.pdf
+2026-06-10 09:09:36 | DEBUG    |   PyMuPDF: 13870 chars extracted from HSNS_Declaration_filing_procedure.pdf
+2026-06-10 09:09:36 | DEBUG    |   ✓ 8 chunks from HSNS_Declaration_filing_procedure.pdf (pymupdf)
+2026-06-10 09:09:36 | DEBUG    | Processing: ins-gst-02-2025.pdf
+2026-06-10 09:09:36 | DEBUG    |   PyMuPDF: 3409 chars extracted from ins-gst-02-2025.pdf
+2026-06-10 09:09:36 | DEBUG    |   ✓ 2 chunks from ins-gst-02-2025.pdf (pymupdf)
+2026-06-10 09:09:36 | DEBUG    | Processing: ins-gst-no-03-2025.pdf
+2026-06-10 09:09:36 | DEBUG    |   PyMuPDF: 18020 chars extracted from ins-gst-no-03-2025.pdf
+2026-06-10 09:09:36 | DEBUG    |   ✓ 10 chunks from ins-gst-no-03-2025.pdf (pymupdf)
+2026-06-10 09:09:36 | DEBUG    | Processing: Introduction_of_2FA.pdf
+2026-06-10 09:09:36 | DEBUG    |   PyMuPDF: 2556 chars extracted from Introduction_of_2FA.pdf
+2026-06-10 09:09:36 | DEBUG    |   ✓ 2 chunks from Introduction_of_2FA.pdf (pymupdf)
+2026-06-10 09:09:36 | DEBUG    | Processing: NN-30-2024-Eng.pdf
+2026-06-10 09:09:36 | DEBUG    |   PyMuPDF: 1118 chars extracted from NN-30-2024-Eng.pdf
+2026-06-10 09:09:36 | DEBUG    |   ✓ 1 chunks from NN-30-2024-Eng.pdf (pymupdf)
+2026-06-10 09:09:36 | DEBUG    | Processing: NN-30-2024-Hindi.pdf
+2026-06-10 09:09:36 | DEBUG    |   PyMuPDF: 860 chars extracted from NN-30-2024-Hindi.pdf
+2026-06-10 09:09:36 | DEBUG    |   ✓ 1 chunks from NN-30-2024-Hindi.pdf (pymupdf)
+2026-06-10 09:09:36 | DEBUG    | Processing: NN-31-2024-Eng.pdf
+2026-06-10 09:09:36 | DEBUG    |   PyMuPDF: 4187 chars extracted from NN-31-2024-Eng.pdf
+2026-06-10 09:09:36 | DEBUG    |   ✓ 3 chunks from NN-31-2024-Eng.pdf (pymupdf)
+2026-06-10 09:09:36 | DEBUG    | Processing: procedure-locate-e-payment-challan.pdf
+2026-06-10 09:09:36 | DEBUG    |   PyMuPDF: 1061 chars extracted from procedure-locate-e-payment-challan.pdf
+2026-06-10 09:09:36 | DEBUG    |   ✓ 1 chunks from procedure-locate-e-payment-challan.pdf (pymupdf)
+2026-06-10 09:09:36 | DEBUG    | Processing: recruitment-rules.pdf
+2026-06-10 09:09:37 | DEBUG    |   PyMuPDF only got 0 chars (<100) from recruitment-rules.pdf → trying OCR...
+2026-06-10 09:09:37 | WARNING  | pytesseract not installed. Install: pip install pytesseract Pillow
+2026-06-10 09:09:37 | WARNING  |   Both methods failed for recruitment-rules.pdf (PyMuPDF: 0, OCR: 0 chars)
+2026-06-10 09:09:37 | WARNING  |   Skipping (no usable text): recruitment-rules.pdf
+2026-06-10 09:09:37 | INFO     | 
+============================================================
+2026-06-10 09:09:37 | INFO     | CHUNKING COMPLETE — GST
+2026-06-10 09:09:37 | INFO     |   ✓ PDFs processed:    58/65
+2026-06-10 09:09:37 | INFO     |   ✗ Failed/empty:      7
+2026-06-10 09:09:37 | INFO     |   📄 PyMuPDF used:     58 PDFs
+2026-06-10 09:09:37 | INFO     |   🔍 OCR used:         0 PDFs
+2026-06-10 09:09:37 | INFO     |   🧩 Total chunks:     363
+2026-06-10 09:09:37 | INFO     |   📏 Avg chunk size:   1863.5 chars
+2026-06-10 09:09:37 | INFO     |   💾 Saved to:         C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\gst\chunks.json
+2026-06-10 09:09:37 | INFO     | ============================================================
