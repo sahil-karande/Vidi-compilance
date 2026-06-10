@@ -1,13 +1,13 @@
 {
   "total_pdfs": 65,
-  "success": 58,
-  "failed": 7,
-  "ocr_used": 0,
+  "success": 65,
+  "failed": 0,
+  "ocr_used": 7,
   "pymupdf_used": 58,
-  "skipped_empty": 7,
-  "total_chunks": 363,
+  "skipped_empty": 0,
+  "total_chunks": 403,
   "corpus": "gst",
   "output_file": "C:\\Users\\Sahil Karande\\OneDrive\\Desktop\\Projects\\Vidi\\data\\gst\\chunks.json",
-  "avg_chunk_size": 1863.5,
-  "chunked_at": "2026-06-10T09:14:02.205376"
+  "avg_chunk_size": 1856.6,
+  "chunked_at": "2026-06-10T13:16:35.526137"
 }
