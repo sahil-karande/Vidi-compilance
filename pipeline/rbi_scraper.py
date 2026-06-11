@@ -88,139 +88,142 @@ RBI_PDF_BASE = "https://rbidocs.rbi.org.in/rdocs"
 
 # C) Curated high-value Master Directions — direct PDF links
 # These are the most important RBI documents for SME compliance
-CURATED_RBI_PDFS = [
+
+CURATED_RBI_PDFS = []
+
+# CURATED_RBI_PDFS = [
     # ── Master Directions ─────────────────────────────────
-    {
-        "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/MDNBFC300120201B503D0B66A4453A8F8C45E9718BFDA.PDF",
-        "title": "Master Direction - Non-Banking Financial Companies",
-        "circular_no": "MD-NBFC/2016",
-        "date": "01-09-2016",
-    },
-    {
-        "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/FEMA20R310820181.PDF",
-        "title": "Master Direction - Foreign Exchange Management (Transfer or Issue of Security by a Person Resident outside India)",
-        "circular_no": "MD-FEMA20R/2018",
-        "date": "31-08-2018",
-    },
-    {
-        "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/MDIR15022016.PDF",
-        "title": "Master Direction - Interest Rate on Advances",
-        "circular_no": "MD-DIR/2016",
-        "date": "15-02-2016",
-    },
-    {
-        "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/MDKYCAML300120202.PDF",
-        "title": "Master Direction - Know Your Customer (KYC)",
-        "circular_no": "MD-KYC/2016",
-        "date": "25-02-2016",
-    },
-    {
-        "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/MDUPI271220191.PDF",
-        "title": "Master Direction - Unified Payments Interface (UPI)",
-        "circular_no": "MD-UPI/2019",
-        "date": "27-12-2019",
-    },
-    {
-        "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/MDPREPAID240820231.PDF",
-        "title": "Master Direction - Prepaid Payment Instruments",
-        "circular_no": "MD-PPI/2021",
-        "date": "27-08-2021",
-    },
-    {
-        "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/MDFX01092020.PDF",
-        "title": "Master Direction - Liberalised Remittance Scheme",
-        "circular_no": "MD-LRS/2016",
-        "date": "01-01-2016",
-    },
-    {
-        "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/MDDBT26032021.PDF",
-        "title": "Master Direction - Debit Card Issuance and Operation",
-        "circular_no": "MD-DBT/2021",
-        "date": "26-03-2021",
-    },
-    # ── Master Circulars ──────────────────────────────────
-    {
-        "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/MC01072024.PDF",
-        "title": "Master Circular - Prudential Norms on Income Recognition, Asset Classification and Provisioning",
-        "circular_no": "MC-IRAC/2024",
-        "date": "01-07-2024",
-    },
-    {
-        "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/MCKCC01072024.PDF",
-        "title": "Master Circular - Kisan Credit Card Scheme",
-        "circular_no": "MC-KCC/2024",
-        "date": "01-07-2024",
-    },
-    {
-        "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/MCSB01072024.PDF",
-        "title": "Master Circular - Savings Bank Accounts",
-        "circular_no": "MC-SB/2024",
-        "date": "01-07-2024",
-    },
-    {
-        "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/MCFD01072024.PDF",
-        "title": "Master Circular - Foreign Direct Investment in India",
-        "circular_no": "MC-FDI/2024",
-        "date": "01-07-2024",
-    },
-    {
-        "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/MCLOAN01072024.PDF",
-        "title": "Master Circular - Loans and Advances - Statutory and Other Restrictions",
-        "circular_no": "MC-Loans/2024",
-        "date": "01-07-2024",
-    },
-    {
-        "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/MCPRIORITY01072024.PDF",
-        "title": "Master Circular - Priority Sector Lending",
-        "circular_no": "MC-PSL/2024",
-        "date": "01-07-2024",
-    },
-    # ── Recent Notifications (2023–2025) ─────────────────
-    {
-        "url": "https://rbidocs.rbi.org.in/rdocs/notification/PDFs/NT2024MSME.PDF",
-        "title": "RBI Notification - MSME Lending Guidelines 2024",
-        "circular_no": "RBI/2024/MSME",
-        "date": "2024",
-    },
-    {
-        "url": "https://rbidocs.rbi.org.in/rdocs/notification/PDFs/NOTI12520240112.PDF",
-        "title": "RBI Circular - Digital Lending Guidelines",
-        "circular_no": "RBI/2024-25/23",
-        "date": "12-01-2024",
-    },
-    {
-        "url": "https://rbidocs.rbi.org.in/rdocs/notification/PDFs/NREGS_INTEREST.PDF",
-        "title": "RBI - Interest Rates on NRE Deposits",
-        "circular_no": "RBI/NREGS",
-        "date": "2023",
-    },
-    # ── Annual Reports & Policy Docs ──────────────────────
-    {
-        "url": "https://rbidocs.rbi.org.in/rdocs/AnnualReport/PDFs/0AR202324_F.PDF",
-        "title": "RBI Annual Report 2023-24",
-        "circular_no": "AR/2023-24",
-        "date": "2024",
-    },
-    {
-        "url": "https://rbidocs.rbi.org.in/rdocs/Speeches/PDFs/MONETARYPOLICY2024.PDF",
-        "title": "RBI Monetary Policy Statement 2024",
-        "circular_no": "MPC/2024",
-        "date": "2024",
-    },
-    # ── FEMA Regulations ─────────────────────────────────
-    {
-        "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/FEMA22020191.PDF",
-        "title": "FEMA 22 - Foreign Exchange Management (Export of Goods and Services)",
-        "circular_no": "FEMA-22/2000",
-        "date": "03-05-2000",
-    },
-    {
-        "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/FEMA120190527.PDF",
-        "title": "FEMA 1 - Foreign Exchange Management (Permissible Capital Account Transactions)",
-        "circular_no": "FEMA-1/2000",
-        "date": "03-05-2000",
-    },
-]
+#     {
+#         "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/MDNBFC300120201B503D0B66A4453A8F8C45E9718BFDA.PDF",
+#         "title": "Master Direction - Non-Banking Financial Companies",
+#         "circular_no": "MD-NBFC/2016",
+#         "date": "01-09-2016",
+#     },
+#     {
+#         "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/FEMA20R310820181.PDF",
+#         "title": "Master Direction - Foreign Exchange Management (Transfer or Issue of Security by a Person Resident outside India)",
+#         "circular_no": "MD-FEMA20R/2018",
+#         "date": "31-08-2018",
+#     },
+#     {
+#         "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/MDIR15022016.PDF",
+#         "title": "Master Direction - Interest Rate on Advances",
+#         "circular_no": "MD-DIR/2016",
+#         "date": "15-02-2016",
+#     },
+#     {
+#         "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/MDKYCAML300120202.PDF",
+#         "title": "Master Direction - Know Your Customer (KYC)",
+#         "circular_no": "MD-KYC/2016",
+#         "date": "25-02-2016",
+#     },
+#     {
+#         "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/MDUPI271220191.PDF",
+#         "title": "Master Direction - Unified Payments Interface (UPI)",
+#         "circular_no": "MD-UPI/2019",
+#         "date": "27-12-2019",
+#     },
+#     {
+#         "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/MDPREPAID240820231.PDF",
+#         "title": "Master Direction - Prepaid Payment Instruments",
+#         "circular_no": "MD-PPI/2021",
+#         "date": "27-08-2021",
+#     },
+#     {
+#         "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/MDFX01092020.PDF",
+#         "title": "Master Direction - Liberalised Remittance Scheme",
+#         "circular_no": "MD-LRS/2016",
+#         "date": "01-01-2016",
+#     },
+#     {
+#         "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/MDDBT26032021.PDF",
+#         "title": "Master Direction - Debit Card Issuance and Operation",
+#         "circular_no": "MD-DBT/2021",
+#         "date": "26-03-2021",
+#     },
+#     # ── Master Circulars ──────────────────────────────────
+#     {
+#         "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/MC01072024.PDF",
+#         "title": "Master Circular - Prudential Norms on Income Recognition, Asset Classification and Provisioning",
+#         "circular_no": "MC-IRAC/2024",
+#         "date": "01-07-2024",
+#     },
+#     {
+#         "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/MCKCC01072024.PDF",
+#         "title": "Master Circular - Kisan Credit Card Scheme",
+#         "circular_no": "MC-KCC/2024",
+#         "date": "01-07-2024",
+#     },
+#     {
+#         "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/MCSB01072024.PDF",
+#         "title": "Master Circular - Savings Bank Accounts",
+#         "circular_no": "MC-SB/2024",
+#         "date": "01-07-2024",
+#     },
+#     {
+#         "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/MCFD01072024.PDF",
+#         "title": "Master Circular - Foreign Direct Investment in India",
+#         "circular_no": "MC-FDI/2024",
+#         "date": "01-07-2024",
+#     },
+#     {
+#         "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/MCLOAN01072024.PDF",
+#         "title": "Master Circular - Loans and Advances - Statutory and Other Restrictions",
+#         "circular_no": "MC-Loans/2024",
+#         "date": "01-07-2024",
+#     },
+#     {
+#         "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/MCPRIORITY01072024.PDF",
+#         "title": "Master Circular - Priority Sector Lending",
+#         "circular_no": "MC-PSL/2024",
+#         "date": "01-07-2024",
+#     },
+#     # ── Recent Notifications (2023–2025) ─────────────────
+#     {
+#         "url": "https://rbidocs.rbi.org.in/rdocs/notification/PDFs/NT2024MSME.PDF",
+#         "title": "RBI Notification - MSME Lending Guidelines 2024",
+#         "circular_no": "RBI/2024/MSME",
+#         "date": "2024",
+#     },
+#     {
+#         "url": "https://rbidocs.rbi.org.in/rdocs/notification/PDFs/NOTI12520240112.PDF",
+#         "title": "RBI Circular - Digital Lending Guidelines",
+#         "circular_no": "RBI/2024-25/23",
+#         "date": "12-01-2024",
+#     },
+#     {
+#         "url": "https://rbidocs.rbi.org.in/rdocs/notification/PDFs/NREGS_INTEREST.PDF",
+#         "title": "RBI - Interest Rates on NRE Deposits",
+#         "circular_no": "RBI/NREGS",
+#         "date": "2023",
+#     },
+#     # ── Annual Reports & Policy Docs ──────────────────────
+#     {
+#         "url": "https://rbidocs.rbi.org.in/rdocs/AnnualReport/PDFs/0AR202324_F.PDF",
+#         "title": "RBI Annual Report 2023-24",
+#         "circular_no": "AR/2023-24",
+#         "date": "2024",
+#     },
+#     {
+#         "url": "https://rbidocs.rbi.org.in/rdocs/Speeches/PDFs/MONETARYPOLICY2024.PDF",
+#         "title": "RBI Monetary Policy Statement 2024",
+#         "circular_no": "MPC/2024",
+#         "date": "2024",
+#     },
+#     # ── FEMA Regulations ─────────────────────────────────
+#     {
+#         "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/FEMA22020191.PDF",
+#         "title": "FEMA 22 - Foreign Exchange Management (Export of Goods and Services)",
+#         "circular_no": "FEMA-22/2000",
+#         "date": "03-05-2000",
+#     },
+#     {
+#         "url": "https://rbidocs.rbi.org.in/rdocs/content/PDFs/FEMA120190527.PDF",
+#         "title": "FEMA 1 - Foreign Exchange Management (Permissible Capital Account Transactions)",
+#         "circular_no": "FEMA-1/2000",
+#         "date": "03-05-2000",
+#     },
+# ]
 
 # ─────────────────────────────────────────────────────────────
 #  Logger
