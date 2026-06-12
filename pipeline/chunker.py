@@ -338,7 +338,7 @@ def chunk_corpus(corpus: str, limit: int = None):
     setup_logger(corpus)
 
     # Find all PDFs
-    pdf_files = sorted(corpus_dir.glob("*.pdf"))
+    pdf_files = sorted(list(corpus_dir.glob("*.pdf")) + list(corpus_dir.glob("*.txt")))
     if not pdf_files:
         logger.error(f"No PDFs found in {corpus_dir}")
         logger.error(f"Run scraper first: python pipeline/scraper.py --corpus {corpus}")
