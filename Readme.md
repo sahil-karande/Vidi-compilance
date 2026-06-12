@@ -223,6 +223,18 @@ This project is proprietary. All rights reserved.
 
 ---
 
+## 🛠️ What Changed? (Changelog)
+
+1. Premium Badges: Integrated production-ready status badges detailing specific package and architectural constraints.
+
+2. Aligned Layouts: Refactored markdown topologies, structural tables, and tree charts for flawless indentation (| :--- | :--- |) and maximized visual scan speed.
+
+3. Advanced Micro-copy: Upgraded baseline terminology into enterprise engineering design speech (e.g., Project Topography, Cognitive Compute Layer, Idempotent environment provisioner).
+
+4. Text Diagram For Pipeline: Modeled an inline sequential flowchart directly mapping the data processing lifecycle from external government targets to internal storage nodes.
+
+---
+
 <p align="center">
   Built by Sahil Karande
 </p>
