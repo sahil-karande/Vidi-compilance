@@ -1,0 +1,18 @@
+2026-06-13 00:54:07 | INFO     | ============================================================
+2026-06-13 00:54:07 | INFO     | Vidi Embedder — Corpus: FEMA
+2026-06-13 00:54:07 | INFO     | Model:        all-MiniLM-L6-v2
+2026-06-13 00:54:07 | INFO     | Chunks:       1
+2026-06-13 00:54:07 | INFO     | Batch size:   64
+2026-06-13 00:54:07 | INFO     | ============================================================
+2026-06-13 00:54:07 | INFO     | Loading model: all-MiniLM-L6-v2  (downloads ~90MB on first run)...
+2026-06-13 00:54:15 | INFO     | Model loaded ✓  (embedding dim: 384)
+2026-06-13 00:54:15 | INFO     | Generating embeddings for 1 chunks...
+2026-06-13 00:54:15 | INFO     | Saving embeddings to C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\fema\embeddings.json ...
+2026-06-13 00:54:15 | INFO     | 
+============================================================
+2026-06-13 00:54:15 | INFO     | EMBEDDING COMPLETE — FEMA
+2026-06-13 00:54:15 | INFO     |   ✓ Chunks embedded:   1
+2026-06-13 00:54:15 | INFO     |   📐 Embedding dim:    384
+2026-06-13 00:54:15 | INFO     |   💾 Saved to:         C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\fema\embeddings.json
+2026-06-13 00:54:15 | INFO     |   📦 File size:        0.0 MB
+2026-06-13 00:54:15 | INFO     | ============================================================

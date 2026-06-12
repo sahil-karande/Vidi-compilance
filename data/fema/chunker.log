@@ -2,3 +2,50 @@
 2026-06-13 00:41:58 | ERROR    | Run scraper first: python pipeline/scraper.py --corpus fema
 2026-06-13 00:46:12 | ERROR    | No PDFs found in C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\fema
 2026-06-13 00:46:12 | ERROR    | Run scraper first: python pipeline/scraper.py --corpus fema
+2026-06-13 00:50:07 | INFO     | ============================================================
+2026-06-13 00:50:07 | INFO     | Vidi Chunker — Corpus: FEMA
+2026-06-13 00:50:07 | INFO     | PDFs found:   1
+2026-06-13 00:50:07 | INFO     | Chunk size:   ~512 tokens (2048 chars)
+2026-06-13 00:50:07 | INFO     | Overlap:      ~50 tokens  (200 chars)
+2026-06-13 00:50:07 | INFO     | OCR fallback: enabled (threshold: 5 chars)
+2026-06-13 00:50:07 | INFO     | ============================================================
+2026-06-13 00:50:07 | INFO     | Loaded 0 entries from index.csv
+2026-06-13 00:50:07 | DEBUG    | Processing: fema_0001_IT-Act_1961.pdf
+2026-06-13 00:50:07 | WARNING  | PyMuPDF failed on fema_0001_IT-Act_1961.pdf: Failed to open file 'C:\\Users\\Sahil Karande\\OneDrive\\Desktop\\Projects\\Vidi\\data\\fema\\fema_0001_IT-Act_1961.pdf'.
+2026-06-13 00:50:07 | DEBUG    |   PyMuPDF only got 0 chars (<5) from fema_0001_IT-Act_1961.pdf → trying OCR...
+2026-06-13 00:50:07 | WARNING  | OCR failed on fema_0001_IT-Act_1961.pdf: Failed to open file 'C:\\Users\\Sahil Karande\\OneDrive\\Desktop\\Projects\\Vidi\\data\\fema\\fema_0001_IT-Act_1961.pdf'.
+2026-06-13 00:50:07 | WARNING  |   Both methods failed for fema_0001_IT-Act_1961.pdf (PyMuPDF: 0, OCR: 0 chars)
+2026-06-13 00:50:07 | WARNING  |   Skipping (no usable text): fema_0001_IT-Act_1961.pdf
+2026-06-13 00:50:07 | INFO     | 
+============================================================
+2026-06-13 00:50:07 | INFO     | CHUNKING COMPLETE — FEMA
+2026-06-13 00:50:07 | INFO     |   ✓ PDFs processed:    0/1
+2026-06-13 00:50:07 | INFO     |   ✗ Failed/empty:      1
+2026-06-13 00:50:07 | INFO     |   📄 PyMuPDF used:     0 PDFs
+2026-06-13 00:50:07 | INFO     |   🔍 OCR used:         0 PDFs
+2026-06-13 00:50:07 | INFO     |   🧩 Total chunks:     0
+2026-06-13 00:50:07 | INFO     |   📏 Avg chunk size:   0 chars
+2026-06-13 00:50:07 | INFO     |   💾 Saved to:         C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\fema\chunks.json
+2026-06-13 00:50:07 | INFO     | ============================================================
+2026-06-13 00:51:50 | INFO     | ============================================================
+2026-06-13 00:51:50 | INFO     | Vidi Chunker — Corpus: FEMA
+2026-06-13 00:51:50 | INFO     | PDFs found:   1
+2026-06-13 00:51:50 | INFO     | Chunk size:   ~512 tokens (2048 chars)
+2026-06-13 00:51:50 | INFO     | Overlap:      ~50 tokens  (200 chars)
+2026-06-13 00:51:50 | INFO     | OCR fallback: enabled (threshold: 5 chars)
+2026-06-13 00:51:50 | INFO     | ============================================================
+2026-06-13 00:51:50 | INFO     | Loaded 0 entries from index.csv
+2026-06-13 00:51:50 | DEBUG    | Processing: fema_0001_IT-Act_1961.pdf
+2026-06-13 00:51:50 | DEBUG    |   PyMuPDF: 721 chars extracted from fema_0001_IT-Act_1961.pdf
+2026-06-13 00:51:50 | DEBUG    |   ✓ 1 chunks from fema_0001_IT-Act_1961.pdf (pymupdf)
+2026-06-13 00:51:50 | INFO     | 
+============================================================
+2026-06-13 00:51:50 | INFO     | CHUNKING COMPLETE — FEMA
+2026-06-13 00:51:50 | INFO     |   ✓ PDFs processed:    1/1
+2026-06-13 00:51:50 | INFO     |   ✗ Failed/empty:      0
+2026-06-13 00:51:50 | INFO     |   📄 PyMuPDF used:     1 PDFs
+2026-06-13 00:51:50 | INFO     |   🔍 OCR used:         0 PDFs
+2026-06-13 00:51:50 | INFO     |   🧩 Total chunks:     1
+2026-06-13 00:51:50 | INFO     |   📏 Avg chunk size:   721.0 chars
+2026-06-13 00:51:50 | INFO     |   💾 Saved to:         C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\fema\chunks.json
+2026-06-13 00:51:50 | INFO     | ============================================================
