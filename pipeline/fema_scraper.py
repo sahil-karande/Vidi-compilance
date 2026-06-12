@@ -76,20 +76,20 @@ def download_asset(url: str, backup_url: str, filename: str) -> tuple[bool, floa
     if out_path.exists() and out_path.stat().st_size > 1000:
         return True, out_path.stat().st_size / 1024
 
-    # Try Primary open storage mirror
+    # Try Primary mirror with standard raw request (no custom headers)
     try:
-        response = requests.get(url, headers=HEADERS, timeout=15)
-        if response.status_code == 200 and len(response.content) > 1000:
+        response = requests.get(url, timeout=20, allow_redirects=True)
+        if response.status_code == 200 and len(response.content) > 5000:
             with open(out_path, "wb") as f:
                 f.write(response.content)
             return True, len(response.content) / 1024
     except Exception:
         pass
 
-    # Try Secondary infrastructure fallback (clean headers without structural bloat)
+    # Try Backup mirror with standard raw request
     try:
-        response = requests.get(backup_url, headers=HEADERS, timeout=15, allow_redirects=True)
-        if response.status_code == 200 and len(response.content) > 1000:
+        response = requests.get(backup_url, timeout=20, allow_redirects=True)
+        if response.status_code == 200 and len(response.content) > 5000:
             with open(out_path, "wb") as f:
                 f.write(response.content)
             return True, len(response.content) / 1024
@@ -97,7 +97,6 @@ def download_asset(url: str, backup_url: str, filename: str) -> tuple[bool, floa
         logger.warning(f"Failed to pull asset down via backup channels: {type(e).__name__}")
         
     return False, 0
-
 # ─────────────────────────────────────────────────────────────
 #  Pipeline Execution
 # ─────────────────────────────────────────────────────────────
