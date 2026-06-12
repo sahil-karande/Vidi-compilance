@@ -39,7 +39,7 @@ CHUNK_OVERLAP = 50     # token overlap between chunks
 
 # OCR fallback threshold
 # If PyMuPDF extracts fewer than this many characters → use OCR
-MIN_TEXT_LENGTH = 100
+MIN_TEXT_LENGTH = 5
 
 # Supported corpora
 CORPORA = ["gst", "rbi", "sebi", "mca"]

@@ -61,3 +61,8 @@
 2026-06-12 01:19:25 | INFO     | Executing payload downloader. Queue contains 54 items.
 2026-06-12 01:39:22 | INFO     | Successfully processed 54 documents for MCA
 2026-06-12 01:39:22 | INFO     | Comprehensive pipeline sync finalized. Total database items collected: 251
+2026-06-12 07:59:43 | INFO     | Starting Ingestion Run -> MCA
+2026-06-12 07:59:43 | INFO     | Connecting to data node: https://ca2013.com/notifications/
+2026-06-12 07:59:48 | WARNING  | Expanding ingestion target queue for MCA to guarantee 200+ doc milestone...
+2026-06-12 07:59:48 | INFO     | Executing payload downloader. Queue contains 54 items.
+2026-06-12 07:59:48 | INFO     | Successfully processed 54 documents for MCA
