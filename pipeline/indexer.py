@@ -302,8 +302,8 @@ Examples:
   python pipeline/indexer.py --collections           # show all collections
         """
     )
-    parser.add_argument("--corpus", choices=["gst","rbi","sebi","mca","all"],
-                        default="gst")
+    parser.add_argument("--corpus", choices=["gst", "rbi", "sebi", "mca", "fema", "all"], default="all")
+    
     parser.add_argument("--reset", action="store_true",
                         help="Delete existing collection before indexing")
     parser.add_argument("--verify", action="store_true",

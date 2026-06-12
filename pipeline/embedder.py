@@ -141,8 +141,8 @@ def embed_corpus(corpus: str, limit: int = None):
 
 def main():
     parser = argparse.ArgumentParser(description="Vidi — Embedder")
-    parser.add_argument("--corpus", choices=["gst","rbi","sebi","mca","all"],
-                        default="gst")
+    parser.add_argument("--corpus", choices=["gst", "rbi", "sebi", "mca", "fema", "all"], default="all")
+    
     parser.add_argument("--limit", type=int, default=None)
     args = parser.parse_args()
 

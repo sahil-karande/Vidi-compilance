@@ -511,12 +511,8 @@ Examples:
   python pipeline/chunker.py --corpus gst --verify     # verify output
         """
     )
-    parser.add_argument(
-        "--corpus",
-        choices=["gst", "rbi", "sebi", "mca", "all"],
-        default="gst",
-        help="Which corpus to chunk (default: gst)",
-    )
+    parser.add_argument("--corpus", choices=["gst", "rbi", "sebi", "mca", "fema", "all"], default="all")
+    
     parser.add_argument(
         "--limit",
         type=int,
