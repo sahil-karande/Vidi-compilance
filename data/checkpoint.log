@@ -293,3 +293,199 @@ Members are requested to place this Best Practic...
   ⚠ Missing/empty corpora: mca
 2026-06-12 07:54:35 | WARNING  |   Run their scrapers before declaring Phase 1 complete.
 2026-06-12 07:54:35 | INFO     | ============================================================
+2026-06-12 08:11:06 | INFO     | ============================================================
+2026-06-12 08:11:06 | INFO     | Vidi — Pipeline Checkpoint (Day 7)
+2026-06-12 08:11:06 | INFO     | ============================================================
+2026-06-12 08:11:06 | INFO     | 
+============================================================
+2026-06-12 08:11:06 | INFO     | STEP 1 — Verify ChromaDB Collections
+2026-06-12 08:11:06 | INFO     | ============================================================
+2026-06-12 08:11:07 | INFO     |   GST       403 docs   ✓ OK
+2026-06-12 08:11:07 | INFO     |   RBI     15067 docs   ✓ OK
+2026-06-12 08:11:07 | INFO     |   SEBI      455 docs   ✓ OK
+2026-06-12 08:11:07 | INFO     |   MCA        56 docs   ✓ OK
+2026-06-12 08:11:07 | INFO     | 
+  TOTAL: 15981 chunks across 4 collections
+2026-06-12 08:11:07 | INFO     | 
+============================================================
+2026-06-12 08:11:07 | INFO     | STEP 2 — Test Queries (10 per corpus)
+2026-06-12 08:11:07 | INFO     | ============================================================
+2026-06-12 08:11:07 | INFO     | Loading embedding model...
+2026-06-12 08:11:14 | INFO     | 
+--- Testing GST (10 queries) ---
+2026-06-12 08:11:14 | INFO     |   [ 1] ✓ sim=0.665 | What is the GST registration threshold for turnover?
+2026-06-12 08:11:14 | DEBUG    |        → unknown | a significant achievement given the complicated nature and wide area of subjects/issues involved and...
+2026-06-12 08:11:14 | INFO     |   [ 2] ✓ sim=0.656 | How to claim input tax credit under GST?
+2026-06-12 08:11:14 | DEBUG    |        → unknown | relates to Central GST or State GST (with identification
+of the State to whom the tax is to be credi...
+2026-06-12 08:11:14 | INFO     |   [ 3] ✓ sim=0.555 | What is the GST rate for restaurant services?
+2026-06-12 08:11:14 | DEBUG    |        → unknown | rate on exports. 
+4.5 
+Under a standard scenario exempting health, education, financial intermediati...
+2026-06-12 08:11:14 | INFO     |   [ 4] ✓ sim=0.731 | What is the due date for filing GSTR-3B?
+2026-06-12 08:11:14 | DEBUG    |        → unknown | [Page 19]
+ All taxpayers are required to file return FORM GSTR-3B & pay tax on monthly basis.
+ Taxpa...
+2026-06-12 08:11:14 | INFO     |   [ 5] ✓ sim=0.662 | What is the composition scheme under GST?
+2026-06-12 08:11:14 | DEBUG    |        → unknown | Main Features of the GST Act (1/5)
+[Page 33]
+Main Features of the GST Act (2/5)
+ 
+Option of Voluntar...
+2026-06-12 08:11:14 | INFO     |   [ 6] ✓ sim=0.607 | How to register for GST as a new business?
+2026-06-12 08:11:14 | DEBUG    |        → unknown | a significant achievement given the complicated nature and wide area of subjects/issues involved and...
+2026-06-12 08:11:14 | INFO     |   [ 7] ✓ sim=0.611 | What are e-invoicing requirements under GST?
+2026-06-12 08:11:14 | DEBUG    |        → unknown | Main Features of the GST Act (1/5)
+[Page 33]
+Main Features of the GST Act (2/5)
+ 
+Option of Voluntar...
+2026-06-12 08:11:14 | INFO     |   [ 8] ✓ sim=0.587 | What is reverse charge mechanism in GST?
+2026-06-12 08:11:14 | DEBUG    |        → unknown | 10% with the Central tax administration. Further, all administrative control over
+taxpayers having t...
+2026-06-12 08:11:14 | INFO     |   [ 9] ✓ sim=0.630 | What are the penalties for late GST filing?
+2026-06-12 08:11:14 | DEBUG    |        → 02/2025 | [Page 1]
+ Instruction No. 02/2025-GST 
+CBIC-20016/39/2024-GST-SECTION 
+Government of India 
+Ministry...
+2026-06-12 08:11:14 | INFO     |   [10] ✓ sim=0.664 | How is GST applicable on export of services?
+2026-06-12 08:11:14 | DEBUG    |        → unknown | classified into 10 sectors and further sub classified into 75 sub-sectors. We assume that these 94, ...
+2026-06-12 08:11:14 | INFO     |   → Avg similarity: 0.637 | Pass rate: 100.0%
+2026-06-12 08:11:14 | INFO     | 
+--- Testing RBI (10 queries) ---
+2026-06-12 08:11:14 | INFO     |   [ 1] ✓ sim=0.706 | What are KYC requirements for opening a bank account?
+2026-06-12 08:11:14 | DEBUG    |        → notification | arrangements for allowing their customers to access other ATM networks, Mobile ATMs, etc. 
+iii) Curr...
+2026-06-12 08:11:14 | INFO     |   [ 2] ✓ sim=0.685 | What is the Liberalised Remittance Scheme limit?
+2026-06-12 08:11:14 | DEBUG    |        → notification | individual may avail of exchange facility for an amount in excess of the limit 
+prescribed under the...
+2026-06-12 08:11:14 | INFO     |   [ 3] ✓ sim=0.714 | What are the rules for NBFC registration?
+2026-06-12 08:11:14 | DEBUG    |        → notification | 42. 
+The following glide path is provided for the existing NBFCs, viz., NBFC-ICC, 
+NBFC-MFI (without...
+2026-06-12 08:11:14 | INFO     |   [ 4] ✓ sim=0.634 | What is the interest rate on savings bank accounts?
+2026-06-12 08:11:14 | DEBUG    |        → notification | Name of the Bank 
+Rates at a quick glance as on __________ 
+Deposit Accounts 
+Nature 
+Rate of Intere...
+2026-06-12 08:11:14 | INFO     |   [ 5] ✓ sim=0.602 | What are the guidelines for digital lending?
+2026-06-12 08:11:14 | DEBUG    |        → notification | latter guarantees to compensate the bank, for the loss due to default up to 
+a certain percentage of...
+2026-06-12 08:11:14 | INFO     |   [ 6] ✓ sim=0.705 | What is the priority sector lending requirement?
+2026-06-12 08:11:14 | DEBUG    |        → notification | Directions, 
+(Ref. 
+FIDD.CO.Plan.BC.5/04.09.01/2020-21) dated September 04, 2020 (updated from 
+time...
+2026-06-12 08:11:14 | INFO     |   [ 7] ✓ sim=0.629 | What are UPI transaction limits?
+2026-06-12 08:11:14 | DEBUG    |        → notification | transactions. 
+Provided that the above prohibition shall not apply to a bank undertaking 
+inter-bank...
+2026-06-12 08:11:14 | INFO     |   [ 8] ✓ sim=0.584 | What is the master direction for prepaid payment instru
+2026-06-12 08:11:14 | DEBUG    |        → notification | withdraw cash, make online payments, do PoS terminal / Quick Response (QR) code 
+transactions, fund ...
+2026-06-12 08:11:14 | INFO     |   [ 9] ✓ sim=0.591 | What are the FEMA rules for foreign investment?
+2026-06-12 08:11:14 | DEBUG    |        → notification | Foreign Exchange Management Act (FEMA), 1999. This Master Direction lays 
+down the modalities as to ...
+2026-06-12 08:11:14 | INFO     |   [10] ✓ sim=0.544 | What is the Kisan Credit Card scheme?
+2026-06-12 08:11:14 | DEBUG    |        → notification | able to offer charge/mortgage of land as security for the converted loan, she/he shall 
+not be denie...
+2026-06-12 08:11:14 | INFO     |   → Avg similarity: 0.639 | Pass rate: 100.0%
+2026-06-12 08:11:14 | INFO     | 
+--- Testing SEBI (10 queries) ---
+2026-06-12 08:11:14 | INFO     |   [ 1] ✓ sim=0.446 | What are the listing requirements for SME IPO?
+2026-06-12 08:11:14 | DEBUG    |        → unknown | Latest fiscal year data is considered for the calculation of return on equity (ROE) and 
+debt-to-equ...
+2026-06-12 08:11:14 | INFO     |   [ 2] ✓ sim=0.474 | What is insider trading regulation under SEBI?
+2026-06-12 08:11:14 | DEBUG    |        → unknown | Particulars 
+Criminal 
+Proceedings
+Tax 
+Proceedings 
+Statutory or 
+regulatory 
+proceedings 
+Discipli...
+2026-06-12 08:11:15 | INFO     |   [ 3] ✓ sim=0.592 | What are mutual fund disclosure requirements?
+2026-06-12 08:11:15 | DEBUG    |        → unknown | I / We hereby authorize ____________________________________________________________________ Mutual ...
+2026-06-12 08:11:15 | INFO     |   [ 4] ✓ sim=0.457 | What is the SEBI takeover code?
+2026-06-12 08:11:15 | DEBUG    |        → No | SEBI s letter no. SEBI/H0/1MD/IMD-POD-2/P/OW/2023/23603/1 dated June 8, 2023 in this 
+regard is atta...
+2026-06-12 08:11:15 | INFO     |   [ 5] ✓ sim=0.564 | What are the ESG disclosure norms for listed companies?
+2026-06-12 08:11:15 | DEBUG    |        → unknown | The companies are assessed annually by Sustainalytics based on annual filings & other sources. 
+Addi...
+2026-06-12 08:11:15 | INFO     |   [ 6] ✓ sim=0.600 | What are SEBI registration requirements for investment 
+2026-06-12 08:11:15 | DEBUG    |        → n-Demat | and policies shall be effective from April 1, 2022 
+Members are requested to place this Best Practic...
+2026-06-12 08:11:15 | INFO     |   [ 7] ⚠ sim=0.310 | What is T+0 settlement cycle?
+2026-06-12 08:11:15 | DEBUG    |        → unknown | representation of annual index dividend points. It is not an active index of stocks representing 
+a ...
+2026-06-12 08:11:15 | INFO     |   [ 8] ✓ sim=0.415 | What are SEBI cybersecurity framework requirements?
+2026-06-12 08:11:15 | DEBUG    |        → No | SEBI s letter no. SEBI/H0/1MD/IMD-POD-2/P/OW/2023/23603/1 dated June 8, 2023 in this 
+regard is atta...
+2026-06-12 08:11:15 | INFO     |   [ 9] ✓ sim=0.646 | What are SEBI regulations for alternative investment fu
+2026-06-12 08:11:15 | DEBUG    |        → unknown | [Page 1]
+ASSOCIATION OF MUTUAL FUNDS IN INDIA
+135/ BP/ 83/ 2019-20 November 18, 2019
+To,
+All AMFI Me...
+2026-06-12 08:11:15 | INFO     |   [10] ✓ sim=0.515 | What is the SEBI portfolio manager registration process
+2026-06-12 08:11:15 | DEBUG    |        → n-Demat | and policies shall be effective from April 1, 2022 
+Members are requested to place this Best Practic...
+2026-06-12 08:11:15 | INFO     |   → Avg similarity: 0.502 | Pass rate: 90.0%
+2026-06-12 08:11:15 | INFO     | 
+--- Testing MCA (10 queries) ---
+2026-06-12 08:11:15 | INFO     |   [ 1] ⚠ sim=0.323 | What are the director KYC requirements under Companies 
+2026-06-12 08:11:15 | DEBUG    |        → Corpus | [Page 1]
+RegIQ Corporate Indian Compliance Master Reference Entry Ledger Record Data Node....
+2026-06-12 08:11:15 | INFO     |   [ 2] ⚠ sim=0.258 | What is the procedure for company incorporation?
+2026-06-12 08:11:15 | DEBUG    |        → Corpus | [Page 1]
+RegIQ Corporate Indian Compliance Master Reference Entry Ledger Record Data Node....
+2026-06-12 08:11:15 | INFO     |   [ 3] ⚠ sim=0.283 | What are annual filing requirements for private compani
+2026-06-12 08:11:15 | DEBUG    |        → Corpus | [Page 1]
+RegIQ Corporate Indian Compliance Master Reference Entry Ledger Record Data Node....
+2026-06-12 08:11:15 | INFO     |   [ 4] ⚠ sim=0.061 | What is the minimum number of directors required?
+2026-06-12 08:11:15 | DEBUG    |        → Corpus | [Page 1]
+RegIQ Corporate Indian Compliance Master Reference Entry Ledger Record Data Node....
+2026-06-12 08:11:15 | INFO     |   [ 5] ⚠ sim=0.323 | What are LLP compliance requirements?
+2026-06-12 08:11:15 | DEBUG    |        → Corpus | [Page 1]
+RegIQ Corporate Indian Compliance Master Reference Entry Ledger Record Data Node....
+2026-06-12 08:11:15 | INFO     |   [ 6] ⚠ sim=0.105 | What is the procedure for striking off a company?
+2026-06-12 08:11:15 | DEBUG    |        → Corpus | [Page 1]
+RegIQ Corporate Indian Compliance Master Reference Entry Ledger Record Data Node....
+2026-06-12 08:11:15 | INFO     |   [ 7] ⚠ sim=0.111 | What are the rules for related party transactions?
+2026-06-12 08:11:15 | DEBUG    |        → Corpus | [Page 1]
+RegIQ Corporate Indian Compliance Master Reference Entry Ledger Record Data Node....
+2026-06-12 08:11:15 | INFO     |   [ 8] ⚠ sim=0.210 | What is the requirement for board meetings frequency?
+2026-06-12 08:11:15 | DEBUG    |        → Corpus | [Page 1]
+RegIQ Corporate Indian Compliance Master Reference Entry Ledger Record Data Node....
+2026-06-12 08:11:15 | INFO     |   [ 9] ⚠ sim=0.302 | What are the penalties for non-compliance under Compani
+2026-06-12 08:11:15 | DEBUG    |        → Corpus | [Page 1]
+RegIQ Corporate Indian Compliance Master Reference Entry Ledger Record Data Node....
+2026-06-12 08:11:15 | INFO     |   [10] ⚠ sim=0.126 | What is the process for changing registered office addr
+2026-06-12 08:11:15 | DEBUG    |        → Corpus | [Page 1]
+RegIQ Corporate Indian Compliance Master Reference Entry Ledger Record Data Node....
+2026-06-12 08:11:15 | INFO     |   → Avg similarity: 0.21 | Pass rate: 0.0%
+2026-06-12 08:11:15 | INFO     | 
+============================================================
+2026-06-12 08:11:15 | INFO     | STEP 3 — Chunking & OCR Stats
+2026-06-12 08:11:15 | INFO     | ============================================================
+2026-06-12 08:11:15 | INFO     |   GST    65/65 PDFs (100.0%) | OCR: 7 | Failed: 0 | Chunks: 403
+2026-06-12 08:11:15 | INFO     |   RBI    441/441 PDFs (100.0%) | OCR: 1 | Failed: 0 | Chunks: 15067
+2026-06-12 08:11:15 | INFO     |   SEBI   41/95 PDFs (43.2%) | OCR: 4 | Failed: 54 | Chunks: 455
+2026-06-12 08:11:15 | INFO     |   MCA    56/56 PDFs (100.0%) | OCR: 0 | Failed: 0 | Chunks: 56
+2026-06-12 08:11:15 | INFO     | 
+📄 Pipeline README written to: C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\pipeline\README.md
+2026-06-12 08:11:15 | INFO     | 
+============================================================
+2026-06-12 08:11:15 | INFO     | CHECKPOINT COMPLETE
+2026-06-12 08:11:15 | INFO     | ============================================================
+2026-06-12 08:11:15 | INFO     |   Collections live:   4/4
+2026-06-12 08:11:15 | INFO     |   Total chunks:       15,981
+2026-06-12 08:11:15 | INFO     |   Overall avg sim:    0.497
+2026-06-12 08:11:15 | INFO     |   Report saved:       C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\checkpoint_report.json
+2026-06-12 08:11:15 | INFO     |   README saved:       C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\pipeline\README.md
+2026-06-12 08:11:15 | INFO     | 
+  🎉 ALL 4 CORPORA INDEXED — Phase 1 data pipeline COMPLETE!
+2026-06-12 08:11:15 | INFO     | ============================================================

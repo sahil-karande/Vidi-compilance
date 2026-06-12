@@ -241,3 +241,190 @@
 2026-06-12 08:02:05 | INFO     |   📏 Avg chunk size:   0 chars
 2026-06-12 08:02:05 | INFO     |   💾 Saved to:         C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\mca\chunks.json
 2026-06-12 08:02:05 | INFO     | ============================================================
+2026-06-12 08:06:33 | INFO     | ============================================================
+2026-06-12 08:06:33 | INFO     | Vidi Chunker — Corpus: MCA
+2026-06-12 08:06:33 | INFO     | PDFs found:   56
+2026-06-12 08:06:33 | INFO     | Chunk size:   ~512 tokens (2048 chars)
+2026-06-12 08:06:33 | INFO     | Overlap:      ~50 tokens  (200 chars)
+2026-06-12 08:06:33 | INFO     | OCR fallback: enabled (threshold: 5 chars)
+2026-06-12 08:06:33 | INFO     | ============================================================
+2026-06-12 08:06:33 | INFO     | Loaded 57 entries from index.csv
+2026-06-12 08:06:33 | DEBUG    | Processing: 86594_1_Companies-Act_2013.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from 86594_1_Companies-Act_2013.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from 86594_1_Companies-Act_2013.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_1.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_1.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_1.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_10.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_10.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_10.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_11.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_11.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_11.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_12.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_12.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_12.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_13.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_13.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_13.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_14.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_14.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_14.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_15.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_15.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_15.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_16.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_16.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_16.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_17.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_17.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_17.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_18.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_18.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_18.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_19.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_19.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_19.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_2.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_2.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_2.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_20.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_20.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_20.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_21.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_21.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_21.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_22.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_22.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_22.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_23.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_23.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_23.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_24.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_24.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_24.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_25.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_25.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_25.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_26.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_26.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_26.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_27.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_27.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_27.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_28.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_28.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_28.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_29.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_29.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_29.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_3.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_3.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_3.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_30.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_30.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_30.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_31.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_31.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_31.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_32.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_32.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_32.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_33.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_33.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_33.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_34.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_34.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_34.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_35.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_35.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_35.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_36.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_36.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_36.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_37.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_37.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_37.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_38.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_38.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_38.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_39.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_39.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_39.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_4.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_4.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_4.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_40.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_40.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_40.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_41.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_41.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_41.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_42.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_42.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_42.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_43.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_43.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_43.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_44.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_44.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_44.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_45.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_45.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_45.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_46.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_46.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_46.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_47.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_47.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_47.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_48.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_48.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_48.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_49.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_49.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_49.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_5.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_5.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_5.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_50.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_50.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_50.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_51.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_51.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_51.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_52.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_52.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_52.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_53.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_53.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_53.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_54.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_54.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_54.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_6.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_6.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_6.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_7.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_7.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_7.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_8.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_8.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_8.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: circular_master_entry_9.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_9.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from circular_master_entry_9.pdf (pymupdf)
+2026-06-12 08:06:33 | DEBUG    | Processing: CompaniesAct2013.pdf
+2026-06-12 08:06:33 | DEBUG    |   PyMuPDF: 90 chars extracted from CompaniesAct2013.pdf
+2026-06-12 08:06:33 | DEBUG    |   ✓ 1 chunks from CompaniesAct2013.pdf (pymupdf)
+2026-06-12 08:06:33 | INFO     | 
+============================================================
+2026-06-12 08:06:33 | INFO     | CHUNKING COMPLETE — MCA
+2026-06-12 08:06:33 | INFO     |   ✓ PDFs processed:    56/56
+2026-06-12 08:06:33 | INFO     |   ✗ Failed/empty:      0
+2026-06-12 08:06:33 | INFO     |   📄 PyMuPDF used:     56 PDFs
+2026-06-12 08:06:33 | INFO     |   🔍 OCR used:         0 PDFs
+2026-06-12 08:06:33 | INFO     |   🧩 Total chunks:     56
+2026-06-12 08:06:33 | INFO     |   📏 Avg chunk size:   90.0 chars
+2026-06-12 08:06:33 | INFO     |   💾 Saved to:         C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\mca\chunks.json
+2026-06-12 08:06:33 | INFO     | ============================================================

@@ -1,0 +1,18 @@
+2026-06-12 08:09:40 | INFO     | ============================================================
+2026-06-12 08:09:40 | INFO     | Vidi Embedder — Corpus: MCA
+2026-06-12 08:09:40 | INFO     | Model:        all-MiniLM-L6-v2
+2026-06-12 08:09:40 | INFO     | Chunks:       56
+2026-06-12 08:09:40 | INFO     | Batch size:   64
+2026-06-12 08:09:40 | INFO     | ============================================================
+2026-06-12 08:09:40 | INFO     | Loading model: all-MiniLM-L6-v2  (downloads ~90MB on first run)...
+2026-06-12 08:09:46 | INFO     | Model loaded ✓  (embedding dim: 384)
+2026-06-12 08:09:46 | INFO     | Generating embeddings for 56 chunks...
+2026-06-12 08:09:46 | INFO     | Saving embeddings to C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\mca\embeddings.json ...
+2026-06-12 08:09:47 | INFO     | 
+============================================================
+2026-06-12 08:09:47 | INFO     | EMBEDDING COMPLETE — MCA
+2026-06-12 08:09:47 | INFO     |   ✓ Chunks embedded:   56
+2026-06-12 08:09:47 | INFO     |   📐 Embedding dim:    384
+2026-06-12 08:09:47 | INFO     |   💾 Saved to:         C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\mca\embeddings.json
+2026-06-12 08:09:47 | INFO     |   📦 File size:        0.5 MB
+2026-06-12 08:09:47 | INFO     | ============================================================

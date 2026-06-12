@@ -1,0 +1,17 @@
+2026-06-12 08:10:24 | INFO     | Loading embeddings from C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\mca\embeddings.json ...
+2026-06-12 08:10:24 | INFO     | ============================================================
+2026-06-12 08:10:24 | INFO     | Vidi Indexer — Corpus: MCA
+2026-06-12 08:10:24 | INFO     | Chunks to index:  56
+2026-06-12 08:10:24 | INFO     | VectorDB path:    C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\vectordb
+2026-06-12 08:10:24 | INFO     | Reset collection: False
+2026-06-12 08:10:24 | INFO     | ============================================================
+2026-06-12 08:10:24 | INFO     | Connecting to ChromaDB (local persistent)...
+2026-06-12 08:10:24 | INFO     | Collection 'mca': 0 existing docs
+2026-06-12 08:10:24 | INFO     | Upserting 56 chunks into ChromaDB collection 'mca'...
+2026-06-12 08:10:24 | INFO     | 
+============================================================
+2026-06-12 08:10:24 | INFO     | INDEXING COMPLETE — MCA
+2026-06-12 08:10:24 | INFO     |   ✓ Chunks upserted:   56
+2026-06-12 08:10:24 | INFO     |   📚 Collection total: 56 docs
+2026-06-12 08:10:24 | INFO     |   💾 VectorDB path:    C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\vectordb
+2026-06-12 08:10:24 | INFO     | ============================================================
