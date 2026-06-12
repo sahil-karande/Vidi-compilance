@@ -204,17 +204,26 @@ def download_pdf(url: str, filename: str, session: requests.Session) -> tuple[bo
     if out_path.exists() and out_path.stat().st_size > 1000:
         return True, out_path.stat().st_size / 1024
     
-    response = make_request(url, session)
-    if not response:
-        return False, 0
+    # FIX: Use clean standalone requests to prevent session corruption
+    try:
+        # Drop complex headers for non-government fallback links dynamically
+        current_headers = HEADERS if "gov.in" in url or "rbi.org" in url else {}
         
-    # More permissive validation: as long as we get a good payload size
-    if len(response.content) < 1000:
-        return False, 0
+        response = requests.get(url, headers=current_headers, timeout=TIMEOUT, allow_redirects=True)
+        if response.status_code != 200:
+            logger.warning(f"HTTP {response.status_code} — {url} (Standalone)")
+            return False, 0
+            
+        if len(response.content) < 1000:
+            return False, 0
+            
+        with open(out_path, "wb") as f:
+            f.write(response.content)
+        return True, len(response.content) / 1024
         
-    with open(out_path, "wb") as f:
-        f.write(response.content)
-    return True, len(response.content) / 1024
+    except Exception as e:
+        logger.warning(f"{type(e).__name__} on standalone request for {url}")
+        return False, 0
 
 # ─────────────────────────────────────────────────────────────
 #  Execution Pipeline
