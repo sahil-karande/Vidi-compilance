@@ -155,7 +155,7 @@ CHROMA_AUTH_TOKEN=regiq_chroma_secret
 
 # App
 ENVIRONMENT=development
-ALLOWED_ORIGINS=http://localhost:5173
+ALLOWED_ORIGINS=http://localhost:5173    ( temporary on local host )
 ```
 
 ### 3. Start the backend stack
