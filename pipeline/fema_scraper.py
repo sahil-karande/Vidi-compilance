@@ -32,18 +32,11 @@ HEADERS = {
 # High-Availability Open-Access Assets (Guaranteed 200 OK from anywhere)
 VERIFIED_ASSETS = [
     {
-        "url": "https://images.transparencycdn.org/images/2021_Report_Incentivising-Clean-Tax-Compliance-SMEs-India_EN.pdf",
-        "fallback_url": "https://images.transparencycdn.org/images/2021_Report_Incentivising-Clean-Tax-Compliance-SMEs-India_EN.pdf",
-        "title": "The Income-Tax Act - SME Compliance Framework",
+        "url": "https://www.wipo.int/export/sites/www/directory/en/legal_texts/pdf/in019en.pdf",
+        "fallback_url": "https://www.wipo.int/export/sites/www/directory/en/legal_texts/pdf/in019en.pdf",
+        "title": "The Income-Tax Act, 1961 - Core Legal Text",
         "circular_no": "IT-Act/1961",
         "date": "1961"
-    },
-    {
-        "url": "https://www.orfonline.org/wp-content/uploads/2023/01/ORF_OccasionalPaper_387_FEMA-CrossBorder.pdf",
-        "fallback_url": "https://www.orfonline.org/wp-content/uploads/2023/01/ORF_OccasionalPaper_387_FEMA-CrossBorder.pdf",
-        "title": "Foreign Exchange Management Act - Core Regulations",
-        "circular_no": "FEMA-Act/1999",
-        "date": "2000"
     }
 ]
 

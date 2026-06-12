@@ -1,0 +1,40 @@
+2026-06-13 00:29:00 | INFO     | Loading embeddings from C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\fema\embeddings.json ...
+2026-06-13 00:29:01 | INFO     | ============================================================
+2026-06-13 00:29:01 | INFO     | Vidi Indexer — Corpus: FEMA
+2026-06-13 00:29:01 | INFO     | Chunks to index:  7
+2026-06-13 00:29:01 | INFO     | VectorDB path:    C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\vectordb
+2026-06-13 00:29:01 | INFO     | Reset collection: False
+2026-06-13 00:29:01 | INFO     | ============================================================
+2026-06-13 00:29:01 | INFO     | Connecting to ChromaDB (local persistent)...
+2026-06-13 00:29:02 | INFO     | Collection 'fema': 0 existing docs
+2026-06-13 00:29:02 | INFO     | Upserting 7 chunks into ChromaDB collection 'fema'...
+2026-06-13 00:29:02 | INFO     | 
+============================================================
+2026-06-13 00:29:02 | INFO     | INDEXING COMPLETE — FEMA
+2026-06-13 00:29:02 | INFO     |   ✓ Chunks upserted:   7
+2026-06-13 00:29:02 | INFO     |   📚 Collection total: 7 docs
+2026-06-13 00:29:02 | INFO     |   💾 VectorDB path:    C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\vectordb
+2026-06-13 00:29:02 | INFO     | ============================================================
+2026-06-13 00:29:19 | INFO     | 
+Verification — test query: 'compliance regulation India'
+2026-06-13 00:29:19 | INFO     | Loading model for query embedding...
+2026-06-13 00:38:04 | INFO     | Loading embeddings from C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\fema\embeddings.json ...
+2026-06-13 00:38:04 | INFO     | ============================================================
+2026-06-13 00:38:04 | INFO     | Vidi Indexer — Corpus: FEMA
+2026-06-13 00:38:04 | INFO     | Chunks to index:  7
+2026-06-13 00:38:04 | INFO     | VectorDB path:    C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\vectordb
+2026-06-13 00:38:04 | INFO     | Reset collection: False
+2026-06-13 00:38:04 | INFO     | ============================================================
+2026-06-13 00:38:04 | INFO     | Connecting to ChromaDB (local persistent)...
+2026-06-13 00:38:04 | INFO     | Collection 'fema': 7 existing docs
+2026-06-13 00:38:04 | INFO     | Upserting 7 chunks into ChromaDB collection 'fema'...
+2026-06-13 00:38:04 | INFO     | 
+============================================================
+2026-06-13 00:38:04 | INFO     | INDEXING COMPLETE — FEMA
+2026-06-13 00:38:04 | INFO     |   ✓ Chunks upserted:   7
+2026-06-13 00:38:04 | INFO     |   📚 Collection total: 7 docs
+2026-06-13 00:38:04 | INFO     |   💾 VectorDB path:    C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\vectordb
+2026-06-13 00:38:04 | INFO     | ============================================================
+2026-06-13 00:38:22 | INFO     | 
+Verification — test query: 'compliance regulation India'
+2026-06-13 00:38:22 | INFO     | Loading model for query embedding...

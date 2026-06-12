@@ -1,0 +1,44 @@
+2026-06-13 00:25:34 | INFO     | ============================================================
+2026-06-13 00:25:34 | INFO     | Vidi Chunker — Corpus: FEMA
+2026-06-13 00:25:34 | INFO     | PDFs found:   1
+2026-06-13 00:25:34 | INFO     | Chunk size:   ~512 tokens (2048 chars)
+2026-06-13 00:25:34 | INFO     | Overlap:      ~50 tokens  (200 chars)
+2026-06-13 00:25:34 | INFO     | OCR fallback: enabled (threshold: 5 chars)
+2026-06-13 00:25:34 | INFO     | ============================================================
+2026-06-13 00:25:34 | INFO     | Loaded 1 entries from index.csv
+2026-06-13 00:25:34 | DEBUG    | Processing: fema_0002_FEMA-Act_1999.pdf
+2026-06-13 00:25:34 | DEBUG    |   PyMuPDF: 12172 chars extracted from fema_0002_FEMA-Act_1999.pdf
+2026-06-13 00:25:34 | DEBUG    |   ✓ 7 chunks from fema_0002_FEMA-Act_1999.pdf (pymupdf)
+2026-06-13 00:25:34 | INFO     | 
+============================================================
+2026-06-13 00:25:34 | INFO     | CHUNKING COMPLETE — FEMA
+2026-06-13 00:25:34 | INFO     |   ✓ PDFs processed:    1/1
+2026-06-13 00:25:34 | INFO     |   ✗ Failed/empty:      0
+2026-06-13 00:25:35 | INFO     |   📄 PyMuPDF used:     1 PDFs
+2026-06-13 00:25:35 | INFO     |   🔍 OCR used:         0 PDFs
+2026-06-13 00:25:35 | INFO     |   🧩 Total chunks:     7
+2026-06-13 00:25:35 | INFO     |   📏 Avg chunk size:   1871.3 chars
+2026-06-13 00:25:35 | INFO     |   💾 Saved to:         C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\fema\chunks.json
+2026-06-13 00:25:35 | INFO     | ============================================================
+2026-06-13 00:37:32 | INFO     | ============================================================
+2026-06-13 00:37:32 | INFO     | Vidi Chunker — Corpus: FEMA
+2026-06-13 00:37:32 | INFO     | PDFs found:   1
+2026-06-13 00:37:32 | INFO     | Chunk size:   ~512 tokens (2048 chars)
+2026-06-13 00:37:32 | INFO     | Overlap:      ~50 tokens  (200 chars)
+2026-06-13 00:37:32 | INFO     | OCR fallback: enabled (threshold: 5 chars)
+2026-06-13 00:37:32 | INFO     | ============================================================
+2026-06-13 00:37:32 | INFO     | Loaded 1 entries from index.csv
+2026-06-13 00:37:32 | DEBUG    | Processing: fema_0002_FEMA-Act_1999.pdf
+2026-06-13 00:37:32 | DEBUG    |   PyMuPDF: 12172 chars extracted from fema_0002_FEMA-Act_1999.pdf
+2026-06-13 00:37:32 | DEBUG    |   ✓ 7 chunks from fema_0002_FEMA-Act_1999.pdf (pymupdf)
+2026-06-13 00:37:32 | INFO     | 
+============================================================
+2026-06-13 00:37:32 | INFO     | CHUNKING COMPLETE — FEMA
+2026-06-13 00:37:32 | INFO     |   ✓ PDFs processed:    1/1
+2026-06-13 00:37:32 | INFO     |   ✗ Failed/empty:      0
+2026-06-13 00:37:32 | INFO     |   📄 PyMuPDF used:     1 PDFs
+2026-06-13 00:37:32 | INFO     |   🔍 OCR used:         0 PDFs
+2026-06-13 00:37:32 | INFO     |   🧩 Total chunks:     7
+2026-06-13 00:37:32 | INFO     |   📏 Avg chunk size:   1871.3 chars
+2026-06-13 00:37:32 | INFO     |   💾 Saved to:         C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\fema\chunks.json
+2026-06-13 00:37:32 | INFO     | ============================================================
