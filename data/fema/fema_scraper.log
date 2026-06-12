@@ -404,3 +404,34 @@ Next steps:
 2026-06-12 22:14:32 | INFO     |   ✗ Failed:      2 PDFs
 2026-06-12 22:14:32 | INFO     |   💾 Storage Size: 0.00 MB
 2026-06-12 22:14:32 | INFO     | ============================================================
+2026-06-13 00:03:01 | INFO     | ============================================================
+2026-06-13 00:03:01 | INFO     | Vidi FEMA + Income Tax Scraper
+2026-06-13 00:03:01 | INFO     | Target collection: 'fema'
+2026-06-13 00:03:01 | INFO     | Running Test Limit Mode: 5 PDFs
+2026-06-13 00:03:01 | INFO     | ============================================================
+2026-06-13 00:03:02 | INFO     | Crawling 7 FEMA/IncomeTax listing pages...
+2026-06-13 00:03:02 | INFO     |   Targeting: https://www.rbi.org.in/Scripts/Fema.aspx
+2026-06-13 00:03:06 | INFO     |   Targeting: https://www.rbi.org.in/Scripts/BS_FemaNotifications.aspx
+2026-06-13 00:03:08 | INFO     |   Targeting: https://incometaxindia.gov.in/Pages/acts/income-tax-act.aspx
+2026-06-13 00:03:13 | WARNING  | HTTP 404 — https://incometaxindia.gov.in/Pages/acts/income-tax-act.aspx (attempt 1/3)
+2026-06-13 00:03:18 | WARNING  | HTTP 404 — https://incometaxindia.gov.in/Pages/acts/income-tax-act.aspx (attempt 2/3)
+2026-06-13 00:03:25 | WARNING  | HTTP 404 — https://incometaxindia.gov.in/Pages/acts/income-tax-act.aspx (attempt 3/3)
+2026-06-13 00:03:25 | ERROR    | Failed completely on: https://incometaxindia.gov.in/Pages/acts/income-tax-act.aspx
+2026-06-13 00:03:25 | INFO     |   Targeting: https://incometaxindia.gov.in/Pages/rules/income-tax-rules.aspx
+2026-06-13 00:03:28 | WARNING  | HTTP 404 — https://incometaxindia.gov.in/Pages/rules/income-tax-rules.aspx (attempt 1/3)
+2026-06-13 00:03:33 | WARNING  | HTTP 404 — https://incometaxindia.gov.in/Pages/rules/income-tax-rules.aspx (attempt 2/3)
+2026-06-13 00:03:40 | WARNING  | HTTP 404 — https://incometaxindia.gov.in/Pages/rules/income-tax-rules.aspx (attempt 3/3)
+2026-06-13 00:03:40 | ERROR    | Failed completely on: https://incometaxindia.gov.in/Pages/rules/income-tax-rules.aspx
+2026-06-13 00:03:40 | INFO     |   Targeting: https://incometaxindia.gov.in/Pages/communications/circulars.aspx
+2026-06-13 00:03:43 | WARNING  | HTTP 404 — https://incometaxindia.gov.in/Pages/communications/circulars.aspx (attempt 1/3)
+2026-06-13 00:03:48 | WARNING  | HTTP 404 — https://incometaxindia.gov.in/Pages/communications/circulars.aspx (attempt 2/3)
+2026-06-13 00:03:55 | WARNING  | HTTP 404 — https://incometaxindia.gov.in/Pages/communications/circulars.aspx (attempt 3/3)
+2026-06-13 00:03:55 | ERROR    | Failed completely on: https://incometaxindia.gov.in/Pages/communications/circulars.aspx
+2026-06-13 00:03:55 | INFO     |   Targeting: https://incometaxindia.gov.in/Pages/communications/notifications.aspx
+2026-06-13 00:03:58 | WARNING  | HTTP 404 — https://incometaxindia.gov.in/Pages/communications/notifications.aspx (attempt 1/3)
+2026-06-13 00:04:03 | WARNING  | HTTP 404 — https://incometaxindia.gov.in/Pages/communications/notifications.aspx (attempt 2/3)
+2026-06-13 00:04:10 | WARNING  | HTTP 404 — https://incometaxindia.gov.in/Pages/communications/notifications.aspx (attempt 3/3)
+2026-06-13 00:04:10 | ERROR    | Failed completely on: https://incometaxindia.gov.in/Pages/communications/notifications.aspx
+2026-06-13 00:04:10 | INFO     |   Targeting: https://incometaxindia.gov.in/Pages/utilities/forms.aspx
+2026-06-13 00:04:13 | WARNING  | HTTP 404 — https://incometaxindia.gov.in/Pages/utilities/forms.aspx (attempt 1/3)
+2026-06-13 00:04:18 | WARNING  | HTTP 404 — https://incometaxindia.gov.in/Pages/utilities/forms.aspx (attempt 2/3)
