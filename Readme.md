@@ -168,6 +168,8 @@ This spins up:
 - **FastAPI backend** → `http://localhost:8000`
 - **ChromaDB** → `http://localhost:8001`
 
+( temporary available on local host )
+
 ### 4. Start the frontend
 
 ```bash
@@ -176,7 +178,7 @@ npm install
 npm run dev
 ```
 
-Frontend available at `http://localhost:5173`.
+Frontend currently available at `http://localhost:5173`.
 
 ---
 
