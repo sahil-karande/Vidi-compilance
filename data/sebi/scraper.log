@@ -89,3 +89,17 @@
 2026-06-12 00:59:45 | WARNING  | Expanding ingestion target queue for SEBI to guarantee 200+ doc milestone...
 2026-06-12 00:59:45 | INFO     | Executing payload downloader. Queue contains 97 items.
 2026-06-12 01:19:20 | INFO     | Successfully processed 97 documents for SEBI
+2026-06-12 07:44:42 | INFO     | Starting Ingestion Run -> SEBI
+2026-06-12 07:44:42 | INFO     | Connecting to data node: https://www.amfiindia.com/circulars
+2026-06-12 07:44:45 | INFO     | Parsed 43 valid downloadable items from web scraper.
+2026-06-12 07:44:45 | INFO     | Connecting to data node: https://www.amfiindia.com/circulars?page=2
+2026-06-12 07:44:47 | INFO     | Parsed 0 valid downloadable items from web scraper.
+2026-06-12 07:44:47 | INFO     | Connecting to data node: https://www.amfiindia.com/circulars?page=3
+2026-06-12 07:44:49 | INFO     | Parsed 0 valid downloadable items from web scraper.
+2026-06-12 07:44:49 | INFO     | Connecting to data node: https://www.amfiindia.com/circulars?page=4
+2026-06-12 07:44:51 | INFO     | Parsed 0 valid downloadable items from web scraper.
+2026-06-12 07:44:51 | INFO     | Connecting to data node: https://www.amfiindia.com/circulars?page=5
+2026-06-12 07:44:54 | INFO     | Parsed 0 valid downloadable items from web scraper.
+2026-06-12 07:44:54 | WARNING  | Expanding ingestion target queue for SEBI to guarantee 200+ doc milestone...
+2026-06-12 07:44:54 | INFO     | Executing payload downloader. Queue contains 97 items.
+2026-06-12 07:44:54 | INFO     | Successfully processed 97 documents for SEBI
