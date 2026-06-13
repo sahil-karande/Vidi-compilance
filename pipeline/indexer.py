@@ -228,7 +228,8 @@ def verify_search(collection, corpus: str):
         "gst":  "GST registration threshold turnover limit",
         "rbi":  "RBI interest rate monetary policy",
         "sebi": "SEBI listing requirements stock exchange",
-        "mca", "fema":  "Companies Act director compliance",
+        "mca":  "Companies Act director compliance",
+        "fema": "FEMA foreign exchange regulation or Income Tax Act",
     }
 
     query = test_queries.get(corpus, "compliance regulation India")
@@ -302,7 +303,7 @@ Examples:
   python pipeline/indexer.py --collections           # show all collections
         """
     )
-    parser.add_argument("--corpus", choices=["gst", "rbi", "sebi", "mca", "fema", "fema", "all"], default="all")
+    parser.add_argument("--corpus", choices=["gst", "rbi", "sebi", "mca", "fema", "all"], default="all")
     
     parser.add_argument("--reset", action="store_true",
                         help="Delete existing collection before indexing")
