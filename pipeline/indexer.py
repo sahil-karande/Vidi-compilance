@@ -36,7 +36,7 @@ VECTORDB_DIR = BASE_DIR / "vectordb"
 # ChromaDB has a 5461-item limit per batch — 500 is safe
 BATCH_SIZE = 500
 
-CORPORA = ["gst", "rbi", "sebi", "mca"]
+CORPORA = ["gst", "rbi", "sebi", "mca", "fema"]
 
 # ─────────────────────────────────────────────────────────────
 #  Logger
@@ -228,7 +228,7 @@ def verify_search(collection, corpus: str):
         "gst":  "GST registration threshold turnover limit",
         "rbi":  "RBI interest rate monetary policy",
         "sebi": "SEBI listing requirements stock exchange",
-        "mca":  "Companies Act director compliance",
+        "mca", "fema":  "Companies Act director compliance",
     }
 
     query = test_queries.get(corpus, "compliance regulation India")
@@ -302,7 +302,7 @@ Examples:
   python pipeline/indexer.py --collections           # show all collections
         """
     )
-    parser.add_argument("--corpus", choices=["gst", "rbi", "sebi", "mca", "fema", "all"], default="all")
+    parser.add_argument("--corpus", choices=["gst", "rbi", "sebi", "mca", "fema", "fema", "all"], default="all")
     
     parser.add_argument("--reset", action="store_true",
                         help="Delete existing collection before indexing")

@@ -42,7 +42,7 @@ CHUNK_OVERLAP = 50     # token overlap between chunks
 MIN_TEXT_LENGTH = 5
 
 # Supported corpora
-CORPORA = ["gst", "rbi", "sebi", "mca"]
+CORPORA = ["gst", "rbi", "sebi", "mca", "fema"]
 
 # ─────────────────────────────────────────────────────────────
 #  Logger Setup
@@ -511,7 +511,7 @@ Examples:
   python pipeline/chunker.py --corpus gst --verify     # verify output
         """
     )
-    parser.add_argument("--corpus", choices=["gst", "rbi", "sebi", "mca", "fema", "all"], default="all")
+    parser.add_argument("--corpus", choices=["gst", "rbi", "sebi", "mca", "fema", "fema", "all"], default="all")
     
     parser.add_argument(
         "--limit",

@@ -36,7 +36,7 @@ MODEL_NAME = "all-MiniLM-L6-v2"
 # Higher = faster but more RAM. 64 is safe for most machines.
 BATCH_SIZE = 64
 
-CORPORA = ["gst", "rbi", "sebi", "mca"]
+CORPORA = ["gst", "rbi", "sebi", "mca", "fema"]
 
 # ─────────────────────────────────────────────────────────────
 #  Logger
@@ -141,7 +141,7 @@ def embed_corpus(corpus: str, limit: int = None):
 
 def main():
     parser = argparse.ArgumentParser(description="Vidi — Embedder")
-    parser.add_argument("--corpus", choices=["gst", "rbi", "sebi", "mca", "fema", "all"], default="all")
+    parser.add_argument("--corpus", choices=["gst", "rbi", "sebi", "mca", "fema", "fema", "all"], default="all")
     
     parser.add_argument("--limit", type=int, default=None)
     args = parser.parse_args()
