@@ -16,3 +16,21 @@
 2026-06-12 07:50:09 | INFO     |   💾 Saved to:         C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\sebi\embeddings.json
 2026-06-12 07:50:09 | INFO     |   📦 File size:        4.8 MB
 2026-06-12 07:50:09 | INFO     | ============================================================
+2026-06-13 18:34:40 | INFO     | ============================================================
+2026-06-13 18:34:40 | INFO     | Vidi Embedder — Corpus: SEBI
+2026-06-13 18:34:40 | INFO     | Model:        all-MiniLM-L6-v2
+2026-06-13 18:34:40 | INFO     | Chunks:       509
+2026-06-13 18:34:40 | INFO     | Batch size:   64
+2026-06-13 18:34:40 | INFO     | ============================================================
+2026-06-13 18:34:40 | INFO     | Loading model: all-MiniLM-L6-v2  (downloads ~90MB on first run)...
+2026-06-13 18:34:45 | INFO     | Model loaded ✓  (embedding dim: 384)
+2026-06-13 18:34:45 | INFO     | Generating embeddings for 509 chunks...
+2026-06-13 18:35:06 | INFO     | Saving embeddings to C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\sebi\embeddings.json ...
+2026-06-13 18:35:06 | INFO     | 
+============================================================
+2026-06-13 18:35:06 | INFO     | EMBEDDING COMPLETE — SEBI
+2026-06-13 18:35:06 | INFO     |   ✓ Chunks embedded:   509
+2026-06-13 18:35:06 | INFO     |   📐 Embedding dim:    384
+2026-06-13 18:35:06 | INFO     |   💾 Saved to:         C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\sebi\embeddings.json
+2026-06-13 18:35:06 | INFO     |   📦 File size:        5.2 MB
+2026-06-13 18:35:06 | INFO     | ============================================================
