@@ -15,3 +15,20 @@
 2026-06-12 07:51:14 | INFO     |   📚 Collection total: 455 docs
 2026-06-12 07:51:14 | INFO     |   💾 VectorDB path:    C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\vectordb
 2026-06-12 07:51:14 | INFO     | ============================================================
+2026-06-13 18:42:08 | INFO     | Loading embeddings from C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\sebi\embeddings.json ...
+2026-06-13 18:42:08 | INFO     | ============================================================
+2026-06-13 18:42:08 | INFO     | Vidi Indexer — Corpus: SEBI
+2026-06-13 18:42:08 | INFO     | Chunks to index:  509
+2026-06-13 18:42:08 | INFO     | VectorDB path:    C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\vectordb
+2026-06-13 18:42:08 | INFO     | Reset collection: False
+2026-06-13 18:42:08 | INFO     | ============================================================
+2026-06-13 18:42:08 | INFO     | Connecting to ChromaDB (local persistent)...
+2026-06-13 18:42:08 | INFO     | Collection 'sebi': 455 existing docs
+2026-06-13 18:42:08 | INFO     | Upserting 509 chunks into ChromaDB collection 'sebi'...
+2026-06-13 18:42:10 | INFO     | 
+============================================================
+2026-06-13 18:42:10 | INFO     | INDEXING COMPLETE — SEBI
+2026-06-13 18:42:10 | INFO     |   ✓ Chunks upserted:   509
+2026-06-13 18:42:10 | INFO     |   📚 Collection total: 509 docs
+2026-06-13 18:42:10 | INFO     |   💾 VectorDB path:    C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\vectordb
+2026-06-13 18:42:10 | INFO     | ============================================================
