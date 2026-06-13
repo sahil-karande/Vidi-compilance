@@ -7,6 +7,7 @@ Creates historical snapshot backup ➔ Scraper ➔ Chunker ➔ Embedder ➔ Inde
 """
 
 import os
+import sys
 import shutil
 import subprocess
 from pathlib import Path
@@ -45,7 +46,7 @@ def execute_pipeline_step(script_name: str) -> bool:
     try:
         # Executes within our activated virtual environment framework context
         result = subprocess.run(
-            ["python", str(script_path)],
+            [sys.executable, str(script_path)],
             capture_output=True,
             text=True,
             check=True

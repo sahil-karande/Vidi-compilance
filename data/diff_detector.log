@@ -1,0 +1,6 @@
+2026-06-13 19:21:49.887 | INFO     | __main__:detect_corpus_changes:67 - Analyzing changes for corpus: GST
+2026-06-13 19:21:50.347 | INFO     | __main__:detect_corpus_changes:67 - Analyzing changes for corpus: RBI
+2026-06-13 19:28:24.382 | INFO     | __main__:detect_corpus_changes:67 - Analyzing changes for corpus: SEBI
+2026-06-13 19:28:24.756 | INFO     | __main__:detect_corpus_changes:67 - Analyzing changes for corpus: MCA
+2026-06-13 19:28:24.773 | INFO     | __main__:detect_corpus_changes:67 - Analyzing changes for corpus: FEMA
+2026-06-13 19:28:24.778 | INFO     | __main__:run_diff_detection:134 - Diff detection routine complete. Created 0 system alert records.

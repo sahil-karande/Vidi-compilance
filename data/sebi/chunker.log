@@ -988,3 +988,315 @@
 2026-06-13 18:21:34 | INFO     |   📏 Avg chunk size:   1734.0 chars
 2026-06-13 18:21:34 | INFO     |   💾 Saved to:         C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\sebi\chunks.json
 2026-06-13 18:21:34 | INFO     | ============================================================
+2026-06-13 19:07:21 | INFO     | ============================================================
+2026-06-13 19:07:21 | INFO     | Vidi Chunker — Corpus: SEBI
+2026-06-13 19:07:21 | INFO     | PDFs found:   95
+2026-06-13 19:07:21 | INFO     | Chunk size:   ~512 tokens (2048 chars)
+2026-06-13 19:07:21 | INFO     | Overlap:      ~50 tokens  (200 chars)
+2026-06-13 19:07:21 | INFO     | OCR fallback: enabled (threshold: 5 chars)
+2026-06-13 19:07:21 | INFO     | ============================================================
+2026-06-13 19:07:21 | INFO     | Loaded 99 entries from index.csv
+2026-06-13 19:07:21 | DEBUG    | Processing: 0001_Extension_of_timelines_for_compliance_with_certain_provisions_of_Circu.pdf
+2026-06-13 19:07:21 | DEBUG    |   PyMuPDF: 869 chars extracted from 0001_Extension_of_timelines_for_compliance_with_certain_provisions_of_Circu.pdf
+2026-06-13 19:07:21 | DEBUG    |   ✓ 1 chunks from 0001_Extension_of_timelines_for_compliance_with_certain_provisions_of_Circu.pdf (pymupdf)
+2026-06-13 19:07:21 | DEBUG    | Processing: 1._20AMFI_s_20email_20dt._2015-Oct-2019-Liquid_20Fund_20Exit_20Load.pdf
+2026-06-13 19:07:21 | DEBUG    |   PyMuPDF: 1336 chars extracted from 1._20AMFI_s_20email_20dt._2015-Oct-2019-Liquid_20Fund_20Exit_20Load.pdf
+2026-06-13 19:07:21 | DEBUG    |   ✓ 1 chunks from 1._20AMFI_s_20email_20dt._2015-Oct-2019-Liquid_20Fund_20Exit_20Load.pdf (pymupdf)
+2026-06-13 19:07:21 | DEBUG    | Processing: 11._20AMFI_20email_2035P_2074_20dt._2004-Dec-21.pdf
+2026-06-13 19:07:21 | DEBUG    |   PyMuPDF: 1521 chars extracted from 11._20AMFI_20email_2035P_2074_20dt._2004-Dec-21.pdf
+2026-06-13 19:07:21 | DEBUG    |   ✓ 1 chunks from 11._20AMFI_20email_2035P_2074_20dt._2004-Dec-21.pdf (pymupdf)
+2026-06-13 19:07:21 | DEBUG    | Processing: 12._20AMFI_20email_2035P_2076_20dt._2010-Dec-21.pdf
+2026-06-13 19:07:21 | DEBUG    |   PyMuPDF: 5500 chars extracted from 12._20AMFI_20email_2035P_2076_20dt._2010-Dec-21.pdf
+2026-06-13 19:07:21 | DEBUG    |   ✓ 3 chunks from 12._20AMFI_20email_2035P_2076_20dt._2010-Dec-21.pdf (pymupdf)
+2026-06-13 19:07:21 | DEBUG    | Processing: 13._20AMFI_20email_2035P_20114_20dt._2002-Mar-22.pdf
+2026-06-13 19:07:21 | DEBUG    |   PyMuPDF: 964 chars extracted from 13._20AMFI_20email_2035P_20114_20dt._2002-Mar-22.pdf
+2026-06-13 19:07:21 | DEBUG    |   ✓ 1 chunks from 13._20AMFI_20email_2035P_20114_20dt._2002-Mar-22.pdf (pymupdf)
+2026-06-13 19:07:21 | DEBUG    | Processing: 13a._20Nifty_20Press_20Release_20for_20launch_20of_20Housing_20Index.pdf
+2026-06-13 19:07:21 | DEBUG    |   PyMuPDF: 3868 chars extracted from 13a._20Nifty_20Press_20Release_20for_20launch_20of_20Housing_20Index.pdf
+2026-06-13 19:07:21 | DEBUG    |   ✓ 2 chunks from 13a._20Nifty_20Press_20Release_20for_20launch_20of_20Housing_20Index.pdf (pymupdf)
+2026-06-13 19:07:21 | DEBUG    | Processing: 13b._20Factsheet_Nifty_20Housing_20Index.pdf
+2026-06-13 19:07:21 | DEBUG    |   PyMuPDF: 4189 chars extracted from 13b._20Factsheet_Nifty_20Housing_20Index.pdf
+2026-06-13 19:07:21 | DEBUG    |   ✓ 3 chunks from 13b._20Factsheet_Nifty_20Housing_20Index.pdf (pymupdf)
+2026-06-13 19:07:21 | DEBUG    | Processing: 13c._20Methodology_20Document_20-_20NSE_20Indices.pdf
+2026-06-13 19:07:22 | DEBUG    |   PyMuPDF: 301089 chars extracted from 13c._20Methodology_20Document_20-_20NSE_20Indices.pdf
+2026-06-13 19:07:22 | DEBUG    |   ✓ 162 chunks from 13c._20Methodology_20Document_20-_20NSE_20Indices.pdf (pymupdf)
+2026-06-13 19:07:22 | DEBUG    | Processing: 14._20AMFI_20email_2035P_20120_20dt._2014-Mar-22.pdf
+2026-06-13 19:07:22 | DEBUG    |   PyMuPDF: 1074 chars extracted from 14._20AMFI_20email_2035P_20120_20dt._2014-Mar-22.pdf
+2026-06-13 19:07:22 | DEBUG    |   ✓ 1 chunks from 14._20AMFI_20email_2035P_20120_20dt._2014-Mar-22.pdf (pymupdf)
+2026-06-13 19:07:22 | DEBUG    | Processing: 14a._20Method_NIFTY_Equity_Indices.pdf
+2026-06-13 19:07:22 | DEBUG    |   PyMuPDF: 302758 chars extracted from 14a._20Method_NIFTY_Equity_Indices.pdf
+2026-06-13 19:07:22 | DEBUG    |   ✓ 162 chunks from 14a._20Method_NIFTY_Equity_Indices.pdf (pymupdf)
+2026-06-13 19:07:22 | DEBUG    | Processing: 14b._20Factsheet_Nifty_India_Manufacturing_Index.pdf
+2026-06-13 19:07:22 | DEBUG    |   PyMuPDF: 4474 chars extracted from 14b._20Factsheet_Nifty_India_Manufacturing_Index.pdf
+2026-06-13 19:07:22 | DEBUG    |   ✓ 3 chunks from 14b._20Factsheet_Nifty_India_Manufacturing_Index.pdf (pymupdf)
+2026-06-13 19:07:22 | DEBUG    | Processing: 18._20AMFI_20email_2035P_20131_20dt._2031-Mar-22.pdf
+2026-06-13 19:07:22 | DEBUG    |   PyMuPDF: 1633 chars extracted from 18._20AMFI_20email_2035P_20131_20dt._2031-Mar-22.pdf
+2026-06-13 19:07:22 | DEBUG    |   ✓ 1 chunks from 18._20AMFI_20email_2035P_20131_20dt._2031-Mar-22.pdf (pymupdf)
+2026-06-13 19:07:22 | DEBUG    | Processing: 1a._20SEBI_s_20Letter_20to_20AMFI_20dt._2015-Oct-2019.pdf
+2026-06-13 19:07:22 | DEBUG    |   PyMuPDF only got 0 chars (<5) from 1a._20SEBI_s_20Letter_20to_20AMFI_20dt._2015-Oct-2019.pdf → trying OCR...
+2026-06-13 19:07:25 | DEBUG    |   OCR: 1652 chars extracted from 1a._20SEBI_s_20Letter_20to_20AMFI_20dt._2015-Oct-2019.pdf
+2026-06-13 19:07:25 | DEBUG    |   OCR used for: 1a._20SEBI_s_20Letter_20to_20AMFI_20dt._2015-Oct-2019.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from 1a._20SEBI_s_20Letter_20to_20AMFI_20dt._2015-Oct-2019.pdf (ocr)
+2026-06-13 19:07:25 | DEBUG    | Processing: 3._20AMFI_s_20email_20dt._2024-Dec-19-IST_20Valuations_20-_20TAT_20and_20Go_20Live_20Date.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 2691 chars extracted from 3._20AMFI_s_20email_20dt._2024-Dec-19-IST_20Valuations_20-_20TAT_20and_20Go_20Live_20Date.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 2 chunks from 3._20AMFI_s_20email_20dt._2024-Dec-19-IST_20Valuations_20-_20TAT_20and_20Go_20Live_20Date.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: 7._20AMFI_20email_2035P_2070_20dt._2025-Nov-21.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 1264 chars extracted from 7._20AMFI_20email_2035P_2070_20dt._2025-Nov-21.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from 7._20AMFI_20email_2035P_2070_20dt._2025-Nov-21.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: 8._20AMFI_20email_2035P_2073_20dt._2002-Dec-21.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 2069 chars extracted from 8._20AMFI_20email_2035P_2073_20dt._2002-Dec-21.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from 8._20AMFI_20email_2035P_2073_20dt._2002-Dec-21.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: 9._20AMFI_20email_2035P_2072_20dt._2002-Dec-21-SEBI_20Cir_20dt._2027-Oct-2021.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 2684 chars extracted from 9._20AMFI_20email_2035P_2072_20dt._2002-Dec-21-SEBI_20Cir_20dt._2027-Oct-2021.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 2 chunks from 9._20AMFI_20email_2035P_2072_20dt._2002-Dec-21-SEBI_20Cir_20dt._2027-Oct-2021.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: Advit_20Jewels_20Limited_20-_20APR_p.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 26194 chars extracted from Advit_20Jewels_20Limited_20-_20APR_p.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 14 chunks from Advit_20Jewels_20Limited_20-_20APR_p.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_1.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_1.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_1.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_10.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_10.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_10.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_11.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_11.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_11.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_12.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_12.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_12.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_13.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_13.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_13.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_14.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_14.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_14.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_15.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_15.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_15.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_16.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_16.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_16.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_17.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_17.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_17.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_18.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_18.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_18.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_19.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_19.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_19.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_2.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_2.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_2.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_20.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_20.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_20.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_21.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_21.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_21.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_22.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_22.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_22.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_23.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_23.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_23.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_24.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_24.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_24.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_25.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_25.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_25.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_26.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_26.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_26.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_27.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_27.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_27.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_28.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_28.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_28.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_29.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_29.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_29.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_3.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_3.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_3.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_30.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_30.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_30.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_31.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_31.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_31.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_32.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_32.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_32.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_33.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_33.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_33.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_34.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_34.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_34.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_35.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_35.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_35.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_36.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_36.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_36.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_37.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_37.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_37.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_38.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_38.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_38.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_39.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_39.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_39.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_4.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_4.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_4.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_40.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_40.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_40.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_41.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_41.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_41.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_42.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_42.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_42.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_43.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_43.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_43.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_44.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_44.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_44.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_45.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_45.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_45.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_46.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_46.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_46.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_47.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_47.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_47.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_48.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_48.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_48.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_49.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_49.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_49.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_5.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_5.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_5.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_50.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_50.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_50.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_51.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_51.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_51.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_52.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_52.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_52.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_53.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_53.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_53.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_54.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_54.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_54.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_6.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_6.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_6.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_7.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_7.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_7.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_8.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_8.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_8.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: circular_master_entry_9.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF: 90 chars extracted from circular_master_entry_9.pdf
+2026-06-13 19:07:25 | DEBUG    |   ✓ 1 chunks from circular_master_entry_9.pdf (pymupdf)
+2026-06-13 19:07:25 | DEBUG    | Processing: CU107-AMFI_20BP_20cir._2083_20dt._2018-Nov-19-_20Various_20guidelines_20pursuant_20to_20SEBI_20cir_20dt_2024-09-19.pdf
+2026-06-13 19:07:25 | DEBUG    |   PyMuPDF only got 0 chars (<5) from CU107-AMFI_20BP_20cir._2083_20dt._2018-Nov-19-_20Various_20guidelines_20pursuant_20to_20SEBI_20cir_20dt_2024-09-19.pdf → trying OCR...
+2026-06-13 19:07:53 | DEBUG    |   OCR: 30035 chars extracted from CU107-AMFI_20BP_20cir._2083_20dt._2018-Nov-19-_20Various_20guidelines_20pursuant_20to_20SEBI_20cir_20dt_2024-09-19.pdf
+2026-06-13 19:07:53 | DEBUG    |   OCR used for: CU107-AMFI_20BP_20cir._2083_20dt._2018-Nov-19-_20Various_20guidelines_20pursuant_20to_20SEBI_20cir_20dt_2024-09-19.pdf
+2026-06-13 19:07:53 | DEBUG    |   ✓ 16 chunks from CU107-AMFI_20BP_20cir._2083_20dt._2018-Nov-19-_20Various_20guidelines_20pursuant_20to_20SEBI_20cir_20dt_2024-09-19.pdf (ocr)
+2026-06-13 19:07:53 | DEBUG    | Processing: CU124-AMFIBPGCircular93adt.03-Dec-21-PrudentialnormsforLiquidity.pdf
+2026-06-13 19:07:53 | DEBUG    |   PyMuPDF: 4648 chars extracted from CU124-AMFIBPGCircular93adt.03-Dec-21-PrudentialnormsforLiquidity.pdf
+2026-06-13 19:07:53 | DEBUG    |   ✓ 3 chunks from CU124-AMFIBPGCircular93adt.03-Dec-21-PrudentialnormsforLiquidity.pdf (pymupdf)
+2026-06-13 19:07:53 | DEBUG    | Processing: CU127-AMFI_20Best_20Practices_20Guidelines_20Circular_20No.96_20dt._2023.03.2022_20on_20Swing_20Pricing_20Framework.pdf
+2026-06-13 19:07:53 | DEBUG    |   PyMuPDF: 5148 chars extracted from CU127-AMFI_20Best_20Practices_20Guidelines_20Circular_20No.96_20dt._2023.03.2022_20on_20Swing_20Pricing_20Framework.pdf
+2026-06-13 19:07:53 | DEBUG    |   ✓ 3 chunks from CU127-AMFI_20Best_20Practices_20Guidelines_20Circular_20No.96_20dt._2023.03.2022_20on_20Swing_20Pricing_20Framework.pdf (pymupdf)
+2026-06-13 19:07:53 | DEBUG    | Processing: CU129-AMFIBPGno.97dt.28.03.2022-Std.ProcessforValidationofEmail_20ID-MobilenoBankMandate.pdf
+2026-06-13 19:07:53 | DEBUG    |   PyMuPDF: 16598 chars extracted from CU129-AMFIBPGno.97dt.28.03.2022-Std.ProcessforValidationofEmail_20ID-MobilenoBankMandate.pdf
+2026-06-13 19:07:53 | DEBUG    |   ✓ 9 chunks from CU129-AMFIBPGno.97dt.28.03.2022-Std.ProcessforValidationofEmail_20ID-MobilenoBankMandate.pdf (pymupdf)
+2026-06-13 19:07:53 | DEBUG    | Processing: CU144-AMFI_20BP_20Cir_20No.93b_20dt.15-Jun-23.pdf
+2026-06-13 19:07:53 | DEBUG    |   PyMuPDF: 4308 chars extracted from CU144-AMFI_20BP_20Cir_20No.93b_20dt.15-Jun-23.pdf
+2026-06-13 19:07:53 | DEBUG    |   ✓ 3 chunks from CU144-AMFI_20BP_20Cir_20No.93b_20dt.15-Jun-23.pdf (pymupdf)
+2026-06-13 19:07:53 | DEBUG    | Processing: CU144-Ch1Annexure_20I-15-Jun-23.pdf
+2026-06-13 19:07:53 | DEBUG    |   PyMuPDF: 5787 chars extracted from CU144-Ch1Annexure_20I-15-Jun-23.pdf
+2026-06-13 19:07:53 | DEBUG    |   ✓ 3 chunks from CU144-Ch1Annexure_20I-15-Jun-23.pdf (pymupdf)
+2026-06-13 19:07:53 | DEBUG    | Processing: CU144-Ch2Annexure_20II-15-Jun-23.pdf
+2026-06-13 19:07:53 | DEBUG    |   PyMuPDF only got 0 chars (<5) from CU144-Ch2Annexure_20II-15-Jun-23.pdf → trying OCR...
+2026-06-13 19:07:55 | DEBUG    |   OCR: 2013 chars extracted from CU144-Ch2Annexure_20II-15-Jun-23.pdf
+2026-06-13 19:07:55 | DEBUG    |   OCR used for: CU144-Ch2Annexure_20II-15-Jun-23.pdf
+2026-06-13 19:07:55 | DEBUG    |   ✓ 1 chunks from CU144-Ch2Annexure_20II-15-Jun-23.pdf (ocr)
+2026-06-13 19:07:55 | DEBUG    | Processing: CU145-AMFI_20Email_20dt._2027-Jul-23.pdf
+2026-06-13 19:07:55 | DEBUG    |   PyMuPDF: 4557 chars extracted from CU145-AMFI_20Email_20dt._2027-Jul-23.pdf
+2026-06-13 19:07:55 | DEBUG    |   ✓ 3 chunks from CU145-AMFI_20Email_20dt._2027-Jul-23.pdf (pymupdf)
+2026-06-13 19:07:55 | DEBUG    | Processing: CU149-AMFI_20BP_20cir_20110_20dt._2031-Jan-24.pdf
+2026-06-13 19:07:55 | DEBUG    |   PyMuPDF: 32234 chars extracted from CU149-AMFI_20BP_20cir_20110_20dt._2031-Jan-24.pdf
+2026-06-13 19:07:55 | DEBUG    |   ✓ 18 chunks from CU149-AMFI_20BP_20cir_20110_20dt._2031-Jan-24.pdf (pymupdf)
+2026-06-13 19:07:55 | DEBUG    | Processing: CU149-Ch10Attachment_2010_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Annexure-III.pdf
+2026-06-13 19:07:55 | DEBUG    |   PyMuPDF: 3723 chars extracted from CU149-Ch10Attachment_2010_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Annexure-III.pdf
+2026-06-13 19:07:55 | DEBUG    |   ✓ 2 chunks from CU149-Ch10Attachment_2010_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Annexure-III.pdf (pymupdf)
+2026-06-13 19:07:55 | DEBUG    | Processing: CU149-Ch11Attachment_2011_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Annexure-IV.pdf
+2026-06-13 19:07:55 | DEBUG    |   PyMuPDF: 2864 chars extracted from CU149-Ch11Attachment_2011_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Annexure-IV.pdf
+2026-06-13 19:07:55 | DEBUG    |   ✓ 2 chunks from CU149-Ch11Attachment_2011_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Annexure-IV.pdf (pymupdf)
+2026-06-13 19:07:55 | DEBUG    | Processing: CU149-Ch12Attachment_2012_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Annexure-V.pdf
+2026-06-13 19:07:55 | DEBUG    |   PyMuPDF: 3730 chars extracted from CU149-Ch12Attachment_2012_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Annexure-V.pdf
+2026-06-13 19:07:55 | DEBUG    |   ✓ 2 chunks from CU149-Ch12Attachment_2012_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Annexure-V.pdf (pymupdf)
+2026-06-13 19:07:55 | DEBUG    | Processing: CU149-Ch13Attachment_2013_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Annexure_20VI.pdf
+2026-06-13 19:07:55 | DEBUG    |   PyMuPDF: 3276 chars extracted from CU149-Ch13Attachment_2013_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Annexure_20VI.pdf
+2026-06-13 19:07:55 | DEBUG    |   ✓ 2 chunks from CU149-Ch13Attachment_2013_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Annexure_20VI.pdf (pymupdf)
+2026-06-13 19:07:55 | DEBUG    | Processing: CU149-Ch14Attachment_2014_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-MF-NominationForm.pdf
+2026-06-13 19:07:55 | DEBUG    |   PyMuPDF: 6711 chars extracted from CU149-Ch14Attachment_2014_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-MF-NominationForm.pdf
+2026-06-13 19:07:55 | DEBUG    |   ✓ 3 chunks from CU149-Ch14Attachment_2014_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-MF-NominationForm.pdf (pymupdf)
+2026-06-13 19:07:55 | DEBUG    | Processing: CU149-Ch1Attachment_201_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-SEBILetter.pdf
+2026-06-13 19:07:55 | DEBUG    |   PyMuPDF only got 0 chars (<5) from CU149-Ch1Attachment_201_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-SEBILetter.pdf → trying OCR...
+2026-06-13 19:08:00 | DEBUG    |   OCR: 2904 chars extracted from CU149-Ch1Attachment_201_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-SEBILetter.pdf
+2026-06-13 19:08:00 | DEBUG    |   OCR used for: CU149-Ch1Attachment_201_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-SEBILetter.pdf
+2026-06-13 19:08:00 | DEBUG    |   ✓ 2 chunks from CU149-Ch1Attachment_201_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-SEBILetter.pdf (ocr)
+2026-06-13 19:08:00 | DEBUG    | Processing: CU149-Ch2Attachment_202_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Form_20T1.pdf
+2026-06-13 19:08:00 | DEBUG    |   PyMuPDF: 2248 chars extracted from CU149-Ch2Attachment_202_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Form_20T1.pdf
+2026-06-13 19:08:00 | DEBUG    |   ✓ 2 chunks from CU149-Ch2Attachment_202_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Form_20T1.pdf (pymupdf)
+2026-06-13 19:08:00 | DEBUG    | Processing: CU149-Ch3Attachment_203_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Form_20T2.pdf
+2026-06-13 19:08:00 | DEBUG    |   PyMuPDF: 5965 chars extracted from CU149-Ch3Attachment_203_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Form_20T2.pdf
+2026-06-13 19:08:00 | DEBUG    |   ✓ 3 chunks from CU149-Ch3Attachment_203_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Form_20T2.pdf (pymupdf)
+2026-06-13 19:08:00 | DEBUG    | Processing: CU149-Ch4Attachment_204_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Form_20T3.pdf
+2026-06-13 19:08:00 | DEBUG    |   PyMuPDF: 7397 chars extracted from CU149-Ch4Attachment_204_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Form_20T3.pdf
+2026-06-13 19:08:00 | DEBUG    |   ✓ 4 chunks from CU149-Ch4Attachment_204_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Form_20T3.pdf (pymupdf)
+2026-06-13 19:08:00 | DEBUG    | Processing: CU149-Ch5Attachment_205_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Form_20T4.pdf
+2026-06-13 19:08:00 | DEBUG    |   PyMuPDF: 4676 chars extracted from CU149-Ch5Attachment_205_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Form_20T4.pdf
+2026-06-13 19:08:00 | DEBUG    |   ✓ 3 chunks from CU149-Ch5Attachment_205_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Form_20T4.pdf (pymupdf)
+2026-06-13 19:08:00 | DEBUG    | Processing: CU149-Ch6Attachment_206_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Form_20T5.pdf
+2026-06-13 19:08:00 | DEBUG    |   PyMuPDF: 7427 chars extracted from CU149-Ch6Attachment_206_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Form_20T5.pdf
+2026-06-13 19:08:00 | DEBUG    |   ✓ 4 chunks from CU149-Ch6Attachment_206_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Form_20T5.pdf (pymupdf)
+2026-06-13 19:08:00 | DEBUG    | Processing: CU149-Ch7Attachment_207_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Annexure-I_20a.pdf
+2026-06-13 19:08:00 | DEBUG    |   PyMuPDF: 1543 chars extracted from CU149-Ch7Attachment_207_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Annexure-I_20a.pdf
+2026-06-13 19:08:00 | DEBUG    |   ✓ 1 chunks from CU149-Ch7Attachment_207_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Annexure-I_20a.pdf (pymupdf)
+2026-06-13 19:08:00 | DEBUG    | Processing: CU149-Ch8Attachment_208_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Annexure-I_20b.pdf
+2026-06-13 19:08:00 | DEBUG    |   PyMuPDF: 1754 chars extracted from CU149-Ch8Attachment_208_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Annexure-I_20b.pdf
+2026-06-13 19:08:00 | DEBUG    |   ✓ 1 chunks from CU149-Ch8Attachment_208_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Annexure-I_20b.pdf (pymupdf)
+2026-06-13 19:08:00 | DEBUG    | Processing: CU149-Ch9Attachment_209_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Annexure-II.pdf
+2026-06-13 19:08:00 | DEBUG    |   PyMuPDF: 5021 chars extracted from CU149-Ch9Attachment_209_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Annexure-II.pdf
+2026-06-13 19:08:00 | DEBUG    |   ✓ 3 chunks from CU149-Ch9Attachment_209_20to_20AMFI_20BP_20cir_20110_20dt._2031-Jan-24-Annexure-II.pdf (pymupdf)
+2026-06-13 19:08:00 | INFO     | 
+============================================================
+2026-06-13 19:08:00 | INFO     | CHUNKING COMPLETE — SEBI
+2026-06-13 19:08:00 | INFO     |   ✓ PDFs processed:    95/95
+2026-06-13 19:08:00 | INFO     |   ✗ Failed/empty:      0
+2026-06-13 19:08:00 | INFO     |   📄 PyMuPDF used:     91 PDFs
+2026-06-13 19:08:00 | INFO     |   🔍 OCR used:         4 PDFs
+2026-06-13 19:08:00 | INFO     |   🧩 Total chunks:     509
+2026-06-13 19:08:00 | INFO     |   📏 Avg chunk size:   1734.0 chars
+2026-06-13 19:08:00 | INFO     |   💾 Saved to:         C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\sebi\chunks.json
+2026-06-13 19:08:00 | INFO     | ============================================================

@@ -71,3 +71,25 @@
 2026-06-13 18:21:34 | INFO     |   📏 Avg chunk size:   721.0 chars
 2026-06-13 18:21:34 | INFO     |   💾 Saved to:         C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\fema\chunks.json
 2026-06-13 18:21:34 | INFO     | ============================================================
+2026-06-13 19:08:00 | INFO     | ============================================================
+2026-06-13 19:08:00 | INFO     | Vidi Chunker — Corpus: FEMA
+2026-06-13 19:08:00 | INFO     | PDFs found:   1
+2026-06-13 19:08:00 | INFO     | Chunk size:   ~512 tokens (2048 chars)
+2026-06-13 19:08:00 | INFO     | Overlap:      ~50 tokens  (200 chars)
+2026-06-13 19:08:00 | INFO     | OCR fallback: enabled (threshold: 5 chars)
+2026-06-13 19:08:00 | INFO     | ============================================================
+2026-06-13 19:08:00 | WARNING  | No index.csv found at C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\fema\index.csv. Metadata will be limited.
+2026-06-13 19:08:00 | DEBUG    | Processing: fema_0001_IT-Act_1961.pdf
+2026-06-13 19:08:00 | DEBUG    |   PyMuPDF: 721 chars extracted from fema_0001_IT-Act_1961.pdf
+2026-06-13 19:08:00 | DEBUG    |   ✓ 1 chunks from fema_0001_IT-Act_1961.pdf (pymupdf)
+2026-06-13 19:08:00 | INFO     | 
+============================================================
+2026-06-13 19:08:00 | INFO     | CHUNKING COMPLETE — FEMA
+2026-06-13 19:08:00 | INFO     |   ✓ PDFs processed:    1/1
+2026-06-13 19:08:00 | INFO     |   ✗ Failed/empty:      0
+2026-06-13 19:08:00 | INFO     |   📄 PyMuPDF used:     1 PDFs
+2026-06-13 19:08:00 | INFO     |   🔍 OCR used:         0 PDFs
+2026-06-13 19:08:00 | INFO     |   🧩 Total chunks:     1
+2026-06-13 19:08:00 | INFO     |   📏 Avg chunk size:   721.0 chars
+2026-06-13 19:08:00 | INFO     |   💾 Saved to:         C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\fema\chunks.json
+2026-06-13 19:08:00 | INFO     | ============================================================
