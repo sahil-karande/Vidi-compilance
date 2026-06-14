@@ -35,11 +35,3 @@ vectordb/
 *.pdf
 *.csvgit 
 # Python bytecode cache
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-# Local environment files
-.env
-venv/
