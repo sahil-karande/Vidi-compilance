@@ -1,264 +1,190 @@
 import os
 import json
 import logging
-from typing import Dict, Any, List, Optional
+from typing import List, Dict, Any, Tuple
+import google.generativeai as genai
 import httpx
-from google import genai
-from google.genai import types
-from pydantic import BaseModel, Field
 
-# Setup logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("RegIQ_Generator")
+logger = logging.getLogger("regiq.generator")
 
-# Define structural format for strict fallback downstream validation
-class RegIQStructuredOutput(BaseModel):
-    answer: str = Field(description="The compliance answer, strictly derived from provided context snippets.")
-    is_found: bool = Field(description="Set to false if context has insufficient information to answer fully. Otherwise true.")
+# Load environment variables
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "gemini").lower()  # 'gemini' or 'openrouter'
+OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", "google/gemini-2.5-flash")
 
-class RegIQGenerator:
+# Configure Google Gemini SDK if selected
+if LLM_PROVIDER == "gemini" and GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY)
+
+
+class RAGGenerator:
+    """
+    Generates grounded responses using an LLM (Gemini/OpenRouter) based strictly on 
+    retrieved and reranked regulatory context chunks. Enforces compliance styling.
+    """
+
+    SYSTEM_PROMPT_BASE = (
+        "You are RegIQ, an advanced, authoritative regulatory compliance AI assistant for Indian SMEs.\n"
+        "Your core duty is to provide hyper-accurate, grounded answers using ONLY the text provided in the 'Context' section below.\n\n"
+        "CRITICAL RULES:\n"
+        "1. If the context does not contain the answer to the user's question, you MUST reply EXACTLY with: \n"
+        "   \"I could not find this in the available regulatory documents.\"\n"
+        "   Do not attempt to use external knowledge, pre-trained facts, or extrapolate.\n"
+        "2. Do not invent circular numbers, section clauses, notification dates, or URLs under any circumstances.\n"
+        "3. Every factual claim or rule state MUST explicitly reference its source chunk index or citation details (e.g., [Source 1]).\n"
+    )
+
+    PLAIN_MODE_INSTRUCTIONS = (
+        "[MODE: PLAIN ENGLISH]\n"
+        "- Explain the compliance rule like you are talking to a business owner with no legal background.\n"
+        "- Use simple, clear, 8th-grade level English.\n"
+        "- Break down complex terms into actionable steps.\n"
+        "- Format your response strictly using clean Markdown bullet points.\n"
+        "- Keep sentences concise.\n"
+    )
+
+    LEGAL_MODE_INSTRUCTIONS = (
+        "[MODE: LEGAL TEXT]\n"
+        "- Use formal, precise legal and regulatory language.\n"
+        "- Maintain the original density and strict terminology of the circulars.\n"
+        "- Include precise section clauses, definitions, and exact wording where relevant.\n"
+        "- Format with professional paragraphs and structured sub-sections.\n"
+    )
+
     def __init__(self):
-        # Load API keys from environment
-        self.gemini_api_key = os.getenv("GEMINI_API_KEY")
-        self.openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
-        
-        # Fallback tracking
-        self.preferred_provider = os.getenv("PREFERRED_LLM_PROVIDER", "gemini").lower()
-        
-        # Initialize Gemini client if available
-        if self.gemini_api_key:
-            self.gemini_client = genai.Client(api_key=self.gemini_api_key)
-        else:
-            self.gemini_client = None
-            logger.warning("GEMINI_API_KEY not found in environment variables.")
+        if LLM_PROVIDER == "gemini" and not GEMINI_API_KEY:
+            logger.warning("Gemini API Key missing. Falling back or failing runtime requests.")
+        elif LLM_PROVIDER == "openrouter" and not OPENROUTER_API_KEY:
+            logger.warning("OpenRouter API Key missing. Check your environment variables.")
 
-        if not self.openrouter_api_key:
-            logger.warning("OPENROUTER_API_KEY not found in environment variables.")
+    def _format_context(self, chunks: List[Dict[str, Any]]) -> Tuple[str, List[Dict[str, Any]]]:
+        """
+        Formats list of metadata-rich chunks into an organized text string for the LLM prompt.
+        Extracts citation objects for the frontend payload mapping.
+        """
+        context_str = ""
+        citations = []
 
-    def _get_system_prompt(self, mode: str = "plain") -> str:
-        """
-        Returns the rigid system prompt based on user interface mode selection.
-        """
-        base_prompt = (
-            "You are RegIQ, an expert regulatory compliance assistant for Indian SMEs.\n"
-            "Your sole objective is to answer the user's query based strictly on the provided context chunks.\n\n"
-            "CRITICAL RULES:\n"
-            "1. Answer ONLY using the facts directly mentioned in the provided context.\n"
-            "2. If the context does not contain enough information to conclusively answer the query, "
-            "you MUST set 'is_found' to false and reply exactly with: \"I could not find this in the available regulatory documents.\"\n"
-            "3. Do NOT extrapolate, speculate, or use outside training knowledge under any circumstances.\n"
-            "4. For every claim or rule you state, you MUST cite its specific metadata attributes "
-            "(circular number, issuing authority, section, and date) explicitly in your text.\n"
-            "5. Never invent or hallucinate regulation details, section numbers, or dates.\n\n"
-        )
-        
-        if mode == "plain":
-            mode_prompt = (
-                "[PLAIN MODE ACTIVE]\n"
-                "- Write your response using simple, clear English targeting an 8th-grade comprehension level.\n"
-                "- Avoid dense legal jargon; explain complex compliance terms simply.\n"
-                "- Structure your answer logically using clean Markdown bullet points.\n"
-                "- Keep sentences brief and practical for an SME business owner."
-            )
-        else:  # legal mode
-            mode_prompt = (
-                "[LEGAL MODE ACTIVE]\n"
-                "- Use formal, authoritative, and precise legal language.\n"
-                "- Maintain the tone of a high-level compliance officer or corporate attorney.\n"
-                "- Include full verbatim section references, legal definitions, and precise provisions.\n"
-                "- Do not oversimplify clauses; preserve the structural nuances of the source text."
-            )
-            
-        return base_prompt + mode_prompt
-
-    def _format_context(self, chunks: List[Dict[str, Any]]) -> str:
-        """
-        Formats retrieved vector chunks and metadata into a clean text block for the LLM context window.
-        """
-        formatted_blocks = []
-        for i, chunk in enumerate(chunks):
+        for idx, chunk in enumerate(chunks, 1):
             metadata = chunk.get("metadata", {})
-            text = chunk.get("text", "")
+            text = chunk.get("text", chunk.get("page_content", ""))
             
-            block = (
-                f"--- CONTEXT CHUNK {i+1} ---\n"
-                f"Source Authority: {metadata.get('authority', 'N/A')}\n"
-                f"Circular/Notification No: {metadata.get('circular_no', 'N/A')}\n"
-                f"Section/Clause: {metadata.get('section', 'N/A')}\n"
-                f"Date: {metadata.get('date', 'N/A')}\n"
-                f"URL: {metadata.get('url', 'N/A')}\n"
-                f"Content: {text}\n"
-            )
-            formatted_blocks.append(block)
-            
-        return "\n".join(formatted_blocks)
+            # Extract clean regulatory metadata fields
+            source_doc = metadata.get("source", "Unknown Document")
+            circular_no = metadata.get("circular_no", "N/A")
+            date = metadata.get("date", "N/A")
+            section = metadata.get("section", "N/A")
+            url = metadata.get("url", "#")
 
-    def _generate_via_gemini(self, system_prompt: str, user_content: str, model_name: str = "gemini-2.5-flash") -> Dict[str, Any]:
+            # Formulate structured context block for the LLM
+            context_str += f"--- START SOURCE {idx} ---\n"
+            context_str += f"Issuing Authority/Source: {source_doc}\n"
+            context_str += f"Circular/Notification No: {circular_no}\n"
+            context_str += f"Date: {date}\n"
+            context_str += f"Section/Clause: {section}\n"
+            context_str += f"Content: {text}\n"
+            context_str += f"--- END SOURCE {idx} ---\n\n"
+
+            # Prepare clean client-side citation objects
+            citations.append({
+                "id": idx,
+                "source": source_doc,
+                "circular_no": circular_no,
+                "date": date,
+                "section": section,
+                "url": url,
+                "snippet": text[:200] + "..." if len(text) > 200 else text
+            })
+
+        return context_str, citations
+
+    async def generate_answer(
+        self, query: str, chunks: List[Dict[str, Any]], mode: str = "plain"
+    ) -> Dict[str, Any]:
         """
-        Direct generation calls using the official GenAI SDK enforcing Structured JSON schema outputs.
+        Coordinates context formulation, system instructions compilation, and execution of LLM API.
         """
-        if not self.gemini_client:
-            raise ValueError("Gemini client is not initialized.")
-            
-        config = types.GenerateContentConfig(
-            system_instruction=system_prompt,
-            temperature=0.0,
-            max_output_tokens=1500,
-            response_mime_type="application/json",
-            response_schema=RegIQStructuredOutput,
+        if not chunks:
+            return {
+                "answer": "I could not find this in the available regulatory documents.",
+                "citations": [],
+                "mode": mode
+            }
+
+        context_text, citations = self._format_context(chunks)
+        
+        # Select dynamic prompt modifier based on presentation mode
+        mode_instruction = self.PLAIN_MODE_INSTRUCTIONS if mode.lower() == "plain" else self.LEGAL_MODE_INSTRUCTIONS
+        
+        full_system_prompt = f"{self.SYSTEM_PROMPT_BASE}\n{mode_instruction}"
+        
+        user_prompt = (
+            f"Context Documents:\n====================\n{context_text}\n====================\n\n"
+            f"User Question: {query}\n\n"
+            f"Provide your response below, following all rules specified in the system instructions. Ensure citations correspond cleanly to the [Source X] tags."
+        )
+
+        try:
+            if LLM_PROVIDER == "gemini":
+                return await self._call_gemini(full_system_prompt, user_prompt, citations, mode)
+            elif LLM_PROVIDER == "openrouter":
+                return await self._call_openrouter(full_system_prompt, user_prompt, citations, mode)
+            else:
+                raise ValueError(f"Unsupported LLM provider: {LLM_PROVIDER}")
+                
+        except Exception as e:
+            logger.error(f"Error during LLM text generation loop: {str(e)}")
+            return {
+                "answer": "An error occurred while generating your answer. Please try again shortly.",
+                "citations": [],
+                "mode": mode
+            }
+
+    async def _call_gemini(self, system_instruction: str, user_content: str, citations: List[Dict], mode: str) -> Dict[str, Any]:
+        """Invokes native Gemini API via Google GenAI SDK wrapper."""
+        # Using gemini-1.5-flash as default for lightning-fast latency/RAG compliance
+        model = genai.GenerativeModel(
+            model_name="gemini-1.5-flash",
+            system_instruction=system_instruction,
+            generation_config={"temperature": 0.0} # Absolute 0 temperature to enforce anti-hallucination guardrails
         )
         
-        response = self.gemini_client.models.generate_content(
-            model=model_name,
-            contents=user_content,
-            config=config
-        )
-        return json.loads(response.text)
+        # Wrap blocking SDK call in an async executor thread if necessary, or execute direct
+        response = model.generate_content(user_content)
+        
+        return {
+            "answer": response.text.strip(),
+            "citations": citations,
+            "mode": mode
+        }
 
-    def _generate_via_openrouter(self, system_prompt: str, user_content: str, model_name: str = "google/gemini-2.5-flash") -> Dict[str, Any]:
-        """
-        Fallback path via OpenRouter, requesting structural compliance inside a JSON block schema response layout.
-        """
-        if not self.openrouter_api_key:
-            raise ValueError("OpenRouter API key is not configured.")
-            
-        url = "https://openrouter.ai/api/v1/chat/completions"
+    async def _call_openrouter(self, system_instruction: str, user_content: str, citations: List[Dict], mode: str) -> Dict[str, Any]:
+        """Invokes OpenRouter endpoint using an asynchronous HTTPX pool."""
         headers = {
-            "Authorization": f"Bearer {self.openrouter_api_key}",
+            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
             "Content-Type": "application/json",
-            "HTTP-Referer": "https://github.com/sahilkarande/regiq",
+            "HTTP-Referer": "https://github.com/sahilkarande/regiq", # Required site metadata for OpenRouter rankings
             "X-Title": "RegIQ Compliance Assistant"
         }
         
-        # Enforce JSON output for OpenRouter compatible inference backends
         payload = {
-            "model": model_name,
-            "response_format": {"type": "json_object"},
+            "model": OPENROUTER_MODEL,
             "messages": [
-                {"role": "system", "content": system_prompt + "\nOutput your answer strictly formatted in valid JSON containing keys 'answer' (string) and 'is_found' (boolean)."},
-                {"role": "user", "content": user_content}
+                {"role": "system", "content": system_instruction},
+                {"role": "content", "content": user_content}
             ],
-            "temperature": 0.0,
-            "max_tokens": 1500
+            "temperature": 0.0  # Zero temperature for deterministic RAG behavior
         }
         
-        with httpx.Client(timeout=30.0) as client:
-            response = client.post(url, headers=headers, json=payload)
-            if response.status_code != 200:
-                raise RuntimeError(f"OpenRouter Error {response.status_code}: {response.text}")
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.post("https://openrouter.ai/api/v1/chat/completions", json=payload, headers=headers)
+            response.raise_for_status()
+            res_json = response.json()
             
-            result = response.json()
-            raw_content = result['choices'][0]['message']['content']
-            return json.loads(raw_content)
-
-    def generate_answer(self, query: str, retrieved_chunks: List[Dict[str, Any]], mode: str = "plain") -> Dict[str, Any]:
-        """
-        Primary interface function executed by the FastAPI /query router.
-        Combines inputs -> Triggers LLM execution loop -> Catches edge cases.
-        """
-        if not retrieved_chunks:
+            answer_text = res_json['choices'][0]['message']['content']
             return {
-                "answer": "I could not find this in the available regulatory documents.",
-                "citations": []
+                "answer": answer_text.strip(),
+                "citations": citations,
+                "mode": mode
             }
-            
-        system_prompt = self._get_system_prompt(mode=mode)
-        formatted_context = self._format_context(retrieved_chunks)
-        
-        user_content = (
-            f"Context Documents:\n{formatted_context}\n\n"
-            f"User Query: {query}\n\n"
-            f"Generate answer strictly conforming to system rules. Populate JSON output parameter metrics fields explicitly."
-        )
-        
-        structured_response = None
-        provider_used = self.preferred_provider
-        
-        # Primary Execution Loop
-        try:
-            if provider_used == "gemini" and self.gemini_client:
-                logger.info("Routing query to Native Gemini SDK with Structural Schema Enforcement...")
-                structured_response = self._generate_via_gemini(system_prompt, user_content)
-            elif self.openrouter_api_key:
-                logger.info("Routing query to OpenRouter JSON Parser fallback routing...")
-                provider_used = "openrouter"
-                structured_response = self._generate_via_openrouter(system_prompt, user_content)
-            else:
-                raise RuntimeError("No operational LLM provider configuration variables detected.")
-                
-        except Exception as e:
-            logger.error(f"Primary LLM route failed: {str(e)}. Attempting cross-provider fallback handling...")
-            # Cross-Provider Failover Execution Block
-            try:
-                if provider_used == "gemini" and self.openrouter_api_key:
-                    provider_used = "openrouter"
-                    structured_response = self._generate_via_openrouter(system_prompt, user_content)
-                elif provider_used == "openrouter" and self.gemini_client:
-                    provider_used = "gemini"
-                    structured_response = self._generate_via_gemini(system_prompt, user_content)
-                else:
-                    raise e
-            except Exception as failover_err:
-                logger.critical(f"All structural LLM routing backends collapsed: {str(failover_err)}")
-                return {
-                    "answer": "An unexpected server-side error occurred while computing the response.",
-                    "citations": []
-                }
-
-        # Anti-hallucination processing leveraging structural attributes
-        if not structured_response or not structured_response.get("is_found", True):
-            return {
-                "answer": "I could not find this in the available regulatory documents.",
-                "citations": []
-            }
-            
-        cleaned_answer = structured_response.get("answer", "").strip()
-        
-        if "I could not find this in the available regulatory documents" in cleaned_answer:
-            return {
-                "answer": "I could not find this in the available regulatory documents.",
-                "citations": []
-            }
-
-        # Map metadata objects safely to feed React elements
-        citations = [chunk.get("metadata", {}) for chunk in retrieved_chunks]
-        
-        return {
-            "answer": cleaned_answer,
-            "citations": citations,
-            "meta": {"provider": provider_used, "mode": mode}
-        }
-
-if __name__ == "__main__":
-    # Test script stays identical for runtime structural contract testing
-    os.environ["PREFERRED_LLM_PROVIDER"] = "gemini"
-    generator = RegIQGenerator()
-    
-    mock_retrieved_data = [
-        {
-            "text": "As per Notification No. 12/2017-Central Tax, services provided by an entity registered under section 12AA of the Income-tax Act by way of charitable activities are exempt from GST.",
-            "metadata": {
-                "authority": "CBIC (GST)",
-                "circular_no": "Notification No. 12/2017-Central Tax",
-                "section": "Section 12AA reference",
-                "date": "28-06-2017",
-                "url": "https://cbic-gst.gov.in/pdf"
-            }
-        }
-    ]
-    
-    print("\n--- TEST 1: Question In-Corpus ---")
-    res1 = generator.generate_answer(
-        query="Are registered charitable organizations exempt from paying GST?",
-        retrieved_chunks=mock_retrieved_data,
-        mode="plain"
-    )
-    print(json.dumps(res1, indent=2))
-    
-    print("\n--- TEST 2: Question Out-Of-Corpus ---")
-    res2 = generator.generate_answer(
-        query="What is the penalty for filing dynamic QR codes late for companies making over 500 crores?",
-        retrieved_chunks=mock_retrieved_data,
-        mode="legal"
-    )
-    print(json.dumps(res2, indent=2))
