@@ -2,10 +2,10 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import Dict, Any
 
-# Import Core RAG Pipeline Elements — Matching your exact files
-from app.rag.classifier import classify_query  # <-- Importing your functional function directly
-from app.rag.retriever import ChromaRetriever
-from app.rag.reranker import CrossEncoderReranker
+# Import Core RAG Pipeline Elements — Clean procedural matching
+from app.rag.classifier import classify_query  
+from app.rag.retriever import retrieve          
+from app.rag.reranker import rerank            # <-- Directly importing your plain function!
 from app.rag.generator import RAGGenerator
 
 # Import Security Guard Bypass Node
@@ -14,9 +14,7 @@ from app.api.auth import get_current_user
 logger = logging.getLogger("regiq.query")
 router = APIRouter()
 
-# Instantiate runtime state nodes
-retriever = ChromaRetriever()
-reranker = CrossEncoderReranker()
+# Instantiate only the active generator class
 generator = RAGGenerator()
 
 @router.post("/query")
@@ -39,22 +37,38 @@ async def handle_compliance_query(
 
     try:
         # Phase 1: Topic Classification (rbi, sebi, gst, mca, fema)
-        # Calling your function directly with verbose logging active
         corpus_enum = classify_query(user_query, verbose=True)
-        corpus_used = corpus_enum.value  # Extracts the clean string name ("gst", "rbi", etc.)
+        corpus_used = corpus_enum.value  # Extracts string name ("gst", "rbi", etc.)
         
         logger.info(f"User [{current_user['id']}] query routed to corpus namespace: '{corpus_used}'")
 
         # Phase 2: Vector Search Retrieval
-        raw_chunks = retriever.retrieve(query=user_query, namespace=corpus_used)
+        # This calls your native retrieve function and hands back a list of RetrievedChunk dataclasses!
+        raw_chunks = retrieve(query=user_query, corpus=corpus_used)
 
         # Phase 3: Cross-Encoder Reranking
-        refined_chunks = reranker.rerank(query=user_query, chunks=raw_chunks)
+        # Your rerank function naturally handles the list of RetrievedChunk objects and filters them
+        reranked_chunks = rerank(query=user_query, chunks=raw_chunks, top_n=5)
 
-        # Phase 4: Context-Grounded LLM Answer Generation
+        # Transform your processed RetrievedChunk instances into the exact dictionary layout 
+        # that your modern RAGGenerator expects to construct system contexts
+        generator_input_chunks = []
+        for chunk in reranked_chunks:
+            generator_input_chunks.append({
+                "text": chunk.text,
+                "metadata": {
+                    "source": chunk.filename or "Official Portal Documents",
+                    "circular_no": chunk.circular_no,
+                    "date": chunk.date,
+                    "section": chunk.title or "N/A",
+                    "url": chunk.url or "#"
+                }
+            })
+
+        # Phase 4: Context-Grounded LLM Answer Generation (Gemini 2.5 Flash)
         generation_payload = await generator.generate_answer(
             query=user_query, 
-            chunks=refined_chunks, 
+            chunks=generator_input_chunks, 
             mode=ui_mode
         )
 
