@@ -1,0 +1,54 @@
+2026-06-12 07:49:42 | INFO     | ============================================================
+2026-06-12 07:49:42 | INFO     | Vidi Embedder — Corpus: SEBI
+2026-06-12 07:49:42 | INFO     | Model:        all-MiniLM-L6-v2
+2026-06-12 07:49:42 | INFO     | Chunks:       455
+2026-06-12 07:49:42 | INFO     | Batch size:   64
+2026-06-12 07:49:42 | INFO     | ============================================================
+2026-06-12 07:49:42 | INFO     | Loading model: all-MiniLM-L6-v2  (downloads ~90MB on first run)...
+2026-06-12 07:49:48 | INFO     | Model loaded ✓  (embedding dim: 384)
+2026-06-12 07:49:48 | INFO     | Generating embeddings for 455 chunks...
+2026-06-12 07:50:09 | INFO     | Saving embeddings to C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\sebi\embeddings.json ...
+2026-06-12 07:50:09 | INFO     | 
+============================================================
+2026-06-12 07:50:09 | INFO     | EMBEDDING COMPLETE — SEBI
+2026-06-12 07:50:09 | INFO     |   ✓ Chunks embedded:   455
+2026-06-12 07:50:09 | INFO     |   📐 Embedding dim:    384
+2026-06-12 07:50:09 | INFO     |   💾 Saved to:         C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\sebi\embeddings.json
+2026-06-12 07:50:09 | INFO     |   📦 File size:        4.8 MB
+2026-06-12 07:50:09 | INFO     | ============================================================
+2026-06-13 18:34:40 | INFO     | ============================================================
+2026-06-13 18:34:40 | INFO     | Vidi Embedder — Corpus: SEBI
+2026-06-13 18:34:40 | INFO     | Model:        all-MiniLM-L6-v2
+2026-06-13 18:34:40 | INFO     | Chunks:       509
+2026-06-13 18:34:40 | INFO     | Batch size:   64
+2026-06-13 18:34:40 | INFO     | ============================================================
+2026-06-13 18:34:40 | INFO     | Loading model: all-MiniLM-L6-v2  (downloads ~90MB on first run)...
+2026-06-13 18:34:45 | INFO     | Model loaded ✓  (embedding dim: 384)
+2026-06-13 18:34:45 | INFO     | Generating embeddings for 509 chunks...
+2026-06-13 18:35:06 | INFO     | Saving embeddings to C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\sebi\embeddings.json ...
+2026-06-13 18:35:06 | INFO     | 
+============================================================
+2026-06-13 18:35:06 | INFO     | EMBEDDING COMPLETE — SEBI
+2026-06-13 18:35:06 | INFO     |   ✓ Chunks embedded:   509
+2026-06-13 18:35:06 | INFO     |   📐 Embedding dim:    384
+2026-06-13 18:35:06 | INFO     |   💾 Saved to:         C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\sebi\embeddings.json
+2026-06-13 18:35:06 | INFO     |   📦 File size:        5.2 MB
+2026-06-13 18:35:06 | INFO     | ============================================================
+2026-06-13 19:19:57 | INFO     | ============================================================
+2026-06-13 19:19:57 | INFO     | Vidi Embedder — Corpus: SEBI
+2026-06-13 19:19:57 | INFO     | Model:        all-MiniLM-L6-v2
+2026-06-13 19:19:57 | INFO     | Chunks:       509
+2026-06-13 19:19:57 | INFO     | Batch size:   64
+2026-06-13 19:19:57 | INFO     | ============================================================
+2026-06-13 19:19:57 | INFO     | Loading model: all-MiniLM-L6-v2  (downloads ~90MB on first run)...
+2026-06-13 19:20:02 | INFO     | Model loaded ✓  (embedding dim: 384)
+2026-06-13 19:20:02 | INFO     | Generating embeddings for 509 chunks...
+2026-06-13 19:20:23 | INFO     | Saving embeddings to C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\sebi\embeddings.json ...
+2026-06-13 19:20:23 | INFO     | 
+============================================================
+2026-06-13 19:20:23 | INFO     | EMBEDDING COMPLETE — SEBI
+2026-06-13 19:20:23 | INFO     |   ✓ Chunks embedded:   509
+2026-06-13 19:20:23 | INFO     |   📐 Embedding dim:    384
+2026-06-13 19:20:23 | INFO     |   💾 Saved to:         C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\sebi\embeddings.json
+2026-06-13 19:20:23 | INFO     |   📦 File size:        5.2 MB
+2026-06-13 19:20:23 | INFO     | ============================================================
