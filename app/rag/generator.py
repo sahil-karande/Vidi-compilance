@@ -2,7 +2,8 @@ import os
 import json
 import logging
 from typing import List, Dict, Any, Tuple
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 import httpx
 
 logger = logging.getLogger("regiq.generator")
@@ -13,15 +14,17 @@ OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "gemini").lower()  # 'gemini' or 'openrouter'
 OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", "google/gemini-2.5-flash")
 
-# Configure Google Gemini SDK if selected
+# Initialize the new Google GenAI Client if selected
+gemini_client = None
 if LLM_PROVIDER == "gemini" and GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
+    # Explicitly instantiating the unified client wrapper
+    gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
 
 class RAGGenerator:
     """
-    Generates grounded responses using an LLM (Gemini/OpenRouter) based strictly on 
-    retrieved and reranked regulatory context chunks. Enforces compliance styling.
+    Generates grounded responses using the modern google-genai SDK or OpenRouter.
+    Enforces compliance styling and anti-hallucination guardrails.
     """
 
     SYSTEM_PROMPT_BASE = (
@@ -59,10 +62,7 @@ class RAGGenerator:
             logger.warning("OpenRouter API Key missing. Check your environment variables.")
 
     def _format_context(self, chunks: List[Dict[str, Any]]) -> Tuple[str, List[Dict[str, Any]]]:
-        """
-        Formats list of metadata-rich chunks into an organized text string for the LLM prompt.
-        Extracts citation objects for the frontend payload mapping.
-        """
+        """Formats list of chunks into an organized context block for the prompt."""
         context_str = ""
         citations = []
 
@@ -70,14 +70,12 @@ class RAGGenerator:
             metadata = chunk.get("metadata", {})
             text = chunk.get("text", chunk.get("page_content", ""))
             
-            # Extract clean regulatory metadata fields
             source_doc = metadata.get("source", "Unknown Document")
             circular_no = metadata.get("circular_no", "N/A")
             date = metadata.get("date", "N/A")
             section = metadata.get("section", "N/A")
             url = metadata.get("url", "#")
 
-            # Formulate structured context block for the LLM
             context_str += f"--- START SOURCE {idx} ---\n"
             context_str += f"Issuing Authority/Source: {source_doc}\n"
             context_str += f"Circular/Notification No: {circular_no}\n"
@@ -86,7 +84,6 @@ class RAGGenerator:
             context_str += f"Content: {text}\n"
             context_str += f"--- END SOURCE {idx} ---\n\n"
 
-            # Prepare clean client-side citation objects
             citations.append({
                 "id": idx,
                 "source": source_doc,
@@ -102,9 +99,7 @@ class RAGGenerator:
     async def generate_answer(
         self, query: str, chunks: List[Dict[str, Any]], mode: str = "plain"
     ) -> Dict[str, Any]:
-        """
-        Coordinates context formulation, system instructions compilation, and execution of LLM API.
-        """
+        """Coordinates context formulation and invokes the active API layer."""
         if not chunks:
             return {
                 "answer": "I could not find this in the available regulatory documents.",
@@ -113,16 +108,13 @@ class RAGGenerator:
             }
 
         context_text, citations = self._format_context(chunks)
-        
-        # Select dynamic prompt modifier based on presentation mode
         mode_instruction = self.PLAIN_MODE_INSTRUCTIONS if mode.lower() == "plain" else self.LEGAL_MODE_INSTRUCTIONS
-        
         full_system_prompt = f"{self.SYSTEM_PROMPT_BASE}\n{mode_instruction}"
         
         user_prompt = (
             f"Context Documents:\n====================\n{context_text}\n====================\n\n"
             f"User Question: {query}\n\n"
-            f"Provide your response below, following all rules specified in the system instructions. Ensure citations correspond cleanly to the [Source X] tags."
+            f"Provide your response below, following all rules specified in the system instructions."
         )
 
         try:
@@ -142,16 +134,22 @@ class RAGGenerator:
             }
 
     async def _call_gemini(self, system_instruction: str, user_content: str, citations: List[Dict], mode: str) -> Dict[str, Any]:
-        """Invokes native Gemini API via Google GenAI SDK wrapper."""
-        # Using gemini-1.5-flash as default for lightning-fast latency/RAG compliance
-        model = genai.GenerativeModel(
-            model_name="gemini-1.5-flash",
+        """Invokes the modern google-genai models service correctly."""
+        if not gemini_client:
+            raise ValueError("Gemini Client is not initialized. Verify your GEMINI_API_KEY.")
+
+        # Configuration structure using the correct SDK parameters
+        config = types.GenerateContentConfig(
             system_instruction=system_instruction,
-            generation_config={"temperature": 0.0} # Absolute 0 temperature to enforce anti-hallucination guardrails
+            temperature=0.0,  # Strict determinism
         )
-        
-        # Wrap blocking SDK call in an async executor thread if necessary, or execute direct
-        response = model.generate_content(user_content)
+
+        # Correct method location: client.models.generate_content
+        response = gemini_client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=user_content,
+            config=config
+        )
         
         return {
             "answer": response.text.strip(),
@@ -164,7 +162,7 @@ class RAGGenerator:
         headers = {
             "Authorization": f"Bearer {OPENROUTER_API_KEY}",
             "Content-Type": "application/json",
-            "HTTP-Referer": "https://github.com/sahilkarande/regiq", # Required site metadata for OpenRouter rankings
+            "HTTP-Referer": "https://github.com/sahilkarande/regiq",
             "X-Title": "RegIQ Compliance Assistant"
         }
         
@@ -172,9 +170,9 @@ class RAGGenerator:
             "model": OPENROUTER_MODEL,
             "messages": [
                 {"role": "system", "content": system_instruction},
-                {"role": "content", "content": user_content}
+                {"role": "user", "content": user_content}
             ],
-            "temperature": 0.0  # Zero temperature for deterministic RAG behavior
+            "temperature": 0.0
         }
         
         async with httpx.AsyncClient(timeout=30.0) as client:
