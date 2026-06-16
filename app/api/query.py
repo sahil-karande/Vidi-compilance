@@ -2,20 +2,19 @@ import logging
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import Dict, Any
 
-# Import Core RAG Pipeline Pillars
-from app.rag.classifier import QueryClassifier
+# Import Core RAG Pipeline Elements — Matching your exact files
+from app.rag.classifier import classify_query  # <-- Importing your functional function directly
 from app.rag.retriever import ChromaRetriever
 from app.rag.reranker import CrossEncoderReranker
 from app.rag.generator import RAGGenerator
 
-# Import Security Guard
+# Import Security Guard Bypass Node
 from app.api.auth import get_current_user
 
 logger = logging.getLogger("regiq.query")
 router = APIRouter()
 
-# Instantiate singletons for runtime efficiency
-classifier = QueryClassifier()
+# Instantiate runtime state nodes
 retriever = ChromaRetriever()
 reranker = CrossEncoderReranker()
 generator = RAGGenerator()
@@ -27,7 +26,7 @@ async def handle_compliance_query(
 ):
     """
     Production RAG Pipeline Execution Loop:
-    Extracts query -> Classifies namespace -> Retrieves -> Reranks -> Generates via LLM.
+    Extracts query -> Runs keyword/embedding classifier -> Retrieves -> Reranks -> Generates via LLM.
     """
     user_query = payload.get("query")
     ui_mode = payload.get("mode", "plain")
@@ -39,14 +38,17 @@ async def handle_compliance_query(
         )
 
     try:
-        # Phase 1: Topic Classification (rbi, sebi, gst, mca, etc.)
-        corpus_used = classifier.classify(user_query)
-        logger.info(f"User [{current_user['id']}] query routed to corpus: '{corpus_used}'")
+        # Phase 1: Topic Classification (rbi, sebi, gst, mca, fema)
+        # Calling your function directly with verbose logging active
+        corpus_enum = classify_query(user_query, verbose=True)
+        corpus_used = corpus_enum.value  # Extracts the clean string name ("gst", "rbi", etc.)
+        
+        logger.info(f"User [{current_user['id']}] query routed to corpus namespace: '{corpus_used}'")
 
         # Phase 2: Vector Search Retrieval
         raw_chunks = retriever.retrieve(query=user_query, namespace=corpus_used)
 
-        # Phase 3: Cross-Encoder Reranking for context compression
+        # Phase 3: Cross-Encoder Reranking
         refined_chunks = reranker.rerank(query=user_query, chunks=raw_chunks)
 
         # Phase 4: Context-Grounded LLM Answer Generation
@@ -56,7 +58,7 @@ async def handle_compliance_query(
             mode=ui_mode
         )
 
-        # Build production response wrapper
+        # Return comprehensive production payload wrapper back to the frontend drawer
         return {
             "answer": generation_payload["answer"],
             "citations": generation_payload["citations"],
