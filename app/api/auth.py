@@ -7,10 +7,10 @@ from typing import Dict, Any
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY")
 
-if not SUPABASE_URL or not SUPABASE_ANON_KEY:
-    raise RuntimeError("Missing Supabase configuration variables in environment.")
+# if not SUPABASE_URL or not SUPABASE_ANON_KEY:
+    # raise RuntimeError("Missing Supabase configuration variables in environment.")
 
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
+# supabase: Client = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
 security = HTTPBearer()
 
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> Dict[str, Any]:
