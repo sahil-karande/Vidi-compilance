@@ -5,20 +5,14 @@ from typing import List, Dict, Any, Tuple
 from google import genai
 from google.genai import types
 import httpx
+from app.config import settings
 
 logger = logging.getLogger("regiq.generator")
 
-# Load environment variables
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+# Load configuration values from unified settings
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "gemini").lower()  # 'gemini' or 'openrouter'
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", "google/gemini-2.5-flash")
-
-# Initialize the new Google GenAI Client if selected
-gemini_client = None
-if LLM_PROVIDER == "gemini" and GEMINI_API_KEY:
-    # Explicitly instantiating the unified client wrapper
-    gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
 
 class RAGGenerator:
@@ -56,8 +50,13 @@ class RAGGenerator:
     )
 
     def __init__(self):
-        if LLM_PROVIDER == "gemini" and not GEMINI_API_KEY:
-            logger.warning("Gemini API Key missing. Falling back or failing runtime requests.")
+        # Dynamically bind unified client wrapper once configurations populate
+        self.gemini_client = None
+        if LLM_PROVIDER == "gemini":
+            if settings.gemini_api_key:
+                self.gemini_client = genai.Client(api_key=settings.gemini_api_key)
+            else:
+                logger.warning("Gemini API Key missing. Falling back or failing runtime requests.")
         elif LLM_PROVIDER == "openrouter" and not OPENROUTER_API_KEY:
             logger.warning("OpenRouter API Key missing. Check your environment variables.")
 
@@ -99,7 +98,6 @@ class RAGGenerator:
             })
 
         return context_str, citations
-        
 
     async def generate_answer(
         self, query: str, chunks: List[Dict[str, Any]], mode: str = "plain"
@@ -140,17 +138,15 @@ class RAGGenerator:
 
     async def _call_gemini(self, system_instruction: str, user_content: str, citations: List[Dict], mode: str) -> Dict[str, Any]:
         """Invokes the modern google-genai models service correctly."""
-        if not gemini_client:
+        if not self.gemini_client:
             raise ValueError("Gemini Client is not initialized. Verify your GEMINI_API_KEY.")
 
-        # Configuration structure using the correct SDK parameters
         config = types.GenerateContentConfig(
             system_instruction=system_instruction,
-            temperature=0.0,  # Strict determinism
+            temperature=0.0,  # Deterministic grounding compliance
         )
 
-        # Correct method location: client.models.generate_content
-        response = gemini_client.models.generate_content(
+        response = self.gemini_client.models.generate_content(
             model="gemini-2.5-flash",
             contents=user_content,
             config=config
