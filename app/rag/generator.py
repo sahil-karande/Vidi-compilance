@@ -61,14 +61,19 @@ class RAGGenerator:
         elif LLM_PROVIDER == "openrouter" and not OPENROUTER_API_KEY:
             logger.warning("OpenRouter API Key missing. Check your environment variables.")
 
-    def _format_context(self, chunks: List[Dict[str, Any]]) -> Tuple[str, List[Dict[str, Any]]]:
+   def _format_context(self, chunks: List[Any]) -> Tuple[str, List[Dict[str, Any]]]:
         """Formats list of chunks into an organized context block for the prompt."""
         context_str = ""
         citations = []
 
         for idx, chunk in enumerate(chunks, 1):
-            metadata = chunk.get("metadata", {})
-            text = chunk.get("text", chunk.get("page_content", ""))
+            # Safe parsing fallback for either 'RetrievedChunk' object attributes or standard dict entries
+            if hasattr(chunk, "__dict__") or not isinstance(chunk, dict):
+                metadata = getattr(chunk, "metadata", {}) or {}
+                text = getattr(chunk, "text", getattr(chunk, "page_content", ""))
+            else:
+                metadata = chunk.get("metadata", {}) or {}
+                text = chunk.get("text", chunk.get("page_content", ""))
             
             source_doc = metadata.get("source", "Unknown Document")
             circular_no = metadata.get("circular_no", "N/A")
