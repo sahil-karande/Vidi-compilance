@@ -1,12 +1,6 @@
 """
 Vidi — backend/app/main.py
-Day 14 Task: FastAPI Scaffold + Query Router Integration
-
-Initializes the FastAPI application:
-- CORS middleware
-- Health check endpoint
-- Settings loaded from .env
-- Connected to Day 14 Structured RAG /query router layer
+Updated: Day 16 — Threads + Alerts routers added
 """
 
 from fastapi import FastAPI, Request
@@ -15,8 +9,8 @@ from fastapi.responses import JSONResponse
 from datetime import datetime
 
 from app.config import settings
-# Explicitly import the query api submodule that handles our RAG pipelines
 from app.api import query
+from app.api import threads, alerts   # Day 16
 
 # ─────────────────────────────────────────────────────────────
 #  FastAPI App
@@ -48,7 +42,6 @@ app.add_middleware(
 
 @app.get("/", tags=["System"])
 def root():
-    """Root endpoint — basic service info."""
     return {
         "service": "Vidi API",
         "version": "0.1.0",
@@ -59,10 +52,6 @@ def root():
 
 @app.get("/health", tags=["System"])
 def health():
-    """
-    Health check endpoint.
-    Used by Docker healthcheck, Render, and uptime monitors.
-    """
     return {
         "status": "healthy",
         "environment": settings.environment,
@@ -76,7 +65,6 @@ def health():
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
-    """Catch-all exception handler — returns clean JSON errors."""
     return JSONResponse(
         status_code=500,
         content={
@@ -90,21 +78,15 @@ async def global_exception_handler(request: Request, exc: Exception):
 #  Routers
 # ─────────────────────────────────────────────────────────────
 
-# Day 14: Activated query pipeline engine endpoint router
-app.include_router(query.router)
+app.include_router(query.router)                                        # Day 14
+app.include_router(threads.router, prefix="/api", tags=["Threads"])    # Day 16
+app.include_router(alerts.router,  prefix="/api", tags=["Alerts"])     # Day 16
 
-# Day 20: auth middleware (added incrementally in later days)
-# from app.api import auth
-# app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
+# Day 20: from app.api import auth
+#         app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
 
-# Day 34: scorecard
-# from app.api import scorecard
-# app.include_router(scorecard.router, prefix="/api", tags=["Scorecard"])
+# Day 34: from app.api import scorecard
+#         app.include_router(scorecard.router, prefix="/api", tags=["Scorecard"])
 
-# Day 44: alerts
-# from app.api import alerts
-# app.include_router(alerts.router, prefix="/api", tags=["Alerts"])
-
-# Day 42: billing
-# from app.api import billing
-# app.include_router(billing.router, prefix="/api/billing", tags=["Billing"])
+# Day 42: from app.api import billing
+#         app.include_router(billing.router, prefix="/api/billing", tags=["Billing"])
