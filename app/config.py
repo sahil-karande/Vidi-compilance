@@ -46,7 +46,8 @@ class Settings(BaseSettings):
     vectordb_dir: str = "./vectordb"
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        # Checks for .env in both the execution root and the explicit backend subdirectory
+        env_file=[".env", "backend/.env"],
         env_file_encoding="utf-8",
         extra="ignore",          # ignore unrelated env vars
     )
