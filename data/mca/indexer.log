@@ -70,3 +70,24 @@
 2026-06-18 08:26:05 | INFO     | 
 Verification — test query: 'Companies Act director compliance'
 2026-06-18 08:26:05 | INFO     | Loading model for query embedding...
+2026-06-18 09:09:38 | INFO     | Loading embeddings from C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\mca\embeddings.json ...
+2026-06-18 09:09:38 | INFO     | ============================================================
+2026-06-18 09:09:38 | INFO     | Vidi Indexer — Corpus: MCA
+2026-06-18 09:09:38 | INFO     | Chunks to index:  3
+2026-06-18 09:09:38 | INFO     | VectorDB path:    C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\vectordb
+2026-06-18 09:09:38 | INFO     | Reset collection: True
+2026-06-18 09:09:38 | INFO     | ============================================================
+2026-06-18 09:09:38 | INFO     | Connecting to ChromaDB (local persistent)...
+2026-06-18 09:09:38 | INFO     | Deleted existing 'mca' collection
+2026-06-18 09:09:38 | INFO     | Collection 'mca': 0 existing docs
+2026-06-18 09:09:38 | INFO     | Upserting 3 chunks into ChromaDB collection 'mca'...
+2026-06-18 09:09:38 | INFO     | 
+============================================================
+2026-06-18 09:09:38 | INFO     | INDEXING COMPLETE — MCA
+2026-06-18 09:09:38 | INFO     |   ✓ Chunks upserted:   3
+2026-06-18 09:09:38 | INFO     |   📚 Collection total: 3 docs
+2026-06-18 09:09:38 | INFO     |   💾 VectorDB path:    C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\vectordb
+2026-06-18 09:09:38 | INFO     | ============================================================
+2026-06-18 09:09:47 | INFO     | 
+Verification — test query: 'Companies Act director compliance'
+2026-06-18 09:09:47 | INFO     | Loading model for query embedding...
