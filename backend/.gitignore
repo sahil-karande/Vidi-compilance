@@ -1,0 +1,37 @@
+# Virtual Environment
+venv/
+.venv/
+env/
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# IDE settings
+.vscode/
+.idea/
+
+# Environment Variables / Credentials
+.env
+
+# Docker & Databases
+chroma_data/
+vector_db_data/
+
+# Ignore python virtual environments
+venv/
+.venv/
+
+# Ignore Vidi data caches and scraped payloads
+data/rbi/
+data/gst/
+vectordb/
+
+# Catch any stray massive JSON blocks or binaries
+*.json
+*.pdf
+*.csv
+# Python bytecode cache

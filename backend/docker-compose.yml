@@ -1,0 +1,87 @@
+version: "3.9"
+
+# ─────────────────────────────────────────────────────────────
+#  RegIQ — docker-compose.yml
+#  Services: FastAPI backend + ChromaDB vector store
+#
+#  Usage:
+#    docker-compose up --build          # first time
+#    docker-compose up -d               # background
+#    docker-compose down                # stop
+#    docker-compose logs -f backend     # live logs
+# ─────────────────────────────────────────────────────────────
+
+services:
+
+  # ── FastAPI Backend ───────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: regiq_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      # Supabase
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+      - SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_KEY}
+      # LLM APIs
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      # Payments
+      - RAZORPAY_KEY_ID=${RAZORPAY_KEY_ID}
+      - RAZORPAY_KEY_SECRET=${RAZORPAY_KEY_SECRET}
+      # Email
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      # ChromaDB
+      - CHROMA_HOST=chromadb
+      - CHROMA_PORT=8001
+      # App
+      - ENVIRONMENT=${ENVIRONMENT:-production}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost:5173}
+    volumes:
+      - ./data:/app/data              # scraped PDFs accessible to backend
+    depends_on:
+      chromadb:
+        condition: service_healthy
+    networks:
+      - regiq_network
+
+  # ── ChromaDB Vector Store ─────────────────────────────────
+  chromadb:
+    image: chromadb/chroma:0.5.0
+    container_name: regiq_chromadb
+    restart: unless-stopped
+    ports:
+      - "8001:8000"                   # expose for local debugging
+    environment:
+      - CHROMA_SERVER_AUTH_CREDENTIALS_PROVIDER=chromadb.auth.token.TokenConfigServerAuthCredentialsProvider
+      - CHROMA_SERVER_AUTH_CREDENTIALS=${CHROMA_AUTH_TOKEN:-regiq_chroma_secret}
+      - CHROMA_SERVER_AUTH_PROVIDER=chromadb.auth.token.TokenAuthServerProvider
+      - IS_PERSISTENT=TRUE
+      - PERSIST_DIRECTORY=/chroma/chroma
+      - ANONYMIZED_TELEMETRY=FALSE
+    volumes:
+      - chroma_data:/chroma/chroma    # persist vector data across restarts
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/heartbeat"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - regiq_network
+
+# ─────────────────────────────────────────────────────────────
+#  Volumes & Networks
+# ─────────────────────────────────────────────────────────────
+
+volumes:
+  chroma_data:
+    driver: local
+
+networks:
+  regiq_network:
+    driver: bridge

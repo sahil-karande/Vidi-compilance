@@ -1,0 +1,100 @@
+2026-06-12 13:47:46 | INFO     | ============================================================
+2026-06-12 13:47:46 | INFO     | Vidi Chunker — Corpus: MCA
+2026-06-12 13:47:46 | INFO     | PDFs found:   2
+2026-06-12 13:47:46 | INFO     | Chunk size:   ~512 tokens (2048 chars)
+2026-06-12 13:47:46 | INFO     | Overlap:      ~50 tokens  (200 chars)
+2026-06-12 13:47:46 | INFO     | OCR fallback: enabled (threshold: 5 chars)
+2026-06-12 13:47:46 | INFO     | ============================================================
+2026-06-12 13:47:46 | INFO     | Loaded 2 entries from index.csv
+2026-06-12 13:47:46 | DEBUG    | Processing: CompaniesAct2013.txt
+2026-06-12 13:47:46 | DEBUG    |   PyMuPDF: 3134 chars extracted from CompaniesAct2013.txt
+2026-06-12 13:47:46 | DEBUG    |   ✓ 2 chunks from CompaniesAct2013.txt (pymupdf)
+2026-06-12 13:47:46 | DEBUG    | Processing: LLP_Act_2008.txt
+2026-06-12 13:47:46 | DEBUG    |   PyMuPDF: 734 chars extracted from LLP_Act_2008.txt
+2026-06-12 13:47:46 | DEBUG    |   ✓ 1 chunks from LLP_Act_2008.txt (pymupdf)
+2026-06-12 13:47:46 | INFO     | 
+============================================================
+2026-06-12 13:47:46 | INFO     | CHUNKING COMPLETE — MCA
+2026-06-12 13:47:46 | INFO     |   ✓ PDFs processed:    2/2
+2026-06-12 13:47:46 | INFO     |   ✗ Failed/empty:      0
+2026-06-12 13:47:46 | INFO     |   📄 PyMuPDF used:     2 PDFs
+2026-06-12 13:47:46 | INFO     |   🔍 OCR used:         0 PDFs
+2026-06-12 13:47:46 | INFO     |   🧩 Total chunks:     3
+2026-06-12 13:47:46 | INFO     |   📏 Avg chunk size:   1299.3 chars
+2026-06-12 13:47:46 | INFO     |   💾 Saved to:         C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\mca\chunks.json
+2026-06-12 13:47:46 | INFO     | ============================================================
+2026-06-13 18:07:49 | INFO     | ============================================================
+2026-06-13 18:07:49 | INFO     | Vidi Chunker — Corpus: MCA
+2026-06-13 18:07:49 | INFO     | PDFs found:   2
+2026-06-13 18:07:49 | INFO     | Chunk size:   ~512 tokens (2048 chars)
+2026-06-13 18:07:49 | INFO     | Overlap:      ~50 tokens  (200 chars)
+2026-06-13 18:07:49 | INFO     | OCR fallback: enabled (threshold: 5 chars)
+2026-06-13 18:07:49 | INFO     | ============================================================
+2026-06-13 18:07:49 | INFO     | Loaded 2 entries from index.csv
+2026-06-13 18:07:49 | DEBUG    | Processing: CompaniesAct2013.txt
+2026-06-13 18:07:49 | DEBUG    |   PyMuPDF: 3134 chars extracted from CompaniesAct2013.txt
+2026-06-13 18:07:49 | DEBUG    |   ✓ 2 chunks from CompaniesAct2013.txt (pymupdf)
+2026-06-13 18:07:49 | DEBUG    | Processing: LLP_Act_2008.txt
+2026-06-13 18:07:49 | DEBUG    |   PyMuPDF: 734 chars extracted from LLP_Act_2008.txt
+2026-06-13 18:07:49 | DEBUG    |   ✓ 1 chunks from LLP_Act_2008.txt (pymupdf)
+2026-06-13 18:07:49 | INFO     | 
+============================================================
+2026-06-13 18:07:49 | INFO     | CHUNKING COMPLETE — MCA
+2026-06-13 18:07:49 | INFO     |   ✓ PDFs processed:    2/2
+2026-06-13 18:07:49 | INFO     |   ✗ Failed/empty:      0
+2026-06-13 18:07:49 | INFO     |   📄 PyMuPDF used:     2 PDFs
+2026-06-13 18:07:49 | INFO     |   🔍 OCR used:         0 PDFs
+2026-06-13 18:07:49 | INFO     |   🧩 Total chunks:     3
+2026-06-13 18:07:49 | INFO     |   📏 Avg chunk size:   1299.3 chars
+2026-06-13 18:07:49 | INFO     |   💾 Saved to:         C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\mca\chunks.json
+2026-06-13 18:07:49 | INFO     | ============================================================
+2026-06-13 18:21:34 | INFO     | ============================================================
+2026-06-13 18:21:34 | INFO     | Vidi Chunker — Corpus: MCA
+2026-06-13 18:21:34 | INFO     | PDFs found:   2
+2026-06-13 18:21:34 | INFO     | Chunk size:   ~512 tokens (2048 chars)
+2026-06-13 18:21:34 | INFO     | Overlap:      ~50 tokens  (200 chars)
+2026-06-13 18:21:34 | INFO     | OCR fallback: enabled (threshold: 5 chars)
+2026-06-13 18:21:34 | INFO     | ============================================================
+2026-06-13 18:21:34 | INFO     | Loaded 2 entries from index.csv
+2026-06-13 18:21:34 | DEBUG    | Processing: CompaniesAct2013.txt
+2026-06-13 18:21:34 | DEBUG    |   PyMuPDF: 3134 chars extracted from CompaniesAct2013.txt
+2026-06-13 18:21:34 | DEBUG    |   ✓ 2 chunks from CompaniesAct2013.txt (pymupdf)
+2026-06-13 18:21:34 | DEBUG    | Processing: LLP_Act_2008.txt
+2026-06-13 18:21:34 | DEBUG    |   PyMuPDF: 734 chars extracted from LLP_Act_2008.txt
+2026-06-13 18:21:34 | DEBUG    |   ✓ 1 chunks from LLP_Act_2008.txt (pymupdf)
+2026-06-13 18:21:34 | INFO     | 
+============================================================
+2026-06-13 18:21:34 | INFO     | CHUNKING COMPLETE — MCA
+2026-06-13 18:21:34 | INFO     |   ✓ PDFs processed:    2/2
+2026-06-13 18:21:34 | INFO     |   ✗ Failed/empty:      0
+2026-06-13 18:21:34 | INFO     |   📄 PyMuPDF used:     2 PDFs
+2026-06-13 18:21:34 | INFO     |   🔍 OCR used:         0 PDFs
+2026-06-13 18:21:34 | INFO     |   🧩 Total chunks:     3
+2026-06-13 18:21:34 | INFO     |   📏 Avg chunk size:   1299.3 chars
+2026-06-13 18:21:34 | INFO     |   💾 Saved to:         C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\mca\chunks.json
+2026-06-13 18:21:34 | INFO     | ============================================================
+2026-06-13 19:08:00 | INFO     | ============================================================
+2026-06-13 19:08:00 | INFO     | Vidi Chunker — Corpus: MCA
+2026-06-13 19:08:00 | INFO     | PDFs found:   2
+2026-06-13 19:08:00 | INFO     | Chunk size:   ~512 tokens (2048 chars)
+2026-06-13 19:08:00 | INFO     | Overlap:      ~50 tokens  (200 chars)
+2026-06-13 19:08:00 | INFO     | OCR fallback: enabled (threshold: 5 chars)
+2026-06-13 19:08:00 | INFO     | ============================================================
+2026-06-13 19:08:00 | INFO     | Loaded 2 entries from index.csv
+2026-06-13 19:08:00 | DEBUG    | Processing: CompaniesAct2013.txt
+2026-06-13 19:08:00 | DEBUG    |   PyMuPDF: 3134 chars extracted from CompaniesAct2013.txt
+2026-06-13 19:08:00 | DEBUG    |   ✓ 2 chunks from CompaniesAct2013.txt (pymupdf)
+2026-06-13 19:08:00 | DEBUG    | Processing: LLP_Act_2008.txt
+2026-06-13 19:08:00 | DEBUG    |   PyMuPDF: 734 chars extracted from LLP_Act_2008.txt
+2026-06-13 19:08:00 | DEBUG    |   ✓ 1 chunks from LLP_Act_2008.txt (pymupdf)
+2026-06-13 19:08:00 | INFO     | 
+============================================================
+2026-06-13 19:08:00 | INFO     | CHUNKING COMPLETE — MCA
+2026-06-13 19:08:00 | INFO     |   ✓ PDFs processed:    2/2
+2026-06-13 19:08:00 | INFO     |   ✗ Failed/empty:      0
+2026-06-13 19:08:00 | INFO     |   📄 PyMuPDF used:     2 PDFs
+2026-06-13 19:08:00 | INFO     |   🔍 OCR used:         0 PDFs
+2026-06-13 19:08:00 | INFO     |   🧩 Total chunks:     3
+2026-06-13 19:08:00 | INFO     |   📏 Avg chunk size:   1299.3 chars
+2026-06-13 19:08:00 | INFO     |   💾 Saved to:         C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\data\mca\chunks.json
+2026-06-13 19:08:00 | INFO     | ============================================================

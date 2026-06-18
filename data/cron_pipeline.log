@@ -1,0 +1,56 @@
+2026-06-13 19:02:01.851 | INFO     | __main__:run_weekly_sync_sequence:64 - =================== CRON SYNC SEQUENCE INITIATED: 2026-06-13 19:02:01.851583 ===================
+2026-06-13 19:02:01.851 | INFO     | __main__:backup_current_chunks:28 - Initializing pre-sync data structure backup...
+2026-06-13 19:02:01.853 | INFO     | __main__:backup_current_chunks:35 - Successfully backed up active gst chunks.
+2026-06-13 19:02:01.876 | INFO     | __main__:backup_current_chunks:35 - Successfully backed up active rbi chunks.
+2026-06-13 19:02:01.878 | INFO     | __main__:backup_current_chunks:35 - Successfully backed up active sebi chunks.
+2026-06-13 19:02:01.881 | INFO     | __main__:backup_current_chunks:35 - Successfully backed up active mca chunks.
+2026-06-13 19:02:01.882 | INFO     | __main__:backup_current_chunks:35 - Successfully backed up active fema chunks.
+2026-06-13 19:02:01.882 | INFO     | __main__:execute_pipeline_step:44 - ▶️ Starting core module task: scraper.py
+2026-06-13 19:02:11.627 | INFO     | __main__:execute_pipeline_step:53 - ✅ Finished module task cleanly: scraper.py
+2026-06-13 19:02:11.627 | INFO     | __main__:execute_pipeline_step:44 - ▶️ Starting core module task: chunker.py
+2026-06-13 19:02:11.736 | ERROR    | __main__:execute_pipeline_step:56 - ❌ CRITICAL SUBSYSTEM FAULT running chunker.py!
+2026-06-13 19:02:11.737 | ERROR    | __main__:execute_pipeline_step:57 - STDOUT: 
+2026-06-13 19:02:11.737 | ERROR    | __main__:execute_pipeline_step:58 - STDERR: Traceback (most recent call last):
+  File "C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\pipeline\chunker.py", line 24, in <module>
+    import fitz  # PyMuPDF
+    ^^^^^^^^^^^
+ModuleNotFoundError: No module named 'fitz'
+
+2026-06-13 19:02:11.737 | CRITICAL | __main__:run_weekly_sync_sequence:81 - Pipeline flow terminated abruptly at layer: chunker.py
+2026-06-13 19:02:46.198 | INFO     | __main__:run_weekly_sync_sequence:64 - =================== CRON SYNC SEQUENCE INITIATED: 2026-06-13 19:02:46.198883 ===================
+2026-06-13 19:02:46.198 | INFO     | __main__:backup_current_chunks:28 - Initializing pre-sync data structure backup...
+2026-06-13 19:02:46.201 | INFO     | __main__:backup_current_chunks:35 - Successfully backed up active gst chunks.
+2026-06-13 19:02:46.217 | INFO     | __main__:backup_current_chunks:35 - Successfully backed up active rbi chunks.
+2026-06-13 19:02:46.220 | INFO     | __main__:backup_current_chunks:35 - Successfully backed up active sebi chunks.
+2026-06-13 19:02:46.221 | INFO     | __main__:backup_current_chunks:35 - Successfully backed up active mca chunks.
+2026-06-13 19:02:46.222 | INFO     | __main__:backup_current_chunks:35 - Successfully backed up active fema chunks.
+2026-06-13 19:02:46.222 | INFO     | __main__:execute_pipeline_step:44 - ▶️ Starting core module task: scraper.py
+2026-06-13 19:02:55.613 | INFO     | __main__:execute_pipeline_step:53 - ✅ Finished module task cleanly: scraper.py
+2026-06-13 19:02:55.613 | INFO     | __main__:execute_pipeline_step:44 - ▶️ Starting core module task: chunker.py
+2026-06-13 19:02:55.686 | ERROR    | __main__:execute_pipeline_step:56 - ❌ CRITICAL SUBSYSTEM FAULT running chunker.py!
+2026-06-13 19:02:55.687 | ERROR    | __main__:execute_pipeline_step:57 - STDOUT: 
+2026-06-13 19:02:55.687 | ERROR    | __main__:execute_pipeline_step:58 - STDERR: Traceback (most recent call last):
+  File "C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\pipeline\chunker.py", line 24, in <module>
+    import fitz  # PyMuPDF
+    ^^^^^^^^^^^
+ModuleNotFoundError: No module named 'fitz'
+
+2026-06-13 19:02:55.687 | CRITICAL | __main__:run_weekly_sync_sequence:81 - Pipeline flow terminated abruptly at layer: chunker.py
+2026-06-13 19:04:34.257 | INFO     | __main__:run_weekly_sync_sequence:65 - =================== CRON SYNC SEQUENCE INITIATED: 2026-06-13 19:04:34.257797 ===================
+2026-06-13 19:04:34.258 | INFO     | __main__:backup_current_chunks:29 - Initializing pre-sync data structure backup...
+2026-06-13 19:04:34.259 | INFO     | __main__:backup_current_chunks:36 - Successfully backed up active gst chunks.
+2026-06-13 19:04:34.283 | INFO     | __main__:backup_current_chunks:36 - Successfully backed up active rbi chunks.
+2026-06-13 19:04:34.286 | INFO     | __main__:backup_current_chunks:36 - Successfully backed up active sebi chunks.
+2026-06-13 19:04:34.288 | INFO     | __main__:backup_current_chunks:36 - Successfully backed up active mca chunks.
+2026-06-13 19:04:34.289 | INFO     | __main__:backup_current_chunks:36 - Successfully backed up active fema chunks.
+2026-06-13 19:04:34.289 | INFO     | __main__:execute_pipeline_step:45 - ▶️ Starting core module task: scraper.py
+2026-06-13 19:04:42.020 | INFO     | __main__:execute_pipeline_step:54 - ✅ Finished module task cleanly: scraper.py
+2026-06-13 19:04:42.020 | INFO     | __main__:execute_pipeline_step:45 - ▶️ Starting core module task: chunker.py
+2026-06-13 19:08:01.508 | INFO     | __main__:execute_pipeline_step:54 - ✅ Finished module task cleanly: chunker.py
+2026-06-13 19:08:01.509 | INFO     | __main__:execute_pipeline_step:45 - ▶️ Starting core module task: embedder.py
+2026-06-13 19:20:36.111 | INFO     | __main__:execute_pipeline_step:54 - ✅ Finished module task cleanly: embedder.py
+2026-06-13 19:20:36.112 | INFO     | __main__:execute_pipeline_step:45 - ▶️ Starting core module task: indexer.py
+2026-06-13 19:21:49.612 | INFO     | __main__:execute_pipeline_step:54 - ✅ Finished module task cleanly: indexer.py
+2026-06-13 19:21:49.613 | INFO     | __main__:execute_pipeline_step:45 - ▶️ Starting core module task: diff_detector.py
+2026-06-13 19:28:24.805 | INFO     | __main__:execute_pipeline_step:54 - ✅ Finished module task cleanly: diff_detector.py
+2026-06-13 19:28:24.805 | INFO     | __main__:run_weekly_sync_sequence:87 - =================== CRON SYNC COMPLETED SUCCESSFUL: Duration 0:23:50.547724 ===================
