@@ -1,30 +1,39 @@
+"""
+Vidi — backend/app/api/query.py
+Updated Day 21: Integrated Query Limit Enforcement Middleware
+"""
+
 import logging
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from typing import Dict, Any
 
-# Import Core RAG Pipeline Elements — Clean procedural matching
+# Import Core RAG Pipeline Elements
 from app.rag.classifier import classify_query  
 from app.rag.retriever import retrieve          
-from app.rag.reranker import rerank            # <-- Directly importing your plain function!
+from app.rag.reranker import rerank            
 from app.rag.generator import RAGGenerator
 
-# Import Security Guard Bypass Node
-from app.api.auth import get_current_user
+# Day 21 Updates: Grab optional user schema and the guard dependency
+from app.api.auth import get_optional_user
+from app.api.limits import check_query_limits
+from app.models.user import User
 
 logger = logging.getLogger("regiq.query")
 router = APIRouter()
 
-# Instantiate only the active generator class
+# Instantiate the active generator class
 generator = RAGGenerator()
 
-@router.post("/query")
+# Attach check_query_limits as a route-level dependency guard
+@router.post("/query", dependencies=[Depends(check_query_limits)])
 async def handle_compliance_query(
+    request: Request,  # Added to allow underlying context tracking access
     payload: Dict[str, Any], 
-    current_user: Dict = Depends(get_current_user)
+    current_user: Optional[User] = Depends(get_optional_user) # Swapped to optional mode
 ):
     """
-    Production RAG Pipeline Execution Loop:
-    Extracts query -> Runs keyword/embedding classifier -> Retrieves -> Reranks -> Generates via LLM.
+    Production RAG Pipeline Execution Loop with Rate Limiting:
+    Extracts query -> Checks Limits -> Runs Classifier -> Retrieves -> Reranks -> Generates.
     """
     user_query = payload.get("query")
     ui_mode = payload.get("mode", "plain")
@@ -40,18 +49,17 @@ async def handle_compliance_query(
         corpus_enum = classify_query(user_query, verbose=True)
         corpus_used = corpus_enum.value  # Extracts string name ("gst", "rbi", etc.)
         
-        logger.info(f"User [{current_user['id']}] query routed to corpus namespace: '{corpus_used}'")
+        # Log intelligently based on authentication state
+        user_log_id = current_user.user_id if current_user else "Anonymous Guest"
+        logger.info(f"User [{user_log_id}] query routed to corpus namespace: '{corpus_used}'")
 
         # Phase 2: Vector Search Retrieval
-        # This calls your native retrieve function and hands back a list of RetrievedChunk dataclasses!
         raw_chunks = retrieve(query=user_query, corpus=corpus_used)
 
         # Phase 3: Cross-Encoder Reranking
-        # Your rerank function naturally handles the list of RetrievedChunk objects and filters them
         reranked_chunks = rerank(query=user_query, chunks=raw_chunks, top_n=5)
 
-        # Transform your processed RetrievedChunk instances into the exact dictionary layout 
-        # that your modern RAGGenerator expects to construct system contexts
+        # Transform processed chunks into layout expected by RAGGenerator
         generator_input_chunks = []
         for chunk in reranked_chunks:
             generator_input_chunks.append({
@@ -65,14 +73,13 @@ async def handle_compliance_query(
                 }
             })
 
-        # Phase 4: Context-Grounded LLM Answer Generation (Gemini 2.5 Flash)
+        # Phase 4: Context-Grounded LLM Answer Generation (Gemini)
         generation_payload = await generator.generate_answer(
             query=user_query, 
             chunks=generator_input_chunks, 
             mode=ui_mode
         )
 
-        # Return comprehensive production payload wrapper back to the frontend drawer
         return {
             "answer": generation_payload["answer"],
             "citations": generation_payload["citations"],
