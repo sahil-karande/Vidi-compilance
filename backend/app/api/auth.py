@@ -237,16 +237,14 @@ def get_optional_user(
 ) -> Optional[User]:
     """
     Like get_current_user, but returns None instead of raising 401
-    if no token is provided. Used for endpoints accessible to Guests
-    (e.g. /query allows 3 free queries/day without login).
-
-    If a token IS provided but invalid/expired, this still raises 401 —
-    only a MISSING token is treated as "guest mode".
+    if no token is provided. Used for endpoints accessible to Guests.
     """
-    if credentials is None:
-        return None  # Guest — no token provided, that's allowed here
+    # FIX: Check if credentials object is missing OR if the token string inside it is empty
+    if credentials is None or not credentials.credentials:
+        return None  # Guest mode — safely allowed!
 
-    # Token was provided — it must be valid
+    # A token WAS provided, so it must be valid
+    return get_current_user(credentials)
     return get_current_user(credentials)
 
 
