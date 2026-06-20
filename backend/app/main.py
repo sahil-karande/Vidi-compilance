@@ -1,6 +1,6 @@
 """
 Vidi — backend/app/main.py
-Updated: Day 16 — Threads + Alerts routers added
+Updated: Day 20 — Integrated Asymmetric JWT Validation Endpoints
 """
 
 from fastapi import FastAPI, Request
@@ -9,8 +9,8 @@ from fastapi.responses import JSONResponse
 from datetime import datetime
 
 from app.config import settings
-from app.api import query
-from app.api import threads_api, alerts_api   # Day 16 (Updated names)
+from app.api import query, threads_api, alerts_api
+from app.api import me  # Day 20: Import the authenticated test endpoint
 
 # ─────────────────────────────────────────────────────────────
 #  FastAPI App
@@ -79,14 +79,14 @@ async def global_exception_handler(request: Request, exc: Exception):
 # ─────────────────────────────────────────────────────────────
 
 app.include_router(query.router)                                        # Day 14
+app.include_router(threads_api.router, prefix="/api", tags=["Threads"]) # Day 16
+app.include_router(alerts_api.router, prefix="/api", tags=["Alerts"])   # Day 16
 
-# Update your router inclusion at the bottom:
-app.include_router(threads_api.router, prefix="/api", tags=["Threads"])
-app.include_router(alerts_api.router, prefix="/api", tags=["Alerts"]) # Added the 's' here too
+# ── Day 20 Authentication Endpoints ───────────────────────────
+app.include_router(me.router, prefix="/api", tags=["Authentication Test"])
 
-# Day 20: from app.api import auth
-#         app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
 
+# Future Roadmap Markers:
 # Day 34: from app.api import scorecard
 #         app.include_router(scorecard.router, prefix="/api", tags=["Scorecard"])
 
