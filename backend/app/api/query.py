@@ -5,7 +5,7 @@ Updated Day 21: Integrated Query Limit Enforcement Middleware
 
 import logging
 from fastapi import APIRouter, Depends, HTTPException, status, Request
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 # Import Core RAG Pipeline Elements
 from app.rag.classifier import classify_query  
