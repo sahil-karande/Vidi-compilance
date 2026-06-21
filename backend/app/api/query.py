@@ -1,95 +1,139 @@
 """
 Vidi — backend/app/api/query.py
-Updated Day 21: Integrated Query Limit Enforcement Middleware
+Day 21 Task: /query endpoint with quota enforcement
+
+Full RAG pipeline + query limit enforcement:
+    1. Check quota (Guest ≤3/day, Free ≤20/day, Pro unlimited)
+    2. classifier → retriever → reranker → generator
+    3. Increment usage count on SUCCESS only (failed queries don't count)
+    4. Return answer + citations + remaining quota info
+
+Also exposes GET /api/usage for the frontend usage bar.
 """
 
-import logging
-from fastapi import APIRouter, Depends, HTTPException, status, Request
-from typing import Dict, Any, Optional
+from fastapi import APIRouter, Depends
+from loguru import logger
 
-# Import Core RAG Pipeline Elements
-from app.rag.classifier import classify_query  
-from app.rag.retriever import retrieve          
-from app.rag.reranker import rerank            
-from app.rag.generator import RAGGenerator
-
-# Day 21 Updates: Grab optional user schema and the guard dependency
 from app.api.auth import get_optional_user
-from app.api.limits import check_query_limits
-from app.models.user import User
+from app.models.user import User, UserRole, QueryRequest, QueryResponse
+from app.rag.usage import check_quota, increment_usage, get_usage_summary
+from app.rag.classifier import classify_query
+from app.rag.retriever import retrieve
+from app.rag.reranker import rerank
+from app.rag.generator import generate_answer
 
-logger = logging.getLogger("regiq.query")
 router = APIRouter()
 
-# Instantiate the active generator class
-generator = RAGGenerator()
 
-# Attach check_query_limits as a route-level dependency guard
-@router.post("/query", dependencies=[Depends(check_query_limits)])
-async def handle_compliance_query(
-    request: Request,  # Added to allow underlying context tracking access
-    payload: Dict[str, Any], 
-    current_user: Optional[User] = Depends(get_optional_user) # Swapped to optional mode
+# ─────────────────────────────────────────────────────────────
+#  Helper: resolve a user_id even for Guests
+#  Guests are tracked by a client-provided session id (or fallback)
+# ─────────────────────────────────────────────────────────────
+
+def resolve_user_identity(user: User | None, guest_session_id: str | None) -> tuple[str, UserRole]:
+    """
+    Returns (user_id_for_quota_tracking, role).
+
+    Authenticated users → use their real user_id + role from profile.
+    Guests → use the client-provided session id (e.g. browser fingerprint
+             or a UUID stored in localStorage) so quota tracking still works
+             without requiring login.
+    """
+    if user is not None:
+        return user.user_id, user.role
+
+    if guest_session_id:
+        # Prefix to avoid collision with real Supabase UUIDs
+        return f"guest_{guest_session_id}", UserRole.GUEST
+
+    # No session id provided at all — fall back to a generic bucket.
+    # Not ideal (shared quota across anonymous guests with no id),
+    # but prevents the endpoint from crashing.
+    return "guest_anonymous", UserRole.GUEST
+
+
+# ─────────────────────────────────────────────────────────────
+#  POST /api/query — Main RAG endpoint
+# ─────────────────────────────────────────────────────────────
+
+@router.post("/query", response_model=QueryResponse)
+def query(
+    request: QueryRequest,
+    guest_session_id: str | None = None,
+    user: User | None = Depends(get_optional_user),
 ):
     """
-    Production RAG Pipeline Execution Loop with Rate Limiting:
-    Extracts query -> Checks Limits -> Runs Classifier -> Retrieves -> Reranks -> Generates.
+    Ask a compliance question. Works for both authenticated users and Guests.
+
+    Flow:
+        1. Resolve identity (user_id + role)
+        2. Check quota — raises 429 if exceeded
+        3. Classify → retrieve → rerank → generate
+        4. Increment usage ONLY if answer was generated successfully
+        5. Return answer with citations
     """
-    user_query = payload.get("query")
-    ui_mode = payload.get("mode", "plain")
+    user_id, role = resolve_user_identity(user, guest_session_id)
 
-    if not user_query:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, 
-            detail="The request body must contain a non-empty 'query' string parameter."
-        )
+    # ── Step 1: Check quota BEFORE doing any expensive work ───
+    quota_info = check_quota(user_id, role)
+    logger.debug(
+        f"[query] {user_id} ({role.value}) — "
+        f"{quota_info['current_count']}/{quota_info['limit'] if quota_info['limit'] != -1 else '∞'} used"
+    )
 
-    try:
-        # Phase 1: Topic Classification (rbi, sebi, gst, mca, fema)
-        corpus_enum = classify_query(user_query, verbose=True)
-        corpus_used = corpus_enum.value  # Extracts string name ("gst", "rbi", etc.)
-        
-        # Log intelligently based on authentication state
-        user_log_id = current_user.user_id if current_user else "Anonymous Guest"
-        logger.info(f"User [{user_log_id}] query routed to corpus namespace: '{corpus_used}'")
+    # ── Step 2: Classify corpus (unless user forced one) ──────
+    corpus = request.corpus if request.corpus else classify_query(request.query)
 
-        # Phase 2: Vector Search Retrieval
-        raw_chunks = retrieve(query=user_query, corpus=corpus_used)
+    # ── Step 3: Retrieve + Rerank ──────────────────────────────
+    candidates = retrieve(request.query, corpus, top_k=10)
+    chunks = rerank(request.query, candidates, top_n=5) if candidates else []
 
-        # Phase 3: Cross-Encoder Reranking
-        reranked_chunks = rerank(query=user_query, chunks=raw_chunks, top_n=5)
+    # ── Step 4: Generate answer ────────────────────────────────
+    result = generate_answer(request.query, chunks, request.mode, corpus)
 
-        # Transform processed chunks into layout expected by RAGGenerator
-        generator_input_chunks = []
-        for chunk in reranked_chunks:
-            generator_input_chunks.append({
-                "text": chunk.text,
-                "metadata": {
-                    "source": chunk.filename or "Official Portal Documents",
-                    "circular_no": chunk.circular_no,
-                    "date": chunk.date,
-                    "section": chunk.title or "N/A",
-                    "url": chunk.url or "#"
-                }
-            })
+    # ── Step 5: Increment usage (count successful AND not_found —
+    #            both consume quota since both used an LLM call) ──
+    new_count = increment_usage(user_id)
 
-        # Phase 4: Context-Grounded LLM Answer Generation (Gemini)
-        generation_payload = await generator.generate_answer(
-            query=user_query, 
-            chunks=generator_input_chunks, 
-            mode=ui_mode
-        )
+    # ── Step 6: Build response ─────────────────────────────────
+    remaining = (
+        -1 if quota_info["limit"] == -1
+        else max(0, quota_info["limit"] - new_count)
+    )
 
-        return {
-            "answer": generation_payload["answer"],
-            "citations": generation_payload["citations"],
-            "mode": generation_payload["mode"],
-            "corpus_used": corpus_used
+    return QueryResponse(
+        answer=result["answer"],
+        citations=result["citations"],
+        mode=request.mode,
+        corpus_used=corpus,
+        thread_id=request.thread_id or "temp-thread-id",  # real threading wired Day 23
+        confidence=result["confidence"],
+        response_time_ms=result["response_ms"],
+    )
+
+
+# ─────────────────────────────────────────────────────────────
+#  GET /api/usage — Frontend usage bar data source
+# ─────────────────────────────────────────────────────────────
+
+@router.get("/usage")
+def get_usage(
+    guest_session_id: str | None = None,
+    user: User | None = Depends(get_optional_user),
+):
+    """
+    Returns today's usage summary for the current user/guest.
+    Used by useQueryLimit.js to render the usage bar.
+
+    Example response:
+        {
+            "role": "free",
+            "limit": 20,
+            "used": 7,
+            "remaining": 13,
+            "unlimited": false,
+            "percent_used": 35
         }
-
-    except Exception as e:
-        logger.error(f"Critical execution error during RAG query pipeline loop: {str(e)}", exc_info=True)
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="A technical interruption occurred inside the regulatory analysis pipeline."
-        )
+    """
+    user_id, role = resolve_user_identity(user, guest_session_id)
+    return get_usage_summary(user_id, role)
