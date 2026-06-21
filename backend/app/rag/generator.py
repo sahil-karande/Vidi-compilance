@@ -187,3 +187,8 @@ class RAGGenerator:
                 "citations": citations,
                 "mode": mode
             }
+
+
+# Singleton instance initialization to allow module-level imports
+_generator_instance = RAGGenerator()
+generate_answer = _generator_instance.generate_answer

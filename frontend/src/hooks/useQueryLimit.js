@@ -83,7 +83,7 @@ export function useQueryLimit() {
   // Fetch on mount and whenever auth state changes
   useEffect(() => {
     fetchUsage();
-  }, [isAuthenticated]);
+  }, [fetchUsage]);
 
   // Helper: should we show an "upgrade" prompt?
   const isNearLimit = !usage.unlimited && usage.percent_used >= 80;
