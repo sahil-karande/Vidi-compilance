@@ -32,7 +32,7 @@ function getOrCreateGuestSessionId() {
 }
 
 export function useQueryLimit() {
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const [usage, setUsage] = useState({
     role: 'guest',
