@@ -1,7 +1,5 @@
-/* Inject Core Tailwind CSS Processing Layers */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Native Tailwind CSS v4 Ingestion Layout Directive */
+@import "tailwindcss";
 
 :root {
   --text: #6b6375;
