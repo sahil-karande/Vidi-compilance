@@ -1,6 +1,6 @@
 """
 Vidi — backend/app/main.py
-Updated: Day 20 — Integrated Asymmetric JWT Validation Endpoints
+Updated: Day 21 — Query limit enforcement wired in
 """
 
 from fastapi import FastAPI, Request
@@ -10,7 +10,7 @@ from datetime import datetime
 
 from app.config import settings
 from app.api import query, threads_api, alerts_api
-from app.api import me  # Day 20: Import the authenticated test endpoint
+from app.api import me  # Day 20: authenticated test endpoint
 
 # ─────────────────────────────────────────────────────────────
 #  FastAPI App
@@ -78,7 +78,10 @@ async def global_exception_handler(request: Request, exc: Exception):
 #  Routers
 # ─────────────────────────────────────────────────────────────
 
-app.include_router(query.router)                                        # Day 14
+# Day 21: query.router now has prefix="/api" baked into its own
+# route paths internally is NOT the pattern used here — instead
+# we add the prefix at include_router, matching threads/alerts style.
+app.include_router(query.router, prefix="/api", tags=["Query"])         # Day 21 (was Day 14, prefix added)
 app.include_router(threads_api.router, prefix="/api", tags=["Threads"]) # Day 16
 app.include_router(alerts_api.router, prefix="/api", tags=["Alerts"])   # Day 16
 
