@@ -57,3 +57,12 @@ class Settings(BaseSettings):
 
 # Singleton settings instance — imported across the app
 settings = Settings()
+
+# Singleton settings instance — imported across the app
+settings = Settings()
+
+# ── Instantiate Supabase Client Singleton (Day 23) ──────────────────────
+from supabase import create_client
+
+# This reads directly from your Pydantic settings instance dynamically
+supabase = create_client(settings.supabase_url, settings.supabase_anon_key)

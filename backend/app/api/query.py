@@ -24,8 +24,8 @@ from app.rag.retriever import retrieve
 from app.rag.reranker import rerank
 from app.rag.generator import generate_answer
 
-# Import your configured live Supabase client wrapper
-from app.lib.supabaseClient import supabase
+# Import your cleanly configured live Supabase client instance from config
+from app.config import supabase
 
 router = APIRouter()
 
@@ -67,9 +67,6 @@ def query(
         # Generate a short default name based on the query text
         thread_title = request.query[:40] + "..." if len(request.query) > 40 else request.query
         try:
-            # Note: For guests, user_id might be 'guest_sessionid' string. 
-            # If your Supabase profile user_id column has a strict foreign key UUID constraint, 
-            # ensure your database structure handles guest threads or leave user_id as NULL for guests.
             db_user_id = user_id if role != UserRole.GUEST else None
             
             thread_data = supabase.table("threads").insert({
@@ -97,8 +94,6 @@ def query(
         }).execute()
     except Exception as e:
         logger.error(f"[Database Error] Failed to write user message row: {str(e)}")
-        # We don't crash the whole pipeline if just logging the user message trace hits an error, 
-        # but tracking is preferred.
 
     # ── Step 4: Classify corpus (unless user forced one) ──────
     corpus = request.corpus if request.corpus else classify_query(request.query)
@@ -142,7 +137,7 @@ def query(
         citations=result["citations"],
         mode=request.mode,
         corpus_used=corpus,
-        thread_id=thread_id,  # Returning the real validated or new thread_id back to UI
+        thread_id=thread_id,
         confidence=result["confidence"],
         response_time_ms=result["response_ms"],
     )
