@@ -33,6 +33,7 @@ api.interceptors.request.use(
 );
 
 // Unified API Wrapper Methods for your Chat Frontend Components
+// Unified API Wrapper Methods for your Chat Frontend Components
 export const chatAPI = {
   /**
    * Sends user query along with targeted context variables
@@ -42,7 +43,7 @@ export const chatAPI = {
    */
   sendQuery: async (text, threadId = null, mode = 'plain') => {
     const response = await api.post('/api/query', {
-      text,
+      query: text, // <-- CHANGED FROM 'text: text' TO 'query: text'
       thread_id: threadId,
       mode,
     });
@@ -53,8 +54,6 @@ export const chatAPI = {
    * Fetches all persistent threads for the active sidebar navigation
    */
   getThreads: async () => {
-    // If you build dedicated GET endpoints on FastAPI, point them here.
-    // Alternatively, you can pull directly via Supabase client depending on preference.
     const response = await api.get('/api/threads'); 
     return response.data;
   },
@@ -67,5 +66,3 @@ export const chatAPI = {
     return response.data;
   }
 };
-
-export default api;
