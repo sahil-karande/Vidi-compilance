@@ -1,16 +1,12 @@
 /**
  * Vidi — frontend/src/pages/TestAuth.jsx
  * Day 19 Task: Browser test page for Google OAuth flow
- *
- * TEMPORARY test page — verifies useAuth.js works end-to-end.
- * Add a route for this in App.jsx: <Route path="/test-auth" element={<TestAuth />} />
- * Visit http://localhost:5173/test-auth to test login.
- *
- * Delete this file once Login.jsx (Day 22) replaces it.
+ * Day 23 Patch: Added explicit manual navigation bridge to bypass local caching loops
  */
 
 import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
+import { useNavigate } from 'react-router-dom'; // Clean import for routing hook
 
 export default function TestAuth() {
   const {
@@ -24,6 +20,7 @@ export default function TestAuth() {
     signOut,
   } = useAuth();
 
+  const navigate = useNavigate(); // Initialize the internal redirect mechanism
   const [email, setEmail] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [error, setError] = useState(null);
@@ -32,7 +29,6 @@ export default function TestAuth() {
     setError(null);
     try {
       await signInWithGoogle();
-      // Browser redirects to Google — this code won't continue here
     } catch (err) {
       setError(err.message);
     }
@@ -82,7 +78,26 @@ export default function TestAuth() {
   profile: profile,
 }, null, 2)}
           </pre>
-          <button onClick={handleSignOut} style={{ padding: '8px 16px', marginTop: 12 }}>
+
+          {/* ── Day 23 Navigation Bridge Button ── */}
+          <button 
+            onClick={() => navigate('/dashboard')} 
+            style={{ 
+              padding: '8px 16px', 
+              marginTop: 12, 
+              marginRight: 10,
+              background: '#10b981', 
+              color: 'white', 
+              border: 'none', 
+              borderRadius: 6, 
+              cursor: 'pointer',
+              fontWeight: 'bold'
+            }}
+          >
+            Go to Chat Dashboard
+          </button>
+
+          <button onClick={handleSignOut} style={{ padding: '8px 16px', marginTop: 12, cursor: 'pointer' }}>
             Sign Out
           </button>
         </div>
