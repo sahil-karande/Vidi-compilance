@@ -25,7 +25,7 @@ from app.rag.reranker import rerank
 from app.rag.generator import generate_answer
 
 # Import your configured live Supabase client wrapper
-from lib.supabaseClient import supabase 
+from app.lib.supabaseClient import supabase
 
 router = APIRouter()
 
