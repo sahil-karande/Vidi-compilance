@@ -1,123 +1,95 @@
-/**
- * Vidi — frontend/src/pages/TestAuth.jsx
- * Day 19 Task: Browser test page for Google OAuth flow
- */
-
 import { useState } from 'react';
+import { chatAPI } from '../lib/api';
 import { useAuth } from '../hooks/useAuth';
 
-export default function TestAuth() {
-  const {
-    user,
-    profile,
-    loading,
-    isAuthenticated,
-    role,
-    signInWithGoogle,
-    signInWithOtp,
-    signOut,
-  } = useAuth();
+export default function Chat() {
+  const { signOut } = useAuth();
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState('');
+  const [activeThreadId, setActiveThreadId] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const [email, setEmail] = useState('');
-  const [otpSent, setOtpSent] = useState(false);
-  const [error, setError] = useState(null);
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
 
-  const handleGoogleSignIn = async () => {
-    setError(null);
+    const userPrompt = input.trim();
+    setInput('');
+    setIsLoading(true);
+
+    setMessages((prev) => [...prev, { role: 'user', content: userPrompt }]);
+
     try {
-      await signInWithGoogle();
+      const data = await chatAPI.sendQuery(userPrompt, activeThreadId, 'plain');
+
+      if (!activeThreadId && data.thread_id) {
+        setActiveThreadId(data.thread_id);
+      }
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: 'assistant',
+          content: data.answer,
+        },
+      ]);
     } catch (err) {
-      setError(err.message);
+      console.error(err);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: 'assistant',
+          content: 'Error connecting to backend. Please check your FastAPI server.',
+        },
+      ]);
+    } finally {
+      setIsLoading(false);
     }
   };
-
-  const handleOtpSignIn = async () => {
-    setError(null);
-    try {
-      await signInWithOtp(email);
-      setOtpSent(true);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  const handleSignOut = async () => {
-    setError(null);
-    try {
-      await signOut();
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  if (loading) {
-    return <div style={{ padding: 40, fontFamily: 'sans-serif' }}>Loading session...</div>;
-  }
 
   return (
-    <div style={{ padding: 40, fontFamily: 'sans-serif', maxWidth: 500 }}>
-      <h1>Vidi — Day 19 Auth Test</h1>
-
-      {error && (
-        <div style={{ background: '#fee', color: '#c00', padding: 12, borderRadius: 6, marginBottom: 16 }}>
-          ⚠ {error}
+    <div style={{ minHeight: '100vh', background: '#020617', color: '#f8fafc', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px', fontFamily: 'sans-serif' }}>
+      <div style={{ width: '100%', maxWidth: '768px', display: 'flex', flexDirection: 'column', height: '80vh', background: 'rgba(30, 41, 59, 0.4)', border: '1px solid rgba(51, 65, 85, 0.8)', borderRadius: '16px', overflow: 'hidden' }}>
+        
+        {/* Header */}
+        <div style={{ padding: '16px', background: 'rgba(30, 41, 59, 0.6)', borderBottom: '1px solid rgba(51, 65, 85, 0.8)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <h2 style={{ margin: 0, fontSize: '18px', color: '#818cf8' }}>RegIQ Real-Time RAG Stream</h2>
+          <button onClick={() => signOut()} style={{ background: '#ef4444', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}>Sign Out</button>
         </div>
-      )}
 
-      {isAuthenticated ? (
-        <div>
-          <h2>✅ Signed In</h2>
-          <pre style={{ background: '#f5f5f5', padding: 12, borderRadius: 6, fontSize: 12 }}>
-{JSON.stringify({
-  user_id: user?.id,
-  email: user?.email,
-  role: role,
-  profile: profile,
-}, null, 2)}
-          </pre>
-          <button onClick={handleSignOut} style={{ padding: '8px 16px', marginTop: 12 }}>
-            Sign Out
-          </button>
-        </div>
-      ) : (
-        <div>
-          <h2>Not signed in</h2>
-          <button
-            onClick={handleGoogleSignIn}
-            style={{
-              padding: '10px 20px',
-              background: '#4285F4',
-              color: 'white',
-              border: 'none',
-              borderRadius: 6,
-              cursor: 'pointer',
-              marginBottom: 20,
-            }}
-          >
-            Sign in with Google
-          </button>
-
-          <hr style={{ margin: '20px 0' }} />
-
-          <h3>Or use Email OTP:</h3>
-          {!otpSent ? (
-            <div>
-              <input
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                style={{ padding: 8, width: '100%', marginBottom: 8 }}
-              />
-              <button onClick={handleOtpSignIn} style={{ padding: '8px 16px' }}>
-                Send Magic Link
-              </button>
+        {/* Messages Container */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {messages.length === 0 ? (
+            <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#64748b', textAlign: 'center' }}>
+              <p>Send a prompt below to test your database loops.</p>
             </div>
           ) : (
-            <p>✓ Magic link sent to {email}. Check your inbox!</p>
+            messages.map((msg, index) => (
+              <div key={index} style={{ display: 'flex', flexDirection: 'column', alignItems: msg.role === 'user' ? 'flex-end' : 'flex-start' }}>
+                <div style={{ padding: '16px', borderRadius: '12px', maxWidth: '512px', fontSize: '14px', background: msg.role === 'user' ? '#4f46e5' : 'rgba(30, 41, 59, 0.9)', color: '#fff', border: msg.role === 'user' ? 'none' : '1px solid rgba(51, 65, 85, 0.8)' }}>
+                  <p style={{ margin: 0 }}>{msg.content}</p>
+                </div>
+              </div>
+            ))
           )}
         </div>
-      )}
+
+        {/* Input Form */}
+        <form onSubmit={handleSendMessage} style={{ padding: '16px', background: 'rgba(30, 41, 59, 0.4)', borderTop: '1px solid rgba(51, 65, 85, 0.8)', display: 'flex', gap: '12px' }}>
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Enter prompt..."
+            style={{ flex: 1, background: '#020617', border: '1px solid #334155', borderRadius: '12px', padding: '12px 16px', color: '#f8fafc', fontSize: '14px', outline: 'none' }}
+            disabled={isLoading}
+          />
+          <button type="submit" disabled={isLoading || !input.trim()} style={{ background: '#4f46e5', color: 'white', border: 'none', borderRadius: '12px', padding: '0 20px', fontSize: '14px', cursor: 'pointer', fontWeight: 'bold' }}>
+            {isLoading ? 'Processing...' : 'Send'}
+          </button>
+        </form>
+
+      </div>
     </div>
   );
 }

@@ -7,7 +7,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './hooks/useAuth.jsx'; 
 import Login from './pages/Login';
 import { AuthGuard } from './components/AuthGuard';
-import Chat from './pages/Chat'; // Your real Chat component file
+import Chat from './pages/Chat'; 
+import TestAuth from './pages/TestAuth'; // Import your custom test file
 
 export default function App() {
   return (
@@ -25,8 +26,17 @@ export default function App() {
             path="/dashboard" 
             element={
               <AuthGuard>
-                {/* We completely swapped DashboardPlaceholder out for your real Chat UI here */}
                 <Chat />
+              </AuthGuard>
+            } 
+          />
+
+          {/* Explicitly Register your Test Auth Route to prevent redirect loops */}
+          <Route 
+            path="/test-auth" 
+            element={
+              <AuthGuard>
+                <TestAuth />
               </AuthGuard>
             } 
           />
