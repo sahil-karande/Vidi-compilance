@@ -1,4 +1,4 @@
-import React from 'react';
+
 
 export default function ChatThread({ messages }) {
   // Format timestamps neatly
@@ -6,6 +6,7 @@ export default function ChatThread({ messages }) {
     try {
       const date = dateString ? new Date(dateString) : new Date();
       return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    // eslint-disable-next-line no-unused-vars
     } catch (e) {
       return '';
     }
