@@ -258,7 +258,7 @@ export default function Chat() {
             </button>
           </form>
 
-          {/* New Smooth Slide-out Context Drawer */}
+          {/* Smooth Side-out Context Drawer Component overlay */}
           <CitationDrawer 
             citation={mapCitationToCardProps(activeCitation)} 
             onClose={() => setActiveCitation(null)} 
