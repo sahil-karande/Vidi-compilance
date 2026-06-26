@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { chatAPI } from '../lib/api';
 import { useAuth } from '../hooks/useAuth';
 import ChatThread from '../components/ChatThread';
+import { CitationDrawer } from '../components/CitationCard';
 
 export default function Chat() {
   const { signOut } = useAuth();
@@ -15,9 +16,6 @@ export default function Chat() {
   const [activeCitation, setActiveCitation] = useState(null);
 
   const messagesEndRef = useRef(null);
-
-  // Core background fetching engine
-  
 
   const handleSelectThread = async (threadId) => {
     if (!threadId || isLoading) return;
@@ -95,7 +93,6 @@ export default function Chat() {
 
       if (!activeThreadId && data.thread_id) {
         setActiveThreadId(data.thread_id);
-        // Refresh sidebar background silently without causing UI flashes
         const updatedThreads = await chatAPI.getThreads();
         setThreads(updatedThreads || []);
       }
@@ -122,6 +119,19 @@ export default function Chat() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Adapter function mapping metadata structure from internal engine formats
+  const mapCitationToCardProps = (cite) => {
+    if (!cite) return null;
+    return {
+      authority: cite.source || 'Regulatory Body',
+      circular_no: cite.circular_no || 'Document Context',
+      date: cite.date || 'N/A',
+      section: cite.section || '',
+      text: cite.excerpt || '',
+      url: cite.url || ''
+    };
   };
 
   return (
@@ -248,69 +258,13 @@ export default function Chat() {
             </button>
           </form>
 
-          {/* Slide-out Citation Inspector Side Drawer */}
-          <div style={{ position: 'absolute', top: 0, right: 0, width: '320px', height: '100%', background: '#0b1329', borderLeft: '1px solid rgba(129, 140, 248, 0.3)', transform: activeCitation ? 'translateX(0)' : 'translateX(100%)', transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)', zIndex: 50, padding: '24px', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', boxShadow: '-10px 0 30px rgba(0,0,0,0.5)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '1px solid #1e293b', paddingBottom: '12px' }}>
-              <h3 style={{ margin: 0, fontSize: '15px', color: '#818cf8', fontWeight: '600' }}>Citation Inspector</h3>
-              <button 
-                onClick={() => setActiveCitation(null)}
-                style={{ background: 'transparent', border: 'none', color: '#64748b', fontSize: '18px', cursor: 'pointer' }}
-              >
-                ✕
-              </button>
-            </div>
-
-            {activeCitation && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', height: '100%', overflowY: 'auto', textAlign: 'left' }}>
-                <div>
-                  <div style={{ fontSize: '11px', color: '#475569', fontWeight: 'bold', textTransform: 'uppercase' }}>Issuing Authority</div>
-                  <div style={{ fontSize: '14px', color: '#f8fafc', marginTop: '2px', fontWeight: '500' }}>{activeCitation.source || 'N/A'}</div>
-                </div>
-
-                <div>
-                  <div style={{ fontSize: '11px', color: '#475569', fontWeight: 'bold', textTransform: 'uppercase' }}>Reference Number</div>
-                  <div style={{ fontSize: '13px', color: '#c7d2fe', marginTop: '2px', fontFamily: 'monospace' }}>{activeCitation.circular_no || 'N/A'}</div>
-                </div>
-
-                {activeCitation.date && (
-                  <div>
-                    <div style={{ fontSize: '11px', color: '#475569', fontWeight: 'bold', textTransform: 'uppercase' }}>Effective Date</div>
-                    <div style={{ fontSize: '13px', color: '#e2e8f0', marginTop: '2px' }}>{activeCitation.date}</div>
-                  </div>
-                )}
-
-                {activeCitation.section && (
-                  <div>
-                    <div style={{ fontSize: '11px', color: '#475569', fontWeight: 'bold', textTransform: 'uppercase' }}>Statute Section</div>
-                    <div style={{ fontSize: '13px', color: '#94a3b8', marginTop: '2px' }}>{activeCitation.section}</div>
-                  </div>
-                )}
-
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: '11px', color: '#475569', fontWeight: 'bold', textTransform: 'uppercase', marginBottom: '4px' }}>Context Excerpt</div>
-                  <div style={{ fontSize: '12px', color: '#94a3b8', background: '#020617', padding: '12px', borderRadius: '8px', border: '1px solid #1e293b', lineHeight: '1.5', maxHeight: '180px', overflowY: 'auto', fontStyle: 'italic' }}>
-                    "{activeCitation.excerpt || 'Context document match extracted by vector pipeline.'}"
-                  </div>
-                </div>
-
-                {activeCitation.url && (
-                  <a 
-                    href={activeCitation.url} 
-                    target="_blank" 
-                    rel="noreferrer"
-                    style={{ textAlign: 'center', background: '#1e1b4b', color: '#a5b4fc', border: '1px solid #312e81', borderRadius: '8px', padding: '10px', fontSize: '13px', fontWeight: '600', textDecoration: 'none', transition: 'background 0.2s', marginTop: 'auto' }}
-                    onMouseEnter={(e) => e.target.style.background = '#312e81'}
-                    onMouseLeave={(e) => e.target.style.background = '#1e1b4b'}
-                  >
-                    🔗 View Source Gazette
-                  </a>
-                )}
-              </div>
-            )}
-          </div>
+          {/* New Smooth Slide-out Context Drawer */}
+          <CitationDrawer 
+            citation={mapCitationToCardProps(activeCitation)} 
+            onClose={() => setActiveCitation(null)} 
+          />
 
         </div>
-
       </div>
     </div>
   );
