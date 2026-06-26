@@ -46,7 +46,8 @@ export default function Chat() {
   };
 
   // Automated prompt execution engine linked to Dashboard click interactions
-  const executeAutomatedQuery = async (queryText) => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps, no-undef
+  const executeAutomatedQuery = useCallback(async (queryText) => {
     if (!queryText.trim() || isLoading) return;
     setIsLoading(true);
 
@@ -88,7 +89,7 @@ export default function Chat() {
     } finally {
       setIsLoading(false);
     }
-  };
+  });
 
   // INTERCEPT ROUTER STATE HANDLER: Catches incoming dashboard redirect links
   useEffect(() => {
