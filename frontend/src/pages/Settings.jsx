@@ -2,12 +2,11 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import PricingPage from '../components/PricingPage';
 
-
 export default function Settings() {
   const { signOut, user } = useAuth();
   const [activeTab, setActiveTab] = useState('profile');
 
-  // 1. Profile Tab State Matrix
+  // Profile Tab State Matrix
   const [profileForm, setProfileForm] = useState({
     name: user?.name || 'Sahil Karande',
     businessType: 'SME / Retail Services',
@@ -15,7 +14,7 @@ export default function Settings() {
     turnover: '₹50 Lakhs - ₹2 Crores'
   });
 
-  // 2. Alerts Tab Topic Subscription Toggles
+  // Alerts Tab Topic Subscription Toggles
   const [alertSubscriptions, setAlertSubscriptions] = useState({
     gst_revisions: true,
     rbi_notifications: true,
@@ -26,6 +25,7 @@ export default function Settings() {
   // Load user data dynamically if attached to auth profiles database schema
   useEffect(() => {
     if (user) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setProfileForm((prev) => ({
         ...prev,
         name: user.name || prev.name,
@@ -236,6 +236,7 @@ export default function Settings() {
                 <h3 style={{ margin: '0 0 6px 0', fontSize: '18px', color: '#ffffff' }}>Terminate active sessions</h3>
                 <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: '#64748b' }}>Logs your identity credentials safely out of this client framework workspace node.</p>
                 <button 
+                  type="button"
                   onClick={signOut}
                   style={{ background: 'transparent', color: '#f8fafc', border: '1px solid #334155', borderRadius: '8px', padding: '10px 20px', fontSize: '13px', fontWeight: '600', cursor: 'pointer', transition: 'border-color 0.2s' }}
                   onMouseEnter={(e) => e.currentTarget.style.borderColor = '#ef4444'}
@@ -249,12 +250,11 @@ export default function Settings() {
                 <h3 style={{ margin: '0 0 6px 0', fontSize: '18px', color: '#ef4444' }}>Danger Zone Layout</h3>
                 <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: '#64748b' }}>Permanently purges historical references, custom datasets, billing leases, and account profile schemas completely.</p>
                 <button 
+                  type="button"
                   onClick={handleDeleteAccount}
                   style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.4)', borderRadius: '8px', padding: '10px 20px', fontSize: '13px', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s' }}
-                  // eslint-disable-next-line no-undef
-                  onMouseEnter={(e) => e.currentTarget.style.background = '#ef4444', e.currentTarget.style.color = '#fff'}
-                  // eslint-disable-next-line no-undef
-                  onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)', e.currentTarget.style.color = '#ef4444'}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = '#ef4444'; e.currentTarget.style.color = '#fff'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'; e.currentTarget.style.color = '#ef4444'; }}
                 >
                   Delete Account Permanently
                 </button>
