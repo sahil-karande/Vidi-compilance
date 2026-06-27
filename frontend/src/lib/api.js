@@ -73,6 +73,27 @@ export const chatAPI = {
     return response.data;
   },
 
+  // --- DAY 29 TASK: THREAD MANAGEMENT LAYERS ---
+  
+  /**
+   * Initializes a dedicated thread log with specified corpus configurations
+   */
+  createThread: async (title, corpusTags = []) => {
+    const response = await api.post('/api/threads', {
+      title,
+      corpus_tags: corpusTags,
+    });
+    return response.data;
+  },
+
+  /**
+   * Permanently clears out a compliance thread from user workspace history
+   */
+  deleteThread: async (threadId) => {
+    const response = await api.delete(`/api/threads/${threadId}`);
+    return response.data;
+  },
+
   // --- WEEK 7 COMPLIANCE DASHBOARD INTEGRATION METHODS ---
   
   /**
