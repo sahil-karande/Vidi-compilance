@@ -5,7 +5,7 @@ Day 29 Task: Production Supabase Thread Persistence Router
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List
-from postgrest.exceptions import APIError
+from postgrest.exceptions import APIError # type: ignore
 
 from app.models.thread import Thread, ThreadCreate, ThreadSummary
 from app.models.user import User
