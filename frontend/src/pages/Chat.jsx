@@ -255,7 +255,8 @@ export default function Chat() {
             ) : (
               <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
                 {/* Note: In Day 29, update ChatThread interior message wrappers to wrap with <AnswerText /> for style changes */}
-                <ChatThread messages={messages} onSelectCitation={(cite) => setActiveCitation(cite)} />
+                <ChatThread messages={messages} mode={ragMode} onSelectCitation={(cite) => setActiveCitation(cite)} 
+/>
               </div>
             )}
 
