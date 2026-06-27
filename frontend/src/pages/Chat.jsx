@@ -50,6 +50,25 @@ export default function Chat() {
     setLastQuery('');
   };
 
+  // DAY 29 TASK: Handle deleting specific context thread logs from Supabase
+  const handleDeleteThread = async (e, threadId) => {
+    e.stopPropagation(); // Avoid triggering thread selection on click
+    if (window.confirm('Are you sure you want to permanently delete this compliance session log?')) {
+      try {
+        await chatAPI.deleteThread(threadId);
+        setThreads((prev) => prev.filter((t) => t.id !== threadId));
+        
+        // If current thread is the one deleted, bounce user into a fresh session context
+        if (activeThreadId === threadId) {
+          handleStartNewChat();
+        }
+      } catch (err) {
+        console.error('Failed to remove compliance session:', err);
+        alert('Could not delete session log. Please check your network connection.');
+      }
+    }
+  };
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -71,10 +90,12 @@ export default function Chat() {
     try {
       const data = await chatAPI.sendQuery(queryText, activeThreadId, targetMode);
 
+      // Refresh threads to dynamically surface title auto-generation from first query
+      const updatedThreads = await chatAPI.getThreads();
+      setThreads(updatedThreads || []);
+
       if (!activeThreadId && data.thread_id) {
         setActiveThreadId(data.thread_id);
-        const updatedThreads = await chatAPI.getThreads();
-        setThreads(updatedThreads || []);
       }
 
       setMessages((prev) => [
@@ -177,6 +198,38 @@ export default function Chat() {
     };
   };
 
+  // DAY 29 TASK HELPER: Group active sessions by primary corporate/regulatory topic clusters
+  const getGroupedThreads = () => {
+    const groups = {
+      'GST Compliance': [],
+      'RBI Framework': [],
+      'SEBI Directives': [],
+      'MCA & Corporate Acts': [],
+      'General Compliance': []
+    };
+
+    threads.forEach((thread) => {
+      const tags = Array.isArray(thread.corpus_tags) ? thread.corpus_tags.map(t => t.toUpperCase()) : [];
+      
+      if (tags.includes('GST')) {
+        groups['GST Compliance'].push(thread);
+      } else if (tags.includes('RBI') || tags.includes('FEMA')) {
+        groups['RBI Framework'].push(thread);
+      } else if (tags.includes('SEBI')) {
+        groups['SEBI Directives'].push(thread);
+      } else if (tags.includes('MCA')) {
+        groups['MCA & Corporate Acts'].push(thread);
+      } else {
+        groups['General Compliance'].push(thread);
+      }
+    });
+
+    // Remove empty categories to keep the workspace sleek
+    return Object.fromEntries(Object.entries(groups).filter(([, items]) => items.length > 0));
+  };
+
+  const groupedThreads = getGroupedThreads();
+
   return (
     <div style={{ minHeight: '100vh', background: '#020617', color: '#f8fafc', display: 'flex', padding: '24px', boxSizing: 'border-box', fontFamily: 'sans-serif', alignItems: 'center', justifyContent: 'center' }}>
       
@@ -184,7 +237,7 @@ export default function Chat() {
       <div style={{ display: 'flex', width: '100%', maxWidth: '1200px', height: '85vh', background: 'rgba(15, 23, 42, 0.4)', border: '1px solid rgba(51, 65, 85, 0.6)', borderRadius: '16px', overflow: 'hidden', backdropFilter: 'blur(12px)', position: 'relative' }}>
         
         {/* Left Sidebar */}
-        <div style={{ width: '260px', minWidth: '260px', background: 'rgba(15, 23, 42, 0.8)', borderRight: '1px solid rgba(51, 65, 85, 0.6)', display: 'flex', flexDirection: 'column', padding: '16px', boxSizing: 'border-box' }}>
+        <div style={{ width: '280px', minWidth: '280px', background: 'rgba(15, 23, 42, 0.8)', borderRight: '1px solid rgba(51, 65, 85, 0.6)', display: 'flex', flexDirection: 'column', padding: '16px', boxSizing: 'border-box' }}>
           <button
             onClick={handleStartNewChat}
             style={{ width: '100%', background: 'linear-gradient(135deg, #4f46e5 0%, #4338ca 100%)', color: '#fff', border: 'none', borderRadius: '8px', padding: '10px', fontSize: '13px', fontWeight: '600', cursor: 'pointer', marginBottom: '16px', boxShadow: '0 4px 12px rgba(79, 70, 229, 0.2)' }}
@@ -192,28 +245,93 @@ export default function Chat() {
             + New Chat Session
           </button>
 
-          <div style={{ fontSize: '11px', color: '#475569', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px', textAlign: 'left' }}>Saved History</div>
+          <div style={{ fontSize: '11px', color: '#6366f1', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px', textAlign: 'left', borderBottom: '1px solid rgba(51, 65, 85, 0.4)', paddingBottom: '4px' }}>
+            Saved History
+          </div>
           
-          <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          {/* DAY 29 SCROLLABLE SIDEBAR WITH TOPIC GROUPING & ACTIONS */}
+          <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '14px', paddingRight: '4px' }}>
             {isSidebarLoading ? (
               <div style={{ color: '#64748b', fontSize: '12px', textAlign: 'center', marginTop: '20px' }}>Loading sessions...</div>
             ) : threads.length === 0 ? (
               <div style={{ color: '#475569', fontSize: '12px', textAlign: 'center', marginTop: '20px' }}>No session logs found</div>
             ) : (
-              threads.map((thread, index) => {
-                const isActive = thread.id === activeThreadId;
-                const displayId = thread.id ? String(thread.id).substring(0, 6) : index;
-                
-                return (
-                  <button
-                    key={thread.id || index}
-                    onClick={() => handleSelectThread(thread.id)}
-                    style={{ width: '100%', textAlign: 'left', background: isActive ? 'rgba(99, 102, 241, 0.15)' : 'transparent', border: isActive ? '1px solid rgba(99, 102, 241, 0.4)' : '1px solid transparent', borderRadius: '8px', padding: '10px', color: isActive ? '#818cf8' : '#94a3b8', fontSize: '13px', cursor: 'pointer', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', transition: 'all 0.2s' }}
-                  >
-                    💬 {thread.title || `Session ${displayId}`}
-                  </button>
-                );
-              })
+              Object.entries(groupedThreads).map(([groupName, items]) => (
+                <div key={groupName} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  {/* Category Header Label */}
+                  <div style={{ fontSize: '10px', color: '#475569', fontWeight: '700', textAlign: 'left', paddingLeft: '4px', textTransform: 'uppercase' }}>
+                    📁 {groupName}
+                  </div>
+                  
+                  {/* Category Thread Logs */}
+                  {items.map((thread, index) => {
+                    const isActive = thread.id === activeThreadId;
+                    const displayId = thread.id ? String(thread.id).substring(0, 6) : index;
+                    
+                    return (
+                      <div
+                        key={thread.id || index}
+                        onClick={() => handleSelectThread(thread.id)}
+                        className="sidebar-thread-item"
+                        style={{ 
+                          width: '100%', 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          justifyContent: 'between',
+                          background: isActive ? 'rgba(99, 102, 241, 0.15)' : 'transparent', 
+                          border: isActive ? '1px solid rgba(99, 102, 241, 0.4)' : '1px solid transparent', 
+                          borderRadius: '8px', 
+                          padding: '6px 10px', 
+                          cursor: 'pointer',
+                          transition: 'all 0.2s',
+                          gap: '8px'
+                        }}
+                      >
+                        <span style={{ 
+                          textAlign: 'left', 
+                          color: isActive ? '#818cf8' : '#94a3b8', 
+                          fontSize: '13px', 
+                          whiteSpace: 'nowrap', 
+                          overflow: 'hidden', 
+                          textOverflow: 'ellipsis',
+                          flex: 1
+                        }}>
+                          💬 {thread.title || `Session ${displayId}`}
+                        </span>
+
+                        {/* DAY 29 TASK: Interactive Trash Icon Button for Deleting Sessions */}
+                        <button
+                          onClick={(e) => handleDeleteThread(e, thread.id)}
+                          title="Delete context session"
+                          style={{
+                            background: 'transparent',
+                            border: 'none',
+                            color: '#475569',
+                            cursor: 'pointer',
+                            fontSize: '12px',
+                            padding: '4px',
+                            borderRadius: '4px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'color 0.2s, background-color 0.2s'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.color = '#ef4444';
+                            e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.1)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.color = '#475569';
+                            e.currentTarget.style.backgroundColor = 'transparent';
+                          }}
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              ))
             )}
           </div>
         </div>
@@ -254,9 +372,7 @@ export default function Chat() {
               </div>
             ) : (
               <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
-                {/* Note: In Day 29, update ChatThread interior message wrappers to wrap with <AnswerText /> for style changes */}
-                <ChatThread messages={messages} mode={ragMode} onSelectCitation={(cite) => setActiveCitation(cite)} 
-/>
+                <ChatThread messages={messages} mode={ragMode} onSelectCitation={(cite) => setActiveCitation(cite)} />
               </div>
             )}
 
