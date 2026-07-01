@@ -1,4 +1,4 @@
-import React from 'react';
+import 'react';
 
 export const ChatMessageSkeleton = () => (
   <div className="flex flex-col gap-4 animate-pulse w-full max-w-3xl mx-auto p-4">
