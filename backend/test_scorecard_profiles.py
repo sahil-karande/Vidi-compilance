@@ -1,17 +1,14 @@
 import json
 import requests
 
-# Adjust the port if your FastAPI app runs on a different address (e.g., 8000)
 BASE_URL = "http://localhost:8000/api/scorecard"
 
-# Pass a dummy token for local functional verification if auth middleware is temporarily bypassed,
-# or paste a valid current JWT from your development workspace.
+# Set X-Mock-User to bypass active token validation loops locally
 HEADERS = {
     "Content-Type": "application/json",
-    "Authorization": "Bearer MOCK_DEV_JWT_TOKEN"
+    "X-Mock-User": json.dumps({"id": "00000000-0000-0000-0000-000000000000", "email": "test@regiq.ai"})
 }
 
-# Day 34 Matrix: The 5 core test profiles representing distinct Indian SME / Enterprise setups
 profiles = {
     "1_Fully_Compliant_SME_Retailer": {
         "industry_type": "Retail",
@@ -52,12 +49,11 @@ profiles = {
 
 def run_scorecard_tests():
     print("=" * 70)
-    print("🚀 STARTING DAY 34 COMPLIANCE SCORECARD ENDPOINT MATRIX TEST SUITE")
+    print("🚀 STARTING DAY 34 BYPASSED COMPLIANCE SCORECARD ENDPOINT MATRIX TEST")
     print("=" * 70)
     
     for profile_name, payload in profiles.items():
         print(f"\nTarget Profile: {profile_name.replace('_', ' ')}")
-        print(f"Payload Config: {json.dumps(payload, indent=2)}")
         
         try:
             response = requests.post(BASE_URL, json=payload, headers=HEADERS)
@@ -69,11 +65,8 @@ def run_scorecard_tests():
             else:
                 print(f"⚠️ Test Execution Failed with Error Content: {response.text}")
                 
-        except requests.exceptions.ConnectionError:
-            print("❌ Connection Error: Could not reach the FastAPI server. Ensure main.py is up and running on port 8000.")
-            break
         except Exception as e:
-            print(f"❌ Unexpected test execution failure: {str(e)}")
+            print(f"❌ Test execution failure: {str(e)}")
             
         print("-" * 70)
 
