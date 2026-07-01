@@ -1,85 +1,279 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from app.api.auth import get_current_user  # Your JWT middleware dependency
-from pydantic import BaseModel
-from typing import List, Dict, Any
+from pydantic import BaseModel, Field
+from typing import List, Dict, Optional, Any
+import os
+import json
+import google.generativeai as genai
+from app.api.auth import get_current_user  # Your established JWT middleware
 
-router = APIRouter(prefix="/scorecard", tags=["Scorecard"])
+router = APIRouter(prefix="/api/scorecard", tags=["Scorecard"])
 
-class BusinessProfileUpdate(BaseModel):
-    business_name: str
-    entity_type: str  # Pvt Ltd, LLP, Partnership, Sole Proprietorship
-    has_gstin: bool
-    turnover_bracket: str  # Under 20L, 20L-1.5Cr, Over 1.5Cr
-    industry_sector: str  # Manufacturing, Services, FinTech, Import-Export
+# Ensure Gemini API is loaded properly
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+if GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY)
 
-@router.get("")
-async def get_compliance_scorecard(current_user: Dict[str, Any] = Depends(get_current_user)):
+# --- Pydantic Request Models ---
+class BusinessProfile(BaseModel):
+    industry_type: str = Field(..., description="e.g., Manufacturing, FinTech, IT Services, Retail")
+    annual_turnover_inr: float = Field(..., description="Annual turnover in Indian Rupees")
+    is_import_export: bool = Field(default=False, description="Whether company engages in cross-border trade")
+    has_listed_securities: bool = Field(default=False, description="True if public/listed under SEBI parameters")
+    missing_filings: List[str] = Field(
+        default_for=[], 
+        description="List of known missed tasks like GSTR-1, AOC-4, MGT-7, KYC"
+    )
+
+# --- Pydantic Structured Response Models ---
+class AuditCheckItem(BaseModel):
+    title: str
+    desc: str
+    passed: bool
+
+class CategoryScore(BaseModel):
+    score: int = Field(..., ge=0, le=100, description="Risk Score from 0 (Safe) to 100 (Critical)")
+    label: str = Field(..., description="RED, AMBER, or GREEN")
+    checks: List[AuditCheckItem]
+
+class ScorecardResponse(BaseModel):
+    overall_status: str
+    gst: CategoryScore
+    rbi: CategoryScore
+    sebi: CategoryScore
+    mca: CategoryScore
+
+
+# --- Rule Engine Core Functions ---
+def execute_deterministic_rule_engine(profile: BusinessProfile) -> Dict[str, Any]:
     """
-    Evaluates business profile data from Supabase and applies compliance rules
-    to return Red/Amber/Green risk vectors for Indian SME categories.
+    Executes a deterministic framework logic based on statutory Indian regulations
+    to compute baseline parameters, thresholds, and flag missing compliance items.
     """
-    # Fallback to defaults if business profile data JSON is uninitialized
-    profile = current_user.get("business_profile") or {}
-    entity_type = profile.get("entity_type", "Pvt Ltd")
-    has_gstin = profile.get("has_gstin", False)
-    turnover = profile.get("turnover_bracket", "Under 20L")
-    sector = profile.get("industry_sector", "Services")
+    # 1. GST Framework Rule Sets
+    gst_passed_items = []
+    gst_score = 0
+    
+    # Registration requirement threshold rules
+    threshold = 4000000 if profile.industry_type.lower() == "manufacturing" else 2000000
+    if profile.annual_turnover_inr >= threshold:
+        gst_passed_items.append(AuditCheckItem(
+            title="GST Registration Threshold",
+            desc=f"Turnover exceeds registration boundary (₹{threshold//100000}L). Registration active.",
+            passed=True
+        ))
+    else:
+        gst_passed_items.append(AuditCheckItem(
+            title="GST Voluntary Threshold Check",
+            desc="Turnover falls below standard mandatory registration boundaries.",
+            passed=True
+        ))
+        
+    if "GSTR-1" in [x.upper() for x in profile.missing_filings] or "GSTR-3B" in [x.upper() for x in profile.missing_filings]:
+        gst_passed_items.append(AuditCheckItem(
+            title="Periodic Returns Filing",
+            desc="Missing active periodic returns (GSTR-1/3B). Triggers immediate high interest and penalty metrics.",
+            passed=False
+        ))
+        gst_score += 45
+    else:
+        gst_passed_items.append(AuditCheckItem(
+            title="Periodic Returns Filing",
+            desc="No outstanding defaults flagged on active monthly/quarterly tracks.",
+            passed=True
+        ))
 
-    scorecard_data = {
-        "overall_health": "Healthy",
-        "scores": {
-            "gst": {"status": "GREEN", "percentage": 100, "checks": []},
-            "mca": {"status": "GREEN", "percentage": 100, "checks": []},
-            "rbi": {"status": "GREEN", "percentage": 100, "checks": []},
-            "sebi": {"status": "GREEN", "percentage": 100, "checks": []}
-        }
+    # 2. RBI & FEMA Framework Rule Sets
+    rbi_passed_items = []
+    rbi_score = 0
+    if profile.is_import_export:
+        rbi_passed_items.append(AuditCheckItem(
+            title="FEMA EEFC Compliance",
+            desc="Cross-border operations active. Requires operational realization compliance within 9 months.",
+            passed=True
+        ))
+        if "RBI-KYC" in [x.upper() for x in profile.missing_filings] or "FEMA-FLA" in [x.upper() for x in profile.missing_filings]:
+            rbi_passed_items.append(AuditCheckItem(
+                title="Foreign Liabilities and Assets (FLA)",
+                desc="Missed annual mandatory FLA financial return reporting window or Master Direction KYC mandates.",
+                passed=False
+            ))
+            rbi_score += 50
+        else:
+            rbi_passed_items.append(AuditCheckItem(
+                title="RBI Compliance Master Track",
+                desc="Basic international settlement reporting checks passed cleanly.",
+                passed=True
+            ))
+    else:
+        rbi_passed_items.append(AuditCheckItem(
+            title="FEMA Statutory Applicability",
+            desc="No active foreign currency inflows or cross-border liabilities declared.",
+            passed=True
+        ))
+
+    # 3. SEBI Framework Rule Sets
+    sebi_passed_items = []
+    sebi_score = 0
+    if profile.has_listed_securities:
+        if "LODR-COMPLIANCE" in [x.upper() for x in profile.missing_filings] or "SEBI-INSIDER" in [x.upper() for x in profile.missing_filings]:
+            sebi_passed_items.append(AuditCheckItem(
+                title="SEBI LODR Regulation 30/55",
+                desc="Critical governance lapse: missed submission of quarterly disclosures or structural report components.",
+                passed=False
+            ))
+            sebi_score += 65
+        else:
+            sebi_passed_items.append(AuditCheckItem(
+                title="SEBI Listing Disclosures",
+                desc="Governance frameworks comply with standard dynamic market tracking metrics.",
+                passed=True
+            ))
+    else:
+        sebi_passed_items.append(AuditCheckItem(
+            title="SEBI Public Listing Applicability",
+            desc="Entity is categorized as a closely-held private organization or partnership structure.",
+            passed=True
+        ))
+
+    # 4. MCA & Companies Act Framework Rule Sets
+    mca_passed_items = []
+    mca_score = 0
+    
+    # Check statutory company filing omissions
+    mca_misses = [x.upper() for x in profile.missing_filings if x.upper() in ["AOC-4", "MGT-7", "DIR-3-KYC"]]
+    if mca_misses:
+        mca_passed_items.append(AuditCheckItem(
+            title="Annual Return Form Filings",
+            desc=f"Lapse detected in mandatory corporate compliance returns: {', '.join(mca_misses)}. Triggers dynamic daily per-form penalties.",
+            passed=False
+        ))
+        mca_score += (25 * len(mca_misses))
+    else:
+        mca_passed_items.append(AuditCheckItem(
+            title="MCA Corporate Integrity Maintenance",
+            desc="Annual financial statements (AOC-4) and Director registries align with current registries.",
+            passed=True
+        ))
+
+    return {
+        "gst": {"base_score": min(gst_score, 100), "checks": gst_passed_items},
+        "rbi": {"base_score": min(rbi_score, 100), "checks": rbi_passed_items},
+        "sebi": {"base_score": min(sebi_score, 100), "checks": sebi_passed_items},
+        "mca": {"base_score": min(mca_score, 100), "checks": mca_passed_items}
     }
 
-    # --- GST Rules Engine ---
-    gst_checks = [
-        {"id": "gst_reg", "title": "GST Registration Mandatory Check", "passed": True, "desc": "Not required under 20L threshold unless inter-state trading."}
-    ]
-    if turnover != "Under 20L" and not has_gstin:
-        gst_checks[0]["passed"] = False
-        gst_checks[0]["desc"] = f"Action Needed: Turnover is {turnover} but no GSTIN flag is active."
-        scorecard_data["scores"]["gst"]["status"] = "RED"
-        scorecard_data["scores"]["gst"]["percentage"] = 30
-    elif has_gstin:
-        gst_checks.append({"id": "gst_filing", "title": "GSTR-1 & GSTR-3B Baseline Filings", "passed": True, "desc": "Active tracking active via vector database parameters."})
+
+def analyze_with_llm_fallback(profile: BusinessProfile, rule_results: Dict[str, Any]) -> ScorecardResponse:
+    """
+    Blends the hard rule metrics with a fast Gemini reasoning execution pass 
+    to dynamically adjust weight distribution, append granular risk explanations, 
+    and guarantee production-grade JSON format structures.
+    """
+    if not GEMINI_API_KEY:
+        # Graceful fallback schema generation if API key is unassigned
+        def assign_label(s: int) -> str:
+            return "RED" if s >= 60 else "AMBER" if s >= 20 else "GREEN"
+            
+        g_s = rule_results["gst"]["base_score"]
+        r_s = rule_results["rbi"]["base_score"]
+        s_s = rule_results["sebi"]["base_score"]
+        m_s = rule_results["mca"]["base_score"]
+        
+        avg_score = (g_s + r_s + s_s + m_s) / 4
+        status_msg = "CRITICAL ACTION REQUIRED" if avg_score >= 50 else "STABLE OPERATION"
+        
+        return ScorecardResponse(
+            overall_status=status_msg,
+            gst=CategoryScore(score=g_s, label=assign_label(g_s), checks=rule_results["gst"]["checks"]),
+            rbi=CategoryScore(score=r_s, label=assign_label(r_s), checks=rule_results["rbi"]["checks"]),
+            sebi=CategoryScore(score=s_s, label=assign_label(s_s), checks=rule_results["sebi"]["checks"]),
+            mca=CategoryScore(score=m_s, label=assign_label(m_s), checks=rule_results["mca"]["checks"])
+        )
+
+    # Initialize dynamic system template block
+    model = genai.GenerativeModel('gemini-1.5-flash')
     
-    scorecard_data["scores"]["gst"]["checks"] = gst_checks
-
-    # --- MCA Rules Engine ---
-    mca_checks = []
-    if entity_type in ["Pvt Ltd", "LLP"]:
-        mca_checks.append({"id": "mca_roc", "title": "Annual RoC Filing (Form AOC-4 / MGT-7)", "passed": True, "desc": f"Mandatory requirement for registered {entity_type} corporate vehicles."})
-        mca_checks.append({"id": "mca_dir", "title": "Director KYC Verification (DIR-3 KYC)", "passed": True, "desc": "Due annually before September 30 cut-off bounds."})
-    else:
-        mca_checks.append({"id": "mca_exempt", "title": "Corporate Law Exemption Status", "passed": True, "desc": "Sole Proprietorships/Partnerships are exempt from MCA portal registry."})
+    prompt = f"""
+    You are RegIQ's compliance system scoring router engine.
+    Analyze the corporate profile input constraints and deterministic baseline score indicators to calculate accurate Indian financial regulation risk vectors (0 to 100).
     
-    scorecard_data["scores"]["mca"]["checks"] = mca_checks
-
-    # --- Cross-border Financial Risk Engine (RBI/FEMA) ---
-    rbi_checks = []
-    if sector == "Import-Export" or sector == "FinTech":
-        rbi_checks.append({"id": "rbi_fema", "title": "FEMA ODI/EDI Remittance Declarations", "passed": False, "desc": "Alert: Active international transactions flagged. Ensure EEFC compliance protocols."})
-        scorecard_data["scores"]["rbi"]["status"] = "AMBER"
-        scorecard_data["scores"]["rbi"]["percentage"] = 65
-    else:
-        rbi_checks.append({"id": "rbi_domestic", "title": "Domestic Banking Clearing Checks", "passed": True, "desc": "No active cross-border alerts found for domestic portfolio profiles."})
+    Input Business Parameters:
+    - Industry Segment: {profile.industry_type}
+    - Annual Turnover (INR): {profile.annual_turnover_inr}
+    - Import/Export Activity status: {profile.is_import_export}
+    - Listed Security under SEBI status: {profile.has_listed_securities}
+    - Reported Outstanding Filings omissions: {profile.missing_filings}
     
-    scorecard_data["scores"]["rbi"]["checks"] = rbi_checks
+    Deterministic Engine Baseline Computed Checks:
+    {json.dumps({k: {"base_score": v["base_score"]} for k, v in rule_results.items()})}
 
-    # --- SEBI Securities Engine ---
-    scorecard_data["scores"]["sebi"]["checks"] = [
-        {"id": "sebi_exempt", "title": "Public Market Regulations", "passed": True, "desc": "Unlisted SME entities are exempt from continuous LODR disclosures."}
-    ]
+    Your core task:
+    1. Calibrate risk scores out of 100 per category (GST, RBI, SEBI, MCA) based on compliance metrics. 
+       - 0-25: GREEN (Compliant, low exposure)
+       - 26-59: AMBER (Moderate risk/remediations pending)
+       - 60-100: RED (High structural non-compliance risk or massive penalty exposure)
+    2. Respond ONLY with a clean, unquoted, strictly valid JSON matching this identical layout schema. Do not output markdown code blocks.
 
-    # Calculate overall application state status
-    statuses = [s["status"] for s in scorecard_data["scores"].values()]
-    if "RED" in statuses:
-        scorecard_data["overall_health"] = "Critical Action Required"
-    elif "AMBER" in statuses:
-        scorecard_data["overall_health"] = "Action Advised"
+    JSON Structure Target Example:
+    {{
+      "overall_status": "CRITICAL RISK PROFILE" or "STABLE FRAMEWORK",
+      "gst": {{ "score": 45, "label": "AMBER" }},
+      "rbi": {{ "score": 0, "label": "GREEN" }},
+      "sebi": {{ "score": 0, "label": "GREEN" }},
+      "mca": {{ "score": 75, "label": "RED" }}
+    }}
+    """
 
-    return scorecard_data
+    try:
+        response = model.generate_content(prompt)
+        text_content = response.text.strip()
+        
+        # Clean potential markdown output wrappers if present
+        if text_content.startswith("```json"):
+            text_content = text_content.split("```json")[1].split("```")[0].strip()
+        elif text_content.startswith("```"):
+            text_content = text_content.split("```")[1].split("```")[0].strip()
+
+        llm_data = json.loads(text_content)
+        
+        # Merge semantic evaluation labels with original deterministic check arrays
+        def build_category(cat_key: str) -> CategoryScore:
+            base_checks = rule_results[cat_key]["checks"]
+            score_val = llm_data.get(cat_key, {}).get("score", rule_results[cat_key]["base_score"])
+            label_val = llm_data.get(cat_key, {}).get("label", "GREEN")
+            return CategoryScore(score=int(score_val), label=str(label_val).upper(), checks=base_checks)
+
+        return ScorecardResponse(
+            overall_status=llm_data.get("overall_status", "COMPLIANCE REVIEW UNDERWAY"),
+            gst=build_category("gst"),
+            rbi=build_category("rbi"),
+            sebi=build_category("sebi"),
+            mca=build_category("mca")
+        )
+    except Exception as e:
+        print(f"Fallback activation. JSON parsing error on dynamic LLM layout generation: {e}")
+        # Secondary defensive strategy invocation
+        return analyze_with_llm_fallback(profile, rule_results)
+
+
+@router.post("", response_model=ScorecardResponse, status_code=status.HTTP_200_OK)
+async def generate_compliance_scorecard(
+    profile: BusinessProfile, 
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    POST /api/scorecard: Validates systemic business parameters against active statutory criteria 
+    and updates user dashboard posture ratings across key financial networks.
+    """
+    try:
+        # Run baseline calculation step
+        rule_results = execute_deterministic_rule_engine(profile)
+        
+        # Evaluate composition metrics
+        final_scorecard = analyze_with_llm_fallback(profile, rule_results)
+        return final_scorecard
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to generate scorecard telemetry processing indicators: {str(e)}"
+        )
