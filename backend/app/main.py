@@ -11,6 +11,7 @@ from datetime import datetime
 from app.config import settings
 from app.api import query, threads_api, alerts_api
 from app.api import me  # Day 20: authenticated test endpoint
+from app.api import scorecard
 
 # ─────────────────────────────────────────────────────────────
 #  FastAPI App
@@ -88,6 +89,7 @@ app.include_router(alerts_api.router, prefix="/api", tags=["Alerts"])   # Day 16
 
 # ── Day 20 Authentication Endpoints ───────────────────────────
 app.include_router(me.router, prefix="/api", tags=["Authentication Test"])
+app.include_router(scorecard.router)
 
 
 # Future Roadmap Markers:
