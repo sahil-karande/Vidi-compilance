@@ -1,9 +1,9 @@
 import os
 import json
 import logging
+import asyncio
 from typing import List, Dict, Any, Tuple
-from google import genai
-from google.genai import types
+import google.generativeai as genai  # Clean, explicit single namespace choice
 import httpx
 from app.config import settings
 
@@ -17,7 +17,7 @@ OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", "google/gemini-2.5-flash")
 
 class RAGGenerator:
     """
-    Generates grounded responses using the modern google-genai SDK or OpenRouter.
+    Generates grounded responses using the official google-generativeai SDK or OpenRouter.
     Enforces compliance styling and anti-hallucination guardrails.
     """
 
@@ -26,8 +26,8 @@ class RAGGenerator:
         "Your core duty is to provide hyper-accurate, grounded answers using ONLY the text provided in the 'Context' section below.\n\n"
         "CRITICAL RULES:\n"
         "1. If the context does not contain the answer to the user's question, you MUST reply EXACTLY with: \n"
-        "   \"I could not find this in the available regulatory documents.\"\n"
-        "   Do not attempt to use external knowledge, pre-trained facts, or extrapolate.\n"
+        "    \"I could not find this in the available regulatory documents.\"\n"
+        "    Do not attempt to use external knowledge, pre-trained facts, or extrapolate.\n"
         "2. Do not invent circular numbers, section clauses, notification dates, or URLs under any circumstances.\n"
         "3. Every factual claim or rule state MUST explicitly reference its source chunk index or citation details (e.g., [Source 1]).\n"
     )
@@ -50,13 +50,12 @@ class RAGGenerator:
     )
 
     def __init__(self):
-        # Dynamically bind unified client wrapper once configurations populate
-        self.gemini_client = None
+        # Configure the legacy/classic generation engine API wrapper safely
         if LLM_PROVIDER == "gemini":
             if settings.gemini_api_key:
-                self.gemini_client = genai.Client(api_key=settings.gemini_api_key)
+                genai.configure(api_key=settings.gemini_api_key)
             else:
-                logger.warning("Gemini API Key missing. Falling back or failing runtime requests.")
+                logger.warning("Gemini API Key missing from settings context. Verify VITE/FastAPI configurations.")
         elif LLM_PROVIDER == "openrouter" and not OPENROUTER_API_KEY:
             logger.warning("OpenRouter API Key missing. Check your environment variables.")
 
@@ -137,20 +136,23 @@ class RAGGenerator:
             }
 
     async def _call_gemini(self, system_instruction: str, user_content: str, citations: List[Dict], mode: str) -> Dict[str, Any]:
-        """Invokes the modern google-genai models service correctly."""
-        if not self.gemini_client:
-            raise ValueError("Gemini Client is not initialized. Verify your GEMINI_API_KEY.")
+        """Invokes the google-generativeai model using thread pools to avoid blockages."""
+        
+        # Define generation parameters via native dictionary matching google-generativeai layout schema
+        generation_config = {
+            "temperature": 0.0,  # Strict grounding threshold
+            "top_p": 1.0,
+        }
 
-        config = types.GenerateContentConfig(
-            system_instruction=system_instruction,
-            temperature=0.0,  # Deterministic grounding compliance
-        )
+        # Wrap combined system prompt instructions with user input parameters cleanly
+        combined_prompt = f"{system_instruction}\n\n{user_content}"
 
-        response = self.gemini_client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=user_content,
-            config=config
-        )
+        def _sync_generate():
+            model = genai.GenerativeModel(model_name="gemini-1.5-flash")
+            return model.generate_content(contents=combined_prompt, generation_config=generation_config)
+
+        # Offload sync SDK generation requests onto thread pools to prevent blocking the async loop
+        response = await asyncio.to_thread(_sync_generate)
         
         return {
             "answer": response.text.strip(),
