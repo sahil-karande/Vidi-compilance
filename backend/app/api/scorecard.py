@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 from typing import List, Dict, Optional, Any
 import os
 import json
-import google.generativeai as genai
+import google.generativeai as genai # pyright: ignore[reportMissingImports]
 from app.api.auth import get_current_user  # Your established JWT middleware
 
 router = APIRouter(prefix="/api/scorecard", tags=["Scorecard"])
