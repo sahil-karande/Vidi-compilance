@@ -97,9 +97,15 @@ export const chatAPI = {
   // --- WEEK 7 COMPLIANCE DASHBOARD INTEGRATION METHODS ---
   
   /**
-   * Fetches user profile scoring details across GST, RBI, SEBI, and MCA
+   * Fetches user profile scoring details across GST, RBI, SEBI, and MCA.
+   * Dynamically switches to POST mapping if a form payload is explicitly provided.
    */
-  getScorecard: async () => {
+  
+  getScorecard: async (formData = null) => {
+    if (formData) {
+      const response = await api.post('/api/scorecard', formData);
+      return response.data;
+    }
     const response = await api.get('/api/scorecard');
     return response.data;
   },
@@ -112,3 +118,4 @@ export const chatAPI = {
     return response.data;
   }
 };
+// (cleaned duplicate exports)
