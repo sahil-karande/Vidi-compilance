@@ -3,15 +3,10 @@ import { useAuth } from '../hooks/useAuth';
 import { chatAPI } from '../lib/api';
 
 export default function RiskScorecard({ data, onMetricClick }) {
-  // Defensive Hook Extraction: Protects against silent context destructuring crashes
   const authContext = useAuth() || {};
   const user = authContext.user;
   const userRole = user?.role || 'guest';
-
-  // Developer Sandbox Tier Override: Allows on-the-fly tier testing without manual DB edits
-  const [sandboxRole, setSandboxRole] = useState(null);
-  const activeRole = sandboxRole || userRole;
-  const isLocked = activeRole === 'guest' || activeRole === 'free';
+  const isLocked = userRole === 'guest' || userRole === 'free';
 
   // Local state tracking parameters matching backend evaluation keys
   const [formData, setFormData] = useState({
@@ -26,30 +21,17 @@ export default function RiskScorecard({ data, onMetricClick }) {
   const [error, setError] = useState('');
   const [localScores, setLocalScores] = useState(null);
 
-  // Safe Explicit Score Parser: Normalizes different schema responses (GET/POST)
-  const parseScores = (payload) => {
-    if (!payload) return null;
-    const unpacked = payload.scores || payload;
-    if (unpacked && typeof unpacked === 'object') {
-      // Ensure we extract valid axis objects, otherwise return null to trigger fallbacks
-      if (unpacked.gst || unpacked.rbi || unpacked.sebi || unpacked.mca) {
-        return unpacked;
-      }
-    }
-    return null;
-  };
-
   // Sync with initial hydration metrics passed from dashboard container load
   useEffect(() => {
     if (data) {
-      const parsed = parseScores(data);
-      if (parsed) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setLocalScores({
-          overall_health: data.overall_health || data.overall_status || 'Balanced Compliance Posture',
-          scores: parsed
-        });
-      }
+      const unpackedScores = data.scores || data;
+      const overallHealth = data.overall_health || data.overall_status;
+      
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLocalScores({
+        overall_health: overallHealth || "Balanced Compliance Posture",
+        scores: unpackedScores
+      });
     }
   }, [data]);
 
@@ -65,7 +47,7 @@ export default function RiskScorecard({ data, onMetricClick }) {
     setLoading(true);
     setError('');
 
-    // Map your select choices to the exact fields expected by the backend Pydantic model
+    // Map frontend dropdown selections precisely to backend parameters schema keys
     const mappedPayload = {
       industry_type: formData.industry, 
       annual_turnover_inr: formData.turnover_range === "Under ₹20 Lakhs" ? 1500000 
@@ -80,10 +62,9 @@ export default function RiskScorecard({ data, onMetricClick }) {
     try {
       const responseData = await chatAPI.getScorecard(mappedPayload);
       
-      const parsed = parseScores(responseData);
       setLocalScores({
         overall_health: responseData.overall_status || responseData.overall_health || 'Calculated Compliance Rating',
-        scores: parsed || responseData
+        scores: responseData.scores || responseData
       });
     } catch (err) {
       console.error('Compliance scorecard submit error:', err);
@@ -93,8 +74,11 @@ export default function RiskScorecard({ data, onMetricClick }) {
     }
   };
 
+  // FIXED: Defensively stringify and fallback status checks to prevent any toUpperCase() crash on load
   const getScoreTheme = (percentage, status) => {
-    const normStatus = status?.toUpperCase() || (percentage >= 80 ? 'GREEN' : percentage >= 50 ? 'AMBER' : 'RED');
+    const cleanStatus = String(status || '').trim().toUpperCase();
+    const normStatus = cleanStatus || (percentage >= 80 ? 'GREEN' : percentage >= 50 ? 'AMBER' : 'RED');
+    
     switch (normStatus) {
       case 'GREEN':
         return { stroke: '#10B981', text: 'text-emerald-400', border: 'border-emerald-500/20', bg: 'bg-emerald-500/5', dot: 'bg-emerald-400' };
@@ -114,39 +98,23 @@ export default function RiskScorecard({ data, onMetricClick }) {
     mca: { percentage: 45, status: 'RED', checks: [] }
   };
 
+  // Safe fallback chain: ensures activeScores is always a valid renderable object
   const activeScores = localScores?.scores || defaultDisplayAxes;
 
   return (
     <div className="w-full flex flex-col gap-6 text-slate-200">
       
       {/* Upper Status Banner Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-slate-900/40 p-4 border border-slate-800 rounded-xl gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-slate-900/40 p-4 border border-slate-800 rounded-xl gap-2">
         <div>
           <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Compliance Health Matrix</h3>
           <p className="text-base font-bold mt-0.5 text-white">
             {localScores?.overall_health || (isLocked ? '🔒 Restricted Tier Vector Status' : 'Awaiting Parameters Evaluation')}
           </p>
         </div>
-        
-        <div className="flex items-center gap-3">
-          {/* Developer Sandbox Tier Override Control Panel */}
-          <div className="flex items-center gap-2 bg-indigo-950/40 border border-indigo-500/20 px-3 py-1.5 rounded-lg text-xs">
-            <span className="text-[10px] uppercase font-bold tracking-wider text-indigo-400">Sandbox Tier Override:</span>
-            <select 
-              value={activeRole} 
-              onChange={(e) => setSandboxRole(e.target.value)} 
-              className="bg-slate-950 border border-slate-800 rounded p-1 text-[11px] text-slate-300 focus:outline-none cursor-pointer focus:border-indigo-500"
-            >
-              <option value="guest">Guest (Locked)</option>
-              <option value="free">Free (Locked)</option>
-              <option value="pro">Pro (Unlocked)</option>
-            </select>
-          </div>
-
-          <span className="text-xs text-slate-400 bg-slate-950 px-3 py-2 rounded-md border border-slate-800 hidden sm:inline-block">
-            Updated: Live Vector Status
-          </span>
-        </div>
+        <span className="text-xs text-slate-400 bg-slate-950 px-3 py-1.5 rounded-md border border-slate-800 w-max self-start sm:self-center">
+          Updated: Live Vector Status
+        </span>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
@@ -231,7 +199,7 @@ export default function RiskScorecard({ data, onMetricClick }) {
               </p>
               <button
                 type="button"
-                onClick={() => setSandboxRole('pro')}
+                onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
                 className="bg-white text-slate-950 font-bold text-xs py-2 px-5 rounded-xl hover:bg-slate-200 shadow-md transition-all"
               >
                 Upgrade to Pro (₹499/mo)
@@ -243,12 +211,15 @@ export default function RiskScorecard({ data, onMetricClick }) {
             {Object.entries(activeScores).map(([key, value]) => {
               const displayAxis = key.toUpperCase();
               
-              // Safe percentage check that supports 'percentage' and 'score' formats from rule outputs
+              // Handles score mapping variants seamlessly from Pydantic schemas (percentage vs score)
               const scoreVal = value && typeof value === 'object'
                 ? (value.percentage !== undefined ? value.percentage : (value.score !== undefined ? value.score : 0))
                 : 0;
                 
-              const currentLabel = value?.status || value?.label || 'GREEN';
+              const currentLabel = value && typeof value === 'object'
+                ? (value.status || value.label || 'GREEN')
+                : 'GREEN';
+                
               const theme = getScoreTheme(scoreVal, currentLabel);
               
               const radius = 32;
@@ -270,7 +241,7 @@ export default function RiskScorecard({ data, onMetricClick }) {
                       <h4 className="text-base font-bold text-white tracking-tight">{displayAxis} Metric</h4>
                     </div>
 
-                    {/* SVG Graphic Component Fill Wheel */}
+                    {/* SVG Progress Wheel Indicator */}
                     <div className="relative w-16 h-16 flex items-center justify-center flex-shrink-0">
                       <svg className="w-full h-full transform -rotate-90">
                         <circle cx="32" cy="32" r={radius} className="stroke-slate-800/60" strokeWidth="5" fill="none" />

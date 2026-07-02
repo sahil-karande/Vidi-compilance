@@ -49,7 +49,7 @@ export default function Dashboard() {
         let scorecardData = null;
         let calendarData = [];
 
-        // Universal Baseline Fallback Data object structures
+        // Universal Baseline Fallback Data object structures matching scoreVal and currentLabel
         const baselineFallback = {
           overall_health: "81% - Stable Active Posture",
           scores: {
@@ -62,12 +62,13 @@ export default function Dashboard() {
 
         if (!isLocked) {
           try {
+            // Default payload structured matching Pydantic BusinessProfile model perfectly
             const defaultPayload = {
-              business_type: 'Private Limited',
-              industry: 'Fintech',
-              turnover_range: '₹1Cr - ₹5Cr',
-              has_foreign_funding: 'No',
-              gst_registered: 'Yes'
+              industry_type: 'Fintech', 
+              annual_turnover_inr: 30000000,
+              is_import_export: false,
+              has_listed_securities: false,
+              missing_filings: []
             };
 
             const [sc, cal] = await Promise.all([
