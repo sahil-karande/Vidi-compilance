@@ -1,6 +1,6 @@
 """
 Vidi — backend/app/main.py
-Updated: Day 21 — Query limit enforcement wired in
+Updated: Day 35 — Scorecard integration and calendar routing verification
 """
 
 from fastapi import FastAPI, Request
@@ -9,12 +9,16 @@ from fastapi.responses import JSONResponse
 from datetime import datetime
 
 from app.config import settings
-from app.api import query, threads_api, alerts_api
-from app.api import me  # Day 20: authenticated test endpoint
-from app.api import scorecard
+from app.api import query, threads_api, alerts_api, me, scorecard
+
+# ─────────── 💡 DAY 35 EXTENSION LOOKUP ───────────
+# If your calendar routes live in a standalone api file (e.g., app/api/calendar.py), 
+# uncomment the line below to import it:
+# from app.api import calendar 
+# ──────────────────────────────────────────────────
 
 # ─────────────────────────────────────────────────────────────
-#  FastAPI App
+#  FastAPI App Initialization
 # ─────────────────────────────────────────────────────────────
 
 app = FastAPI(
@@ -26,20 +30,19 @@ app = FastAPI(
 )
 
 # ─────────────────────────────────────────────────────────────
-#  CORS Middleware
+#  CORS Middleware Configuration
 # ─────────────────────────────────────────────────────────────
 
-# Change your CORS Middleware section to look exactly like this:
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # <-- Change this from settings.allowed_origins_list to ["*"]
-    allow_credentials=False,  # <-- Set this to False when using allow_origins=["*"]
+    allow_origins=["*"],      # Open configuration to completely eliminate local pre-flight blocker errors
+    allow_credentials=False,  # Set to False explicitly when wildcards are active 
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # ─────────────────────────────────────────────────────────────
-#  Root + Health Check
+#  Root & Health Checks
 # ─────────────────────────────────────────────────────────────
 
 @app.get("/", tags=["System"])
@@ -77,28 +80,19 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 
 # ─────────────────────────────────────────────────────────────
-#  Routers
+#  API Router Registrations
 # ─────────────────────────────────────────────────────────────
 
-# ─────────────────────────────────────────────────────────────
-#  Routers
-# ─────────────────────────────────────────────────────────────
-
+# Core features
 app.include_router(query.router, prefix="/api", tags=["Query"])
 app.include_router(threads_api.router, prefix="/api", tags=["Threads"])
 app.include_router(alerts_api.router, prefix="/api", tags=["Alerts"])
 app.include_router(me.router, prefix="/api", tags=["Authentication Test"])
 
-# CHANGE THIS LINE FROM:
-# app.include_router(scorecard.router)
-
-# TO THIS EXACTLY:
+# Day 35 Scorecard Pillar Integration Route
 app.include_router(scorecard.router, prefix="/api", tags=["Scorecard"])
 
-
-# Future Roadmap Markers:
-# Day 34: from app.api import scorecard
-#         app.include_router(scorecard.router, prefix="/api", tags=["Scorecard"])
-
-# Day 42: from app.api import billing
-#         app.include_router(billing.router, prefix="/api/billing", tags=["Billing"])
+# ─────────── 💡 DAY 35 CALENDAR ROUTE ───────────
+# If you verified that calendar has its own separate router, uncomment below:
+# app.include_router(calendar.router, prefix="/api", tags=["Calendar"])
+# ──────────────────────────────────────────────────

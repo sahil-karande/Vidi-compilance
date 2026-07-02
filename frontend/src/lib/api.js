@@ -113,8 +113,9 @@ export const chatAPI = {
   /**
    * Fetches corporate compliance deadlines matching user configurations
    */
-  getCalendarDeadlines: async () => {
-    const response = await api.get('/api/calendar');
+ getCalendarDeadlines: async () => {
+    // CHANGE THIS: Ensure it hits /api/calendar to align with main.py router prefix
+    const response = await api.get('/api/calendar'); 
     return response.data;
   }
 };
