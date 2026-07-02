@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import api from '../lib/api';
+import { chatAPI } from '../lib/api'; // FIXED: Pointed directly onto your clean chatAPI helper context
 
 export default function RiskScorecard({ data, onMetricClick }) {
   const { user } = useAuth();
@@ -23,16 +23,15 @@ export default function RiskScorecard({ data, onMetricClick }) {
   // Sync with initial hydration metrics passed from dashboard container load
   useEffect(() => {
     if (data) {
-      // Safely transform initial dashboard payload keys if structured via standard formats
-      if (data.overall_status && !data.overall_health) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setLocalScores({
-          overall_health: data.overall_status,
-          scores: data.scores
-        });
-      } else {
-        setLocalScores(data);
-      }
+      // Unpack response properties matching either GET or POST schema variations seamlessly
+      const unpackedScores = data.scores || data;
+      const overallHealth = data.overall_health || data.overall_status;
+      
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLocalScores({
+        overall_health: overallHealth,
+        scores: unpackedScores
+      });
     }
   }, [data]);
 
@@ -48,7 +47,7 @@ export default function RiskScorecard({ data, onMetricClick }) {
     setLoading(true);
     setError('');
 
-    // Map your frontend select choices into the exact schema expected by the backend Pydantic model
+    // Map frontend dropdown selections precisely to backend parameters schema keys
     const mappedPayload = {
       industry_type: formData.industry, 
       annual_turnover_inr: formData.turnover_range === "Under ₹20 Lakhs" ? 1500000 
@@ -61,15 +60,13 @@ export default function RiskScorecard({ data, onMetricClick }) {
     };
 
     try {
-      const response = await api.post('/api/scorecard', mappedPayload);
+      // FIXED: Invokes your chatAPI utility module directly to utilize backend rules
+      const responseData = await chatAPI.getScorecard(mappedPayload);
       
-      // Adapt schema response variables directly back into parent states matching formatting hooks
-      const formattedResponse = {
-        overall_health: response.data.overall_status,
-        scores: response.data.scores || response.data
-      };
-      
-      setLocalScores(formattedResponse);
+      setLocalScores({
+        overall_health: responseData.overall_status || responseData.overall_health,
+        scores: responseData.scores || responseData
+      });
     } catch (err) {
       console.error(err);
       setError(err.response?.data?.detail || 'Failed to re-calculate compliance matrix profiles.');
@@ -92,15 +89,16 @@ export default function RiskScorecard({ data, onMetricClick }) {
     }
   };
 
-  // Safe baseline fallback settings matching backend evaluation defaults
   const defaultDisplayAxes = {
-    gst: { score: 85, label: 'GREEN', checks: [] },
-    rbi: { score: 70, label: 'AMBER', checks: [] },
-    sebi: { score: 90, label: 'GREEN', checks: [] },
-    mca: { score: 45, label: 'RED', checks: [] }
+    gst: { percentage: 0, status: 'GREEN', checks: [] },
+    rbi: { percentage: 0, status: 'AMBER', checks: [] },
+    sebi: { percentage: 0, status: 'GREEN', checks: [] },
+    mca: { percentage: 0, status: 'RED', checks: [] }
   };
 
-  const activeScores = localScores?.scores || defaultDisplayAxes;
+  const activeScores = localScores?.scores && Object.keys(localScores.scores).length > 0 
+    ? localScores.scores 
+    : defaultDisplayAxes;
 
   return (
     <div className="w-full flex flex-col gap-6 text-slate-200">
@@ -187,7 +185,7 @@ export default function RiskScorecard({ data, onMetricClick }) {
           {error && <p className="text-[11px] text-red-400 bg-red-500/5 p-2 rounded-lg border border-red-500/10 mt-2">{error}</p>}
         </div>
 
-        {/* Dynamic Scoring Display Row Area */}
+        {/* Dynamic Scoring Display Area */}
         <div className="lg:col-span-2 relative min-h-[380px] h-full">
           {isLocked && (
             <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-950/70 backdrop-blur-md rounded-2xl border border-slate-800/40 p-6 text-center">
@@ -200,7 +198,6 @@ export default function RiskScorecard({ data, onMetricClick }) {
               </p>
               <button
                 type="button"
-                onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
                 className="bg-white text-slate-950 font-bold text-xs py-2 px-5 rounded-xl hover:bg-slate-200 shadow-md transition-all"
               >
                 Upgrade to Pro (₹499/mo)
@@ -212,19 +209,22 @@ export default function RiskScorecard({ data, onMetricClick }) {
             {Object.entries(activeScores).map(([key, value]) => {
               const displayAxis = key.toUpperCase();
               
-              // Aligned perfectly to extract values dynamically from response fields
-              const currentScore = value?.score !== undefined ? value.score : (value?.percentage || 0);
-              const currentLabel = value?.label || value?.status || 'GREEN';
-              const theme = getScoreTheme(currentScore, currentLabel);
+              // Handles mapping variants seamlessly (looks for percentage first, falls back onto score)
+              const scoreVal = value && typeof value === 'object' 
+                ? (value.percentage !== undefined ? value.percentage : (value.score || 0))
+                : 0;
+                
+              const currentLabel = value?.status || value?.label || 'GREEN';
+              const theme = getScoreTheme(scoreVal, currentLabel);
               
               const radius = 32;
               const circumference = 2 * Math.PI * radius;
-              const strokeOffset = circumference - (currentScore / 100) * circumference;
+              const strokeOffset = circumference - (scoreVal / 100) * circumference;
 
               return (
                 <div
                   key={key}
-                  onClick={() => onMetricClick && onMetricClick(key, value.checks)}
+                  onClick={() => onMetricClick && value?.checks && onMetricClick(key, value.checks)}
                   className="p-5 rounded-xl border border-slate-800/80 bg-slate-900/30 flex flex-col justify-between cursor-pointer hover:border-slate-700 hover:bg-slate-900/50 transition-all group shadow-md"
                 >
                   <div className="flex justify-between items-start gap-4">
@@ -236,7 +236,7 @@ export default function RiskScorecard({ data, onMetricClick }) {
                       <h4 className="text-base font-bold text-white tracking-tight">{displayAxis} Metric</h4>
                     </div>
 
-                    {/* SVG Graphic Component Fill Wheel */}
+                    {/* SVG Progress Wheel Indicator */}
                     <div className="relative w-16 h-16 flex items-center justify-center flex-shrink-0">
                       <svg className="w-full h-full transform -rotate-90">
                         <circle cx="32" cy="32" r={radius} className="stroke-slate-800/60" strokeWidth="5" fill="none" />
@@ -253,7 +253,7 @@ export default function RiskScorecard({ data, onMetricClick }) {
                           className="transition-all duration-500 ease-out"
                         />
                       </svg>
-                      <span className="absolute text-xs font-mono font-bold text-white">{currentScore}%</span>
+                      <span className="absolute text-xs font-mono font-bold text-white">{scoreVal}%</span>
                     </div>
                   </div>
 
