@@ -34,22 +34,22 @@ export default function RiskScorecard({ data, onMetricClick }) {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (isLocked) return;
+  e.preventDefault();
+  if (isLocked) return;
 
-    setLoading(true);
-    setError('');
-    try {
-      // FIXED ENTIRELY: Pointed to the direct backend router endpoint definition match
-      const response = await api.post('/scorecard', formData);
-      setLocalScores(response.data);
-    } catch (err) {
-      console.error(err);
-      setError(err.response?.data?.detail || 'Failed to re-calculate compliance matrix profiles.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  setLoading(true);
+  setError('');
+  try {
+    // Make sure it uses the prefix exactly matching your backend router configuration:
+    const response = await api.post('/api/scorecard', formData);
+    setLocalScores(response.data);
+  } catch (err) {
+    console.error(err);
+    setError(err.response?.data?.detail || 'Failed to re-calculate compliance matrix profiles.');
+  } finally {
+    setLoading(false);
+  }
+};
 
   const getScoreTheme = (percentage, status) => {
     const normStatus = status?.toUpperCase() || (percentage >= 80 ? 'GREEN' : percentage >= 50 ? 'AMBER' : 'RED');
