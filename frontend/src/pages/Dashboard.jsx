@@ -42,13 +42,12 @@ export default function Dashboard() {
       try {
         setIsLoading(true);
         
-        // If the feature is tier gated for guest/free accounts, catch specific scorecard 
-        // 403 or fallback responses to avoid blocking the calendar/deadlines view layout hydration.
         let scorecardData = null;
         let calendarData = [];
 
         if (!isLocked) {
           try {
+            // Attempt clean parallel fetch for Pro users
             const [sc, cal] = await Promise.all([
               chatAPI.getScorecard(),
               chatAPI.getCalendarDeadlines()
@@ -60,7 +59,7 @@ export default function Dashboard() {
             calendarData = await chatAPI.getCalendarDeadlines().catch(() => []);
           }
         } else {
-          // Free users skip scorecard calculation fetch logic completely on home load
+          // Free users completely bypass initial scorecard API extraction to avoid 403 blocks
           calendarData = await chatAPI.getCalendarDeadlines().catch(() => []);
         }
         
@@ -141,7 +140,7 @@ export default function Dashboard() {
           </div>
         ) : (
           <>
-            {/* Pillar 1: Risk Scoring Grid */}
+            {/* Pillar 1: Risk Scoring Grid (Receives data safely, fallback managed inside component) */}
             <RiskScorecard 
               data={scorecard} 
               onMetricClick={handleOpenDrillDown} 
@@ -157,7 +156,7 @@ export default function Dashboard() {
           </>
         )}
 
-        {/* Interactive Parameter Inspection Drawer (Drill-Down Modal Modal) */}
+        {/* Interactive Parameter Inspection Drawer (Drill-Down Modal) */}
         {drillDownCategory && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity" onClick={() => setDrillDownCategory(null)} />
@@ -185,7 +184,6 @@ export default function Dashboard() {
                       <div className="flex items-start gap-2.5">
                         <span className={`h-2 w-2 rounded-full mt-1.5 shrink-0 shadow-sm ${check.passed ? 'bg-emerald-500 shadow-emerald-500/40' : 'bg-rose-500 shadow-rose-500/40'}`} />
                         <div className="flex-1 min-w-0">
-                          {/* Fallback bounds handling both backend mapping schema variants gracefully */}
                           <h4 className="text-xs md:text-sm font-bold text-slate-200 truncate">
                             {check.name || check.title || "Audit Compliance Check"}
                           </h4>
