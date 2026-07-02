@@ -1,4 +1,4 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import api from '../lib/api';
 
@@ -40,7 +40,8 @@ export default function RiskScorecard({ data, onMetricClick }) {
     setLoading(true);
     setError('');
     try {
-      const response = await api.post('/api/scorecard', formData);
+      // FIXED ENTIRELY: Pointed to the direct backend router endpoint definition match
+      const response = await api.post('/scorecard', formData);
       setLocalScores(response.data);
     } catch (err) {
       console.error(err);
@@ -155,7 +156,7 @@ export default function RiskScorecard({ data, onMetricClick }) {
               {loading ? 'Evaluating Vectors...' : 'Re-evaluate Risk Vectors'}
             </button>
           </form>
-          {error && <p className="text-[11px] text-red-400 bg-red-500/5 p-2 rounded-lg border border-red-500/10">{error}</p>}
+          {error && <p className="text-[11px] text-red-400 bg-red-500/5 p-2 rounded-lg border border-red-500/10 mt-2">{error}</p>}
         </div>
 
         {/* Dynamic Scoring Display Row Area */}
@@ -170,6 +171,7 @@ export default function RiskScorecard({ data, onMetricClick }) {
                 Dynamic execution algorithms across statutory frameworks are reserved for premium tiers.
               </p>
               <button
+                type="button"
                 onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
                 className="bg-white text-slate-950 font-bold text-xs py-2 px-5 rounded-xl hover:bg-slate-200 shadow-md transition-all"
               >
