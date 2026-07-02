@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { chatAPI } from '../lib/api';
+import { useAuth } from '../hooks/useAuth';
 import RiskScorecard from '../components/RiskScorecard';
 import ComplianceCalendar from '../components/ComplianceCalendar';
 
@@ -22,6 +23,10 @@ function SkeletonCard() {
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const userRole = user?.role || 'guest';
+  const isLocked = userRole === 'guest' || userRole === 'free';
+
   const [scorecard, setScorecard] = useState(null);
   const [deadlines, setDeadlines] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -36,11 +41,28 @@ export default function Dashboard() {
     async function loadDashboardData() {
       try {
         setIsLoading(true);
-        // Fire parallel asynchronous requests using newly defined api wrappers
-        const [scorecardData, calendarData] = await Promise.all([
-          chatAPI.getScorecard(),
-          chatAPI.getCalendarDeadlines()
-        ]);
+        
+        // If the feature is tier gated for guest/free accounts, catch specific scorecard 
+        // 403 or fallback responses to avoid blocking the calendar/deadlines view layout hydration.
+        let scorecardData = null;
+        let calendarData = [];
+
+        if (!isLocked) {
+          try {
+            const [sc, cal] = await Promise.all([
+              chatAPI.getScorecard(),
+              chatAPI.getCalendarDeadlines()
+            ]);
+            scorecardData = sc;
+            calendarData = cal;
+          } catch (apiErr) {
+            console.warn("Primary parallel call failed, falling back to calendar initialization:", apiErr);
+            calendarData = await chatAPI.getCalendarDeadlines().catch(() => []);
+          }
+        } else {
+          // Free users skip scorecard calculation fetch logic completely on home load
+          calendarData = await chatAPI.getCalendarDeadlines().catch(() => []);
+        }
         
         if (isMounted) {
           setScorecard(scorecardData);
@@ -60,18 +82,17 @@ export default function Dashboard() {
 
     loadDashboardData();
     return () => { isMounted = false; };
-  }, []);
+  }, [isLocked]);
 
   // Action callback routing item focus context into real-time Chat
   const handleAnalyzeDeadline = (item) => {
     const predefinedQuery = `What are my exact compliance requirements and penalties for missing the ${item.authority} deadline: ${item.title}?`;
-    // Redirect cleanly to chat, feeding state attributes down into route parameters
     navigate('/chat', { state: { initialQuery: predefinedQuery } });
   };
 
   const handleOpenDrillDown = (category, checks) => {
     setDrillDownCategory(category.toUpperCase());
-    setDrillDownChecks(checks);
+    setDrillDownChecks(checks || []);
   };
 
   // Lighthouse 90+ Fix: Graceful error status card layout (No harsh full screen blanks)
@@ -126,7 +147,7 @@ export default function Dashboard() {
               onMetricClick={handleOpenDrillDown} 
             />
 
-            {/* Pillar 2: Timeline Deadline Board (Completely Responsive Backdrop container) */}
+            {/* Pillar 2: Timeline Deadline Board */}
             <div className="w-full bg-slate-900/10 border border-slate-800/80 rounded-2xl p-4 md:p-6 backdrop-blur-md shadow-xl overflow-hidden">
               <ComplianceCalendar 
                 deadlines={deadlines} 
@@ -136,7 +157,7 @@ export default function Dashboard() {
           </>
         )}
 
-        {/* Interactive Parameter Inspection Drawer (Drill-Down Modal) */}
+        {/* Interactive Parameter Inspection Drawer (Drill-Down Modal Modal) */}
         {drillDownCategory && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity" onClick={() => setDrillDownCategory(null)} />
@@ -164,8 +185,13 @@ export default function Dashboard() {
                       <div className="flex items-start gap-2.5">
                         <span className={`h-2 w-2 rounded-full mt-1.5 shrink-0 shadow-sm ${check.passed ? 'bg-emerald-500 shadow-emerald-500/40' : 'bg-rose-500 shadow-rose-500/40'}`} />
                         <div className="flex-1 min-w-0">
-                          <h4 className="text-xs md:text-sm font-bold text-slate-200 truncate">{check.title}</h4>
-                          <p className="text-[11px] md:text-xs text-slate-400 mt-1 leading-relaxed whitespace-pre-wrap">{check.desc}</p>
+                          {/* Fallback bounds handling both backend mapping schema variants gracefully */}
+                          <h4 className="text-xs md:text-sm font-bold text-slate-200 truncate">
+                            {check.name || check.title || "Audit Compliance Check"}
+                          </h4>
+                          <p className="text-[11px] md:text-xs text-slate-400 mt-1 leading-relaxed whitespace-pre-wrap">
+                            {check.description || check.desc || "No supplemental details logged."}
+                          </p>
                         </div>
                       </div>
                     </div>
