@@ -207,12 +207,14 @@ export default function RiskScorecard({ data, onMetricClick }) {
 
           <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 h-full ${isLocked ? 'blur-[4px] select-none pointer-events-none' : ''}`}>
             {Object.entries(activeScores).map(([key, value]) => {
-              const displayAxis = key.toUpperCase();
-              const theme = getScoreTheme(value.percentage, value.status);
-              
-              const radius = 32;
-              const circumference = 2 * Math.PI * radius;
-              const strokeOffset = circumference - (value.percentage / 100) * circumference;
+              // Find this section inside frontend/src/components/RiskScorecard.jsx:
+const displayAxis = key.toUpperCase();
+const theme = getScoreTheme(value.percentage, value.status);
+
+const radius = 32;
+const circumference = 2 * Math.PI * radius;
+// CHANGE value.percentage to value.score to match your original backend schema!
+const strokeOffset = circumference - ((value.score || 0) / 100) * circumference;
 
               return (
                 <div
@@ -246,7 +248,7 @@ export default function RiskScorecard({ data, onMetricClick }) {
                           className="transition-all duration-500 ease-out"
                         />
                       </svg>
-                      <span className="absolute text-xs font-mono font-bold text-white">{value.percentage}%</span>
+                      <span className="absolute text-xs font-mono font-bold text-white">{value.score || 0}%</span>
                     </div>
                   </div>
 
