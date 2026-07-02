@@ -3,10 +3,11 @@ from pydantic import BaseModel, Field
 from typing import List, Dict, Optional, Any
 import os
 import json
-import google.generativeai as genai  # pyright: ignore[reportMissingImports]
-from app.api.auth import get_current_user  # Established JWT middleware
+import google.generativeai as genai # pyright: ignore[reportMissingImports]
+from app.api.auth import get_current_user  # Your established JWT middleware
 
-router = APIRouter(prefix="/api/scorecard", tags=["Scorecard"])
+# FIXED: Removed the duplicate /api prefix. Main.py will append /api automatically.
+router = APIRouter(prefix="/scorecard", tags=["Scorecard"])
 
 # Ensure Gemini API is loaded properly
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
