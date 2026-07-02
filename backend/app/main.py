@@ -80,25 +80,21 @@ async def global_exception_handler(request: Request, exc: Exception):
 #  Routers
 # ─────────────────────────────────────────────────────────────
 
-# Day 21: query.router now has prefix="/api" baked into its own
-# route paths internally is NOT the pattern used here — instead
-# we add the prefix at include_router, matching threads/alerts style.
-app.include_router(query.router, prefix="/api", tags=["Query"])         # Day 21 (was Day 14, prefix added)
-app.include_router(threads_api.router, prefix="/api", tags=["Threads"]) # Day 16
-app.include_router(alerts_api.router, prefix="/api", tags=["Alerts"])   # Day 16
+# ─────────────────────────────────────────────────────────────
+#  Routers
+# ─────────────────────────────────────────────────────────────
 
-# ── Day 20 Authentication Endpoints ───────────────────────────
-app.include_router(me.router, prefix="/api", tags=["Authentication Test"])
-app.include_router(scorecard.router)
-
-# Align this declaration section at the router include segment of backend/app/main.py
 app.include_router(query.router, prefix="/api", tags=["Query"])
 app.include_router(threads_api.router, prefix="/api", tags=["Threads"])
 app.include_router(alerts_api.router, prefix="/api", tags=["Alerts"])
 app.include_router(me.router, prefix="/api", tags=["Authentication Test"])
 
-# Ensure your scorecard is integrated with the prefix parameter explicitly set:
+# CHANGE THIS LINE FROM:
+# app.include_router(scorecard.router)
+
+# TO THIS EXACTLY:
 app.include_router(scorecard.router, prefix="/api", tags=["Scorecard"])
+
 
 # Future Roadmap Markers:
 # Day 34: from app.api import scorecard
