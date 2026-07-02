@@ -209,7 +209,7 @@ export default function RiskScorecard({ data, onMetricClick }) {
             {Object.entries(activeScores).map(([key, value]) => {
               // Find this section inside frontend/src/components/RiskScorecard.jsx:
 const displayAxis = key.toUpperCase();
-const theme = getScoreTheme(value.percentage, value.status);
+const theme = getScoreTheme(value.score || 0, value.label || value.status);
 
 const radius = 32;
 const circumference = 2 * Math.PI * radius;
