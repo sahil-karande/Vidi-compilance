@@ -34,22 +34,47 @@ export default function RiskScorecard({ data, onMetricClick }) {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  if (isLocked) return;
+    e.preventDefault();
+    if (isLocked) return;
 
-  setLoading(true);
-  setError('');
-  try {
-    // Make sure it uses the prefix exactly matching your backend router configuration:
-    const response = await api.post('/api/scorecard', formData);
-    setLocalScores(response.data);
-  } catch (err) {
-    console.error(err);
-    setError(err.response?.data?.detail || 'Failed to re-calculate compliance matrix profiles.');
-  } finally {
-    setLoading(false);
-  }
-};
+    setLoading(true);
+    setError('');
+
+    // Map your frontend select choices into the exact schema expected by the backend
+    const mappedPayload = {
+      industry_type: formData.industry, 
+      annual_turnover_inr: formData.turnover_range === "Under ₹20 Lakhs" ? 1500000 
+                          : formData.turnover_range === "₹20 Lakhs - ₹1 Cr" ? 5000000 
+                          : formData.turnover_range === "₹1Cr - ₹5Cr" ? 30000000 
+                          : 60000000,
+      is_import_export: formData.has_foreign_funding === "Yes",
+      has_listed_securities: formData.business_type === "Public Limited",
+      missing_filings: [] // Pass an empty list to satisfy Pydantic validations
+    };
+
+    try {
+      // Direct call onto your exposed prefix endpoint path
+      const response = await api.post('/api/scorecard', mappedPayload);
+      
+      // Adapt response structure values back into standard frontend metrics format
+      const formattedResponse = {
+        overall_health: response.data.overall_status,
+        scores: {
+          gst: { percentage: response.data.gst.score, status: response.data.gst.label, checks: response.data.gst.checks },
+          rbi: { percentage: response.data.rbi.score, status: response.data.rbi.label, checks: response.data.rbi.checks },
+          sebi: { percentage: response.data.sebi.score, status: response.data.sebi.label, checks: response.data.sebi.checks },
+          mca: { percentage: response.data.mca.score, status: response.data.mca.label, checks: response.data.mca.checks }
+        }
+      };
+      
+      setLocalScores(formattedResponse);
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.detail || 'Failed to re-calculate compliance matrix profiles.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getScoreTheme = (percentage, status) => {
     const normStatus = status?.toUpperCase() || (percentage >= 80 ? 'GREEN' : percentage >= 50 ? 'AMBER' : 'RED');
