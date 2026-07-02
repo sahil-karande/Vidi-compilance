@@ -23,8 +23,16 @@ export default function RiskScorecard({ data, onMetricClick }) {
   // Sync with initial hydration metrics passed from dashboard container load
   useEffect(() => {
     if (data) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setLocalScores(data);
+      // Safely transform initial dashboard payload keys if structured via standard formats
+      if (data.overall_status && !data.overall_health) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setLocalScores({
+          overall_health: data.overall_status,
+          scores: data.scores
+        });
+      } else {
+        setLocalScores(data);
+      }
     }
   }, [data]);
 
@@ -40,7 +48,7 @@ export default function RiskScorecard({ data, onMetricClick }) {
     setLoading(true);
     setError('');
 
-    // Map your frontend select choices into the exact schema expected by the backend
+    // Map your frontend select choices into the exact schema expected by the backend Pydantic model
     const mappedPayload = {
       industry_type: formData.industry, 
       annual_turnover_inr: formData.turnover_range === "Under ₹20 Lakhs" ? 1500000 
@@ -49,22 +57,16 @@ export default function RiskScorecard({ data, onMetricClick }) {
                           : 60000000,
       is_import_export: formData.has_foreign_funding === "Yes",
       has_listed_securities: formData.business_type === "Public Limited",
-      missing_filings: [] // Pass an empty list to satisfy Pydantic validations
+      missing_filings: [] 
     };
 
     try {
-      // Direct call onto your exposed prefix endpoint path
       const response = await api.post('/api/scorecard', mappedPayload);
       
-      // Adapt response structure values back into standard frontend metrics format
+      // Adapt schema response variables directly back into parent states matching formatting hooks
       const formattedResponse = {
         overall_health: response.data.overall_status,
-        scores: {
-          gst: { percentage: response.data.gst.score, status: response.data.gst.label, checks: response.data.gst.checks },
-          rbi: { percentage: response.data.rbi.score, status: response.data.rbi.label, checks: response.data.rbi.checks },
-          sebi: { percentage: response.data.sebi.score, status: response.data.sebi.label, checks: response.data.sebi.checks },
-          mca: { percentage: response.data.mca.score, status: response.data.mca.label, checks: response.data.mca.checks }
-        }
+        scores: response.data.scores || response.data
       };
       
       setLocalScores(formattedResponse);
@@ -90,11 +92,12 @@ export default function RiskScorecard({ data, onMetricClick }) {
     }
   };
 
+  // Safe baseline fallback settings matching backend evaluation defaults
   const defaultDisplayAxes = {
-    gst: { percentage: 85, status: 'GREEN', checks: [] },
-    rbi: { percentage: 70, status: 'AMBER', checks: [] },
-    sebi: { percentage: 90, status: 'GREEN', checks: [] },
-    mca: { percentage: 45, status: 'RED', checks: [] }
+    gst: { score: 85, label: 'GREEN', checks: [] },
+    rbi: { score: 70, label: 'AMBER', checks: [] },
+    sebi: { score: 90, label: 'GREEN', checks: [] },
+    mca: { score: 45, label: 'RED', checks: [] }
   };
 
   const activeScores = localScores?.scores || defaultDisplayAxes;
@@ -207,14 +210,16 @@ export default function RiskScorecard({ data, onMetricClick }) {
 
           <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 h-full ${isLocked ? 'blur-[4px] select-none pointer-events-none' : ''}`}>
             {Object.entries(activeScores).map(([key, value]) => {
-              // Find this section inside frontend/src/components/RiskScorecard.jsx:
-const displayAxis = key.toUpperCase();
-const theme = getScoreTheme(value.score || 0, value.label || value.status);
-
-const radius = 32;
-const circumference = 2 * Math.PI * radius;
-// CHANGE value.percentage to value.score to match your original backend schema!
-const strokeOffset = circumference - ((value.score || 0) / 100) * circumference;
+              const displayAxis = key.toUpperCase();
+              
+              // Aligned perfectly to extract values dynamically from response fields
+              const currentScore = value?.score !== undefined ? value.score : (value?.percentage || 0);
+              const currentLabel = value?.label || value?.status || 'GREEN';
+              const theme = getScoreTheme(currentScore, currentLabel);
+              
+              const radius = 32;
+              const circumference = 2 * Math.PI * radius;
+              const strokeOffset = circumference - (currentScore / 100) * circumference;
 
               return (
                 <div
@@ -248,7 +253,7 @@ const strokeOffset = circumference - ((value.score || 0) / 100) * circumference;
                           className="transition-all duration-500 ease-out"
                         />
                       </svg>
-                      <span className="absolute text-xs font-mono font-bold text-white">{value.score || 0}%</span>
+                      <span className="absolute text-xs font-mono font-bold text-white">{currentScore}%</span>
                     </div>
                   </div>
 
