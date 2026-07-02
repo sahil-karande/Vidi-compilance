@@ -1,15 +1,13 @@
-import  { useState } from 'react';
+import  { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import api from '../lib/api';
 
-export default function RiskScorecard({ onMetricClick }) {
+export default function RiskScorecard({ data, onMetricClick }) {
   const { user } = useAuth();
-  
-  // Extract user role from context tier setup
   const userRole = user?.role || 'guest';
   const isLocked = userRole === 'guest' || userRole === 'free';
 
-  // Business profile form parameters matching Backend Schema expectations
+  // Local state tracking parameters matching backend evaluation keys
   const [formData, setFormData] = useState({
     business_type: 'Private Limited',
     industry: 'Fintech',
@@ -20,7 +18,15 @@ export default function RiskScorecard({ onMetricClick }) {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [scoreData, setScoreData] = useState(null);
+  const [localScores, setLocalScores] = useState(null);
+
+  // Sync with initial hydration metrics passed from dashboard container load
+  useEffect(() => {
+    if (data) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLocalScores(data);
+    }
+  }, [data]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -34,21 +40,19 @@ export default function RiskScorecard({ onMetricClick }) {
     setLoading(true);
     setError('');
     try {
-      const response = await api.post('/scorecard', formData);
-      // Response from backend matches format: { overall_health: "...", scores: { gst: { percentage: 85, status: "GREEN", checks: [...] }, ... } }
-      setScoreData(response.data);
+      const response = await api.post('/api/scorecard', formData);
+      setLocalScores(response.data);
     } catch (err) {
       console.error(err);
-      setError(err.response?.data?.detail || 'Failed to calculate compliance profile risks.');
+      setError(err.response?.data?.detail || 'Failed to re-calculate compliance matrix profiles.');
     } finally {
       setLoading(false);
     }
   };
 
-  // UI Theme Engine maps status values to specific stroke colors and styles
   const getScoreTheme = (percentage, status) => {
-    const normalizeStatus = status?.toUpperCase() || (percentage >= 80 ? 'GREEN' : percentage >= 50 ? 'AMBER' : 'RED');
-    switch (normalizeStatus) {
+    const normStatus = status?.toUpperCase() || (percentage >= 80 ? 'GREEN' : percentage >= 50 ? 'AMBER' : 'RED');
+    switch (normStatus) {
       case 'GREEN':
         return { stroke: '#10B981', text: 'text-emerald-400', border: 'border-emerald-500/20', bg: 'bg-emerald-500/5', dot: 'bg-emerald-400' };
       case 'AMBER':
@@ -60,53 +64,44 @@ export default function RiskScorecard({ onMetricClick }) {
     }
   };
 
-  // Stand-in metrics preview display shown prior to form execution
   const defaultDisplayAxes = {
-    GST: { percentage: 0, status: 'NONE', checks: [] },
-    RBI: { percentage: 0, status: 'NONE', checks: [] },
-    SEBI: { percentage: 0, status: 'NONE', checks: [] },
-    MCA: { percentage: 0, status: 'NONE', checks: [] }
+    gst: { percentage: 85, status: 'GREEN', checks: [] },
+    rbi: { percentage: 70, status: 'AMBER', checks: [] },
+    sebi: { percentage: 90, status: 'GREEN', checks: [] },
+    mca: { percentage: 45, status: 'RED', checks: [] }
   };
 
-  const activeScores = scoreData?.scores || defaultDisplayAxes;
+  const activeScores = localScores?.scores || defaultDisplayAxes;
 
   return (
-    <div className="w-full max-w-7xl mx-auto p-4 lg:p-6 space-y-8">
-      {/* Dashboard Top Row Header Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-zinc-800 pb-5 gap-4">
+    <div className="w-full flex flex-col gap-6 text-slate-200">
+      
+      {/* Upper Status Banner Section */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-slate-900/40 p-4 border border-slate-800 rounded-xl gap-2">
         <div>
-          <h2 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
-            🛡️ Corporate Compliance Risk Scorecard
-          </h2>
-          <p className="text-sm text-zinc-400 mt-1">
-            Generate risk indices and verification statuses relative to ongoing operations.
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Compliance Health Matrix</h3>
+          <p className="text-base font-bold mt-0.5 text-white">
+            {localScores?.overall_health || (isLocked ? '🔒 Restricted Tier Vector Status' : 'Awaiting Parameters Evaluation')}
           </p>
         </div>
-        {scoreData?.overall_health && !isLocked && (
-          <div className="bg-zinc-900/80 px-4 py-2 border border-zinc-800 rounded-xl flex flex-col justify-center">
-            <span className="text-[10px] uppercase font-mono font-bold text-zinc-500">Overall Assessment</span>
-            <span className="text-sm font-bold text-white mt-0.5">{scoreData.overall_health}</span>
-          </div>
-        )}
+        <span className="text-xs text-slate-400 bg-slate-950 px-3 py-1.5 rounded-md border border-slate-800 w-max self-start sm:self-center">
+          Updated: Live Vector Status
+        </span>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-        {/* Form Column - Left Section */}
-        <div className="bg-zinc-900/90 border border-zinc-800 rounded-2xl p-5 lg:p-6 space-y-5">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        
+        {/* Form Configuration Input Box */}
+        <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 space-y-4">
           <div>
-            <h3 className="text-md font-semibold text-zinc-200">Company Configuration Profile</h3>
-            <p className="text-xs text-zinc-500 mt-0.5">Parameters drive continuous automated evaluation formulas.</p>
+            <h4 className="text-sm font-bold text-slate-200">Company Vector Parameters</h4>
+            <p className="text-[11px] text-slate-400 mt-0.5">Adjust fields to feed back into calculation formulas.</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3.5">
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">Business Constitution</label>
-              <select
-                name="business_type"
-                value={formData.business_type}
-                onChange={handleInputChange}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm text-zinc-200 focus:outline-none focus:border-zinc-700 transition-colors"
-              >
+              <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Constitution</label>
+              <select name="business_type" value={formData.business_type} onChange={handleInputChange} className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-300 focus:outline-none focus:border-slate-700">
                 <option value="Proprietorship">Proprietorship</option>
                 <option value="Partnership / LLP">Partnership / LLP</option>
                 <option value="Private Limited">Private Limited</option>
@@ -115,29 +110,18 @@ export default function RiskScorecard({ onMetricClick }) {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">Operational Sector</label>
-              <select
-                name="industry"
-                value={formData.industry}
-                onChange={handleInputChange}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm text-zinc-200 focus:outline-none focus:border-zinc-700 transition-colors"
-              >
+              <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Operational Sector</label>
+              <select name="industry" value={formData.industry} onChange={handleInputChange} className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-300 focus:outline-none focus:border-slate-700">
                 <option value="Fintech">Fintech & Payments</option>
                 <option value="E-Commerce Retail">E-Commerce Retail</option>
                 <option value="Logistics & Supply">Logistics & Supply</option>
                 <option value="SaaS / Tech Services">SaaS / Tech Services</option>
-                <option value="Manufacturing">Manufacturing</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">Annualized Gross Turnover</label>
-              <select
-                name="turnover_range"
-                value={formData.turnover_range}
-                onChange={handleInputChange}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm text-zinc-200 focus:outline-none focus:border-zinc-700 transition-colors"
-              >
+              <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Annual Turnover</label>
+              <select name="turnover_range" value={formData.turnover_range} onChange={handleInputChange} className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-300 focus:outline-none focus:border-slate-700">
                 <option value="Under ₹20 Lakhs">Under ₹20 Lakhs</option>
                 <option value="₹20 Lakhs - ₹1 Cr">₹20 Lakhs - ₹1 Cr</option>
                 <option value="₹1Cr - ₹5Cr">₹1Cr - ₹5Cr</option>
@@ -146,122 +130,88 @@ export default function RiskScorecard({ onMetricClick }) {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">Cross-Border Capital (FEMA / Inflows)</label>
-              <select
-                name="has_foreign_funding"
-                value={formData.has_foreign_funding}
-                onChange={handleInputChange}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm text-zinc-200 focus:outline-none focus:border-zinc-700 transition-colors"
-              >
-                <option value="No">No Foreign Funding</option>
-                <option value="Yes">Yes (FDI / Venture Capital Inflow)</option>
+              <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Cross-Border Funding</label>
+              <select name="has_foreign_funding" value={formData.has_foreign_funding} onChange={handleInputChange} className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-300 focus:outline-none focus:border-slate-700">
+                <option value="No">No Inflows</option>
+                <option value="Yes">Yes (FDI / Venture Capital)</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">GSTIN Registration Status</label>
-              <select
-                name="gst_registered"
-                value={formData.gst_registered}
-                onChange={handleInputChange}
-                className="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm text-zinc-200 focus:outline-none focus:border-zinc-700 transition-colors"
-              >
-                <option value="Yes">Active Registered Entity</option>
-                <option value="No">Unregistered / Exempted</option>
+              <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">GSTIN Status</label>
+              <select name="gst_registered" value={formData.gst_registered} onChange={handleInputChange} className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-300 focus:outline-none focus:border-slate-700">
+                <option value="Yes">Active Registered</option>
+                <option value="No">Unregistered / Exempt</option>
               </select>
             </div>
 
             <button
               type="submit"
               disabled={loading || isLocked}
-              className={`w-full py-3 px-4 rounded-xl font-medium text-sm transition-all duration-200 mt-2 ${
-                isLocked
-                  ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
-                  : 'bg-white text-zinc-950 hover:bg-zinc-200 shadow-md active:scale-[0.99]'
+              className={`w-full py-2.5 px-4 rounded-xl text-xs font-semibold tracking-wide transition-all mt-1 ${
+                isLocked ? 'bg-slate-800 text-slate-500 cursor-not-allowed' : 'bg-white text-slate-950 hover:bg-slate-200'
               }`}
             >
-              {loading ? 'Processing Parameters...' : 'Re-evaluate Risk Vectors'}
+              {loading ? 'Evaluating Vectors...' : 'Re-evaluate Risk Vectors'}
             </button>
           </form>
-
-          {error && (
-            <div className="p-3 bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs rounded-xl">
-              {error}
-            </div>
-          )}
+          {error && <p className="text-[11px] text-red-400 bg-red-500/5 p-2 rounded-lg border border-red-500/10">{error}</p>}
         </div>
 
-        {/* Matrix Visualization Column Stack - Right Section */}
-        <div className="lg:col-span-2 relative min-h-[460px]">
-          {/* Pro Gate Layer Feature Overlay */}
+        {/* Dynamic Scoring Display Row Area */}
+        <div className="lg:col-span-2 relative min-h-[380px] h-full">
           {isLocked && (
-            <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-zinc-950/70 backdrop-blur-md rounded-2xl border border-zinc-800/60 p-6 text-center">
-              <div className="w-12 h-12 bg-zinc-900 border border-zinc-800 flex items-center justify-center rounded-2xl mb-4 shadow-xl">
-                <span className="text-xl">🔒</span>
+            <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-950/70 backdrop-blur-md rounded-2xl border border-slate-800/40 p-6 text-center">
+              <div className="w-10 h-10 bg-slate-900 border border-slate-800 flex items-center justify-center rounded-xl mb-3 shadow-xl">
+                <span className="text-sm">🔒</span>
               </div>
-              <h4 className="text-lg font-bold text-white tracking-tight">Unlock Dynamic Risk Scorecarding</h4>
-              <p className="text-zinc-400 text-sm max-w-sm mt-1.5 mb-6">
-                Analyzing business matrices and monitoring cross-platform regulatory vulnerabilities require an upgraded account tier.
+              <h4 className="text-sm font-bold text-white">Unlock Live Risk Scorecard</h4>
+              <p className="text-slate-400 text-xs max-w-xs mt-1 mb-4">
+                Dynamic execution algorithms across statutory frameworks are reserved for premium tiers.
               </p>
               <button
-                onClick={() => {
-                  const pricingEl = document.getElementById('pricing');
-                  if (pricingEl) pricingEl.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="bg-white text-zinc-950 font-semibold text-xs py-2.5 px-6 rounded-xl hover:bg-zinc-200 shadow-xl transition-all active:scale-[0.98]"
+                onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
+                className="bg-white text-slate-950 font-bold text-xs py-2 px-5 rounded-xl hover:bg-slate-200 shadow-md transition-all"
               >
                 Upgrade to Pro (₹499/mo)
               </button>
             </div>
           )}
 
-          {/* Grid Layout of the 4 Pillars */}
           <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 h-full ${isLocked ? 'blur-[4px] select-none pointer-events-none' : ''}`}>
             {Object.entries(activeScores).map(([key, value]) => {
-              const displayKey = key.toUpperCase();
+              const displayAxis = key.toUpperCase();
               const theme = getScoreTheme(value.percentage, value.status);
               
-              // SVG Math calculation constants for crisp circular tracks
-              const radius = 36;
+              const radius = 32;
               const circumference = 2 * Math.PI * radius;
               const strokeOffset = circumference - (value.percentage / 100) * circumference;
 
               return (
                 <div
                   key={key}
-                  onClick={() => onMetricClick && value.percentage > 0 && onMetricClick(key, value.checks)}
-                  className={`p-5 rounded-2xl border bg-zinc-900/40 transition-all duration-200 flex flex-col justify-between ${
-                    value.percentage > 0 ? 'cursor-pointer hover:border-zinc-700 hover:bg-zinc-900/60' : 'border-zinc-800/80'
-                  }`}
+                  onClick={() => onMetricClick && onMetricClick(key, value.checks)}
+                  className="p-5 rounded-xl border border-slate-800/80 bg-slate-900/30 flex flex-col justify-between cursor-pointer hover:border-slate-700 hover:bg-slate-900/50 transition-all group shadow-md"
                 >
-                  <div className="flex justify-between items-start gap-2">
+                  <div className="flex justify-between items-start gap-4">
                     <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold font-mono tracking-wider text-zinc-500 uppercase">Jurisdiction</span>
-                        {value.percentage > 0 && <span className={`h-2 w-2 rounded-full ${theme.dot} animate-pulse`} />}
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] font-bold font-mono tracking-wider text-slate-500 uppercase">Axis Pillar</span>
+                        <span className={`h-1.5 w-1.5 rounded-full ${theme.dot} animate-pulse`} />
                       </div>
-                      <h4 className="text-lg font-bold text-white tracking-tight">{displayKey} Framework</h4>
+                      <h4 className="text-base font-bold text-white tracking-tight">{displayAxis} Metric</h4>
                     </div>
 
-                    {/* SVG Circular Progress Meter */}
-                    <div className="relative w-20 h-20 flex items-center justify-center flex-shrink-0">
+                    {/* SVG Graphic Component Fill Wheel */}
+                    <div className="relative w-16 h-16 flex items-center justify-center flex-shrink-0">
                       <svg className="w-full h-full transform -rotate-90">
-                        {/* Background track circle */}
+                        <circle cx="32" cy="32" r={radius} className="stroke-slate-800/60" strokeWidth="5" fill="none" />
                         <circle
-                          cx="40"
-                          cy="40"
-                          r={radius}
-                          className="stroke-zinc-800/70"
-                          strokeWidth="6"
-                          fill="none"
-                        />
-                        {/* Dynamic data tracking foreground fill circle */}
-                        <circle
-                          cx="40"
-                          cy="40"
+                          cx="32"
+                          cy="32"
                           r={radius}
                           stroke={theme.stroke}
-                          strokeWidth="6"
+                          strokeWidth="5"
                           fill="none"
                           strokeDasharray={circumference}
                           strokeDashoffset={strokeOffset}
@@ -269,30 +219,27 @@ export default function RiskScorecard({ onMetricClick }) {
                           className="transition-all duration-500 ease-out"
                         />
                       </svg>
-                      <div className="absolute inset-0 flex flex-col items-center justify-center">
-                        <span className="text-sm font-mono font-bold text-white">{value.percentage}%</span>
-                      </div>
+                      <span className="absolute text-xs font-mono font-bold text-white">{value.percentage}%</span>
                     </div>
                   </div>
 
-                  <div className="mt-4 pt-4 border-t border-zinc-800/60 flex items-center justify-between">
-                    <span className="text-xs text-zinc-400">
-                      {displayKey === 'GST' && 'Filing cycles & logs'}
-                      {displayKey === 'RBI' && 'FDI limits & declarations'}
-                      {displayKey === 'SEBI' && 'Shareholding & investments'}
-                      {displayKey === 'MCA' && 'Annual continuous filings'}
+                  <div className="mt-4 pt-3 border-t border-slate-800/50 flex items-center justify-between text-xs font-medium">
+                    <span className="text-slate-400 text-[11px] italic">
+                      {displayAxis === 'GST' && 'Indirect audit checks'}
+                      {displayAxis === 'RBI' && 'Capital inflow path validation'}
+                      {displayAxis === 'SEBI' && 'Asset securities check logs'}
+                      {displayAxis === 'MCA' && 'Annual Continuous Filing logs'}
                     </span>
-                    {value.percentage > 0 && (
-                      <span className={`text-xs font-medium ${theme.text} flex items-center gap-0.5 group`}>
-                        Analyze <span className="transition-transform group-hover:translate-x-0.5">→</span>
-                      </span>
-                    )}
+                    <span className={`${theme.text} flex items-center gap-0.5`}>
+                      View <span className="transition-transform group-hover:translate-x-0.5">→</span>
+                    </span>
                   </div>
                 </div>
               );
             })}
           </div>
         </div>
+
       </div>
     </div>
   );
