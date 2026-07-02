@@ -91,6 +91,14 @@ app.include_router(alerts_api.router, prefix="/api", tags=["Alerts"])   # Day 16
 app.include_router(me.router, prefix="/api", tags=["Authentication Test"])
 app.include_router(scorecard.router)
 
+# Align this declaration section at the router include segment of backend/app/main.py
+app.include_router(query.router, prefix="/api", tags=["Query"])
+app.include_router(threads_api.router, prefix="/api", tags=["Threads"])
+app.include_router(alerts_api.router, prefix="/api", tags=["Alerts"])
+app.include_router(me.router, prefix="/api", tags=["Authentication Test"])
+
+# Ensure your scorecard is integrated with the prefix parameter explicitly set:
+app.include_router(scorecard.router, prefix="/api", tags=["Scorecard"])
 
 # Future Roadmap Markers:
 # Day 34: from app.api import scorecard
