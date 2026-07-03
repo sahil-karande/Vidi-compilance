@@ -6,12 +6,18 @@ from datetime import datetime
 router = APIRouter(prefix="/calendar", tags=["Calendar"])
 
 @router.get("")
-async def get_compliance_calendar(current_user: Dict[str, Any] = Depends(get_current_user)):
+async def get_compliance_calendar(current_user: Any = Depends(get_current_user)):
     """
     Generates a timeline calendar array containing key Indian corporate compliance
     deadlines, customized against the authenticated user's profile metadata.
     """
-    profile = current_user.get("business_profile") or {}
+    # FIXED: Accessing property directly via object notation instead of dict .get() method
+    profile = getattr(current_user, "business_profile", {}) or {}
+    
+    # If business_profile is stored as a dictionary inside the object model
+    if not isinstance(profile, dict):
+        profile = getattr(profile, "__dict__", {})
+
     entity_type = profile.get("entity_type", "Pvt Ltd")
     has_gstin = profile.get("has_gstin", False)
     sector = profile.get("industry_sector", "Services")

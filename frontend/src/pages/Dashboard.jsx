@@ -62,15 +62,15 @@ export default function Dashboard() {
 
         if (!isLocked) {
           try {
-            // Default payload structured matching Pydantic BusinessProfile model perfectly
-            // Replace the old defaultPayload with the schema your backend actually expects:
-const defaultPayload = {
-  constitution: "Private Limited",
-  operational_sector: "Fintech & Payments",
-  annual_turnover: "₹1Cr - ₹5Cr",
-  cross_border_funding: "No Inflows",
-  gstin_status: "Active Registered"
-};
+            // FIXED: Replaced layout labels with explicit parameter keys and values 
+            // required by the backend Pydantic validation schema rules
+            const defaultPayload = {
+              business_type: "Private Limited",
+              industry: "Fintech",
+              turnover_range: "₹1Cr - ₹5Cr",
+              has_foreign_funding: "No",
+              gst_registered: "Yes"
+            };
 
             const [sc, cal] = await Promise.all([
               chatAPI.getScorecard(defaultPayload).catch(() => null),

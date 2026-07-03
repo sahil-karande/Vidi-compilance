@@ -9,13 +9,8 @@ from fastapi.responses import JSONResponse
 from datetime import datetime
 
 from app.config import settings
-from app.api import query, threads_api, alerts_api, me, scorecard
-
-# ─────────── 💡 DAY 35 EXTENSION LOOKUP ───────────
-# If your calendar routes live in a standalone api file (e.g., app/api/calendar.py), 
-# uncomment the line below to import it:
-# from app.api import calendar 
-# ──────────────────────────────────────────────────
+# FIXED: Imported calendar along with the other routers
+from app.api import query, threads_api, alerts_api, me, scorecard, calendar 
 
 # ─────────────────────────────────────────────────────────────
 #  FastAPI App Initialization
@@ -93,6 +88,6 @@ app.include_router(me.router, prefix="/api", tags=["Authentication Test"])
 app.include_router(scorecard.router, prefix="/api", tags=["Scorecard"])
 
 # ─────────── 💡 DAY 35 CALENDAR ROUTE ───────────
-# If you verified that calendar has its own separate router, uncomment below:
-# app.include_router(calendar.router, prefix="/api", tags=["Calendar"])
+# FIXED: Uncommented to register the live calendar timeline route parameters
+app.include_router(calendar.router, prefix="/api", tags=["Calendar"]) 
 # ──────────────────────────────────────────────────

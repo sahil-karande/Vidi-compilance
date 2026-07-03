@@ -47,20 +47,18 @@ export default function RiskScorecard({ data, onMetricClick }) {
     setLoading(true);
     setError('');
 
-    // Map frontend dropdown selections precisely to backend parameters schema keys
-    const mappedPayload = {
-      industry_type: formData.industry, 
-      annual_turnover_inr: formData.turnover_range === "Under ₹20 Lakhs" ? 1500000 
-                          : formData.turnover_range === "₹20 Lakhs - ₹1 Cr" ? 5000000 
-                          : formData.turnover_range === "₹1Cr - ₹5Cr" ? 30000000 
-                          : 60000000,
-      is_import_export: formData.has_foreign_funding === "Yes",
-      has_listed_securities: formData.business_type === "Public Limited",
-      missing_filings: [] 
+    // FIXED: Construct the payload using literal text strings ("Yes"/"No") 
+    // instead of booleans to match the backend Pydantic validation expectations perfectly
+    const payload = {
+      business_type: formData.business_type,
+      industry: formData.industry,
+      turnover_range: formData.turnover_range,
+      has_foreign_funding: formData.has_foreign_funding, // Kept as string: "Yes" or "No"
+      gst_registered: formData.gst_registered           // Kept as string: "Yes" or "No"
     };
 
     try {
-      const responseData = await chatAPI.getScorecard(mappedPayload);
+      const responseData = await chatAPI.getScorecard(payload);
       
       setLocalScores({
         overall_health: responseData.overall_status || responseData.overall_health || 'Calculated Compliance Rating',
@@ -73,7 +71,6 @@ export default function RiskScorecard({ data, onMetricClick }) {
       setLoading(false);
     }
   };
-
   // FIXED: Defensively stringify and fallback status checks to prevent any toUpperCase() crash on load
   const getScoreTheme = (percentage, status) => {
     const cleanStatus = String(status || '').trim().toUpperCase();
@@ -211,7 +208,6 @@ export default function RiskScorecard({ data, onMetricClick }) {
             {Object.entries(activeScores).map(([key, value]) => {
               const displayAxis = key.toUpperCase();
               
-              // Handles score mapping variants seamlessly from Pydantic schemas (percentage vs score)
               const scoreVal = value && typeof value === 'object'
                 ? (value.percentage !== undefined ? value.percentage : (value.score !== undefined ? value.score : 0))
                 : 0;
