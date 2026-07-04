@@ -1,5 +1,5 @@
 /**
- * RegIQ — frontend/src/App.jsx
+ * Vidi — frontend/src/App.jsx
  * Week 6 — Task 31 Integration: Pricing & Settings Module Unified
  */
 
@@ -13,22 +13,33 @@ import Chat from './pages/Chat';
 import Settings from './pages/Settings'; 
 import TestAuth from './pages/TestAuth';
 
-// Day 25 Page Placeholders — remaining to be populated in upcoming build sequences
-const ExplorerView = () => <div className="p-8 min-h-screen bg-slate-950 text-slate-200"><h2>D3.js Regulation Citation Matrix Graph</h2></div>;
-const UploadView = () => <div className="p-8 min-h-screen bg-slate-950 text-slate-200"><h2>Document Ingestion Workspace (Pro Only)</h2></div>;
+// Day 25 Page Placeholders — ready for future build sequences
+const ExplorerView = () => (
+  <div className="p-8 min-h-screen bg-slate-950 text-slate-200 font-sans">
+    <h2 className="text-xl font-bold tracking-tight text-indigo-400">Vidi Regulation Explorer</h2>
+    <p className="text-xs text-slate-400 mt-1">D3.js dynamic structural force graph mapping cross-regulatory circular citations.</p>
+  </div>
+);
+
+const UploadView = () => (
+  <div className="p-8 min-h-screen bg-slate-950 text-slate-200 font-sans">
+    <h2 className="text-xl font-bold tracking-tight text-cyan-400">Document Ingestion Workspace</h2>
+    <p className="text-xs text-slate-400 mt-1">Blend your company notices with official corpora using localized vector parsing (Pro feature).</p>
+  </div>
+);
 
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          {/* Public Home Route */}
+          {/* Public Landing Interface */}
           <Route path="/" element={<Landing />} />
           
-          {/* Open Public Authentication Gateway */}
+          {/* Public Authentication Gateway */}
           <Route path="/login" element={<Login />} />
           
-          {/* Secure Protected Core SaaS Shell Modules */}
+          {/* Protected SME Workspace Components */}
           <Route 
             path="/dashboard" 
             element={
@@ -62,7 +73,7 @@ export default function App() {
             } 
           />
           
-          {/* Day 31: Linked directly to your 4-tier upgrade workspace flow */}
+          {/* Account Subscriptions & Tier Matrices */}
           <Route 
             path="/settings" 
             element={
@@ -72,7 +83,7 @@ export default function App() {
             } 
           />
 
-          {/* Validation Tool Vectors */}
+          {/* Validation Diagnostics */}
           <Route 
             path="/test-auth" 
             element={
@@ -82,7 +93,7 @@ export default function App() {
             } 
           />
 
-          {/* Catch-all Wildcard Route Safeguard */}
+          {/* Fallback Guardrail Routing */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
