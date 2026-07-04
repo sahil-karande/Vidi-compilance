@@ -50,7 +50,7 @@ class RAGGenerator:
     )
 
     def __init__(self):
-        # Configure the legacy/classic generation engine API wrapper safely
+        # Configure the generation engine API wrapper safely
         if LLM_PROVIDER == "gemini":
             if settings.gemini_api_key:
                 genai.configure(api_key=settings.gemini_api_key)
@@ -129,8 +129,9 @@ class RAGGenerator:
                 
         except Exception as e:
             logger.error(f"Error during LLM text generation loop: {str(e)}")
+            # DIAGNOSTIC CHANGE: Return raw exception details directly to the interface
             return {
-                "answer": "An error occurred while generating your answer. Please try again shortly.",
+                "answer": f"DIAGNOSTIC BLOCK - Internal Model Exception: {str(e)}",
                 "citations": [],
                 "mode": mode
             }
@@ -138,20 +139,19 @@ class RAGGenerator:
     async def _call_gemini(self, system_instruction: str, user_content: str, citations: List[Dict], mode: str) -> Dict[str, Any]:
         """Invokes the google-generativeai model using thread pools to avoid blockages."""
         
-        # Define generation parameters via native dictionary matching google-generativeai layout schema
         generation_config = {
-            "temperature": 0.0,  # Strict grounding threshold
+            "temperature": 0.0,
             "top_p": 1.0,
         }
 
-        # Wrap combined system prompt instructions with user input parameters cleanly
         combined_prompt = f"{system_instruction}\n\n{user_content}"
 
         def _sync_generate():
+            # Force refresh key directly from dynamic runtime settings container
+            genai.configure(api_key=settings.gemini_api_key)
             model = genai.GenerativeModel(model_name="gemini-1.5-flash")
             return model.generate_content(contents=combined_prompt, generation_config=generation_config)
 
-        # Offload sync SDK generation requests onto thread pools to prevent blocking the async loop
         response = await asyncio.to_thread(_sync_generate)
         
         return {
