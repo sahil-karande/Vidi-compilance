@@ -35,13 +35,30 @@ export default function Dashboard() {
   const [scorecard, setScorecard] = useState(null);
   const [deadlines, setDeadlines] = useState([]);
   const [recentThreads, setRecentThreads] = useState([]);
-  const [queryUsage, setQueryUsage] = useState({ used: 0, max: 20 }); // Default free tier
+  const [queryUsage, setQueryUsage] = useState({ used: 0, max: 20 });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   // Drill-down modal state
   const [drillDownCategory, setDrillDownCategory] = useState(null);
   const [drillDownChecks, setDrillDownChecks] = useState([]);
+
+  // Human-readable delta function for real database timestamp conversions
+  const formatTimeAgo = (isoString) => {
+    if (!isoString) return 'Active';
+    try {
+      const diffMs = new Date() - new Date(isoString);
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMins / 60);
+      
+      if (diffMins < 1) return 'Just now';
+      if (diffMins < 60) return `${diffMins}m ago`;
+      if (diffHours < 24) return `${diffHours}h ago`;
+      return new Date(isoString).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    } catch {
+      return 'Active';
+    }
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -52,6 +69,7 @@ export default function Dashboard() {
         
         let scorecardData = null;
         let calendarData = [];
+        let threadsData = [];
 
         const baselineFallback = {
           overall_health: "81% - Stable Active Posture",
@@ -73,36 +91,39 @@ export default function Dashboard() {
               gst_registered: "Yes"
             };
 
-            const [sc, cal] = await Promise.all([
+            // Concurrent operational backend requests
+            const [sc, cal, th] = await Promise.all([
               chatAPI.getScorecard(defaultPayload).catch(() => null),
-              chatAPI.getCalendarDeadlines().catch(() => [])
+              chatAPI.getCalendarDeadlines().catch(() => []),
+              chatAPI.getThreads().catch(() => [])
             ]);
             
             scorecardData = sc || baselineFallback;
             calendarData = cal || [];
+            threadsData = th || [];
           } catch (apiErr) {
             console.warn("API parsing skipped. Rolling back onto fallback defaults:", apiErr);
             scorecardData = baselineFallback;
           }
         } else {
           scorecardData = baselineFallback;
-          calendarData = await chatAPI.getCalendarDeadlines().catch(() => []);
+          const [cal, th] = await Promise.all([
+            chatAPI.getCalendarDeadlines().catch(() => []),
+            chatAPI.getThreads().catch(() => [])
+          ]);
+          calendarData = cal || [];
+          threadsData = th || [];
         }
         
         if (isMounted) {
           setScorecard(scorecardData);
           setDeadlines(calendarData);
-          
-          // Day 37: Mocking recent threads & usage (Replace with actual API calls when ready)
-          setRecentThreads([
-            { id: '1', title: 'GST registration threshold for Fintech', corpus: 'GST', date: '2h ago' },
-            { id: '2', title: 'FEMA guidelines for foreign VC funding', corpus: 'FEMA', date: '1d ago' },
-            { id: '3', title: 'MCA annual filing penalties', corpus: 'MCA', date: '3d ago' }
-          ]);
+          setRecentThreads(threadsData.slice(0, 5)); // Enforce scannable list boundary length
           setQueryUsage({ used: userRole === 'pro' ? 142 : 12, max: userRole === 'pro' ? 500 : 20 });
         }
       } catch (err) {
         console.error("Dashboard mount execution failed:", err);
+        if (isMounted) setError("Failed to synchronize component maps with active database vectors.");
       } finally {
         if (isMounted) setIsLoading(false);
       }
@@ -140,7 +161,9 @@ export default function Dashboard() {
     );
   }
 
-  const usagePercent = (queryUsage.used / queryUsage.max) * 100;
+  // Prevent divide-by-zero errors or broken visual layouts
+  const maxQuota = queryUsage.max || 1;
+  const usagePercent = Math.min((queryUsage.used / maxQuota) * 100, 100);
 
   return (
     <div className="min-h-screen bg-[#030712] text-slate-200 font-sans p-4 md:p-8 flex flex-col items-center antialiased relative overflow-hidden">
@@ -151,7 +174,7 @@ export default function Dashboard() {
 
       <div className="w-full max-w-7xl flex flex-col gap-6 md:gap-8 relative z-10">
         
-        {/* Day 37 Requirement: Welcome Header */}
+        {/* Welcome Header */}
         <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-2xl">
           <div>
             <div className="flex items-center gap-3 mb-1">
@@ -214,7 +237,7 @@ export default function Dashboard() {
             {/* Right Column (Side Widgets) */}
             <div className="flex flex-col gap-6">
               
-              {/* Day 37 Requirement: Query Usage Bar */}
+              {/* Query Usage Bar */}
               <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-xl relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-500/10 rounded-bl-full blur-xl group-hover:bg-cyan-500/20 transition-colors" />
                 <div className="flex items-center justify-between mb-4">
@@ -240,26 +263,43 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* Day 37 Requirement: Recent Threads List */}
-              <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl shadow-xl flex-1 flex flex-col overflow-hidden">
+              {/* Recent Threads List */}
+              <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl shadow-xl flex-1 flex flex-col overflow-hidden max-h-[450px]">
                 <div className="p-5 border-b border-slate-800 flex items-center gap-2">
                   <MessageSquare className="w-4 h-4 text-indigo-400" />
                   <h3 className="text-sm font-bold text-slate-300">Active Threads</h3>
                 </div>
-                <div className="flex-1 divide-y divide-slate-800/50 overflow-y-auto">
-                  {recentThreads.map(thread => (
-                    <div key={thread.id} onClick={() => navigate(`/chat?id=${thread.id}`)} className="p-4 hover:bg-slate-800/50 cursor-pointer transition-colors group">
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="text-[10px] font-mono text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-1.5 py-0.5 rounded">
-                          {thread.corpus}
-                        </span>
-                        <span className="text-xs text-slate-500">{thread.date}</span>
-                      </div>
-                      <p className="text-sm text-slate-300 group-hover:text-cyan-400 transition-colors line-clamp-2">
-                        {thread.title}
-                      </p>
+                <div className="flex-1 divide-y divide-slate-800/50 overflow-y-auto custom-scrollbar">
+                  {recentThreads.length === 0 ? (
+                    <div className="p-8 text-center text-slate-500 text-xs font-mono py-12">
+                      NO_ACTIVE_THREADS_FOUND
                     </div>
-                  ))}
+                  ) : (
+                    recentThreads.map(thread => (
+                      <div 
+                        key={thread.id} 
+                        onClick={() => navigate(`/chat?id=${thread.id}`)} 
+                        className="p-4 hover:bg-slate-800/50 cursor-pointer transition-colors group"
+                      >
+                        <div className="flex justify-between items-center mb-1">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            {/* Gracefully handle array maps or singular properties */}
+                            {(thread.corpus_tags && thread.corpus_tags.length > 0 ? thread.corpus_tags : [thread.corpus || 'RAG']).map((tag, i) => (
+                              <span key={i} className="text-[10px] font-mono text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-1.5 py-0.5 rounded uppercase">
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                          <span className="text-xs text-slate-500">
+                            {formatTimeAgo(thread.updated_at || thread.created_at || thread.date)}
+                          </span>
+                        </div>
+                        <p className="text-sm text-slate-300 group-hover:text-cyan-400 transition-colors line-clamp-2">
+                          {thread.title}
+                        </p>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
 
@@ -267,7 +307,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Drill-Down Modal (Refined for Cyber Theme) */}
+        {/* Drill-Down Modal */}
         {drillDownCategory && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-[#030712]/80 backdrop-blur-sm transition-opacity" onClick={() => setDrillDownCategory(null)} />
