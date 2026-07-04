@@ -56,7 +56,7 @@ export default function Dashboard() {
             gst: { percentage: 85, status: 'GREEN', checks: [] },
             rbi: { percentage: 70, status: 'AMBER', checks: [] },
             sebi: { percentage: 90, status: 'GREEN', checks: [] },
-            mca: { percentage: 45, status: 'RED', checks: [] }
+            mca: { percentage: 45, status: 'RED', checks: [] } 
           }
         };
 

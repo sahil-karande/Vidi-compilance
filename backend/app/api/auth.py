@@ -1,6 +1,7 @@
 """
 Vidi — backend/app/api/auth.py
 Updated: Dynamic Supabase Profile Resolution & Tier Rate-Limiting Implementation
+Fixed: Atomic Upsert to eliminate duplicate key value unique constraint violations on parallel requests
 """
 
 import os
@@ -185,20 +186,23 @@ def get_current_user(credentials: Optional[HTTPAuthorizationCredentials] = Depen
     }
     
     try:
+        # 1. Fetch current usage safely
         usage_res = admin_client.table("query_usage").select("count").eq("user_id", user_id).eq("date", today_date).execute()
         current_count = usage_res.data[0]["count"] if usage_res.data else 0
         
+        # 2. Assert usage limits first
         if current_count >= TIER_LIMITS[resolved_role]:
             raise HTTPException(
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                 detail=f"Tier capacity exceeded. Your '{resolved_role.value}' access path allows up to {TIER_LIMITS[resolved_role]} queries daily."
             )
             
-        # Increment database usage metrics dynamically upon successful verification pass
-        if usage_res.data:
-            admin_client.table("query_usage").update({"count": current_count + 1}).eq("user_id", user_id).eq("date", today_date).execute()
-        else:
-            admin_client.table("query_usage").insert({"user_id": user_id, "date": today_date, "count": 1}).execute()
+        # 3. Perform an Atomic Upsert to prevent race condition constraint failures on parallel frontend hits
+        next_count = current_count + 1
+        admin_client.table("query_usage").upsert(
+            {"user_id": user_id, "date": today_date, "count": next_count},
+            on_conflict="user_id,date"
+        ).execute()
             
     except HTTPException:
         raise
