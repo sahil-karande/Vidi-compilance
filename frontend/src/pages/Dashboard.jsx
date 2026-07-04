@@ -1,21 +1,24 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { chatAPI } from '../lib/api';
 import { useAuth } from '../hooks/useAuth';
-import RiskScorecard from '../components/RiskScorecard';
 import ComplianceCalendar from '../components/ComplianceCalendar';
+import { Terminal, Activity, MessageSquare, Zap, ChevronRight, Server } from 'lucide-react';
 
-// Lighthouse 90+ Optimizations: Content-preserving layout skeleton loaders
+// Day 37 Requirement: Lazy Load the Risk Scorecard
+const RiskScorecard = lazy(() => import('../components/RiskScorecard'));
+
+// Cyber-themed Skeleton Loader
 function SkeletonCard() {
   return (
-    <div className="w-full bg-slate-900/30 border border-slate-800 rounded-2xl p-6 animate-pulse space-y-4">
+    <div className="w-full bg-slate-900/40 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 animate-pulse space-y-4">
       <div className="flex items-center justify-between">
-        <div className="h-4 bg-slate-800 rounded w-1/3"></div>
-        <div className="h-6 bg-slate-800 rounded-full w-12"></div>
+        <div className="h-4 bg-slate-700/50 rounded w-1/3 shadow-[0_0_10px_rgba(51,65,85,0.5)]"></div>
+        <div className="h-6 bg-slate-700/50 rounded-full w-12"></div>
       </div>
       <div className="space-y-2">
-        <div className="h-3 bg-slate-800 rounded w-full"></div>
-        <div className="h-3 bg-slate-800 rounded w-5/6"></div>
+        <div className="h-3 bg-slate-700/50 rounded w-full"></div>
+        <div className="h-3 bg-cyan-900/30 rounded w-5/6"></div>
       </div>
     </div>
   );
@@ -24,7 +27,6 @@ function SkeletonCard() {
 export default function Dashboard() {
   const navigate = useNavigate();
   
-  // Safe extraction that prevents page destruction if Auth Provider returns empty context
   const authContext = useAuth() || {};
   const user = authContext.user;
   const userRole = user?.role || 'guest';
@@ -32,10 +34,12 @@ export default function Dashboard() {
 
   const [scorecard, setScorecard] = useState(null);
   const [deadlines, setDeadlines] = useState([]);
+  const [recentThreads, setRecentThreads] = useState([]);
+  const [queryUsage, setQueryUsage] = useState({ used: 0, max: 20 }); // Default free tier
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Active parameter details modal state for the scorecard metrics drill down
+  // Drill-down modal state
   const [drillDownCategory, setDrillDownCategory] = useState(null);
   const [drillDownChecks, setDrillDownChecks] = useState([]);
 
@@ -49,7 +53,6 @@ export default function Dashboard() {
         let scorecardData = null;
         let calendarData = [];
 
-        // Universal Baseline Fallback Data object structures matching scoreVal and currentLabel
         const baselineFallback = {
           overall_health: "81% - Stable Active Posture",
           scores: {
@@ -62,8 +65,6 @@ export default function Dashboard() {
 
         if (!isLocked) {
           try {
-            // FIXED: Replaced layout labels with explicit parameter keys and values 
-            // required by the backend Pydantic validation schema rules
             const defaultPayload = {
               business_type: "Private Limited",
               industry: "Fintech",
@@ -91,21 +92,26 @@ export default function Dashboard() {
         if (isMounted) {
           setScorecard(scorecardData);
           setDeadlines(calendarData);
+          
+          // Day 37: Mocking recent threads & usage (Replace with actual API calls when ready)
+          setRecentThreads([
+            { id: '1', title: 'GST registration threshold for Fintech', corpus: 'GST', date: '2h ago' },
+            { id: '2', title: 'FEMA guidelines for foreign VC funding', corpus: 'FEMA', date: '1d ago' },
+            { id: '3', title: 'MCA annual filing penalties', corpus: 'MCA', date: '3d ago' }
+          ]);
+          setQueryUsage({ used: userRole === 'pro' ? 142 : 12, max: userRole === 'pro' ? 500 : 20 });
         }
       } catch (err) {
         console.error("Dashboard mount execution failed:", err);
       } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
+        if (isMounted) setIsLoading(false);
       }
     }
 
     loadDashboardData();
     return () => { isMounted = false; };
-  }, [isLocked]);
+  }, [isLocked, userRole]);
 
-  // Action callback routing item focus context into real-time Chat
   const handleAnalyzeDeadline = (item) => {
     const predefinedQuery = `What are my exact compliance requirements and penalties for missing the ${item.authority} deadline: ${item.title}?`;
     navigate('/chat', { state: { initialQuery: predefinedQuery } });
@@ -118,97 +124,182 @@ export default function Dashboard() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-200 flex flex-col items-center justify-center p-4 md:p-6 text-center font-sans antialiased">
-        <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl max-w-md w-full shadow-xl">
-          <div className="text-4xl mb-3">🚨</div>
-          <h3 className="text-base font-bold text-slate-100 mb-1">System Connection Failure</h3>
-          <p className="text-red-400 text-xs leading-relaxed mb-4">{error}</p>
+      <div className="min-h-screen bg-[#030712] text-slate-200 flex flex-col items-center justify-center p-4">
+        <div className="p-6 bg-rose-950/30 backdrop-blur-md border border-rose-500/30 rounded-2xl max-w-md w-full shadow-[0_0_30px_rgba(225,29,72,0.15)] text-center">
+          <Server className="w-12 h-12 text-rose-500 mx-auto mb-4 animate-pulse" />
+          <h3 className="text-lg font-bold text-slate-100 mb-2">Vector Sync Failure</h3>
+          <p className="text-rose-400/80 text-sm mb-6">{error}</p>
           <button 
             onClick={() => window.location.reload()}
-            className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-200 rounded-xl text-xs font-semibold tracking-wide transition-colors"
+            className="w-full py-3 bg-rose-600/20 hover:bg-rose-600/40 border border-rose-500/50 text-rose-100 rounded-xl text-sm font-semibold transition-all shadow-[0_0_15px_rgba(225,29,72,0.2)]"
           >
-            Retry Vector Sync
+            Reinitialize Connection
           </button>
         </div>
       </div>
     );
   }
 
-  return (
-    <div className="min-h-screen bg-[#020617] text-[#f8fafc] font-sans p-4 md:p-8 lg:p-12 flex flex-col items-center antialiased">
-      <div className="w-full max-w-6xl flex flex-col gap-6 md:gap-8">
-        
-        {/* Dynamic Greeting Title */}
-        <div className="text-left">
-          <h1 className="text-xl md:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
-            Corporate Compliance Hub
-          </h1>
-          <p className="text-xs md:text-sm text-slate-400 mt-1">
-            Real-time verification matrix derived from official regulatory circular notifications.
-          </p>
-        </div>
+  const usagePercent = (queryUsage.used / queryUsage.max) * 100;
 
-        {/* Dynamic Layout Track Selection based on Async Telemetry State */}
+  return (
+    <div className="min-h-screen bg-[#030712] text-slate-200 font-sans p-4 md:p-8 flex flex-col items-center antialiased relative overflow-hidden">
+      
+      {/* Cyber Background Glow */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-600/10 rounded-full blur-[120px] pointer-events-none" />
+
+      <div className="w-full max-w-7xl flex flex-col gap-6 md:gap-8 relative z-10">
+        
+        {/* Day 37 Requirement: Welcome Header */}
+        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-2xl">
+          <div>
+            <div className="flex items-center gap-3 mb-1">
+              <Terminal className="w-5 h-5 text-cyan-400" />
+              <span className="text-xs font-mono text-cyan-400/80 tracking-widest uppercase">System Online</span>
+            </div>
+            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
+              Welcome back, <span className="bg-gradient-to-r from-cyan-400 to-indigo-400 bg-clip-text text-transparent">{user?.name || 'Sahil'}</span>
+            </h1>
+            <p className="text-sm text-slate-400 mt-1">
+              Vidi RAG Engine active. Monitoring 5 regulatory corpora.
+            </p>
+          </div>
+          
+          <button 
+            onClick={() => navigate('/chat')}
+            className="group flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white px-6 py-3 rounded-xl font-semibold shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all hover:shadow-[0_0_30px_rgba(6,182,212,0.5)]"
+          >
+            <Zap className="w-4 h-4" />
+            New RAG Query
+            <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </button>
+        </header>
+
         {isLoading ? (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <SkeletonCard />
-              <SkeletonCard />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-6">
               <SkeletonCard />
               <SkeletonCard />
             </div>
-            <div className="w-full h-64 bg-slate-900/20 border border-slate-800/60 rounded-2xl animate-pulse" />
+            <div className="space-y-6">
+              <SkeletonCard />
+              <SkeletonCard />
+            </div>
           </div>
         ) : (
-          <>
-            {/* Pillar 1: Risk Scoring Grid */}
-            <RiskScorecard 
-              data={scorecard} 
-              onMetricClick={handleOpenDrillDown} 
-            />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            {/* Left Column (Main Dash Data) */}
+            <div className="lg:col-span-2 flex flex-col gap-6">
+              {/* Pillar 1: Risk Scoring Grid (Lazy Loaded) */}
+              <Suspense fallback={<SkeletonCard />}>
+                <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl shadow-xl overflow-hidden">
+                  <RiskScorecard 
+                    data={scorecard} 
+                    onMetricClick={handleOpenDrillDown} 
+                  />
+                </div>
+              </Suspense>
 
-            {/* Pillar 2: Timeline & Month Matrix Grid Layout */}
-            <div className="w-full">
-              <ComplianceCalendar 
-                deadlines={deadlines} 
-                onDeadlineClick={handleAnalyzeDeadline} 
-              />
+              {/* Pillar 2: Timeline Matrix */}
+              <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl shadow-xl overflow-hidden">
+                <ComplianceCalendar 
+                  deadlines={deadlines} 
+                  onDeadlineClick={handleAnalyzeDeadline} 
+                />
+              </div>
             </div>
-          </>
+
+            {/* Right Column (Side Widgets) */}
+            <div className="flex flex-col gap-6">
+              
+              {/* Day 37 Requirement: Query Usage Bar */}
+              <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-xl relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-500/10 rounded-bl-full blur-xl group-hover:bg-cyan-500/20 transition-colors" />
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-sm font-bold text-slate-300 flex items-center gap-2">
+                    <Activity className="w-4 h-4 text-cyan-400" />
+                    API Telemetry
+                  </h3>
+                  <span className="text-xs font-mono bg-slate-800 text-cyan-400 px-2 py-1 rounded border border-slate-700">
+                    {userRole.toUpperCase()} TIER
+                  </span>
+                </div>
+                
+                <div className="mb-2 flex justify-between items-end">
+                  <span className="text-3xl font-bold text-white">{queryUsage.used}</span>
+                  <span className="text-sm text-slate-400 mb-1">/ {queryUsage.max} queries</span>
+                </div>
+                
+                <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                  <div 
+                    className={`h-full rounded-full shadow-[0_0_10px_rgba(6,182,212,0.8)] transition-all duration-1000 ${usagePercent > 80 ? 'bg-rose-500' : 'bg-cyan-400'}`} 
+                    style={{ width: `${usagePercent}%` }} 
+                  />
+                </div>
+              </div>
+
+              {/* Day 37 Requirement: Recent Threads List */}
+              <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl shadow-xl flex-1 flex flex-col overflow-hidden">
+                <div className="p-5 border-b border-slate-800 flex items-center gap-2">
+                  <MessageSquare className="w-4 h-4 text-indigo-400" />
+                  <h3 className="text-sm font-bold text-slate-300">Active Threads</h3>
+                </div>
+                <div className="flex-1 divide-y divide-slate-800/50 overflow-y-auto">
+                  {recentThreads.map(thread => (
+                    <div key={thread.id} onClick={() => navigate(`/chat?id=${thread.id}`)} className="p-4 hover:bg-slate-800/50 cursor-pointer transition-colors group">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-[10px] font-mono text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-1.5 py-0.5 rounded">
+                          {thread.corpus}
+                        </span>
+                        <span className="text-xs text-slate-500">{thread.date}</span>
+                      </div>
+                      <p className="text-sm text-slate-300 group-hover:text-cyan-400 transition-colors line-clamp-2">
+                        {thread.title}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+          </div>
         )}
 
-        {/* Interactive Parameter Inspection Drawer (Drill-Down Modal) */}
+        {/* Drill-Down Modal (Refined for Cyber Theme) */}
         {drillDownCategory && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity" onClick={() => setDrillDownCategory(null)} />
+            <div className="absolute inset-0 bg-[#030712]/80 backdrop-blur-sm transition-opacity" onClick={() => setDrillDownCategory(null)} />
             
-            <div className="relative w-full max-w-xl bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-5 md:p-6 overflow-hidden flex flex-col max-h-[85vh] animate-in fade-in zoom-in-95 duration-150">
+            <div className="relative w-full max-w-xl bg-slate-900 border border-slate-700 shadow-[0_0_40px_rgba(0,0,0,0.5)] rounded-2xl p-6 overflow-hidden flex flex-col max-h-[85vh] animate-in fade-in zoom-in-95">
               
               <div className="flex justify-between items-center border-b border-slate-800 pb-4 mb-4">
-                <h3 className="text-sm md:text-base font-bold text-indigo-400 tracking-wider truncate mr-4">
-                  📁 {drillDownCategory} PARAMETERS AUDIT
+                <h3 className="text-sm font-bold text-cyan-400 tracking-wider flex items-center gap-2">
+                  <Terminal className="w-4 h-4" /> 
+                  {drillDownCategory} PARAMETERS AUDIT
                 </h3>
                 <button 
                   onClick={() => setDrillDownCategory(null)}
-                  className="text-slate-400 hover:text-slate-200 text-xs font-semibold shrink-0 transition-colors focus:outline-none"
+                  className="text-slate-500 hover:text-rose-400 text-xs font-semibold transition-colors focus:outline-none"
                 >
-                  ✕ Close
+                  [ ESC ]
                 </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto flex flex-col gap-3 pr-1 scrollbar-thin">
+              <div className="flex-1 overflow-y-auto flex flex-col gap-3 pr-2 custom-scrollbar">
                 {drillDownChecks.length === 0 ? (
-                  <p className="text-xs text-slate-500 text-center py-6">No specific sub-vectors indexed for this branch.</p>
+                  <p className="text-xs text-slate-500 font-mono text-center py-8">NO_VECTORS_INDEXED_FOR_BRANCH</p>
                 ) : (
                   drillDownChecks.map((check, idx) => (
-                    <div key={check.id || idx} className="p-3.5 rounded-xl bg-slate-950 border border-slate-800/60 text-left transition-all hover:border-slate-800">
-                      <div className="flex items-start gap-2.5">
-                        <span className={`h-2 w-2 rounded-full mt-1.5 shrink-0 shadow-sm ${check.passed ? 'bg-emerald-500 shadow-emerald-500/40' : 'bg-rose-500 shadow-rose-500/40'}`} />
-                        <div className="flex-1 min-w-0">
-                          <h4 className="text-xs md:text-sm font-bold text-slate-200 truncate">
+                    <div key={check.id || idx} className="p-4 rounded-xl bg-slate-950/50 border border-slate-800/80 hover:border-cyan-900/50 transition-colors">
+                      <div className="flex items-start gap-3">
+                        <div className={`mt-1 h-2 w-2 rounded-full shrink-0 ${check.passed ? 'bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]' : 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]'}`} />
+                        <div>
+                          <h4 className="text-sm font-bold text-slate-200">
                             {check.name || check.title || "Audit Compliance Check"}
                           </h4>
-                          <p className="text-[11px] md:text-xs text-slate-400 mt-1 leading-relaxed whitespace-pre-wrap">
+                          <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
                             {check.description || check.desc || "No supplemental details logged."}
                           </p>
                         </div>
@@ -217,7 +308,6 @@ export default function Dashboard() {
                   ))
                 )}
               </div>
-
             </div>
           </div>
         )}
