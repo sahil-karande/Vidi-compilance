@@ -1,6 +1,6 @@
 """
 RegIQ — backend/app/api/threads_api.py
-Day 29 Task: Production Supabase Thread Persistence Router
+Day 37 Update: Supabase Thread Persistence Router with Fixed Sort Parameters
 """
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -26,7 +26,7 @@ def list_threads(current_user: User = Depends(get_current_user)):
             admin_client.table("threads")
             .select("id, user_id, title, corpus_tags, created_at, updated_at")
             .eq("user_id", current_user.user_id)
-            .order("updated_at", descending=True)
+            .order("updated_at", desc=True)  # FIXED: Changed descending=True to desc=True
             .execute()
         )
         return response.data or []
@@ -106,7 +106,6 @@ def delete_thread(thread_id: str, current_user: User = Depends(get_current_user)
     """
     admin_client = get_supabase_admin()
     try:
-        # Check ownership prior to mutation layers
         verify_res = admin_client.table("threads").select("user_id").eq("id", thread_id).execute()
         if not verify_res.data:
             raise HTTPException(
@@ -120,7 +119,6 @@ def delete_thread(thread_id: str, current_user: User = Depends(get_current_user)
                 detail="Forbidden: Cannot delete items belonging to another user space."
             )
         
-        # Cascading drop execution via primary key mapping
         admin_client.table("threads").delete().eq("id", thread_id).execute()
         return {"deleted": True, "thread_id": thread_id}
         
