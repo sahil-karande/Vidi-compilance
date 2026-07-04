@@ -1,12 +1,12 @@
 """
 RegIQ — backend/app/api/query.py
-Day 29 Milestone: Syncing Query Classification with Sidebar Topic Grouping Matrix
+Day 37 Refactor: Asynchronous Supabase Persistence Router & Schema Symmetry Check
 """
 
 from datetime import datetime
 import re
 import uuid
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from loguru import logger
 
 from app.api.auth import get_optional_user, get_supabase_admin
@@ -60,6 +60,7 @@ async def query(
     supabase_admin = get_supabase_admin()
 
     # ── Step 1: Check quota ───
+    # Ensures incoming operational widget requests respect rate-limits
     quota_info = check_quota(user_id, role)
 
     # ── Step 2: Thread Setup ───
@@ -71,8 +72,10 @@ async def query(
         thread_title = request.query[:40] + "..." if len(request.query) > 40 else request.query
         
         try:
-            # Enforce fallback user ID to fulfill database NOT NULL constraint settings
-            db_user_id = user_id if user_id and not user_id.startswith("guest") else "a0f31967-1ae0-416e-a484-2231ea37caf0"
+            # FIX 1: Remediate the data contamination fallback bug.
+            # If the user is unauthenticated or a guest, pass None to match nullable column constraints
+            # rather than routing multiple distinct anonymous accounts to a single shared hardcoded UUID profile.
+            db_user_id = user_id if user_id and not user_id.startswith("guest") else None
             
             thread_data = supabase_admin.table("threads").insert({
                 "id": str(uuid.uuid4()),
@@ -104,8 +107,6 @@ async def query(
 
     # ── Step 4: Classify corpus ──────
     corpus = request.corpus if request.corpus else classify_query(request.query)
-    
-    # Extract the target value string out of the Enum object cleanly to satisfy Pydantic
     corpus_str = corpus.value if hasattr(corpus, "value") else str(corpus).lower().split(".")[-1]
 
     # ── Step 5: Retrieve + Rerank ──────────────────────────────
@@ -120,7 +121,22 @@ async def query(
         mode=request.mode
     )
 
-    # ── Step 7: Commit Assistant Response & Dynamic Tag Synchronization ───
+    # ── Step 7: Parse and Structure Citations First (Data Symmetry) ───
+    # FIX 2: Format citations BEFORE committing rows to database logs. 
+    # This prevents storing un-sanitized, unstructured model metadata objects inside your tables.
+    formatted_citations = []
+    raw_citations = result.get("citations", [])
+    for idx, cit in enumerate(raw_citations):
+        if isinstance(cit, dict):
+            formatted_citations.append({
+                "id": cit.get("id", idx + 1),
+                "source": cit.get("source", "Unknown Regulatory Source"),
+                "text": cit.get("text", cit.get("content", "No snippet provided.")),
+                "corpus": corpus_str,
+                "similarity": float(cit.get("similarity", cit.get("score", 0.85)))
+            })
+
+    # ── Step 8: Commit Assistant Response & Dynamic Tag Synchronization ───
     try:
         supabase_admin.table("messages").insert({
             "id": str(uuid.uuid4()),
@@ -128,7 +144,7 @@ async def query(
             "role": "assistant",
             "content": result["answer"],
             "mode": request.mode,
-            "citations": result["citations"]
+            "citations": formatted_citations  # Persist formatted list matching UI expectations
         }).execute()
 
         # Update metadata maps to seamlessly feed frontend sidebar categories
@@ -137,10 +153,8 @@ async def query(
         }
 
         if is_new_thread:
-            # Inject uppercase string token into array to match frontend parser specs ('GST', 'RBI', etc.)
             thread_updates["corpus_tags"] = [corpus_str.upper()]
         else:
-            # Append if missing on subsequent turns inside the session
             existing_thread = supabase_admin.table("threads").select("corpus_tags").eq("id", thread_id).execute()
             if existing_thread.data:
                 current_tags = existing_thread.data[0].get("corpus_tags") or []
@@ -154,13 +168,13 @@ async def query(
     except Exception as e:
         logger.error(f"[Database Error] Failed to save system answer row: {str(e)}")
 
-    # ── Step 8: Increment usage ───
+    # ── Step 9: Increment usage ───
     try:
         increment_usage(user_id)
     except Exception:
         pass
 
-    # ── Step 9: Build response ───
+    # ── Step 10: Build response ───
     confidence_score = result.get("confidence", 0.95)
     if isinstance(confidence_score, (int, float)):
         if confidence_score >= 0.8:
@@ -171,18 +185,6 @@ async def query(
             confidence_literal = "low"
     else:
         confidence_literal = str(confidence_score).lower()
-
-    formatted_citations = []
-    raw_citations = result.get("citations", [])
-    for idx, cit in enumerate(raw_citations):
-        if isinstance(cit, dict):
-            formatted_citations.append({
-                "id": cit.get("id", idx + 1),
-                "source": cit.get("source", "Unknown Regulatory Source"),
-                "text": cit.get("text", cit.get("content", "No snippet provided.")),
-                "corpus": corpus_str,  # Clean string value ('fema', 'sebi', etc.)
-                "similarity": float(cit.get("similarity", cit.get("score", 0.85)))
-            })
 
     return QueryResponse(
         answer=result.get("answer", "No response generated."),
