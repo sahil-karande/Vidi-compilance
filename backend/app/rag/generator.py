@@ -4,20 +4,16 @@ import logging
 import asyncio
 from typing import List, Dict, Any, Tuple
 import google.generativeai as genai  # Clean, explicit single namespace choice
-import httpx
 from app.config import settings
 
 logger = logging.getLogger("regiq.generator")
 
-# Load configuration values from unified settings
-LLM_PROVIDER = os.getenv("LLM_PROVIDER", "gemini").lower()  # 'gemini' or 'openrouter'
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
-OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", "google/gemini-2.5-flash")
+LLM_PROVIDER = "gemini"
 
 
 class RAGGenerator:
     """
-    Generates grounded responses using the official google-generativeai SDK or OpenRouter.
+    Generates grounded responses using the official google-generativeai SDK.
     Enforces compliance styling and anti-hallucination guardrails.
     """
 
@@ -50,14 +46,10 @@ class RAGGenerator:
     )
 
     def __init__(self):
-        # Configure the generation engine API wrapper safely
-        if LLM_PROVIDER == "gemini":
-            if settings.gemini_api_key:
-                genai.configure(api_key=settings.gemini_api_key)
-            else:
-                logger.warning("Gemini API Key missing from settings context. Verify VITE/FastAPI configurations.")
-        elif LLM_PROVIDER == "openrouter" and not OPENROUTER_API_KEY:
-            logger.warning("OpenRouter API Key missing. Check your environment variables.")
+        if settings.gemini_api_key:
+            genai.configure(api_key=settings.gemini_api_key)
+        else:
+            logger.warning("Gemini API Key missing from settings context. Verify VITE/FastAPI configurations.")
 
     def _format_context(self, chunks: List[Any]) -> Tuple[str, List[Dict[str, Any]]]:
         """Formats list of chunks into an organized context block for the prompt."""
@@ -120,24 +112,28 @@ class RAGGenerator:
         )
 
         try:
-            if LLM_PROVIDER == "gemini":
-                return await self._call_gemini(full_system_prompt, user_prompt, citations, mode)
-            elif LLM_PROVIDER == "openrouter":
-                return await self._call_openrouter(full_system_prompt, user_prompt, citations, mode)
-            else:
-                raise ValueError(f"Unsupported LLM provider: {LLM_PROVIDER}")
+            return await self._call_gemini(full_system_prompt, user_prompt, citations, mode)
                 
         except Exception as e:
             logger.error(f"Error during LLM text generation loop: {str(e)}")
+            err_msg = str(e)
+            
+            # If the free tier limit is reached, give a clean suggestion to the user
+            if "429" in err_msg or "quota" in err_msg.lower():
+                return {
+                    "answer": "⚠️ **Gemini Free Quota Limit Reached (5 RPM).** Please wait 30 seconds for the window to reset and resubmit your compliance question.",
+                    "citations": [],
+                    "mode": mode
+                }
+                
             return {
-                "answer": "An error occurred while generating your answer. Please try again shortly.",
+                "answer": f"An error occurred while generating your answer: {err_msg}. Please try again shortly.",
                 "citations": [],
                 "mode": mode
             }
 
     async def _call_gemini(self, system_instruction: str, user_content: str, citations: List[Dict], mode: str) -> Dict[str, Any]:
         """Invokes the google-generativeai model using thread pools to avoid blockages."""
-        
         generation_config = {
             "temperature": 0.0,
             "top_p": 1.0,
@@ -147,8 +143,7 @@ class RAGGenerator:
 
         def _sync_generate():
             genai.configure(api_key=settings.gemini_api_key)
-            # FIXED: Explicitly prefixed with models/ to accommodate the updated v1beta namespace layout requirements
-            model = genai.GenerativeModel(model_name="models/gemini-1.5-flash")
+            model = genai.GenerativeModel(model_name="models/gemini-2.5-flash")
             return model.generate_content(contents=combined_prompt, generation_config=generation_config)
 
         response = await asyncio.to_thread(_sync_generate)
@@ -158,36 +153,6 @@ class RAGGenerator:
             "citations": citations,
             "mode": mode
         }
-
-    async def _call_openrouter(self, system_instruction: str, user_content: str, citations: List[Dict], mode: str) -> Dict[str, Any]:
-        """Invokes OpenRouter endpoint using an asynchronous HTTPX pool."""
-        headers = {
-            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-            "Content-Type": "application/json",
-            "HTTP-Referer": "https://github.com/sahilkarande/regiq",
-            "X-Title": "RegIQ Compliance Assistant"
-        }
-        
-        payload = {
-            "model": OPENROUTER_MODEL,
-            "messages": [
-                {"role": "system", "content": system_instruction},
-                {"role": "user", "content": user_content}
-            ],
-            "temperature": 0.0
-        }
-        
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            response = await client.post("https://openrouter.ai/api/v1/chat/completions", json=payload, headers=headers)
-            response.raise_for_status()
-            res_json = response.json()
-            
-            answer_text = res_json['choices'][0]['message']['content']
-            return {
-                "answer": answer_text.strip(),
-                "citations": citations,
-                "mode": mode
-            }
 
 
 # Singleton instance initialization to allow module-level imports

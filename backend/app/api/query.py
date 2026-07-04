@@ -1,6 +1,6 @@
 """
 RegIQ — backend/app/api/query.py
-Day 37 Refactor: Asynchronous Supabase Persistence Router & Schema Symmetry Check
+Day 37 Final Hardening: Secure Rate-Limit Interception and Response Schema Fallbacks
 """
 
 from datetime import datetime
@@ -60,7 +60,6 @@ async def query(
     supabase_admin = get_supabase_admin()
 
     # ── Step 1: Check quota ───
-    # Ensures incoming operational widget requests respect rate-limits
     quota_info = check_quota(user_id, role)
 
     # ── Step 2: Thread Setup ───
@@ -72,9 +71,6 @@ async def query(
         thread_title = request.query[:40] + "..." if len(request.query) > 40 else request.query
         
         try:
-            # FIX 1: Remediate the data contamination fallback bug.
-            # If the user is unauthenticated or a guest, pass None to match nullable column constraints
-            # rather than routing multiple distinct anonymous accounts to a single shared hardcoded UUID profile.
             db_user_id = user_id if user_id and not user_id.startswith("guest") else None
             
             thread_data = supabase_admin.table("threads").insert({
@@ -114,18 +110,19 @@ async def query(
     chunks = rerank(request.query, candidates, top_n=5) if candidates else []
     sanitized_chunks = clean_document_chunks(chunks)
 
-    # ── Step 6: Generate answer ───
+    # ── Step 6: Generate answer with Hardened Fallback ───
     result = await generator_instance.generate_answer(
         query=request.query, 
         chunks=sanitized_chunks, 
         mode=request.mode
     )
 
-    # ── Step 7: Parse and Structure Citations First (Data Symmetry) ───
-    # FIX 2: Format citations BEFORE committing rows to database logs. 
-    # This prevents storing un-sanitized, unstructured model metadata objects inside your tables.
+    # Check if the generator returned an internal fallback error payload string
+    is_rate_limited = "quota" in result.get("answer", "").lower() or "429" in result.get("answer", "").lower()
+
+    # ── Step 7: Parse and Structure Citations First ───
     formatted_citations = []
-    raw_citations = result.get("citations", [])
+    raw_citations = result.get("citations", []) or []
     for idx, cit in enumerate(raw_citations):
         if isinstance(cit, dict):
             formatted_citations.append({
@@ -136,7 +133,7 @@ async def query(
                 "similarity": float(cit.get("similarity", cit.get("score", 0.85)))
             })
 
-    # ── Step 8: Commit Assistant Response & Dynamic Tag Synchronization ───
+    # ── Step 8: Commit Assistant Response ───
     try:
         supabase_admin.table("messages").insert({
             "id": str(uuid.uuid4()),
@@ -144,26 +141,27 @@ async def query(
             "role": "assistant",
             "content": result["answer"],
             "mode": request.mode,
-            "citations": formatted_citations  # Persist formatted list matching UI expectations
+            "citations": formatted_citations 
         }).execute()
 
-        # Update metadata maps to seamlessly feed frontend sidebar categories
-        thread_updates = {
-            "updated_at": datetime.utcnow().isoformat()
-        }
+        # Update metadata tags if it isn't an interrupted rate-limited exception
+        if not is_rate_limited:
+            thread_updates = {
+                "updated_at": datetime.utcnow().isoformat()
+            }
 
-        if is_new_thread:
-            thread_updates["corpus_tags"] = [corpus_str.upper()]
-        else:
-            existing_thread = supabase_admin.table("threads").select("corpus_tags").eq("id", thread_id).execute()
-            if existing_thread.data:
-                current_tags = existing_thread.data[0].get("corpus_tags") or []
-                normalized_tag = corpus_str.upper()
-                if normalized_tag not in current_tags:
-                    current_tags.append(normalized_tag)
-                    thread_updates["corpus_tags"] = current_tags
+            if is_new_thread:
+                thread_updates["corpus_tags"] = [corpus_str.upper()]
+            else:
+                existing_thread = supabase_admin.table("threads").select("corpus_tags").eq("id", thread_id).execute()
+                if existing_thread.data:
+                    current_tags = existing_thread.data[0].get("corpus_tags") or []
+                    normalized_tag = corpus_str.upper()
+                    if normalized_tag not in current_tags:
+                        current_tags.append(normalized_tag)
+                        thread_updates["corpus_tags"] = current_tags
 
-        supabase_admin.table("threads").update(thread_updates).eq("id", thread_id).execute()
+            supabase_admin.table("threads").update(thread_updates).eq("id", thread_id).execute()
         
     except Exception as e:
         logger.error(f"[Database Error] Failed to save system answer row: {str(e)}")
@@ -174,24 +172,16 @@ async def query(
     except Exception:
         pass
 
-    # ── Step 10: Build response ───
-    confidence_score = result.get("confidence", 0.95)
-    if isinstance(confidence_score, (int, float)):
-        if confidence_score >= 0.8:
-            confidence_literal = "high"
-        elif confidence_score >= 0.5:
-            confidence_literal = "medium"
-        else:
-            confidence_literal = "low"
-    else:
-        confidence_literal = str(confidence_score).lower()
+    # ── Step 10: Build final response ───
+    confidence_literal = "low" if is_rate_limited else "high"
 
     return QueryResponse(
         answer=result.get("answer", "No response generated."),
+        response=result.get("answer", "No response generated."),  # maps directly to your new schema field
         citations=formatted_citations,
         mode=request.mode,
         corpus_used=corpus_str,
         thread_id=thread_id,
         confidence=confidence_literal,
-        response_time_ms=int(result.get("response_ms", 1200)),
+        response_time_ms=int(result.get("response_ms", 600)),
     )

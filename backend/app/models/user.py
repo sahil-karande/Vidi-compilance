@@ -153,19 +153,17 @@ class QueryRequest(BaseModel):
     }
 
 
-class QueryResponse(BaseModel):
-    """
-    Outgoing response for POST /query
-    """
-    answer: str = Field(..., description="LLM-generated answer, grounded in citations")
-    citations: list[Citation] = Field(default_factory=list)
-    mode: AnswerMode
-    corpus_used: Corpus
-    thread_id: str
-    confidence: Literal["high", "medium", "low", "not_found"] = "medium"
-    response_time_ms: int = Field(..., ge=0)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
 
+class QueryResponse(BaseModel):
+    answer: str
+    response: str  # 💡 ADD THIS LINE HERE
+    citations: List[Dict[str, Any]]
+    mode: str
+    corpus_used: str
+    thread_id: str
+    confidence: str
+    response_time_ms: int
+    
     model_config = {
         "json_schema_extra": {
             "example": {
