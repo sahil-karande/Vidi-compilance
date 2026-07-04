@@ -9,13 +9,14 @@ Defines the request/response schemas used across the RAG API:
 - Citation       — a single source citation
 - UserRole       — tier enum (Guest/Free/Pro/Enterprise)
 """
+# 1. Import typing primitives from the standard library
+from typing import List, Dict, Any, Optional, Literal
+
+# 2. Import core validation models from Pydantic
+from pydantic import BaseModel, Field
 
 from enum import Enum
 from datetime import datetime
-from typing import Optional, Literal
-
-from pydantic import BaseModel, Field
-
 
 # ─────────────────────────────────────────────────────────────
 #  Enums
