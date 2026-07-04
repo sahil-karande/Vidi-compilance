@@ -137,12 +137,19 @@ export default function Chat() {
     }
   };
 
+  // Catch contextual redirection requests sent from Compliance Calendar hooks
   useEffect(() => {
     if (location.state?.initialQuery) {
       const dashboardPrompt = location.state.initialQuery;
+      
+      // Instantly strip tracking state values out of application history records
       window.history.replaceState({}, document.title);
+      
+      // Keep input view value identical to runtime executing query contexts
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setLastQuery(dashboardPrompt);
+      setInput(dashboardPrompt);
+      
       executeAutomatedQuery(dashboardPrompt);
     }
   }, [executeAutomatedQuery, location.state]);
