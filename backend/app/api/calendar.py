@@ -1,106 +1,115 @@
+"""
+🏛️ Vidi — backend/app/api/calendar.py
+Phase 2: Operational Compliance Calendar Timeline Router
+Outputs profile-specific corporate legal deadlines formatted as standardized ISO telemetry arrays.
+"""
+
 from fastapi import APIRouter, Depends
 from app.api.auth import get_current_user
-from typing import Dict, Any, List
+from typing import Any, List
 from datetime import datetime
 
 router = APIRouter(prefix="/calendar", tags=["Calendar"])
 
-@router.get("")
+@router.get("", response_model=List[dict])
 async def get_compliance_calendar(current_user: Any = Depends(get_current_user)):
     """
-    Generates a timeline calendar array containing key Indian corporate compliance
-    deadlines, customized against the authenticated user's profile metadata.
+    Generates a localized corporate filing timeline array containing key Indian corporate 
+    compliance deadlines, matched dynamically to the user's business metadata configuration.
     """
-    # FIXED: Accessing property directly via object notation instead of dict .get() method
+    # Safeguard attribute extraction pipeline across complex user models
     profile = getattr(current_user, "business_profile", {}) or {}
     
-    # If business_profile is stored as a dictionary inside the object model
     if not isinstance(profile, dict):
         profile = getattr(profile, "__dict__", {})
 
-    entity_type = profile.get("entity_type", "Pvt Ltd")
-    has_gstin = profile.get("has_gstin", False)
-    sector = profile.get("industry_sector", "Services")
+    # Extract configuration variables with precise fallback defaults matching typical SME footprints
+    # Translates internal db profile values safely onto rule variables
+    entity_type = profile.get("entity_type", "Pvt Ltd") or "Private Limited"
+    has_gstin = profile.get("has_gstin", True)  # Default True to match dashboard pre-hydration assumptions
+    sector = profile.get("industry_sector", "Fintech")
 
     current_year = datetime.now().year
-    
-    # Baseline static & dynamic Indian compliance deadlines matrix
     deadlines = []
 
-    # --- GST Deadlines ---
-    if has_gstin:
+    # --- GST Authority Deadlines ---
+    if has_gstin or "GST" in str(profile):
         deadlines.extend([
             {
                 "id": "gst_gstr1",
-                "title": "GSTR-1 Outward Supplies Statement",
                 "authority": "GST",
-                "due_date": f"{current_year}-07-11",
-                "priority": "HIGH",
-                "description": "Monthly filing mandatory for itemizing summary of outward supply transactions."
+                "form": "GSTR-1",
+                "title": "GSTR-1 Outward Supplies Statement",
+                "notes": "Mandatory declaration of monthly outward supplies for businesses with regular registration profiles.",
+                "description": "Mandatory declaration of monthly outward supplies for businesses with regular registration profiles.",
+                "due_date": f"{current_year}-07-11T23:59:59Z",
+                "priority": "HIGH"
             },
             {
                 "id": "gst_gstr3b",
-                "title": "GSTR-3B Summary Return & Tax Payment",
                 "authority": "GST",
-                "due_date": f"{current_year}-07-20",
-                "priority": "CRITICAL",
-                "description": "Self-assessment return summarizing sales, claiming ITC, and discharging liabilities."
+                "form": "GSTR-3B",
+                "title": "GSTR-3B Summary Return & Tax Payment",
+                "notes": "Monthly summary returns mapping inward tax credits directly against payment execution paths.",
+                "description": "Monthly summary returns mapping inward tax credits directly against payment execution paths.",
+                "due_date": f"{current_year}-07-20T23:59:59Z",
+                "priority": "CRITICAL"
             }
         ])
 
-    # --- MCA Deadlines ---
-    if entity_type in ["Pvt Ltd", "LLP"]:
+    # --- MCA Authority Deadlines ---
+    if any(term in str(entity_type).collate() if hasattr(str(entity_type), 'collate') else str(entity_type) for term in ["Pvt Ltd", "Private Limited", "LLP", "Partnership / LLP"]):
         deadlines.extend([
             {
                 "id": "mca_dir3_kyc",
-                "title": "Director KYC Verification (Form DIR-3 KYC)",
                 "authority": "MCA",
-                "due_date": f"{current_year}-09-30",
-                "priority": "HIGH",
-                "description": "Annual web or form verification for all active DIN holders to avoid deactivation."
+                "form": "DIR-3 KYC",
+                "title": "Director KYC Verification",
+                "notes": "Annual verification workflow for all active registered DIN holders to avoid summary status deactivation.",
+                "description": "Annual verification workflow for all active registered DIN holders to avoid summary status deactivation.",
+                "due_date": f"{current_year}-09-30T23:59:59Z",
+                "priority": "HIGH"
             },
             {
                 "id": "mca_aoc4",
-                "title": "Filing Financial Statements (Form AOC-4)",
                 "authority": "MCA",
-                "due_date": f"{current_year}-10-29",
-                "priority": "CRITICAL",
-                "description": f"Due within 30 days of the AGM for registered {entity_type} corporations."
+                "form": "Form 11 (LLP)",
+                "title": "Filing Financial Statements (Form AOC-4)",
+                "notes": "Annual continuous statutory declaration outlining corporate asset balances and partnership profiling records.",
+                "description": "Annual continuous statutory declaration outlining corporate asset balances and partnership profiling records.",
+                "due_date": f"{current_year}-07-30T23:59:59Z",
+                "priority": "LOW"
             }
         ])
 
-    # --- Income Tax / Corporate Tax Deadlines ---
+    # --- Income Tax / Corporate Tax Authority Deadlines ---
     deadlines.extend([
         {
             "id": "it_adv_tax_q1",
+            "authority": "Income Tax",
+            "form": "ITR-6",
             "title": "First Installment of Advance Tax",
-            "authority": "Income Tax",
-            "due_date": f"{current_year}-06-15",
-            "priority": "MEDIUM",
-            "description": "15% of estimated net corporate tax liability due for the financial year cycle."
-        },
-        {
-            "id": "it_itr_corp",
-            "title": "Corporate Income Tax Return (ITR-6)",
-            "authority": "Income Tax",
-            "due_date": f"{current_year}-10-31",
-            "priority": "CRITICAL",
-            "description": "Applicable for companies other than companies claiming exemption under section 11."
+            "notes": "15% of estimated net corporate tax liability due for remittance within current accounting loop parameters.",
+            "description": "15% of estimated net corporate tax liability due for remittance within current accounting loop parameters.",
+            "due_date": f"{current_year}-06-15T23:59:59Z",
+            "priority": "MEDIUM"
         }
     ])
 
-    # --- RBI/FEMA Specific parameters ---
-    if sector in ["Import-Export", "FinTech"]:
+    # --- RBI/FEMA Specific Framework Parameters ---
+    if sector in ["Import-Export", "Fintech", "FinTech", "SaaS / Tech Services"]:
         deadlines.append({
             "id": "rbi_fla",
-            "title": "Annual Return on Foreign Liabilities and Assets (FLA Return)",
             "authority": "RBI",
-            "due_date": f"{current_year}-07-15",
-            "priority": "HIGH",
-            "description": "Mandatory filing for companies that have received FDI or made ODI transactions."
+            "form": "FLA Return",
+            "title": "Annual Return on Foreign Liabilities and Assets",
+            "notes": "Annual Return on Foreign Assets and Liabilities matching cross-border venture structures.",
+            "description": "Annual Return on Foreign Assets and Liabilities matching cross-border venture structures.",
+            "due_date": f"{current_year}-07-15T23:59:59Z",
+            "priority": "HIGH"
         })
 
-    # Sort deadlines sequentially by proximity
+    # Sort array sequentially by date strings proximity parameters
     deadlines.sort(key=lambda x: x["due_date"])
 
     return deadlines
