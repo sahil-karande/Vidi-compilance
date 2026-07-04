@@ -129,9 +129,8 @@ class RAGGenerator:
                 
         except Exception as e:
             logger.error(f"Error during LLM text generation loop: {str(e)}")
-            # DIAGNOSTIC CHANGE: Return raw exception details directly to the interface
             return {
-                "answer": f"DIAGNOSTIC BLOCK - Internal Model Exception: {str(e)}",
+                "answer": "An error occurred while generating your answer. Please try again shortly.",
                 "citations": [],
                 "mode": mode
             }
@@ -147,9 +146,9 @@ class RAGGenerator:
         combined_prompt = f"{system_instruction}\n\n{user_content}"
 
         def _sync_generate():
-            # Force refresh key directly from dynamic runtime settings container
             genai.configure(api_key=settings.gemini_api_key)
-            model = genai.GenerativeModel(model_name="gemini-1.5-flash")
+            # FIXED: Explicitly prefixed with models/ to accommodate the updated v1beta namespace layout requirements
+            model = genai.GenerativeModel(model_name="models/gemini-1.5-flash")
             return model.generate_content(contents=combined_prompt, generation_config=generation_config)
 
         response = await asyncio.to_thread(_sync_generate)
