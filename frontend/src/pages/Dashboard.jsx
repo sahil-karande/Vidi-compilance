@@ -167,8 +167,8 @@ export default function Dashboard() {
               onMetricClick={handleOpenDrillDown} 
             />
 
-            {/* Pillar 2: Timeline Deadline Board */}
-            <div className="w-full bg-slate-900/10 border border-slate-800/80 rounded-2xl p-4 md:p-6 backdrop-blur-md shadow-xl overflow-hidden">
+            {/* Pillar 2: Timeline & Month Matrix Grid Layout */}
+            <div className="w-full">
               <ComplianceCalendar 
                 deadlines={deadlines} 
                 onDeadlineClick={handleAnalyzeDeadline} 
