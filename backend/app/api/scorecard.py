@@ -1,45 +1,27 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel, Field
-from typing import List, Dict, Optional, Any
-import os
-import json
-import google.generativeai as genai # pyright: ignore[reportMissingImports]
-from app.api.auth import get_current_user  # Your established JWT middleware
+"""
+🏛️ Vidi — backend/app/api/scorecard.py
+Phase 2: Operational Scorecard Router Engine
+Handles rule orchestration, model parsing validations, and LLM tuning fallback layers.
+"""
 
-# FIXED: Removed the duplicate /api prefix. Main.py will append /api automatically.
+from fastapi import APIRouter, Depends, HTTPException, status
+from typing import Dict, Any
+import os
+import google.generativeai as genai  # pyright: ignore[reportMissingImports]
+
+# Import your explicit structural schemas from the centralized models layer
+from app.models.scorecard import ScorecardPayload, ScorecardResponse, AxisScoreDetail, ComplianceCheckItem
+from app.api.auth import get_current_user  # Authenticated identity injection layer
+
 router = APIRouter(prefix="/scorecard", tags=["Scorecard"])
 
-# Ensure Gemini API is loaded properly
+# Ensure Gemini API configurations load cleanly from environmental variables
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
 
-# --- Pydantic Request Model Aligned Perfectly with Frontend Keys ---
-class BusinessProfile(BaseModel):
-    business_type: str = Field(..., description="Proprietorship, Partnership / LLP, Private Limited, Public Limited")
-    industry: str = Field(..., description="Fintech, E-Commerce Retail, Logistics & Supply, SaaS / Tech Services, Manufacturing")
-    turnover_range: str = Field(..., description="Under ₹20 Lakhs, ₹20 Lakhs - ₹1 Cr, ₹1Cr - ₹5Cr, Above ₹5 Cr")
-    has_foreign_funding: str = Field(..., description="Yes, No")
-    gst_registered: str = Field(..., description="Yes, No")
 
-# --- Pydantic Structured Response Models Matching Frontend Structure ---
-class AuditCheckItem(BaseModel):
-    title: str
-    desc: str
-    passed: bool
-
-class CategoryScore(BaseModel):
-    percentage: int = Field(..., ge=0, le=100, description="Compliance Percentage from 0 to 100")
-    status: str = Field(..., description="GREEN, AMBER, or RED")
-    checks: List[AuditCheckItem]
-
-class ScorecardResponse(BaseModel):
-    overall_health: str
-    scores: Dict[str, CategoryScore]
-
-
-# --- Aligned Deterministic Rule Engine Core Function ---
-def execute_deterministic_rule_engine(profile: BusinessProfile) -> Dict[str, Any]:
+def execute_deterministic_rule_engine(profile: ScorecardPayload) -> Dict[str, Any]:
     """
     Executes structural framework logic based on statutory Indian regulations
     mapping the frontend form variables onto strict compliance metrics.
@@ -50,23 +32,23 @@ def execute_deterministic_rule_engine(profile: BusinessProfile) -> Dict[str, Any
 
     if profile.gst_registered == "No":
         if profile.turnover_range in ["₹1Cr - ₹5Cr", "Above ₹5 Cr"]:
-            gst_checks.append(AuditCheckItem(
-                title="Mandatory GSTIN Registration Lapse",
-                desc="Turnover falls into high tax brackets. Operating without active GSTIN triggers continuous penalty liabilities.",
+            gst_checks.append(ComplianceCheckItem(
+                name="Mandatory GSTIN Registration Lapse",
+                description="Turnover falls into high tax brackets. Operating without active GSTIN triggers continuous penalty liabilities under CGST Act.",
                 passed=False
             ))
             gst_percentage -= 60
         else:
-            gst_checks.append(AuditCheckItem(
-                title="GST Registration Voluntary Status",
-                desc="Turnover falls within standard exemption margins. Continuous monitoring advised.",
+            gst_checks.append(ComplianceCheckItem(
+                name="GST Registration Voluntary Status",
+                description="Turnover falls within standard exemption margins. Continuous monitoring advised.",
                 passed=True
             ))
             gst_percentage = 95
     else:
-        gst_checks.append(AuditCheckItem(
-            title="Active GSTIN Registration Network",
-            desc="Entity registered under CBIC ledger nodes. Monthly GSTR filing active track assumed.",
+        gst_checks.append(ComplianceCheckItem(
+            name="Active GSTIN Registration Network",
+            description="Entity registered under CBIC ledger nodes. Monthly GSTR filing active track assumed.",
             passed=True
         ))
 
@@ -75,22 +57,22 @@ def execute_deterministic_rule_engine(profile: BusinessProfile) -> Dict[str, Any
     rbi_percentage = 100
 
     if profile.has_foreign_funding == "Yes":
-        rbi_checks.append(AuditCheckItem(
-            title="FEMA Structural Capital Inflow Tracker",
-            desc="Cross-border VC/FDI detected. Requires mandatory Foreign Liabilities & Assets (FLA) filing returns.",
+        rbi_checks.append(ComplianceCheckItem(
+            name="FEMA Structural Capital Inflow Tracker",
+            description="Cross-border VC/FDI detected. Requires mandatory Foreign Liabilities & Assets (FLA) filing returns.",
             passed=True
         ))
         if profile.business_type in ["Proprietorship", "Partnership / LLP"]:
-            rbi_checks.append(AuditCheckItem(
-                title="FDI Compliance Restrictions",
-                desc="Unincorporated businesses face structural limits regarding venture funding. Risk of compliance flags.",
+            rbi_checks.append(ComplianceCheckItem(
+                name="FDI Compliance Restrictions",
+                description="Unincorporated businesses face structural limits regarding venture funding. Risk of compliance flags.",
                 passed=False
             ))
             rbi_percentage -= 40
     else:
-        rbi_checks.append(AuditCheckItem(
-            title="RBI Currency Exemption Window",
-            desc="No outward/inward capital allocations declared. Subject to basic corporate account maintenance rules.",
+        rbi_checks.append(ComplianceCheckItem(
+            name="RBI Currency Exemption Window",
+            description="No outward/inward capital allocations declared. Subject to basic corporate account maintenance rules.",
             passed=True
         ))
 
@@ -99,16 +81,16 @@ def execute_deterministic_rule_engine(profile: BusinessProfile) -> Dict[str, Any
     sebi_percentage = 100
 
     if profile.business_type == "Public Limited":
-        sebi_checks.append(AuditCheckItem(
-            title="SEBI LODR Statutory Disclosures",
-            desc="Public infrastructure tracking active. Continuous quarterly board reports mandatory.",
+        sebi_checks.append(ComplianceCheckItem(
+            name="SEBI LODR Statutory Disclosures",
+            description="Public infrastructure tracking active. Continuous quarterly board reports mandatory.",
             passed=False
         ))
         sebi_percentage = 55
     else:
-        sebi_checks.append(AuditCheckItem(
-            title="SEBI Listing Exemption Margin",
-            desc="Entity is closely held or private. Shielded from continuous public disclosures.",
+        sebi_checks.append(ComplianceCheckItem(
+            name="SEBI Listing Exemption Margin",
+            description="Entity is closely held or private. Shielded from continuous public disclosures.",
             passed=True
         ))
 
@@ -117,15 +99,15 @@ def execute_deterministic_rule_engine(profile: BusinessProfile) -> Dict[str, Any
     mca_percentage = 100
 
     if profile.business_type in ["Private Limited", "Public Limited"]:
-        mca_checks.append(AuditCheckItem(
-            title="MCA Incorporation Compliance Tracking",
-            desc="Statutory forms (AOC-4 Financials, MGT-7 Annual Returns) must be submitted cleanly to ROC.",
+        mca_checks.append(ComplianceCheckItem(
+            name="MCA Incorporation Compliance Tracking",
+            description="Statutory forms (AOC-4 Financials, MGT-7 Annual Returns) must be submitted cleanly to ROC.",
             passed=True
         ))
     else:
-        mca_checks.append(AuditCheckItem(
-            title="ROC Company Act Exemption",
-            desc="Unincorporated structures skip rigorous registry filing workflows.",
+        mca_checks.append(ComplianceCheckItem(
+            name="ROC Company Act Exemption",
+            description="Unincorporated structures skip rigorous registry filing workflows.",
             passed=True
         ))
 
@@ -137,7 +119,7 @@ def execute_deterministic_rule_engine(profile: BusinessProfile) -> Dict[str, Any
     }
 
 
-def analyze_with_llm_fallback(profile: BusinessProfile, rule_results: Dict[str, Any]) -> ScorecardResponse:
+def analyze_with_llm_fallback(profile: ScorecardPayload, rule_results: Dict[str, Any]) -> ScorecardResponse:
     """
     Blends the calculated parameters matrix with a Gemini flash validation pass
     to return perfectly balanced, front-end friendly labels.
@@ -153,14 +135,14 @@ def analyze_with_llm_fallback(profile: BusinessProfile, rule_results: Dict[str, 
     avg_score = (g_p + r_p + s_p + m_p) / 4
     health_msg = f"{int(avg_score)}% - Balanced Posture Rating" if avg_score >= 75 else f"{int(avg_score)}% - Remediation Priorities Recommended"
 
-    # Fast fallback logic used primarily to protect runtime speed performance boundaries
+    # Construct clean internal type configurations using standardized nested schemas
     fallback_response = ScorecardResponse(
-        overall_health=health_msg,
+        overall_status=health_msg,
         scores={
-            "gst": CategoryScore(percentage=g_p, status=assign_label(g_p), checks=rule_results["gst"]["checks"]),
-            "rbi": CategoryScore(percentage=r_p, status=assign_label(r_p), checks=rule_results["rbi"]["checks"]),
-            "sebi": CategoryScore(percentage=s_p, status=assign_label(s_p), checks=rule_results["sebi"]["checks"]),
-            "mca": CategoryScore(percentage=m_p, status=assign_label(m_p), checks=rule_results["mca"]["checks"]),
+            "gst": AxisScoreDetail(percentage=g_p, status=assign_label(g_p), checks=rule_results["gst"]["checks"]),
+            "rbi": AxisScoreDetail(percentage=r_p, status=assign_label(r_p), checks=rule_results["rbi"]["checks"]),
+            "sebi": AxisScoreDetail(percentage=s_p, status=assign_label(s_p), checks=rule_results["sebi"]["checks"]),
+            "mca": AxisScoreDetail(percentage=m_p, status=assign_label(m_p), checks=rule_results["mca"]["checks"]),
         }
     )
 
@@ -170,30 +152,30 @@ def analyze_with_llm_fallback(profile: BusinessProfile, rule_results: Dict[str, 
     try:
         model = genai.GenerativeModel('gemini-1.5-flash')
         prompt = f"""
-        You are RegIQ's real-time risk framework engine. Based on the calculated rule markers, evaluate the final summary.
-        Parameters: Type={profile.business_type}, Sector={profile.industry}, Range={profile.turnover_range}.
-        Computed Scores: GST={g_p}, RBI={r_p}, SEBI={s_p}, MCA={m_p}.
+        You are the real-time compliance validation matrix engine for Vidi. Evaluate the posture based on data indicators.
+        Parameters: Type={profile.business_type}, Sector={profile.industry}, Turnover={profile.turnover_range}.
+        Scores: GST={g_p}, RBI={r_p}, SEBI={s_p}, MCA={m_p}.
         
-        Generate a summary string for corporate compliance health status (e.g., '82% - Stable Active Posture').
-        Respond ONLY with a valid string matching that format. Do not use JSON formatting or code backticks.
+        Generate a localized metrics description summary string for an Indian corporate compliance workspace (e.g., '82% - Stable Active Posture').
+        Respond ONLY with a single clean string matching that literal format. Do not output markdown code blocks or json.
         """
         response = model.generate_content(prompt)
         text_res = response.text.strip()
         if "%" in text_res:
-            fallback_response.overall_health = text_res
+            fallback_response.overall_status = text_res
         return fallback_response
     except Exception as e:
-        print(f"LLM tuning step skipped: {e}")
+        print(f"[Vidi Live Calibration Error]: LLM sync step skipped: {e}")
         return fallback_response
 
 
-# --- GET Router Method to clear 404 Dashboard Hydration Drops ---
+# --- GET Router Method to handle initial Dashboard Page hydration ---
 @router.get("", response_model=ScorecardResponse)
 async def get_initial_scorecard(current_user: dict = Depends(get_current_user)):
     """
-    GET /api/scorecard: Handles dashboard page hydration beautifully on boot-up.
+    GET /api/scorecard: Pre-hydrates dashboard layouts automatically with enterprise baseline profiles on mount.
     """
-    default_profile = BusinessProfile(
+    default_profile = ScorecardPayload(
         business_type="Private Limited",
         industry="Fintech",
         turnover_range="₹1Cr - ₹5Cr",
@@ -204,14 +186,14 @@ async def get_initial_scorecard(current_user: dict = Depends(get_current_user)):
     return analyze_with_llm_fallback(default_profile, rule_results)
 
 
-# --- POST Router Method to recalculate live form adjustments ---
+# --- POST Router Method to recalculate indicators based on form inputs ---
 @router.post("", response_model=ScorecardResponse)
 async def generate_compliance_scorecard(
-    profile: BusinessProfile, 
+    profile: ScorecardPayload, 
     current_user: dict = Depends(get_current_user)
 ):
     """
-    POST /api/scorecard: Computes new compliance indicators dynamically from form configurations.
+    POST /api/scorecard: Recalculates statutory compliance health indices dynamically from form parameters.
     """
     try:
         rule_results = execute_deterministic_rule_engine(profile)
