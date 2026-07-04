@@ -15,15 +15,15 @@ export function AuthProvider({ children }) {
         .from('profiles')
         .select('user_id, name, email, role, business_profile')
         .eq('user_id', userId)
-        .maybeSingle(); // FIX: using maybeSingle() instead of single() so it doesn't crash if empty!
+        .maybeSingle();
 
       if (error) {
-        console.warn('[RegIQ Auth] Profile missing or not found:', error.message);
+        console.warn('[Vidi Auth] Profile database linkage matching skipped:', error.message);
         return null;
       }
       return data;
     } catch (err) {
-      console.error('[RegIQ Auth] Unexpected profile fetch error:', err);
+      console.error('[Vidi Auth] Unexpected profile fetch exception:', err);
       return null;
     }
   };
@@ -33,33 +33,50 @@ export function AuthProvider({ children }) {
       try {
         const { data: { session: initialSession } } = await supabase.auth.getSession();
         setSession(initialSession);
-        setUser(initialSession?.user ?? null);
-
+        
         if (initialSession?.user) {
           const userProfile = await fetchProfile(initialSession.user.id);
-          setProfile(userProfile || { role: 'free' }); // Fallback defaults
+          const activeProfile = userProfile || { role: 'free' };
+          setProfile(activeProfile);
+          
+          // Hydrate the explicit user state structure used contextually by Dashboard.jsx tracking variables
+          setUser({
+            ...initialSession.user,
+            name: userProfile?.name || initialSession.user.user_metadata?.full_name || 'SME Operator',
+            role: activeProfile.role
+          });
+        } else {
+          setUser(null);
+          setProfile(null);
         }
       } catch (err) {
-        console.error('[RegIQ Auth] Initialization crash:', err);
+        console.error('[Vidi Auth] Lifecycle initiation error:', err);
       } finally {
-        setLoading(false); // CRITICAL: This MUST run to release the "Verifying Session..." screen!
+        setLoading(false); // Releases application boot splash screens seamlessly
       }
     };
 
     initializeAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
-      setLoading(true); // Re-enter safe loading block on state transitions
+      setLoading(true);
       setSession(currentSession);
-      setUser(currentSession?.user ?? null);
 
       if (currentSession?.user) {
         const userProfile = await fetchProfile(currentSession.user.id);
-        setProfile(userProfile || { role: 'free' });
+        const activeProfile = userProfile || { role: 'free' };
+        setProfile(activeProfile);
+        
+        setUser({
+          ...currentSession.user,
+          name: userProfile?.name || currentSession.user.user_metadata?.full_name || 'SME Operator',
+          role: activeProfile.role
+        });
       } else {
+        setUser(null);
         setProfile(null);
       }
-      setLoading(false); // Release lock
+      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
@@ -67,11 +84,16 @@ export function AuthProvider({ children }) {
 
   const signOut = async () => {
     setLoading(true);
-    await supabase.auth.signOut();
-    setSession(null);
-    setUser(null);
-    setProfile(null);
-    setLoading(false);
+    try {
+      await supabase.auth.signOut();
+    } catch (err) {
+      console.error('[Vidi Auth] Signout pipeline failure:', err);
+    } finally {
+      setSession(null);
+      setUser(null);
+      setProfile(null);
+      setLoading(false);
+    }
   };
 
   const value = {
@@ -82,8 +104,6 @@ export function AuthProvider({ children }) {
     signOut,
     isAuthenticated: !!session
   };
-
- // ... rest of your useAuth.jsx code remains completely untouched ...
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
