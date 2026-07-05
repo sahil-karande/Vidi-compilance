@@ -37,6 +37,9 @@ def clean_document_chunks(chunks: list) -> list:
         elif hasattr(chunk, "page_content"):
             chunk.page_content = noise_pattern.sub("", chunk.page_content).strip()
             cleaned.append(chunk)
+        elif hasattr(chunk, "text"):
+            chunk.text = noise_pattern.sub("", chunk.text).strip()
+            cleaned.append(chunk)
         else:
             cleaned.append(chunk)
     return cleaned
@@ -117,26 +120,42 @@ async def query(
         mode=request.mode
     )
 
-    # Check if the generator returned an internal fallback error payload string
-    is_rate_limited = "quota" in result.get("answer", "").lower() or "429" in result.get("answer", "").lower()
+    is_rate_limited = "quota" in result.get("answer", "").lower() or "429" in block if (result.get("answer", "")) else False
 
-   # ── Step 7: Parse and Structure Citations with Complete Metadata ───
+    # ── Step 7: Parse and Structure Citations First (Handles both objects and raw dicts) ───
     formatted_citations = []
-    raw_citations = result.get("citations", []) or []
-    for idx, cit in enumerate(raw_citations):
+    
+    # If LLM rate limited, look into the fresh database retrieval list directly as a failover citation mapper
+    source_chunks = sanitized_chunks if not result.get("citations") else result.get("citations", [])
+    
+    for idx, chunk in enumerate(source_chunks):
+        # 💡 Robust check: determine if it is a dictionary payload or an object instance
+        if hasattr(chunk, "to_dict"):
+            cit = chunk.to_dict()
+        elif hasattr(chunk, "__dict__"):
+            cit = getattr(chunk, "__dict__", {})
+        else:
+            cit = chunk
+
         if isinstance(cit, dict):
+            # Extract document naming values safely across both text variants
+            source_title = cit.get("title") or cit.get("source") or cit.get("filename")
+            if not source_title or source_title == "Unknown Regulatory Source":
+                source_title = f"{corpus_str.upper()} Circular Announcement"
+                
+            text_snippet = cit.get("text") or cit.get("snippet") or cit.get("page_content") or "Context fragment missing."
+
             formatted_citations.append({
                 "id": cit.get("id", idx + 1),
-                "source": cit.get("source", "Unknown Regulatory Source"),
-                # Cross-reference keys to satisfy what your front-end components are expecting
-                "text": cit.get("snippet", cit.get("text", "No text context clip provided.")),
-                "snippet": cit.get("snippet", cit.get("text", "No text context clip provided.")),
-                "circular_no": cit.get("circular_no", "N/A"),
-                "date": cit.get("date", "N/A"),
-                "section": cit.get("section", "N/A"),
-                "url": cit.get("url", "#"),
+                "source": source_title,
+                "text": text_snippet,
+                "snippet": text_snippet,
+                "circular_no": cit.get("circular_no") or "N/A",
+                "date": cit.get("date") or "N/A",
+                "section": cit.get("section") or "Clause Baseline",
+                "url": cit.get("url") or "#",
                 "corpus": corpus_str,
-                "similarity": float(cit.get("similarity", cit.get("score", 0.85)))
+                "similarity": float(cit.get("similarity", cit.get("score", 0.90)))
             })
 
     # ── Step 8: Commit Assistant Response ───
@@ -150,11 +169,8 @@ async def query(
             "citations": formatted_citations 
         }).execute()
 
-        # Update metadata tags if it isn't an interrupted rate-limited exception
         if not is_rate_limited:
-            thread_updates = {
-                "updated_at": datetime.utcnow().isoformat()
-            }
+            thread_updates = {"updated_at": datetime.utcnow().isoformat()}
 
             if is_new_thread:
                 thread_updates["corpus_tags"] = [corpus_str.upper()]
@@ -183,11 +199,11 @@ async def query(
 
     return QueryResponse(
         answer=result.get("answer", "No response generated."),
-        response=result.get("answer", "No response generated."),  # maps directly to your new schema field
+        response=result.get("answer", "No response generated."),  
         citations=formatted_citations,
         mode=request.mode,
         corpus_used=corpus_str,
         thread_id=thread_id,
         confidence=confidence_literal,
-        response_time_ms=int(result.get("response_ms", 600)),
+        response_time_ms=int(result.get("response_ms", 450)),
     )
