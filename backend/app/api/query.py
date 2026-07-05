@@ -120,7 +120,7 @@ async def query(
     # Check if the generator returned an internal fallback error payload string
     is_rate_limited = "quota" in result.get("answer", "").lower() or "429" in result.get("answer", "").lower()
 
-    # ── Step 7: Parse and Structure Citations First ───
+   # ── Step 7: Parse and Structure Citations with Complete Metadata ───
     formatted_citations = []
     raw_citations = result.get("citations", []) or []
     for idx, cit in enumerate(raw_citations):
@@ -128,7 +128,13 @@ async def query(
             formatted_citations.append({
                 "id": cit.get("id", idx + 1),
                 "source": cit.get("source", "Unknown Regulatory Source"),
-                "text": cit.get("text", cit.get("content", "No snippet provided.")),
+                # Cross-reference keys to satisfy what your front-end components are expecting
+                "text": cit.get("snippet", cit.get("text", "No text context clip provided.")),
+                "snippet": cit.get("snippet", cit.get("text", "No text context clip provided.")),
+                "circular_no": cit.get("circular_no", "N/A"),
+                "date": cit.get("date", "N/A"),
+                "section": cit.get("section", "N/A"),
+                "url": cit.get("url", "#"),
                 "corpus": corpus_str,
                 "similarity": float(cit.get("similarity", cit.get("score", 0.85)))
             })
