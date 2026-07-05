@@ -8,6 +8,7 @@ import re
 import uuid
 from fastapi import APIRouter, Depends, HTTPException, status
 from loguru import logger
+from numpy import block
 
 from app.api.auth import get_optional_user, get_supabase_admin
 from app.models.user import User, UserRole, QueryRequest, QueryResponse
