@@ -157,8 +157,8 @@ class QueryRequest(BaseModel):
 
 class QueryResponse(BaseModel):
     answer: str
-    response: str  # 💡 ADD THIS LINE HERE
-    citations: List[Dict[str, Any]]
+    response: str  
+    citations: List[Citation] = []  # 💡 FIXED: Explicitly use your defined Citation model structure
     mode: str
     corpus_used: str
     thread_id: str
