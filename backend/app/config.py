@@ -1,6 +1,6 @@
 """
 Vidi — backend/app/config.py
-Updated Day 20: Added supabase_jwt_secret field
+Updated Day 37: Added groq_api_key parameter mapping
 """
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     # ── LLM APIs ─────────────────────────────────────────────
     gemini_api_key: str = ""
     openrouter_api_key: str = ""
+    groq_api_key: str = ""  # 💡 ADD THIS LINE HERE so Pydantic maps GROQ_API_KEY from your .env file
 
     # ── ChromaDB ─────────────────────────────────────────────
     chroma_host: str = "localhost"
@@ -54,9 +55,6 @@ class Settings(BaseSettings):
         """Split comma-separated ALLOWED_ORIGINS into a list for CORS."""
         return [origin.strip() for origin in self.allowed_origins.split(",") if origin.strip()]
 
-
-# Singleton settings instance — imported across the app
-settings = Settings()
 
 # Singleton settings instance — imported across the app
 settings = Settings()

@@ -54,7 +54,7 @@ class RAGGenerator:
             logger.warning("Groq API Key missing from configuration context. Verify your .env environment parameters.")
             
         # Llama 3.1 70B is incredibly precise for high-density legal and corporate circular analysis
-        self.model = "llama-3.1-70b-versatile"
+        self.model = "llama-3.3-70b-versatile"
 
     def _format_context(self, chunks: List[Any]) -> Tuple[str, List[Dict[str, Any]]]:
         """Formats list of chunks into an organized context block for the prompt."""

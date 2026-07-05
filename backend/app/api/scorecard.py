@@ -7,7 +7,6 @@ Handles rule orchestration, model parsing validations, and LLM tuning fallback l
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import Dict, Any
 import os
-import google.generativeai as genai  # pyright: ignore[reportMissingImports]
 
 # Import your explicit structural schemas from the centralized models layer
 from app.models.scorecard import ScorecardPayload, ScorecardResponse, AxisScoreDetail, ComplianceCheckItem
