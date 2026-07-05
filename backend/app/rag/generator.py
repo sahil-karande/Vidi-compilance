@@ -1,19 +1,17 @@
 import os
-import json
 import logging
-import asyncio
 from typing import List, Dict, Any, Tuple
-import google.generativeai as genai  # Clean, explicit single namespace choice
+from groq import AsyncGroq  # Clean, native asynchronous client choice
 from app.config import settings
 
 logger = logging.getLogger("regiq.generator")
 
-LLM_PROVIDER = "gemini"
+LLM_PROVIDER = "groq"
 
 
 class RAGGenerator:
     """
-    Generates grounded responses using the official google-generativeai SDK.
+    Generates grounded responses using the official Groq SDK.
     Enforces compliance styling and anti-hallucination guardrails.
     """
 
@@ -46,10 +44,17 @@ class RAGGenerator:
     )
 
     def __init__(self):
-        if settings.gemini_api_key:
-            genai.configure(api_key=settings.gemini_api_key)
+        # Fallback tree to check both app settings context and system environment variables securely
+        self.api_key = getattr(settings, "groq_api_key", None) or os.getenv("GROQ_API_KEY")
+        
+        if self.api_key:
+            self.client = AsyncGroq(api_key=self.api_key)
         else:
-            logger.warning("Gemini API Key missing from settings context. Verify VITE/FastAPI configurations.")
+            self.client = None
+            logger.warning("Groq API Key missing from configuration context. Verify your .env environment parameters.")
+            
+        # Llama 3.1 70B is incredibly precise for high-density legal and corporate circular analysis
+        self.model = "llama-3.1-70b-versatile"
 
     def _format_context(self, chunks: List[Any]) -> Tuple[str, List[Dict[str, Any]]]:
         """Formats list of chunks into an organized context block for the prompt."""
@@ -85,7 +90,7 @@ class RAGGenerator:
                 "date": date,
                 "section": section,
                 "url": url,
-                "snippet": text[:200] + "..." if len(text) > 200 else text
+                "snippet": text  # 💡 FIXED: Truncation cutoff removed completely to deliver full information
             })
 
         return context_str, citations
@@ -101,6 +106,18 @@ class RAGGenerator:
                 "mode": mode
             }
 
+        if not self.client:
+            # Lazy load fallback catch if environment values were populated after init hook
+            self.api_key = getattr(settings, "groq_api_key", None) or os.getenv("GROQ_API_KEY")
+            if self.api_key:
+                self.client = AsyncGroq(api_key=self.api_key)
+            else:
+                return {
+                    "answer": "Groq API token is misconfigured or completely missing from your backend server .env file.",
+                    "citations": [],
+                    "mode": mode
+                }
+
         context_text, citations = self._format_context(chunks)
         mode_instruction = self.PLAIN_MODE_INSTRUCTIONS if mode.lower() == "plain" else self.LEGAL_MODE_INSTRUCTIONS
         full_system_prompt = f"{self.SYSTEM_PROMPT_BASE}\n{mode_instruction}"
@@ -112,47 +129,40 @@ class RAGGenerator:
         )
 
         try:
-            return await self._call_gemini(full_system_prompt, user_prompt, citations, mode)
+            # 💡 Native asynchronous call using the official AsyncGroq wrapper client layer
+            chat_completion = await self.client.chat.completions.create(
+                messages=[
+                    {"role": "system", "content": full_system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                model=self.model,
+                temperature=0.0,  # Zero out temperature for strict deterministic compliance alignment
+            )
+            
+            answer_text = chat_completion.choices[0].message.content.strip()
+            
+            return {
+                "answer": answer_text,
+                "citations": citations,
+                "mode": mode
+            }
                 
         except Exception as e:
-            logger.error(f"Error during LLM text generation loop: {str(e)}")
+            logger.error(f"Error during Groq LLM text generation loop: {str(e)}")
             err_msg = str(e)
             
-            # If the free tier limit is reached, give a clean suggestion to the user
-            if "429" in err_msg or "quota" in err_msg.lower():
+            if "429" in err_msg:
                 return {
-                    "answer": "⚠️ **Gemini Free Quota Limit Reached (5 RPM).** Please wait 30 seconds for the window to reset and resubmit your compliance question.",
+                    "answer": "⚠️ **Groq API Rate Limit Hit.** Please wait a moment for your rate limits to clear and resubmit your prompt.",
                     "citations": [],
                     "mode": mode
                 }
                 
             return {
-                "answer": f"An error occurred while generating your answer: {err_msg}. Please try again shortly.",
+                "answer": f"An error occurred while generating your response via Groq: {err_msg}.",
                 "citations": [],
                 "mode": mode
             }
-
-    async def _call_gemini(self, system_instruction: str, user_content: str, citations: List[Dict], mode: str) -> Dict[str, Any]:
-        """Invokes the google-generativeai model using thread pools to avoid blockages."""
-        generation_config = {
-            "temperature": 0.0,
-            "top_p": 1.0,
-        }
-
-        combined_prompt = f"{system_instruction}\n\n{user_content}"
-
-        def _sync_generate():
-            genai.configure(api_key=settings.gemini_api_key)
-            model = genai.GenerativeModel(model_name="models/gemini-2.5-flash")
-            return model.generate_content(contents=combined_prompt, generation_config=generation_config)
-
-        response = await asyncio.to_thread(_sync_generate)
-        
-        return {
-            "answer": response.text.strip(),
-            "citations": citations,
-            "mode": mode
-        }
 
 
 # Singleton instance initialization to allow module-level imports
