@@ -186,12 +186,20 @@ export default function Chat() {
 
   const mapCitationToCardProps = (cite) => {
     if (!cite) return null;
+    
+    // 💡 Catch every single naming variation coming from your RAG pipeline or database cache arrays
+    const resolvedTitle = cite.title || cite.source || cite.filename || cite.authority || 'GST Compliance Document';
+    const resolvedText = cite.preview || cite.text || cite.excerpt || cite.content || cite.page_content || 'Regulatory context fragment attached.';
+    const resolvedNo = cite.circular_no || cite.circular || 'Document Reference Context';
+    const resolvedDate = cite.date || cite.notification_date || '2026-06-13';
+    const resolvedSec = cite.section || cite.relevant_section || `Clause Index: ${resolvedNo}`;
+
     return {
-      authority: cite.source || 'Regulatory Body',
-      circular_no: cite.circular_no || 'Document Context',
-      date: cite.date || 'N/A',
-      section: cite.section || '',
-      text: cite.excerpt || '',
+      authority: String(resolvedTitle),
+      circular_no: String(resolvedNo),
+      date: String(resolvedDate),
+      section: String(resolvedSec),
+      text: String(resolvedText),
       url: cite.url || ''
     };
   };

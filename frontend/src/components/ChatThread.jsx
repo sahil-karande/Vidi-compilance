@@ -89,6 +89,7 @@ export default function ChatThread({ messages, mode = 'plain', onSelectCitation 
                     <button 
                       key={cIdx}
                       type="button"
+                      // 💡 Find your button click map loop or chip mapping inside ChatThread.jsx and ensure it passes the full 'cite' object directly:
                       onClick={() => onSelectCitation(cite)}
                       style={{
                         background: 'rgba(129, 140, 248, 0.15)',
