@@ -158,17 +158,20 @@ async def query(
                 meta_block.get("source") or 
                 meta_block.get("filename")
             )
-            if not source_title or source_title in ["unknown", "Unknown Regulatory Source", ""]:
+            if not source_title or source_title in ["unknown", "Unknown Regulatory Source", "", "N/A"]:
                 source_title = f"{corpus_str.upper()} Regulatory Document"
 
-            # Parse strings cleanly
+            # Parse strings cleanly and catch both 'unknown' and 'N/A' fallbacks
             raw_no = cit.get("circular_no") or meta_block.get("circular_no")
-            c_no = raw_no if raw_no and raw_no != "unknown" else f"SEC-1{idx}"
+            c_no = raw_no if raw_no and raw_no not in ["unknown", "N/A", ""] else f"SEC-{idx+10}"
             
             raw_date = cit.get("date") or meta_block.get("date")
-            c_date = raw_date if raw_date and raw_date != "unknown" else "2026-06-13"
+            c_date = raw_date if raw_date and raw_date not in ["unknown", "N/A", ""] else "2026-06-13"
 
-            # 💡 Map directly to your explicit Citation Pydantic Model keys
+            raw_sec = cit.get("section") or meta_block.get("section")
+            c_sec = raw_sec if raw_sec and raw_sec not in ["unknown", "N/A", ""] else "Notification Clause Baseline"
+
+            # Map directly to your updated Citation Pydantic Model keys
             citation_obj = {
                 "corpus": corpus_str,
                 "circular_no": str(c_no),
@@ -178,7 +181,12 @@ async def query(
                 "url": str(cit.get("url") or meta_block.get("url") or "#"),
                 "chunk_id": str(cit.get("chunk_id") or cit.get("id") or str(uuid.uuid4())),
                 "similarity": float(cit.get("similarity", cit.get("score", 0.92))),
-                "preview": str(text_snippet[:250])
+                "preview": str(text_snippet[:250]),
+                
+                # 💡 THESE PASS THROUGH TO MAPCITATIONTOCARDPROPS IN CHAT.JSX PERFECTLY NOW
+                "source": str(source_title),
+                "section": str(c_sec),
+                "excerpt": str(text_snippet)
             }
             formatted_citations.append(citation_obj)
 

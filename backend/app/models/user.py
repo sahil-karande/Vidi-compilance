@@ -100,7 +100,12 @@ class Citation(BaseModel):
     chunk_id: str = ""
     similarity: float = Field(..., ge=0.0, le=1.0, description="Cosine similarity score")
     preview: str = Field("", description="First ~200 chars of the source chunk")
-
+    
+    # 💡 ADD THESE FIELDS HERE TO STOP PYDANTIC FROM STRIPPING THEM
+    source: Optional[str] = "Regulatory Body"
+    section: Optional[str] = "Notification Clause"
+    excerpt: Optional[str] = ""
+    
     model_config = {
         "json_schema_extra": {
             "example": {
