@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useLocation } from 'react-router-dom';
+// Added useNavigate to fix the undeclared variable runtime error
+import { useLocation, useNavigate } from 'react-router-dom';
 import { chatAPI } from '../lib/api';
 import { useAuth } from '../hooks/useAuth';
 import ChatThread from '../components/ChatThread';
@@ -10,6 +11,7 @@ import { useQueryLimit } from '../hooks/useQueryLimit';
 export default function Chat() {
   const { signOut } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate(); // Hook initialized safely to register router steps
   const { usage, limit, refreshUsage } = useQueryLimit();
 
   const [messages, setMessages] = useState([]);
@@ -137,14 +139,12 @@ export default function Chat() {
     }
   };
 
-  // Catch contextual redirection requests sent from Compliance Calendar hooks
   // Catch contextual redirection requests sent from Compliance Calendar hooks safely
   useEffect(() => {
     if (location.state?.initialQuery) {
       const dashboardPrompt = location.state.initialQuery;
       
-      // Clean query text state values out of application history variables inside React Router framework
-      // eslint-disable-next-line no-undef
+      // Clean query text state values out of history using the initialized hook
       navigate(location.pathname, { replace: true, state: {} });
       
       // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -153,7 +153,7 @@ export default function Chat() {
       
       executeAutomatedQuery(dashboardPrompt);
     }
-  }, [executeAutomatedQuery, location.state, location.pathname]);
+  }, [executeAutomatedQuery, location.state, location.pathname, navigate]);
 
   useEffect(() => {
     let isMounted = true;
