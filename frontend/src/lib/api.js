@@ -187,7 +187,8 @@ export const chatAPI = {
 
   // ── Day 40 Integration: Document Ingestion Workspace Methods ──
   uploadDocument: async (formData) => {
-    const response = await api.post('/upload', formData, {
+    // Added '/api' prefix to match standard FastAPI router mounting rules
+    const response = await api.post('/api/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
     return response.data;
@@ -195,12 +196,12 @@ export const chatAPI = {
 
   getUploadedDocs: async () => {
     try {
-      const response = await api.get('/upload/list');
+      // Added '/api' prefix to point directly to your backend document tracker route
+      const response = await api.get('/api/upload/list');
       return response.data;
     // eslint-disable-next-line no-unused-vars
     } catch (err) {
       printFallbackWarning('getUploadedDocs');
-      // Defensive client mock array to ensure UI tables render during local manual verification
       return [
         { id: 'doc-mock-1', filename: 'Show_Cause_Notice_MaaVaishnavi_GST_2026.pdf', uploaded_at: new Date().toISOString() }
       ];
@@ -208,7 +209,8 @@ export const chatAPI = {
   },
 
   deleteDocument: async (docId) => {
-    const response = await api.delete(`/upload/${docId}`);
+    // Added '/api' prefix to match your backend's deletion endpoint
+    const response = await api.delete(`/api/upload/${docId}`);
     return response.data;
   }
 };
