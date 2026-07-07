@@ -108,7 +108,7 @@ async def query(
     corpus = request.corpus if request.corpus else classify_query(request.query)
     corpus_str = corpus.value if hasattr(corpus, "value") else str(corpus).lower().split(".")[-1]
 
-    # ── Step 5: Retrieve Candidates ──────────────────────────────
+# ── Step 5: Retrieve Candidates ──────────────────────────────
     # Fetch core public regulatory documents first
     candidates = retrieve(request.query, corpus, top_k=10) or []
     
@@ -117,7 +117,6 @@ async def query(
         collection_id = f"user_docs_{user_id}"
         try:
             chroma_client = get_chroma_client()
-            # Double check if the user collection exists before running a vector lookup
             existing_cols = [c.name for c in chroma_client.list_collections()]
             
             if collection_id in existing_cols:
@@ -125,7 +124,6 @@ async def query(
                 user_collection = chroma_client.get_collection(name=collection_id)
                 embedding_model = get_embedding_model()
                 
-                # Generate query text vector representation using singleton weights
                 query_vector = embedding_model.encode([request.query], normalize_embeddings=True).tolist()
                 
                 user_results = user_collection.query(
@@ -138,10 +136,19 @@ async def query(
                         meta = user_results['metadatas'][0][idx] if user_results['metadatas'] else {}
                         score = user_results['distances'][0][idx] if 'distances' in user_results else 0.5
                         
-                        # Convert to normalized matching dictionary layout compatible with rerank() input
-                        user_chunk = {
-                            "text": doc,
-                            "metadata": {
+                        # FIX: Creating a clean generic object layer so dot-notation (.text, .metadata) doesn't break downstream methods
+                        class BlendedChunk:
+                            def __init__(self, text, metadata, score, chunk_id):
+                                self.text = text
+                                self.metadata = metadata
+                                self.score = score
+                                self.id = chunk_id
+                            def to_dict(self):
+                                return {"text": self.text, "metadata": self.metadata, "score": self.score, "id": self.id}
+
+                        user_chunk = BlendedChunk(
+                            text=doc,
+                            metadata={
                                 "corpus": "user_docs",
                                 "source": meta.get("filename", "User Workspace Document"),
                                 "title": meta.get("title", "Custom Document Context"),
@@ -152,14 +159,15 @@ async def query(
                                 "url": "#",
                                 "chunk_id": user_results['ids'][0][idx]
                             },
-                            "score": float(score)
-                        }
+                            score=float(score),
+                            chunk_id=user_results['ids'][0][idx]
+                        )
                         candidates.append(user_chunk)
                         
         except Exception as blended_err:
             logger.error(f"[Blended RAG Failure] Bypassing custom document context insertion safely: {str(blended_err)}")
 
-    # Run unified cross-encoder reranking over the combined pool
+    # Run unified cross-encoder reranking over the combined pool safely
     chunks = rerank(request.query, candidates, top_n=5) if candidates else []
     sanitized_chunks = clean_document_chunks(chunks)
 
