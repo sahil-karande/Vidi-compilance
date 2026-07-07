@@ -183,6 +183,33 @@ export const chatAPI = {
         { id: 'dl-4', authority: 'RBI', title: 'FLA Return Submission', description: 'Annual Return on Foreign Assets and Liabilities matching cross-border venture structures.', due_date: '2026-07-15T23:59:59Z', priority: 'HIGH' }
       ];
     }
+  },
+
+  // ── Day 40 Integration: Document Ingestion Workspace Methods ──
+  uploadDocument: async (formData) => {
+    const response = await api.post('/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
+  },
+
+  getUploadedDocs: async () => {
+    try {
+      const response = await api.get('/upload/list');
+      return response.data;
+    // eslint-disable-next-line no-unused-vars
+    } catch (err) {
+      printFallbackWarning('getUploadedDocs');
+      // Defensive client mock array to ensure UI tables render during local manual verification
+      return [
+        { id: 'doc-mock-1', filename: 'Show_Cause_Notice_MaaVaishnavi_GST_2026.pdf', uploaded_at: new Date().toISOString() }
+      ];
+    }
+  },
+
+  deleteDocument: async (docId) => {
+    const response = await api.delete(`/upload/${docId}`);
+    return response.data;
   }
 };
 

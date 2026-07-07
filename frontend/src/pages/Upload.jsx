@@ -1,5 +1,5 @@
 import  { useState, useEffect, useCallback } from 'react';
-import api from '../lib/api'; 
+import { chatAPI } from '../lib/api'; // <-- Now importing our functional unified wrapper object safely
 
 export default function Upload() {
   const [files, setFiles] = useState([]);
@@ -9,11 +9,11 @@ export default function Upload() {
 
   const fetchUploadedDocs = useCallback(async () => {
     try {
-      const response = await api.get('/upload/list');
-      setFiles(Array.isArray(response.data) ? response.data : []);
+      const data = await chatAPI.getUploadedDocs();
+      setFiles(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.error("Fetch error:", err);
-      setFiles([]); // Fallback to empty state safely
+      console.error("Fetch inventory error:", err);
+      setFiles([]);
     }
   }, []);
 
@@ -58,9 +58,7 @@ export default function Upload() {
     formData.append('file', file);
 
     try {
-      await api.post('/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      await chatAPI.uploadDocument(formData);
       await fetchUploadedDocs();
     } catch (err) {
       setError(err.response?.data?.detail || 'Error uploading file stream to core pipeline.');
@@ -71,7 +69,7 @@ export default function Upload() {
 
   const handleDelete = async (docId) => {
     try {
-      await api.delete(`/upload/${docId}`);
+      await chatAPI.deleteDocument(docId);
       setFiles(prev => prev.filter((file) => file.id !== docId));
     // eslint-disable-next-line no-unused-vars
     } catch (err) {
