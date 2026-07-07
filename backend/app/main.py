@@ -92,3 +92,6 @@ app.include_router(scorecard.router, prefix="/api", tags=["Scorecard"])
 app.include_router(calendar.router, prefix="/api", tags=["Calendar"]) 
 # ──────────────────────────────────────────────────
 
+# Register router line...
+app.include_router(upload.router, prefix="/api", tags=["Pro Upload"])
+
