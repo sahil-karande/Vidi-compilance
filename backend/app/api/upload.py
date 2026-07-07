@@ -6,10 +6,20 @@ Day 39 Task: Pro Document Upload & Dynamic RAG Namespace Processing
 import os
 import uuid
 import tempfile
+import sys
 from pathlib import Path
 from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, status
 from loguru import logger
+
+# ─────────────────────────────────────────────────────────────
+#  DYNAMIC ROOT PATH INJECTION (Fixes ModuleNotFoundError)
+# ─────────────────────────────────────────────────────────────
+# upload.py is in backend/app/api/ (4 levels deep from Vidi/)
+project_root = Path(__file__).resolve().parents[3]
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
+# ─────────────────────────────────────────────────────────────
 
 from app.api.auth import get_current_user, require_role, get_supabase_admin
 from app.models.user import User, UserRole
