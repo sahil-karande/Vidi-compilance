@@ -1,6 +1,6 @@
 """
 RegIQ — backend/app/api/query.py
-Day 37 Final Hardening: Secure Citation Object Parameter Mapping
+Day 40 Blended RAG Integration: Merging User Custom Context with Regulatory Corpora
 """
 
 from datetime import datetime
@@ -13,7 +13,7 @@ from app.api.auth import get_optional_user, get_supabase_admin
 from app.models.user import User, UserRole, QueryRequest, QueryResponse
 from app.rag.usage import check_quota, increment_usage, get_usage_summary
 from app.rag.classifier import classify_query
-from app.rag.retriever import retrieve
+from app.rag.retriever import retrieve, get_chroma_client, get_embedding_model  # Added Chroma imports
 from app.rag.reranker import rerank
 from app.rag.generator import RAGGenerator
 
@@ -108,8 +108,58 @@ async def query(
     corpus = request.corpus if request.corpus else classify_query(request.query)
     corpus_str = corpus.value if hasattr(corpus, "value") else str(corpus).lower().split(".")[-1]
 
-    # ── Step 5: Retrieve + Rerank ──────────────────────────────
-    candidates = retrieve(request.query, corpus, top_k=10)
+    # ── Step 5: Retrieve Candidates ──────────────────────────────
+    # Fetch core public regulatory documents first
+    candidates = retrieve(request.query, corpus, top_k=10) or []
+    
+    # ── Day 40 Integration: Dynamic Custom Workspace Blending ──
+    if role in [UserRole.PRO, UserRole.ENTERPRISE] and not user_id.startswith("guest"):
+        collection_id = f"user_docs_{user_id}"
+        try:
+            chroma_client = get_chroma_client()
+            # Double check if the user collection exists before running a vector lookup
+            existing_cols = [c.name for c in chroma_client.list_collections()]
+            
+            if collection_id in existing_cols:
+                logger.info(f"[Blended RAG] Fetching context matches from custom workspace collection: {collection_id}")
+                user_collection = chroma_client.get_collection(name=collection_id)
+                embedding_model = get_embedding_model()
+                
+                # Generate query text vector representation using singleton weights
+                query_vector = embedding_model.encode([request.query], normalize_embeddings=True).tolist()
+                
+                user_results = user_collection.query(
+                    query_embeddings=query_vector,
+                    n_results=5
+                )
+                
+                if user_results and 'documents' in user_results and user_results['documents']:
+                    for idx, doc in enumerate(user_results['documents'][0]):
+                        meta = user_results['metadatas'][0][idx] if user_results['metadatas'] else {}
+                        score = user_results['distances'][0][idx] if 'distances' in user_results else 0.5
+                        
+                        # Convert to normalized matching dictionary layout compatible with rerank() input
+                        user_chunk = {
+                            "text": doc,
+                            "metadata": {
+                                "corpus": "user_docs",
+                                "source": meta.get("filename", "User Workspace Document"),
+                                "title": meta.get("title", "Custom Document Context"),
+                                "filename": meta.get("filename", "Custom Document Context"),
+                                "circular_no": meta.get("circular_no", "Internal Analysis"),
+                                "date": meta.get("date", datetime.utcnow().date().isoformat()),
+                                "section": meta.get("section", "Uploaded Content File"),
+                                "url": "#",
+                                "chunk_id": user_results['ids'][0][idx]
+                            },
+                            "score": float(score)
+                        }
+                        candidates.append(user_chunk)
+                        
+        except Exception as blended_err:
+            logger.error(f"[Blended RAG Failure] Bypassing custom document context insertion safely: {str(blended_err)}")
+
+    # Run unified cross-encoder reranking over the combined pool
     chunks = rerank(request.query, candidates, top_n=5) if candidates else []
     sanitized_chunks = clean_document_chunks(chunks)
 
@@ -123,7 +173,7 @@ async def query(
     ans_text = result.get("answer", "")
     is_rate_limited = "quota" in ans_text.lower() or "429" in ans_text if ans_text else False
 
-# ── Step 7: Parse and Structure Citations with Explicit Naming Defenses ───
+    # ── Step 7: Parse and Structure Citations with Explicit Naming Defenses ───
     formatted_citations = []
     source_chunks = sanitized_chunks if not result.get("citations") else result.get("citations", [])
     
@@ -138,7 +188,9 @@ async def query(
         if isinstance(cit, dict):
             meta_block = cit.get("metadata", {}) or {} if isinstance(cit.get("metadata"), dict) else cit
             
-            # Resolve full text snippet context blocks without truncation
+            # Identify current source namespace profile context layout 
+            current_chunk_corpus = meta_block.get("corpus", corpus_str)
+            
             text_snippet = (
                 cit.get("text") or 
                 cit.get("snippet") or 
@@ -149,7 +201,6 @@ async def query(
                 "Context text fragment missing."
             )
             
-            # Resolve reference source document titles
             source_title = (
                 cit.get("title") or 
                 cit.get("source") or 
@@ -159,11 +210,10 @@ async def query(
                 meta_block.get("filename")
             )
             if not source_title or source_title in ["unknown", "Unknown Regulatory Source", "", "N/A"]:
-                source_title = f"{corpus_str.upper()} Compliance Circular"
+                source_title = f"{current_chunk_corpus.upper()} Compliance Circular"
 
-            # Parse strings cleanly - Avoid empty string crash traps
             raw_no = cit.get("circular_no") or meta_block.get("circular_no")
-            c_no = raw_no if raw_no and raw_no not in ["unknown", "N/A", ""] else f"{corpus_str.upper()} Ref #{idx+1}"
+            c_no = raw_no if raw_no and raw_no not in ["unknown", "N/A", ""] else f"{current_chunk_corpus.upper()} Ref #{idx+1}"
             
             raw_date = cit.get("date") or meta_block.get("date")
             c_date = raw_date if raw_date and raw_date not in ["unknown", "N/A", ""] else "2026-06-13"
@@ -172,7 +222,7 @@ async def query(
             c_sec = raw_sec if raw_sec and raw_sec not in ["unknown", "N/A", ""] else "Notification Clause"
 
             citation_obj = {
-                "corpus": corpus_str,
+                "corpus": str(current_chunk_corpus),
                 "circular_no": str(c_no),
                 "date": str(c_date),
                 "title": str(source_title),
@@ -195,7 +245,7 @@ async def query(
             "role": "assistant",
             "content": result["answer"],
             "mode": request.mode,
-            "citations": formatted_citations  # Clean, matching serializable dictionary lists
+            "citations": formatted_citations  
         }).execute()
 
         if not is_rate_limited:
@@ -229,7 +279,7 @@ async def query(
     return QueryResponse(
         answer=str(result.get("answer", "No response generated.")),
         response=str(result.get("answer", "No response generated.")),  
-        citations=formatted_citations,  # Automatically wrapped and validated by the QueryResponse model
+        citations=formatted_citations,  
         mode=str(request.mode),
         corpus_used=str(corpus_str),
         thread_id=str(thread_id),
