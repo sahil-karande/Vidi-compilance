@@ -199,8 +199,10 @@ export const chatAPI = {
       // Added '/api' prefix to point directly to your backend document tracker route
       const response = await api.get('/api/upload/list');
       return response.data;
-    // eslint-disable-next-line no-unused-vars
-    } catch (err) {
+    
+    }
+     // eslint-disable-next-line no-unused-vars
+     catch (err) {
       printFallbackWarning('getUploadedDocs');
       return [
         { id: 'doc-mock-1', filename: 'Show_Cause_Notice_MaaVaishnavi_GST_2026.pdf', uploaded_at: new Date().toISOString() }

@@ -1,6 +1,6 @@
 """
 RegIQ — backend/app/api/upload.py
-Day 39 Task: Pro Document Upload & Dynamic RAG Namespace Processing
+Day 40 Complete Implementation: Ingestion Upload, Listing, and Document Purging
 """
 
 import os
@@ -9,13 +9,14 @@ import tempfile
 import sys
 from pathlib import Path
 from datetime import datetime, timezone
+from typing import List
+from pydantic import BaseModel
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, status
 from loguru import logger
 
 # ─────────────────────────────────────────────────────────────
 #  DYNAMIC ROOT PATH INJECTION (Fixes ModuleNotFoundError)
 # ─────────────────────────────────────────────────────────────
-# upload.py is in backend/app/api/ (4 levels deep from Vidi/)
 project_root = Path(__file__).resolve().parents[3]
 if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
@@ -34,15 +35,22 @@ router = APIRouter()
 MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 Megabytes
 
 
+# ── Day 40 Pydantic Response Validation Models ──
+class UploadedDocResponse(BaseModel):
+    id: str
+    filename: str
+    uploaded_at: str
+
+
 @router.post("/upload", status_code=status.HTTP_201_CREATED, tags=["Document Upload"])
 async def upload_document(
     file: UploadFile = File(...),
     current_user: User = Depends(require_role(UserRole.PRO))
 ):
     """
-    POST /upload (Pro and Enterprise users only).
+    POST /api/upload (Pro and Enterprise users only).
     Accepts custom financial/compliance PDFs, extracts text via PyMuPDF/OCR fallback,
-    chunks, embeds, and saves to a isolated namespace inside ChromaDB.
+    chunks, embeds, and saves to an isolated namespace inside ChromaDB.
     Tracks state into Supabase uploaded_docs table.
     """
     # 1. Enforce strict content extension filtering
@@ -53,7 +61,6 @@ async def upload_document(
         )
 
     # 2. Validate maximum file stream capacity limits (10MB)
-    # Read ahead to check chunk sizing, then rewind seek pointer
     try:
         body = await file.read(MAX_FILE_SIZE + 1)
         if len(body) > MAX_FILE_SIZE:
@@ -185,6 +192,65 @@ async def upload_document(
             detail=f"In-flight internal pipeline routing exception: {str(pipeline_err)}"
         )
     finally:
-        # Always run explicit cleanups on system disk artifacts to conserve space
         if tmp_file_path.exists():
             os.unlink(tmp_file_path)
+
+
+# ── Day 40 Integration: GET /api/upload/list Endpoint ──
+@router.get("/upload/list", response_model=List[UploadedDocResponse], tags=["Document Upload"])
+async def list_user_documents(current_user: User = Depends(require_role(UserRole.PRO))):
+    """
+    GET /api/upload/list
+    Retrieves all tracking records for the logged-in PRO user from the Supabase ledger.
+    """
+    try:
+        admin_supabase = get_supabase_admin()
+        res = admin_supabase.table("uploaded_docs").select("id", "filename", "uploaded_at").eq("user_id", current_user.user_id).execute()
+        return res.data or []
+    except Exception as e:
+        logger.error(f"Failed to fetch document ledger list: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal database tracking retrieval error."
+        )
+
+
+# ── Day 40 Integration: DELETE /api/upload/{doc_id} Endpoint ──
+@router.delete("/upload/{doc_id}", tags=["Document Upload"])
+async def delete_user_document(doc_id: str, current_user: User = Depends(require_role(UserRole.PRO))):
+    """
+    DELETE /api/upload/{doc_id}
+    Deletes vector references from ChromaDB and purges row tracking entries from Supabase.
+    """
+    try:
+        admin_supabase = get_supabase_admin()
+        
+        # 1. Clear record entry out of Supabase ledger to verify user ownership
+        res = admin_supabase.table("uploaded_docs").delete().eq("id", doc_id).eq("user_id", current_user.user_id).execute()
+        if not res.data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, 
+                detail="Document asset not found or user ownership access verification failed."
+            )
+            
+        # 2. Flush target indices out of local ChromaDB disk space
+        chroma_client = get_chroma_client()
+        collection_id = f"user_docs_{current_user.user_id}"
+        
+        existing_cols = [c.name for c in chroma_client.list_collections()]
+        if collection_id in existing_cols:
+            collection = chroma_client.get_collection(name=collection_id)
+            # Use metadata dictionary parsing constraint to scrub matches out of memory
+            collection.delete(where={"document_id": doc_id})
+            
+        logger.info(f"[Purge] Document vector space elements {doc_id} successfully dropped.")
+        return {"status": "success", "detail": f"Purged document reference {doc_id} completely from server memory."}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to execute target structural cleanups: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal server-side component flush execution failure."
+        )
