@@ -26,9 +26,10 @@ function SkeletonCard() {
 export default function Dashboard() {
   const navigate = useNavigate();
   const { user, updateUserProfile } = useAuth() || {}; // Assuming updateUserProfile is exposed via useAuth hook
-  
-  const userRole = user?.role || 'guest';
-  const isLocked = userRole === 'guest' || userRole === 'free';
+
+  //  (Bypasses the locked restriction state for dev mode):
+  const userRole = 'pro'; 
+  const isLocked = false;
 
   // Toggle true profile form onboarding state if business details are missing
   const [showProfileForm, setShowProfileForm] = useState(!user?.business_profile);
