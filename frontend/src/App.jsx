@@ -12,6 +12,7 @@ import Dashboard from './pages/Dashboard';
 import Chat from './pages/Chat'; 
 import Settings from './pages/Settings'; 
 import TestAuth from './pages/TestAuth';
+import Upload from './pages/Upload'; // <-- 1. Import your dynamic Upload file here
 
 
 // Premium Navbar Wrapper Layout
@@ -55,26 +56,6 @@ const ExplorerView = () => (
   <div className="p-8 min-h-screen bg-slate-950 text-slate-200 font-sans">
     <h2 className="text-xl font-bold tracking-tight text-indigo-400">Vidi Regulation Explorer</h2>
     <p className="text-xs text-slate-400 mt-1">D3.js dynamic structural force graph mapping cross-regulatory circular citations.</p>
-  </div>
-);
-
-const UploadView = () => (
-  <div className="p-8 min-h-screen bg-slate-950 text-slate-200 font-sans">
-    <h2 className="text-xl font-bold tracking-tight text-cyan-400">Document Ingestion Workspace</h2>
-    <p className="text-xs text-slate-400 mt-1 mb-6">Blend your company notices with official corpora using localized vector parsing.</p>
-    
-    <div className="max-w-xl w-full border-2 border-dashed border-slate-800 hover:border-cyan-500/50 bg-slate-900/20 rounded-2xl p-12 text-center transition-all group">
-      <div className="text-3xl mb-4 group-hover:scale-110 transition-transform">📥</div>
-      <h3 className="text-sm font-bold text-white mb-1">Drag and drop your regulatory compliance PDF</h3>
-      <p className="text-xs text-slate-500 mb-6">Maximum asset scale up to 10MB file limitation</p>
-      <input type="file" id="fileUpload" className="hidden" accept=".pdf" />
-      <button 
-        onClick={() => document.getElementById('fileUpload').click()}
-        className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold py-2.5 px-6 rounded-xl transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)]"
-      >
-        Select PDF File
-      </button>
-    </div>
   </div>
 );
 
@@ -123,7 +104,7 @@ export default function App() {
             element={
               <AuthGuard>
                 <WorkspaceLayout>
-                  <UploadView />
+                  <Upload /> {/* <-- 2. Replaced the dummy element with the dynamic page */}
                 </WorkspaceLayout>
               </AuthGuard>
             } 
