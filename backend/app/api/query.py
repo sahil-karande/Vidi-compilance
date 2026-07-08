@@ -352,10 +352,7 @@ async def query(
 # ─────────────────────────────────────────────────────────────
 
 @router.get("/export/{thread_id}")
-async def export_thread_pdf(
-    thread_id: str,
-    user: User | None = Depends(get_optional_user)
-):
+async def export_thread_pdf(thread_id: str, user: User | None = Depends(get_optional_user)):
     """
     Assembles historical chronological thread logs and nested structural citations
     from Supabase and returns a fully aligned, structured, legal PDF artifact.
