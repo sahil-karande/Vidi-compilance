@@ -111,6 +111,33 @@ export const chatAPI = {
     return response.data;
   },
 
+  // ── 💡 NEW FEATURE: ReportLab PDF Export Request Trigger ──
+  exportThreadPDF: async (threadId) => {
+    try {
+      const response = await api.get(`/api/export/${threadId}`, {
+        responseType: 'blob', // Tells Axios to process incoming binary stream data
+      });
+      
+      // Assemble temporary local URL download attachment anchor
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `RegIQ_Compliance_Report_${threadId.substring(0, 8)}.pdf`);
+      
+      document.body.appendChild(link);
+      link.click();
+      
+      // Clean up DOM objects to prevent storage leaks
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Failed to stream or download PDF report artifact:', err);
+      throw err;
+    }
+  },
+
   /**
    * Fetches user profile scoring details across GST, RBI, SEBI, and MCA.
    * Leverages robust fallback data maps if network exceptions are caught.
@@ -187,7 +214,6 @@ export const chatAPI = {
 
   // ── Day 40 Integration: Document Ingestion Workspace Methods ──
   uploadDocument: async (formData) => {
-    // Added '/api' prefix to match standard FastAPI router mounting rules
     const response = await api.post('/api/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
@@ -196,13 +222,10 @@ export const chatAPI = {
 
   getUploadedDocs: async () => {
     try {
-      // Added '/api' prefix to point directly to your backend document tracker route
       const response = await api.get('/api/upload/list');
       return response.data;
-    
-    }
-     // eslint-disable-next-line no-unused-vars
-     catch (err) {
+    // eslint-disable-next-line no-unused-vars
+    } catch (err) {
       printFallbackWarning('getUploadedDocs');
       return [
         { id: 'doc-mock-1', filename: 'Show_Cause_Notice_MaaVaishnavi_GST_2026.pdf', uploaded_at: new Date().toISOString() }
@@ -211,7 +234,6 @@ export const chatAPI = {
   },
 
   deleteDocument: async (docId) => {
-    // Added '/api' prefix to match your backend's deletion endpoint
     const response = await api.delete(`/api/upload/${docId}`);
     return response.data;
   }
