@@ -111,14 +111,12 @@ export const chatAPI = {
     return response.data;
   },
 
-  // ── 💡 NEW FEATURE: ReportLab PDF Export Request Trigger ──
   exportThreadPDF: async (threadId) => {
     try {
       const response = await api.get(`/api/export/${threadId}`, {
-        responseType: 'blob', // Tells Axios to process incoming binary stream data
+        responseType: 'blob', 
       });
       
-      // Assemble temporary local URL download attachment anchor
       const blob = new Blob([response.data], { type: 'application/pdf' });
       const url = window.URL.createObjectURL(blob);
       
@@ -129,7 +127,6 @@ export const chatAPI = {
       document.body.appendChild(link);
       link.click();
       
-      // Clean up DOM objects to prevent storage leaks
       link.parentNode.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (err) {
@@ -138,10 +135,6 @@ export const chatAPI = {
     }
   },
 
-  /**
-   * Fetches user profile scoring details across GST, RBI, SEBI, and MCA.
-   * Leverages robust fallback data maps if network exceptions are caught.
-   */
   getScorecard: async (formData = null) => {
     try {
       if (formData) {
@@ -192,10 +185,6 @@ export const chatAPI = {
     }
   },
 
-  /**
-   * Fetches corporate compliance deadlines matching user configurations.
-   * Router paths adjusted to target /api/calendar to remain synchronous with backend prefixes.
-   */
   getCalendarDeadlines: async () => {
     try {
       const response = await api.get('/api/calendar'); 
@@ -212,7 +201,6 @@ export const chatAPI = {
     }
   },
 
-  // ── Day 40 Integration: Document Ingestion Workspace Methods ──
   uploadDocument: async (formData) => {
     const response = await api.post('/api/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
@@ -235,6 +223,14 @@ export const chatAPI = {
 
   deleteDocument: async (docId) => {
     const response = await api.delete(`/api/upload/${docId}`);
+    return response.data;
+  }
+};
+
+// ── 💳 NEW MODULE: Billing Integration Layer ──
+export const billingAPI = {
+  createSubscription: async (planCycle) => {
+    const response = await api.post('/billing/create-subscription', { plan: planCycle });
     return response.data;
   }
 };
