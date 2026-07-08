@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-// Added useNavigate to fix the undeclared variable runtime error
 import { useLocation, useNavigate } from 'react-router-dom';
 import { chatAPI } from '../lib/api';
 import { useAuth } from '../hooks/useAuth';
@@ -11,7 +10,7 @@ import { useQueryLimit } from '../hooks/useQueryLimit';
 export default function Chat() {
   const { signOut } = useAuth();
   const location = useLocation();
-  const navigate = useNavigate(); // Hook initialized safely to register router steps
+  const navigate = useNavigate(); 
   const { usage, limit, refreshUsage } = useQueryLimit();
 
   const [messages, setMessages] = useState([]);
@@ -19,12 +18,13 @@ export default function Chat() {
   const [threads, setThreads] = useState([]);
   const [activeThreadId, setActiveThreadId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isExporting, setIsExporting] = useState(false); // Local state tracker for generating file arrays
   const [isSidebarLoading, setIsSidebarLoading] = useState(true);
   const [activeCitation, setActiveCitation] = useState(null);
   
   // Mobile UI States
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-  const [errorState, setErrorState] = useState(null); // { type: 'LIMIT_EXHAUSTED' | 'NETWORK', message: string }
+  const [errorState, setErrorState] = useState(null); 
 
   const [lastQuery, setLastQuery] = useState('');
   const { mode: ragMode, setMode: setRagMode } = useLegalMode();
@@ -36,7 +36,7 @@ export default function Chat() {
     setActiveCitation(null);
     setErrorState(null);
     setIsLoading(true);
-    setIsMobileSidebarOpen(false); // Auto close sidebar context on small views
+    setIsMobileSidebarOpen(false); 
     try {
       const history = await chatAPI.getThreadMessages(threadId);
       setMessages(history || []);
@@ -73,6 +73,23 @@ export default function Chat() {
     }
   };
 
+  const handleExportPDF = async () => {
+    if (!activeThreadId || isExporting) return;
+    try {
+      setIsExporting(true);
+      setErrorState(null);
+      await chatAPI.exportThreadPDF(activeThreadId);
+    } catch (err) {
+      console.error('Export button triggered backend failure:', err);
+      setErrorState({
+        type: 'NETWORK',
+        message: 'Could not render PDF. Please ensure your FastAPI server is active and has ReportLab installed.'
+      });
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -80,7 +97,6 @@ export default function Chat() {
   const executeAutomatedQuery = useCallback(async (queryText, overrideMode) => {
     if (!queryText.trim() || isLoading) return;
 
-    // Enforce tier verification limits immediately client-side
     if (usage >= limit) {
       setErrorState({
         type: 'LIMIT_EXHAUSTED',
@@ -139,12 +155,10 @@ export default function Chat() {
     }
   };
 
-  // Catch contextual redirection requests sent from Compliance Calendar hooks safely
   useEffect(() => {
     if (location.state?.initialQuery) {
       const dashboardPrompt = location.state.initialQuery;
       
-      // Clean query text state values out of history using the initialized hook
       navigate(location.pathname, { replace: true, state: {} });
       
       // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -188,7 +202,6 @@ export default function Chat() {
   const mapCitationToCardProps = (cite) => {
     if (!cite) return null;
     
-    // 💡 Catch every single naming variation coming from your RAG pipeline or database cache arrays
     const resolvedTitle = cite.title || cite.source || cite.filename || cite.authority || 'GST Compliance Document';
     const resolvedText = cite.preview || cite.text || cite.excerpt || cite.content || cite.page_content || 'Regulatory context fragment attached.';
     const resolvedNo = cite.circular_no || cite.circular || 'Document Reference Context';
@@ -232,7 +245,6 @@ export default function Chat() {
     <div className="min-h-screen bg-slate-950 text-slate-50 flex items-center justify-center p-0 md:p-6 font-sans antialiased">
       <div className="flex w-full max-w-7xl h-screen md:h-[85vh] bg-slate-900/40 border-0 md:border border-slate-800 rounded-none md:rounded-2xl overflow-hidden backdrop-blur-xl relative">
         
-        {/* Mobile Sidebar Backdrop Slideout */}
         {isMobileSidebarOpen && (
           <div 
             className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-40 md:hidden transition-opacity duration-200"
@@ -240,7 +252,6 @@ export default function Chat() {
           />
         )}
 
-        {/* Navigation Sidebar Panel */}
         <aside className={`
           fixed md:static inset-y-0 left-0 w-72 bg-slate-900 border-r border-slate-800 flex flex-col p-4 z-50 
           transform transition-transform duration-200 ease-in-out md:translate-x-0
@@ -313,10 +324,8 @@ export default function Chat() {
           </div>
         </aside>
 
-        {/* Central Console Section Layout */}
         <div className="flex-1 flex flex-col bg-transparent relative overflow-hidden h-full">
           
-          {/* Dashboard Header Panel */}
           <header className="p-4 px-6 bg-slate-900/40 border-b border-slate-800 flex items-center justify-between w-full box-border">
             <div className="flex items-center gap-3 text-left">
               <button
@@ -331,7 +340,25 @@ export default function Chat() {
               </div>
             </div>
             
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              {activeThreadId && messages.length > 0 && (
+                <button
+                  onClick={handleExportPDF}
+                  disabled={isExporting}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-slate-700 rounded-xl bg-slate-800/40 hover:bg-slate-800 text-slate-300 hover:text-white transition-all disabled:opacity-40 shrink-0"
+                >
+                  {isExporting ? (
+                    <>
+                      <span className="w-3 h-3 border-2 border-slate-400 border-t-indigo-500 rounded-full animate-spin"></span>
+                      Exporting...
+                    </>
+                  ) : (
+                    <>
+                      📄 Export PDF
+                    </>
+                  )}
+                </button>
+              )}
               <PlainLegalToggle mode={ragMode} onModeChange={handleModeChange} />
               <button 
                 onClick={signOut} 
@@ -342,7 +369,6 @@ export default function Chat() {
             </div>
           </header>
 
-          {/* Interactive Stream Space */}
           <div className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col w-full box-border space-y-4">
             {messages.length === 0 ? (
               <div className="flex flex-col items-center justify-center text-slate-500 text-center gap-3 w-full h-full my-auto px-4 box-border">
@@ -356,7 +382,6 @@ export default function Chat() {
               </div>
             )}
 
-            {/* Performance Skeleton Block */}
             {isLoading && (
               <div className="flex items-center gap-2.5 p-4 bg-slate-900/30 border border-slate-800/40 rounded-xl text-indigo-400 text-xs italic animate-pulse max-w-xl">
                 <div className="w-2 h-2 rounded-full bg-indigo-500 shadow-sm shadow-indigo-500/50"></div>
@@ -364,7 +389,6 @@ export default function Chat() {
               </div>
             )}
 
-            {/* Quota Limit and Network Failure Alert Layout */}
             {errorState && (
               <div className={`p-4 rounded-xl border flex flex-col gap-2 max-w-xl text-sm ${
                 errorState.type === 'LIMIT_EXHAUSTED' 
@@ -385,7 +409,6 @@ export default function Chat() {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Action Input Box Dock */}
           <footer className="p-4 bg-slate-950 border-t border-slate-800 w-full box-border">
             <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto flex gap-3">
               <input
@@ -406,7 +429,6 @@ export default function Chat() {
             </form>
           </footer>
 
-          {/* Core Grounded Citation Side Drawer Drawer overlay */}
           <CitationDrawer 
             citation={mapCitationToCardProps(activeCitation)} 
             onClose={() => setActiveCitation(null)} 
