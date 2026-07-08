@@ -1,10 +1,81 @@
 import { useState } from 'react';
+import { billingAPI } from '../lib/api';
 
-export default function PricingPage({ onSelectPlan }) {
+export default function PricingPage({ onSelectPlan, userEmail = '' }) {
   // Toggle states: 'monthly' | 'quarterly' | 'yearly'
   const [billingCycle, setBillingCycle] = useState('monthly');
+  const [loadingTier, setLoadingTier] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
-  // Exact tier calculations and limits from your master matrix
+  // Helper method to dynamically load Razorpay scripts into context header
+  const initRazorpayScript = () => {
+    return new Promise((resolve) => {
+      if (window.Razorpay) {
+        resolve(true);
+        return;
+      }
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.async = true;
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const executeCheckoutSequence = async (tier, cycle) => {
+    if (tier !== 'pro') {
+      // Bypasses payment for other interactive triggers (e.g., Guest, Enterprise)
+      if (onSelectPlan) onSelectPlan(tier, cycle);
+      return;
+    }
+
+    setLoadingTier(cycle);
+    setErrorMessage(null);
+
+    try {
+      const scriptLoaded = await initRazorpayScript();
+      if (!scriptLoaded) {
+        throw new Error("Unable to reach Razorpay CDN endpoints.");
+      }
+
+      // Generate checkout session values from your FastAPI subscription service
+      const sessionPayload = await billingAPI.createSubscription(cycle);
+      const { subscription_id, razorpay_key_id } = sessionPayload;
+
+      const checkoutOptions = {
+        key: razorpay_key_id,
+        subscription_id: subscription_id,
+        name: 'RegIQ Compliance',
+        description: `RegIQ Pro Tier Subscription (${cycle})`,
+        image: '/favicon.svg',
+        handler: function (response) {
+          alert(`Transaction validated. Sub ID: ${response.razorpay_subscription_id}`);
+          if (onSelectPlan) onSelectPlan('pro', cycle);
+          window.location.href = '/dashboard?checkout=success';
+        },
+        prefill: {
+          email: userEmail
+        },
+        theme: {
+          color: '#6366f1'
+        }
+      };
+
+      const nativeWindowInstance = new window.Razorpay(checkoutOptions);
+      nativeWindowInstance.on('payment.failed', function (failContext) {
+        setErrorMessage(`Transaction halted: ${failContext.error.description}`);
+      });
+      nativeWindowInstance.open();
+
+    } catch (err) {
+      console.error("Subscription initialization failure:", err);
+      setErrorMessage(err.response?.data?.detail || err.message || "Failed to start standard pricing checkout checkout flow.");
+    } finally {
+      setLoadingTier(null);
+    }
+  };
+
   const plans = [
     {
       name: 'Guest Access',
@@ -43,7 +114,6 @@ export default function PricingPage({ onSelectPlan }) {
       name: 'Pro Tier',
       price: billingCycle === 'monthly' ? '₹499' : billingCycle === 'quarterly' ? '₹449' : '₹374',
       period: '/ month',
-      // Live calculation indicators showing exact savings matching your master plan parameters
       subtext: billingCycle === 'monthly' ? 'Standard monthly entry lease' : billingCycle === 'quarterly' ? 'Billed quarterly (Save ₹150/yr)' : 'Billed annually (Save ₹1,500/yr)',
       desc: 'Complete automated operational intelligence shell for expanding teams.',
       features: [
@@ -89,6 +159,12 @@ export default function PricingPage({ onSelectPlan }) {
         <p style={{ fontSize: '15px', color: '#94a3b8', margin: '0 0 28px 0' }}>
           Select a tier that matches your ongoing corporate compliance parameters.
         </p>
+
+        {errorMessage && (
+          <div style={{ margin: '0 auto 20px auto', maxWidth: '500px', padding: '12px', background: 'rgba(239, 68, 68, 0.15)', border: '1px solid #ef4444', color: '#fca5a5', borderRadius: '8px', fontSize: '13px' }}>
+            {errorMessage}
+          </div>
+        )}
 
         {/* Pricing Segment Controls + Dynamic Savings Pills */}
         <div style={{ display: 'inline-flex', alignItems: 'center', background: 'rgba(30, 41, 59, 0.4)', padding: '6px', borderRadius: '12px', border: '1px solid rgba(51, 65, 85, 0.6)', gap: '4px' }}>
@@ -181,8 +257,8 @@ export default function PricingPage({ onSelectPlan }) {
 
             {/* Strategic Upgrade Action Trigger Link */}
             <button
-              onClick={() => !plan.disabled && plan.tier !== 'free' && onSelectPlan(plan.tier, billingCycle)}
-              disabled={plan.tier === 'free' || plan.disabled}
+              onClick={() => !plan.disabled && plan.tier !== 'free' && executeCheckoutSequence(plan.tier, billingCycle)}
+              disabled={plan.tier === 'free' || plan.disabled || (plan.tier === 'pro' && loadingTier !== null)}
               style={{
                 width: '100%',
                 background: plan.popular ? 'linear-gradient(135deg, #4f46e5 0%, #4338ca 100%)' : 'rgba(30, 41, 59, 0.3)',
@@ -192,7 +268,7 @@ export default function PricingPage({ onSelectPlan }) {
                 padding: '12px 16px',
                 fontSize: '13px',
                 fontWeight: '600',
-                cursor: (plan.tier === 'free' || plan.disabled) ? 'default' : 'pointer',
+                cursor: (plan.tier === 'free' || plan.disabled || (plan.tier === 'pro' && loadingTier !== null)) ? 'default' : 'pointer',
                 transition: 'all 0.2s',
                 boxShadow: plan.popular ? '0 4px 14px rgba(79, 70, 229, 0.2)' : 'none',
                 opacity: plan.disabled ? 0.3 : 1
@@ -210,7 +286,7 @@ export default function PricingPage({ onSelectPlan }) {
                 }
               }}
             >
-              {plan.tier === 'free' ? 'Active Framework' : plan.actionText}
+              {plan.tier === 'free' ? 'Active Framework' : (plan.tier === 'pro' && loadingTier !== null) ? 'Contacting Gateway...' : plan.actionText}
             </button>
           </div>
         ))}
