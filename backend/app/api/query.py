@@ -375,7 +375,7 @@ async def export_thread_pdf(thread_id: str, user: User | None = Depends(get_opti
             supabase_admin.table("messages")
             .select("*")
             .eq("thread_id", thread_id)
-            .order("created_at", ascending=False)
+            .order("created_at", desc=True)
             .execute()
         )
         messages = messages_res.data or []
