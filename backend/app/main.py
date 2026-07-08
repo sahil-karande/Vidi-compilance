@@ -11,6 +11,7 @@ from datetime import datetime
 from app.config import settings
 # FIXED: Imported calendar along with the other routers
 from app.api import query, threads_api, alerts_api, me, scorecard, calendar, upload
+from app.api import billing
 
 # ─────────────────────────────────────────────────────────────
 #  FastAPI App Initialization
