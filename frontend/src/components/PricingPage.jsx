@@ -103,7 +103,7 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
       onSelectPlan('pro', activeSandboxCycle);
     }
     
-    // 💡 SPA Redirect instead of window.location.href to preserve the updated roles memory state!
+    // 💡 SPA Redirect via useNavigate instead of window.location.href to preserve memory!
     navigate('/dashboard?checkout=success');
   };
 
