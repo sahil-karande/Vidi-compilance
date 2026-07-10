@@ -12,7 +12,7 @@ from app.config import settings
 # FIXED: Imported calendar along with the other routers
 from app.api import query, threads_api, alerts_api, me, scorecard, calendar, upload
 
-from app.api import query, upload, scorecard, alerts, billing  # Add billing here
+from app.api import query, upload, scorecard, alerts_api, billing
 
 # ─────────────────────────────────────────────────────────────
 #  FastAPI App Initialization
