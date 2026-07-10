@@ -34,14 +34,28 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
     setErrorMessage(null);
 
     try {
+      // 1. Generate checkout session values from your FastAPI subscription service
+      const sessionPayload = await billingAPI.createSubscription(cycle);
+      const { subscription_id, razorpay_key_id } = sessionPayload;
+
+      // 💡 LOCAL SANDBOX MODE INTERCEPTOR
+      // Short-circuit execution if the backend returned a mock key configuration
+      if (razorpay_key_id === "rzp_test_sandbox_key" || subscription_id.startsWith("sub_simulated_")) {
+        console.log("[billing] Local sandbox environment detected. Simulating browser payment gateway...");
+        
+        setTimeout(() => {
+          alert(`[Sandbox Mode Success]\nSubscription Simulated: ${subscription_id}`);
+          if (onSelectPlan) onSelectPlan('pro', cycle);
+          window.location.href = '/dashboard?checkout=success';
+        }, 1000);
+        return;
+      }
+
+      // 2. Run standard live Checkout options loop
       const scriptLoaded = await initRazorpayScript();
       if (!scriptLoaded) {
         throw new Error("Unable to reach Razorpay CDN endpoints.");
       }
-
-      // Generate checkout session values from your FastAPI subscription service
-      const sessionPayload = await billingAPI.createSubscription(cycle);
-      const { subscription_id, razorpay_key_id } = sessionPayload;
 
       const checkoutOptions = {
         key: razorpay_key_id,
@@ -70,7 +84,7 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
 
     } catch (err) {
       console.error("Subscription initialization failure:", err);
-      setErrorMessage(err.response?.data?.detail || err.message || "Failed to start standard pricing checkout checkout flow.");
+      setErrorMessage(err.response?.data?.detail || err.message || "Failed to start standard pricing checkout flow.");
     } finally {
       setLoadingTier(null);
     }
