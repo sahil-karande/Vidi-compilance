@@ -36,14 +36,18 @@ export function AuthProvider({ children }) {
         
         if (initialSession?.user) {
           const userProfile = await fetchProfile(initialSession.user.id);
-          const activeProfile = userProfile || { role: 'free' };
+          
+          // 💡 DEVELOPMENT SANDBOX INTERCEPTOR CHECK
+          const sandboxOverride = sessionStorage.getItem("regiq_sandbox_role");
+          const activeRole = sandboxOverride || userProfile?.role || 'free';
+          
+          const activeProfile = userProfile ? { ...userProfile, role: activeRole } : { role: activeRole };
           setProfile(activeProfile);
           
-          // Hydrate the explicit user state structure used contextually by Dashboard.jsx tracking variables
           setUser({
             ...initialSession.user,
             name: userProfile?.name || initialSession.user.user_metadata?.full_name || 'SME Operator',
-            role: activeProfile.role
+            role: activeRole
           });
         } else {
           setUser(null);
@@ -52,7 +56,7 @@ export function AuthProvider({ children }) {
       } catch (err) {
         console.error('[Vidi Auth] Lifecycle initiation error:', err);
       } finally {
-        setLoading(false); // Releases application boot splash screens seamlessly
+        setLoading(false);
       }
     };
 
@@ -64,13 +68,18 @@ export function AuthProvider({ children }) {
 
       if (currentSession?.user) {
         const userProfile = await fetchProfile(currentSession.user.id);
-        const activeProfile = userProfile || { role: 'free' };
+        
+        // 💡 DEVELOPMENT SANDBOX INTERCEPTOR CHECK
+        const sandboxOverride = sessionStorage.getItem("regiq_sandbox_role");
+        const activeRole = sandboxOverride || userProfile?.role || 'free';
+
+        const activeProfile = userProfile ? { ...userProfile, role: activeRole } : { role: activeRole };
         setProfile(activeProfile);
         
         setUser({
           ...currentSession.user,
           name: userProfile?.name || currentSession.user.user_metadata?.full_name || 'SME Operator',
-          role: activeProfile.role
+          role: activeRole
         });
       } else {
         setUser(null);
@@ -85,6 +94,8 @@ export function AuthProvider({ children }) {
   const signOut = async () => {
     setLoading(true);
     try {
+      // Clear sandbox memory keys on explicit user exit sequence
+      sessionStorage.removeItem("regiq_sandbox_role");
       await supabase.auth.signOut();
     } catch (err) {
       console.error('[Vidi Auth] Signout pipeline failure:', err);

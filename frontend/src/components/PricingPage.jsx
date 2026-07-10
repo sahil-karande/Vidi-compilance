@@ -95,15 +95,20 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
     }
   };
 
-  const handleSandboxSuccess = () => {
+ const handleSandboxSuccess = () => {
     setShowSandboxModal(false);
     
-    // 💡 Notify global context hooks to update local user memory states to 'pro'
+    // 💡 Write to Session Storage to let the global useAuth engine pick up the Pro role state change
+    sessionStorage.setItem("regiq_sandbox_role", "pro");
+    
+    // Notify your parent app handler context hook layers
     if (onSelectPlan) {
       onSelectPlan('pro', activeSandboxCycle);
     }
     
-    // 💡 SPA Redirect via useNavigate instead of window.location.href to preserve memory!
+    console.log("[Sandbox Matrix] Session memory locked. Transitioning to dashboard canvas...");
+    
+    // State-safe SPA navigation redirect trigger
     navigate('/dashboard?checkout=success');
   };
 
