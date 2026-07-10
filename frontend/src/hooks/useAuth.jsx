@@ -28,6 +28,18 @@ export function AuthProvider({ children }) {
     }
   };
 
+  // 💡 FUNCTION TO FORCE A REAL REACT STATE UPDATE FOR THE SANDBOX
+  const syncSandboxRole = (newRole) => {
+    sessionStorage.setItem("regiq_sandbox_role", newRole);
+    if (user) {
+      setUser((prev) => (prev ? { ...prev, role: newRole } : null));
+    }
+    if (profile) {
+      setProfile((prev) => (prev ? { ...prev, role: newRole } : null));
+    }
+    console.log(`[Vidi Auth] Global state role synchronized reactively to: ${newRole}`);
+  };
+
   useEffect(() => {
     const initializeAuth = async () => {
       try {
@@ -37,7 +49,6 @@ export function AuthProvider({ children }) {
         if (initialSession?.user) {
           const userProfile = await fetchProfile(initialSession.user.id);
           
-          // 💡 DEVELOPMENT SANDBOX INTERCEPTOR CHECK
           const sandboxOverride = sessionStorage.getItem("regiq_sandbox_role");
           const activeRole = sandboxOverride || userProfile?.role || 'free';
           
@@ -69,7 +80,6 @@ export function AuthProvider({ children }) {
       if (currentSession?.user) {
         const userProfile = await fetchProfile(currentSession.user.id);
         
-        // 💡 DEVELOPMENT SANDBOX INTERCEPTOR CHECK
         const sandboxOverride = sessionStorage.getItem("regiq_sandbox_role");
         const activeRole = sandboxOverride || userProfile?.role || 'free';
 
@@ -94,7 +104,6 @@ export function AuthProvider({ children }) {
   const signOut = async () => {
     setLoading(true);
     try {
-      // Clear sandbox memory keys on explicit user exit sequence
       sessionStorage.removeItem("regiq_sandbox_role");
       await supabase.auth.signOut();
     } catch (err) {
@@ -113,13 +122,14 @@ export function AuthProvider({ children }) {
     session,
     loading,
     signOut,
+    syncSandboxRole, // Expose this helper clean state updater
     isAuthenticated: !!session
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-/* eslint-disable-next-line react-refresh/only-export-components */
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {

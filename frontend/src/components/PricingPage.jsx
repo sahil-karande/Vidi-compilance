@@ -98,17 +98,17 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
  const handleSandboxSuccess = () => {
     setShowSandboxModal(false);
     
-    // 💡 Write to Session Storage to let the global useAuth engine pick up the Pro role state change
+    // 1. Force state persistence inside session memory storage
     sessionStorage.setItem("regiq_sandbox_role", "pro");
     
-    // Notify your parent app handler context hook layers
+    // 2. Trigger parent callbacks
     if (onSelectPlan) {
       onSelectPlan('pro', activeSandboxCycle);
     }
     
-    console.log("[Sandbox Matrix] Session memory locked. Transitioning to dashboard canvas...");
+    console.log("[Pricing] Bypassing guards. Entering Dashboard...");
     
-    // State-safe SPA navigation redirect trigger
+    // 3. SPA Route transition
     navigate('/dashboard?checkout=success');
   };
 
