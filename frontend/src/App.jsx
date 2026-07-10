@@ -1,10 +1,10 @@
 /**
  * Vidi — frontend/src/App.jsx
- * Unified Navigation Links Hub with Premium UI Support
+ * Unified Navigation Links Hub with Premium UI Support & Billing Matrix
  */
 
 import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
-import { AuthProvider } from './hooks/useAuth'; 
+import { AuthProvider, useAuth } from './hooks/useAuth'; 
 import { AuthGuard } from './components/AuthGuard';
 import Landing from './pages/Landing'; 
 import Login from './pages/Login';
@@ -12,11 +12,13 @@ import Dashboard from './pages/Dashboard';
 import Chat from './pages/Chat'; 
 import Settings from './pages/Settings'; 
 import TestAuth from './pages/TestAuth';
-import Upload from './pages/Upload'; // <-- 1. Import your dynamic Upload file here
-
+import Upload from './pages/Upload'; 
+import PricingPage from './components/PricingPage'; // <-- Import updated Pricing Page Component
 
 // Premium Navbar Wrapper Layout
 function WorkspaceLayout({ children }) {
+  const { user } = useAuth(); // Hook invocation to access session matrix profile context securely
+
   return (
     <div className="min-h-screen bg-[#030712] text-slate-200 font-sans flex flex-col">
       {/* Dynamic Cyber Header */}
@@ -34,10 +36,18 @@ function WorkspaceLayout({ children }) {
               <span>📁</span> Ingestion Upload
             </Link>
             <Link to="/explorer" className="hover:text-white transition-colors">Citation Explorer</Link>
+            <Link to="/pricing" className="hover:text-emerald-400 text-slate-400 transition-colors flex items-center gap-1">
+              <span>💳</span> Plans
+            </Link>
           </div>
         </div>
 
         <div className="flex items-center gap-4">
+          {user?.role !== 'pro' && user?.role !== 'enterprise' && (
+            <Link to="/pricing" className="text-[11px] font-bold bg-emerald-950/40 border border-emerald-500/30 hover:border-emerald-400 px-3 py-1.5 rounded-xl text-emerald-400 transition-all">
+              ⚡ Upgrade
+            </Link>
+          )}
           <Link to="/settings" className="text-xs bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl hover:bg-slate-800 transition-all text-slate-300">
             ⚙️ Settings
           </Link>
@@ -104,7 +114,18 @@ export default function App() {
             element={
               <AuthGuard>
                 <WorkspaceLayout>
-                  <Upload /> {/* <-- 2. Replaced the dummy element with the dynamic page */}
+                  <Upload />
+                </WorkspaceLayout>
+              </AuthGuard>
+            } 
+          />
+          <Route 
+            path="/pricing" 
+            element={
+              <AuthGuard>
+                <WorkspaceLayout>
+                  {/* Dynamic user prefill contextual hook routing wrapper */}
+                  <PricingRoutingWrapper />
                 </WorkspaceLayout>
               </AuthGuard>
             } 
@@ -132,5 +153,18 @@ export default function App() {
         </Routes>
       </BrowserRouter>
     </AuthProvider>
+  );
+}
+
+// Inline component wrapper to pass down global custom hook values cleanly to the static Pricing layout matrix
+function PricingRoutingWrapper() {
+  const { user } = useAuth();
+  return (
+    <PricingPage 
+      userEmail={user?.email || ''} 
+      onSelectPlan={(tier, cycle) => {
+        console.log(`Callback caught: User selected ${tier} under cycle format: ${cycle}`);
+      }} 
+    />
   );
 }
