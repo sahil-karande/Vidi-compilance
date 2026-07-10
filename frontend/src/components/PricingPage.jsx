@@ -1,11 +1,19 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // 💡 Import useNavigate for state-safe SPA routing
 import { billingAPI } from '../lib/api';
 
 export default function PricingPage({ onSelectPlan, userEmail = '' }) {
+  const navigate = useNavigate(); // 💡 Initialize navigation hook context
+  
   // Toggle states: 'monthly' | 'quarterly' | 'yearly'
   const [billingCycle, setBillingCycle] = useState('monthly');
   const [loadingTier, setLoadingTier] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+  
+  // Custom sandbox simulation state machine
+  const [showSandboxModal, setShowSandboxModal] = useState(false);
+  const [activeSandboxCycle, setActiveSandboxCycle] = useState('');
+  const [activeSubId, setActiveSubId] = useState('');
 
   // Helper method to dynamically load Razorpay scripts into context header
   const initRazorpayScript = () => {
@@ -25,7 +33,6 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
 
   const executeCheckoutSequence = async (tier, cycle) => {
     if (tier !== 'pro') {
-      // Bypasses payment for other interactive triggers (e.g., Guest, Enterprise)
       if (onSelectPlan) onSelectPlan(tier, cycle);
       return;
     }
@@ -34,24 +41,22 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
     setErrorMessage(null);
 
     try {
-      // 1. Generate checkout session values from your FastAPI subscription service
+      // 1. Generate checkout credentials from the FastAPI subscription layer FIRST
       const sessionPayload = await billingAPI.createSubscription(cycle);
       const { subscription_id, razorpay_key_id } = sessionPayload;
 
-      // 💡 LOCAL SANDBOX MODE INTERCEPTOR
-      // Short-circuit execution if the backend returned a mock key configuration
+      // 💡 FRONTEND SANDBOX INTERCEPTOR
+      // Short-circuit IMMEDIATELY before initializing the Razorpay script to prevent background loaders/spinners
       if (razorpay_key_id === "rzp_test_sandbox_key" || subscription_id.startsWith("sub_simulated_")) {
-        console.log("[billing] Local sandbox environment detected. Simulating browser payment gateway...");
-        
-        setTimeout(() => {
-          alert(`[Sandbox Mode Success]\nSubscription Simulated: ${subscription_id}`);
-          if (onSelectPlan) onSelectPlan('pro', cycle);
-          window.location.href = '/dashboard?checkout=success';
-        }, 1000);
-        return;
+        console.log("[billing] Sandbox active. Intercepting external call to prevent network errors.");
+        setActiveSandboxCycle(cycle);
+        setActiveSubId(subscription_id);
+        setShowSandboxModal(true);
+        setLoadingTier(null);
+        return; // Complete exit from the function
       }
 
-      // 2. Run standard live Checkout options loop
+      // 2. Only download and run the script if it's a real production check
       const scriptLoaded = await initRazorpayScript();
       if (!scriptLoaded) {
         throw new Error("Unable to reach Razorpay CDN endpoints.");
@@ -66,7 +71,7 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
         handler: function (response) {
           alert(`Transaction validated. Sub ID: ${response.razorpay_subscription_id}`);
           if (onSelectPlan) onSelectPlan('pro', cycle);
-          window.location.href = '/dashboard?checkout=success';
+          navigate('/dashboard?checkout=success'); // 💡 Use SPA navigate on real success too
         },
         prefill: {
           email: userEmail
@@ -88,6 +93,18 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
     } finally {
       setLoadingTier(null);
     }
+  };
+
+  const handleSandboxSuccess = () => {
+    setShowSandboxModal(false);
+    
+    // 💡 Notify global context hooks to update local user memory states to 'pro'
+    if (onSelectPlan) {
+      onSelectPlan('pro', activeSandboxCycle);
+    }
+    
+    // 💡 SPA Redirect instead of window.location.href to preserve the updated roles memory state!
+    navigate('/dashboard?checkout=success');
   };
 
   const plans = [
@@ -163,8 +180,41 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
   ];
 
   return (
-    <div style={{ width: '100%', maxWidth: '1200px', margin: '0 auto', padding: '24px 16px', boxSizing: 'border-box' }}>
+    <div style={{ width: '100%', maxWidth: '1200px', margin: '0 auto', padding: '24px 16px', boxSizing: 'border-box', position: 'relative' }}>
       
+      {/* Dynamic Local Sandbox Mock Modal popup overlay */}
+      {showSandboxModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(2, 6, 23, 0.85)', display: 'flex', alignItems: 'center', justifyOrigin: 'center', justifyContent: 'center', zIndex: 9999, backdropFilter: 'blur(8px)' }}>
+          <div style={{ background: '#0f172a', border: '2px solid #6366f1', borderRadius: '16px', padding: '32px', maxWidth: '420px', width: '90%', textAlign: 'center', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)' }}>
+            <div style={{ fontSize: '40px', marginBottom: '16px' }}>💳</div>
+            <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#ffffff', margin: '0 0 8px 0' }}>Simulated Razorpay Gateway</h3>
+            <span style={{ display: 'inline-block', background: 'rgba(99, 102, 241, 0.15)', color: '#818cf8', fontSize: '11px', fontWeight: 'bold', padding: '2px 8px', borderRadius: '6px', marginBottom: '16px' }}>DEVELOPMENT SANDBOX MODE</span>
+            
+            <p style={{ fontSize: '13px', color: '#94a3b8', margin: '0 0 6px 0', textAlign: 'left' }}>
+              <strong>Sub ID:</strong> <code style={{ color: '#38bdf8' }}>{activeSubId}</code>
+            </p>
+            <p style={{ fontSize: '13px', color: '#94a3b8', margin: '0 0 24px 0', textAlign: 'left' }}>
+              <strong>Prefill Context:</strong> <code style={{ color: '#38bdf8' }}>{userEmail || 'dev@vidi.in'}</code>
+            </p>
+
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button 
+                onClick={() => setShowSandboxModal(false)}
+                style={{ flex: 1, padding: '10px', background: 'rgba(51, 65, 85, 0.5)', border: '1px solid #334155', borderRadius: '8px', color: '#94a3b8', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleSandboxSuccess}
+                style={{ flex: 1, padding: '10px', background: '#6366f1', border: 'none', borderRadius: '8px', color: '#ffffff', fontSize: '13px', fontWeight: '600', cursor: 'pointer', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)' }}
+              >
+                Simulate Success
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Upper Selector Toggle Layout */}
       <div style={{ textAlign: 'center', marginBottom: '40px' }}>
         <h2 style={{ fontSize: '32px', fontWeight: '800', margin: '0 0 12px 0', color: '#ffffff', letterSpacing: '-0.02em' }}>
@@ -269,7 +319,7 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
               })}
             </ul>
 
-            {/* Strategic Upgrade Action Trigger Link */}
+            {/* Strategic Upgrade Action Trigger Button */}
             <button
               onClick={() => !plan.disabled && plan.tier !== 'free' && executeCheckoutSequence(plan.tier, billingCycle)}
               disabled={plan.tier === 'free' || plan.disabled || (plan.tier === 'pro' && loadingTier !== null)}

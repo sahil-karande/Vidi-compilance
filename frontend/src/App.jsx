@@ -157,6 +157,7 @@ export default function App() {
 }
 
 // Inline component wrapper to pass down global custom hook values cleanly to the static Pricing layout matrix
+// Inline component wrapper to pass down global custom hook values cleanly to the static Pricing layout matrix
 function PricingRoutingWrapper() {
   const { user } = useAuth();
   return (
@@ -164,6 +165,14 @@ function PricingRoutingWrapper() {
       userEmail={user?.email || ''} 
       onSelectPlan={(tier, cycle) => {
         console.log(`Callback caught: User selected ${tier} under cycle format: ${cycle}`);
+        
+        // 💡 DEVELOPMENT SANDBOX LOCAL STATE OVERRIDE:
+        // Mutate the active memory session role immediately so route protections release their locks.
+        if (user && tier === 'pro') {
+          // eslint-disable-next-line react-hooks/immutability
+          user.role = 'pro'; 
+          console.log("[Sandbox Matrix] Local user state role successfully overrode to 'pro' in active memory.");
+        }
       }} 
     />
   );
