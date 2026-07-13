@@ -62,16 +62,18 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
         throw new Error("Unable to reach Razorpay CDN endpoints.");
       }
 
+      // Find this block inside executeCheckoutSequence:
       const checkoutOptions = {
         key: razorpay_key_id,
-        subscription_id: subscription_id,
+        order_id: subscription_id, // 💡 CHANGE THIS key from 'subscription_id' to 'order_id'
         name: 'RegIQ Compliance',
         description: `RegIQ Pro Tier Subscription (${cycle})`,
         image: '/favicon.svg',
         handler: function (response) {
-          alert(`Transaction validated. Sub ID: ${response.razorpay_subscription_id}`);
+          // 💡 Update these fields to read the order payment confirmation parameters cleanly:
+          alert(`Transaction validated. Payment ID: ${response.razorpay_payment_id}`);
           if (onSelectPlan) onSelectPlan('pro', cycle);
-          navigate('/dashboard?checkout=success'); // 💡 Use SPA navigate on real success too
+          navigate('/dashboard?checkout=success');
         },
         prefill: {
           email: userEmail
