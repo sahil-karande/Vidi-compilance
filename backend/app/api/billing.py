@@ -137,11 +137,22 @@ async def razorpay_webhook(
             return {"status": "ignored"}
 
         if event_name in ["order.paid", "payment.captured"]:
-            logger.info(f"Payment success for user {user_id}")
-            # --- TODO: Update Supabase table mapping user role -> 'pro' here ---
-            return {"status": "success", "action": "tier_upgraded"}
+            logger.info(f"Payment success intercepted for user {user_id}")
             
-        return {"status": "ignored"}
+            try:
+                # Dynamically fetch the admin client instance
+                from app.api.auth import get_supabase_admin
+                supabase = get_supabase_admin()
+                
+                # Mutate the user role property inside the profiles context table
+                db_response = supabase.table("profiles").update({"role": "pro"}).eq("user_id", user_id).execute()
+                
+                logger.info(f"Database role upgraded successfully for user {user_id}: {db_response.data}")
+                return {"status": "success", "action": "tier_upgraded"}
+                
+            except Exception as db_err:
+                logger.error(f"Failed to execute database profile update: {db_err}")
+                raise HTTPException(status_code=500, detail="Database profile mutation error.")
 
     except Exception as parsing_exception:
         logger.error(f"Webhook tracking execution error: {parsing_exception}")
