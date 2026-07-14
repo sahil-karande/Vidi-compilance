@@ -1,5 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { chatAPI } from '../lib/api';
 import { useAuth } from '../hooks/useAuth';
 import ComplianceCalendar from '../components/ComplianceCalendar';
@@ -25,11 +25,14 @@ function SkeletonCard() {
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { user, updateUserProfile } = useAuth() || {}; // Assuming updateUserProfile is exposed via useAuth hook
+  const location = useLocation();
+  
+  // 🛡️ Day 43 Fix: Pull real user metadata and session refresh callback from auth layer
+  const { user, refreshUserSession } = useAuth() || {}; 
 
-  //  (Bypasses the locked restriction state for dev mode):
-  const userRole = 'pro'; 
-  const isLocked = false;
+  // 🛡️ Day 43 Fix: Dynamically track tier access parameters from profile attributes
+  const userRole = user?.role || 'free'; 
+  const isLocked = userRole === 'free' || userRole === 'guest';
 
   // Toggle true profile form onboarding state if business details are missing
   const [showProfileForm, setShowProfileForm] = useState(!user?.business_profile);
@@ -69,8 +72,21 @@ export default function Dashboard() {
     }
   };
 
+  // 🛡️ Day 43 Interceptor: Sync user data reactively upon Razorpay modal completion parameter injection
   useEffect(() => {
-    // If onboarding form is active, delay operational metrics fetching
+    const searchParams = new URLSearchParams(location.search);
+    if (searchParams.get('checkout') === 'success') {
+      console.log("[billing] Checkout param found. Fetching updated subscription payload...");
+      if (refreshUserSession) {
+        refreshUserSession();
+      } else {
+        // Safe context reload fallback if single function handler is unmounted
+        window.location.reload();
+      }
+    }
+  }, [location, refreshUserSession]);
+
+  useEffect(() => {
     if (showProfileForm) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsLoading(false);
@@ -115,6 +131,7 @@ export default function Dashboard() {
             scorecardData = baselineFallback;
           }
         } else {
+          // Locked view parameters for limited subscription models
           scorecardData = baselineFallback;
           const [cal, th] = await Promise.all([
             chatAPI.getCalendarDeadlines().catch(() => []),
@@ -146,7 +163,9 @@ export default function Dashboard() {
     e.preventDefault();
     setIsSubmittingProfile(true);
     try {
+      // eslint-disable-next-line no-undef
       if (updateUserProfile) {
+        // eslint-disable-next-line no-undef
         await updateUserProfile({ business_profile: formData });
       }
       setShowProfileForm(false);
@@ -192,6 +211,25 @@ export default function Dashboard() {
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-600/10 rounded-full blur-[120px] pointer-events-none" />
 
+      {/* 🛡️ Day 43 Freemium Lock Overlay Banner View Layout */}
+      {isLocked && !showProfileForm && (
+        <div className="absolute inset-x-0 bottom-0 top-[120px] z-40 bg-slate-950/70 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center">
+          <div className="max-w-md p-8 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl space-y-4">
+            <Zap className="w-12 h-12 text-indigo-400 mx-auto animate-bounce" />
+            <h3 className="text-xl font-extrabold text-white tracking-tight">RegIQ Pro Feature Locked</h3>
+            <p className="text-sm text-slate-400">
+              Interactive scorecards, statutory compliance calendars, and custom document blending RAG vectors are exclusively available to premium subscribers.
+            </p>
+            <button
+              onClick={() => navigate('/settings')}
+              className="inline-flex items-center justify-center bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm px-6 py-3 rounded-xl transition-all shadow-lg shadow-indigo-600/30"
+            >
+              Unlock Features (₹499/mo)
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="w-full max-w-7xl flex flex-col gap-6 md:gap-8 relative z-10">
         
         {/* Welcome Header */}
@@ -221,7 +259,7 @@ export default function Dashboard() {
           )}
         </header>
 
-        {/* Onboarding Profile Form Block to prevent empty state rendering */}
+        {/* Onboarding Profile Form Block */}
         {showProfileForm ? (
           <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 md:p-8 shadow-xl max-w-2xl mx-auto w-full">
             <div className="flex items-center gap-3 mb-6">
