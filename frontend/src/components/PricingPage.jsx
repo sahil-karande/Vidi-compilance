@@ -41,42 +41,52 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
     setErrorMessage(null);
 
     try {
-      // 1. Generate checkout credentials from the FastAPI subscription layer FIRST
-      const sessionPayload = await billingAPI.createSubscription(cycle);
-      const { subscription_id, razorpay_key_id } = sessionPayload;
+      // 1. Generate checkout credentials from the FastAPI subscription layer
+      const response = await billingAPI.createSubscription(cycle);
+      
+      // 🛡️ Guard: Safely extract fields whether response is response.data or raw response object
+      const data = response?.data ? response.data : response;
+      const subscription_id = data?.subscription_id;
+      const razorpay_key_id = data?.razorpay_key_id;
 
-      // 💡 FRONTEND SANDBOX INTERCEPTOR
-      // Short-circuit IMMEDIATELY before initializing the Razorpay script to prevent background loaders/spinners
-      if (razorpay_key_id === "rzp_test_sandbox_key" || subscription_id.startsWith("sub_simulated_")) {
+      if (!subscription_id) {
+        throw new Error("Gateway failed to return a valid payment identification signature.");
+      }
+
+      // 💡 FRONTEND SANDBOX INTERCEPTOR WITH OPTIONAL CHAINING GUARD
+      if (
+        razorpay_key_id === "rzp_test_sandbox_key" || 
+        !razorpay_key_id || 
+        subscription_id?.startsWith("sub_simulated_")
+      ) {
         console.log("[billing] Sandbox active. Intercepting external call to prevent network errors.");
         setActiveSandboxCycle(cycle);
         setActiveSubId(subscription_id);
         setShowSandboxModal(true);
         setLoadingTier(null);
-        return; // Complete exit from the function
+        return; 
       }
 
-      // 2. Only download and run the script if it's a real production check
+      // 2. Only download and run the script if it's a real live/test checkout
       const scriptLoaded = await initRazorpayScript();
       if (!scriptLoaded) {
         throw new Error("Unable to reach Razorpay CDN endpoints.");
       }
 
-      // Find this block inside executeCheckoutSequence:
-      const checkoutOptions = {
+     const checkoutOptions = {
         key: razorpay_key_id,
-        order_id: subscription_id, // 💡 CHANGE THIS key from 'subscription_id' to 'order_id'
+        order_id: subscription_id, 
         name: 'RegIQ Compliance',
         description: `RegIQ Pro Tier Subscription (${cycle})`,
-        image: '/favicon.svg',
+        // 🛡️ FIX: Use a public CDN image link instead of a localhost relative path to prevent loopback CORS blocks
+        image: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/matcha/matcha-original.svg', 
         handler: function (response) {
-          // 💡 Update these fields to read the order payment confirmation parameters cleanly:
           alert(`Transaction validated. Payment ID: ${response.razorpay_payment_id}`);
           if (onSelectPlan) onSelectPlan('pro', cycle);
           navigate('/dashboard?checkout=success');
         },
         prefill: {
-          email: userEmail
+          email: userEmail || 'sahil.test@ghrcem.edu'
         },
         theme: {
           color: '#6366f1'
@@ -96,7 +106,6 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
       setLoadingTier(null);
     }
   };
-
  const handleSandboxSuccess = () => {
     setShowSandboxModal(false);
     
