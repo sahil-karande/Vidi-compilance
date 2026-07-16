@@ -218,7 +218,8 @@ def run_diff_detection(backup_directory_name: str = "backup_historical") -> list
     all_system_alerts = []
 
     logger.info("Initializing SentenceTransformer model layer for verification validation tasks...")
-    model = SentenceTransformer("all-MiniLM-L6-v2")
+    # Force local cache fallback to prevent network requests from crashing the script
+    model = SentenceTransformer("all-MiniLM-L6-v2", local_files_only=True)
 
     for corpus in corpora_list:
         corpus_alerts = detect_corpus_changes(corpus, backup_path, model)
