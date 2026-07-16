@@ -31,7 +31,7 @@ export default function Settings() {
   const fetchAlertSubscriptions = async () => {
     try {
       setLoadingAlerts(true);
-      const response = await api.get('/alerts');
+      const response = await api.get('/api/alerts');
       
       // Convert array of alerts into a handy lookup map by topic: { "GST rate changes": alertObject }
       const alertMap = {};
