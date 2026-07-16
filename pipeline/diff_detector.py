@@ -3,8 +3,8 @@ RegIQ — pipeline/diff_detector.py
 Day 45 Task: Advanced NLP Diff Engine & Regulatory Change Detection
 
 Compares newly scraped/embedded circular variations against historical baselines
-using embedding cosine similarity. If similarity falls below 0.85, extracts 
-sentence deltas and triggers Groq LLM summaries for compliance alerts.
+using cosine similarity on embeddings. If similarity < 0.85 -> flags as changed,
+isolates sentence-level deltas, and generates human-readable change summaries via Groq LLM.
 """
 
 import os
@@ -20,7 +20,7 @@ from sentence_transformers import SentenceTransformer
 BASE_DIR = Path(__file__).parent.parent
 DATA_DIR = BASE_DIR / "data"
 
-# Setup monitoring logs
+# Setup monitoring logs matching system layout
 logger.add(DATA_DIR / "diff_detector.log", rotation="5 MB", level="INFO")
 
 def load_json_embeddings(file_path: Path) -> list:
@@ -38,6 +38,8 @@ def calculate_cosine_similarity(vec1: list, vec2: list) -> float:
     """Computes the standard cosine similarity metric between two normalized embedding vectors."""
     v1 = np.array(vec1)
     v2 = np.array(vec2)
+    if v1.size == 0 or v2.size == 0:
+        return 0.0
     dot_product = np.dot(v1, v2)
     norm_v1 = np.linalg.norm(v1)
     norm_v2 = np.linalg.norm(v2)
@@ -47,7 +49,7 @@ def calculate_cosine_similarity(vec1: list, vec2: list) -> float:
 
 def extract_changed_sentences(old_text: str, new_text: str) -> dict:
     """Isolates sentence-level deltas to filter out unchanged context blocks."""
-    # Split text roughly by sentence delimiters for structural analysis
+    # Split text by sentence delimiters for structural analysis
     old_sentences = [s.strip() for s in old_text.replace(";", ".").split(".") if s.strip()]
     new_sentences = [s.strip() for s in new_text.replace(";", ".").split(".") if s.strip()]
     
@@ -70,10 +72,10 @@ def generate_llm_change_summary(source_doc: str, old_text: str, current_text: st
         client = Groq(api_key=api_key)
         
         system_prompt = (
-            "You are RegIQ, an authoritative compliance automation engine for Indian SMEs.\n"
+            "You are RegIQ, an authoritative compliance automation engine for Indian businesses.\n"
             "Your objective is to compare a modified regulatory text document against its previous version "
             "and generate a highly concise, executive summary explaining what changed, what compliance action "
-            "is required, and who is affected. Do not hallucinate or extrapolate details outside of the text provided."
+            "is required, and who is affected. Do not use complex language; explain clearly for a business owner."
         )
         
         user_content = (
@@ -81,7 +83,7 @@ def generate_llm_change_summary(source_doc: str, old_text: str, current_text: st
             f"--- ADDED PROVISIONS/CLAUSES ---\n{chr(10).join(deltas['added'][:10])}\n\n"
             f"--- REMOVED/REPEALED CLAUSES ---\n{chr(10).join(deltas['removed'][:10])}\n\n"
             f"Based on these isolated structural changes, summarize the regulatory shift "
-            f"in up to 3 crisp, bulleted sentences tailored for a business operator."
+            f"in up to 3 crisp, bulleted sentences tailored for an Indian small business operator."
         )
         
         completion = client.chat.completions.create(
@@ -118,7 +120,7 @@ def detect_corpus_changes(corpus: str, backup_dir: Path, model: SentenceTransfor
     # Reconstruct document levels + gather mean embeddings to identify document-level drifts
     active_docs = {}
     for chunk in active_data:
-        src = chunk.get("metadata", {}).get("source", "unknown")
+        src = chunk.get("filename", "unknown")  # Grouping by filename as source identifier
         if src not in active_docs:
             active_docs[src] = {"text": "", "embeddings": []}
         active_docs[src]["text"] += "\n" + chunk.get("text", "")
@@ -127,7 +129,7 @@ def detect_corpus_changes(corpus: str, backup_dir: Path, model: SentenceTransfor
 
     historical_docs = {}
     for chunk in historical_data:
-        src = chunk.get("metadata", {}).get("source", "unknown")
+        src = chunk.get("filename", "unknown")
         if src not in historical_docs:
             historical_docs[src] = {"text": "", "embeddings": []}
         historical_docs[src]["text"] += "\n" + chunk.get("text", "")
@@ -138,7 +140,6 @@ def detect_corpus_changes(corpus: str, backup_dir: Path, model: SentenceTransfor
 
     for doc_source, doc_info in active_docs.items():
         current_text = doc_info["text"]
-        # Generate absolute document vector representation by taking the mean pooling axis of chunks
         current_vector = np.mean(doc_info["embeddings"], axis=0).tolist() if doc_info["embeddings"] else []
 
         if doc_source in historical_docs:
@@ -146,21 +147,20 @@ def detect_corpus_changes(corpus: str, backup_dir: Path, model: SentenceTransfor
             old_vector = np.mean(historical_docs[doc_source]["embeddings"], axis=0).tolist() if historical_docs[doc_source]["embeddings"] else []
             
             if not current_vector or not old_vector:
-                # If embeddings are missing for any reason, calculate them dynamically
                 old_vector = model.encode(old_text, normalize_embeddings=True).tolist()
                 current_vector = model.encode(current_text, normalize_embeddings=True).tolist()
 
             similarity = calculate_cosine_similarity(old_vector, current_vector)
             logger.debug(f"Similarity index for {doc_source}: {similarity:.4f}")
 
-            # Critical threshold limit condition check (Day 45 Spec: < 0.85 indicates variation)
+            # Critical threshold check limit condition (< 0.85 indicates change)
             if similarity < 0.85:
                 logger.info(f"⚠️ SEMANTIC DRIFT IDENTIFIED (< 0.85) in {corpus.upper()} -> {doc_source} (Similarity: {similarity:.2f})")
                 
                 # Extract granular changed sentences
                 deltas = extract_changed_sentences(old_text, current_text)
                 
-                # Trigger LLM Summary layer
+                # Trigger LLM Summary layer via Groq
                 summary = generate_llm_change_summary(doc_source, old_text, current_text, deltas)
                 
                 alert = {
@@ -181,7 +181,7 @@ def detect_corpus_changes(corpus: str, backup_dir: Path, model: SentenceTransfor
                 }
                 detected_alerts.append(alert)
         else:
-            # Entirely new compliance rule parsed during routine task pipeline execution
+            # Entirely new regulation provision parsed
             deltas = extract_changed_sentences("", current_text)
             summary = generate_llm_change_summary(doc_source, "", current_text, deltas)
             
@@ -213,7 +213,6 @@ def run_diff_detection(backup_directory_name: str = "backup_historical") -> list
     all_system_alerts = []
 
     logger.info("Initializing SentenceTransformer model layer for verification validation tasks...")
-    # Standard configuration architecture framework specification matching pipeline/embedder.py
     model = SentenceTransformer("all-MiniLM-L6-v2")
 
     for corpus in corpora_list:
