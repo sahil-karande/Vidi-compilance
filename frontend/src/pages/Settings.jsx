@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import PricingPage from '../components/PricingPage';
-import api from '../lib/api'; // Import our API helper to make HTTP requests
+import { api } from '../lib/api'; // Import our API helper to make HTTP requests
 
 // Map our UI list directly to official backend ALERT_TOPICS
 const AVAILABLE_ALERTS = [
