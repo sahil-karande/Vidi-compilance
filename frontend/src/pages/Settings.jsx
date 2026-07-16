@@ -74,7 +74,7 @@ export default function Settings() {
     try {
       if (existingAlert) {
         // Switch exists: Toggle its active state
-        const updated = await api.patch(`/alerts/${existingAlert.id}`, {
+        const updated = await api.patch(`/api/alerts/${existingAlert.id}`, {
           is_active: !existingAlert.is_active
         });
         
