@@ -84,7 +84,7 @@ export default function Settings() {
         }));
       } else {
         // Switch does not exist: Create a new alert subscription
-        const created = await api.post('/alerts', {
+        const created = await api.post('/api/api/alerts', { // Wait, make sure it is exactly one '/api' prefix:
           topic: item.topic,
           corpus: item.corpus
         });
