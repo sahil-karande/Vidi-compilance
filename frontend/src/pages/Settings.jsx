@@ -67,38 +67,38 @@ export default function Settings() {
     alert('Profile configurations committed successfully to your Supabase metadata storage!');
   };
 
-  // 2. Handle dynamically saving/updating alerts in the database
-  const handleToggleAlert = async (item) => {
-    const existingAlert = dbAlerts[item.topic];
+// 2. Handle dynamically saving/updating alerts in the database
+const handleToggleAlert = async (item) => {
+  const existingAlert = dbAlerts[item.topic];
 
-    try {
-      if (existingAlert) {
-        // Switch exists: Toggle its active state
-        const updated = await api.patch(`/api/alerts/${existingAlert.id}`, {
-          is_active: !existingAlert.is_active
-        });
-        
-        setDbAlerts((prev) => ({
-          ...prev,
-          [item.topic]: updated.data
-        }));
-      } else {
-        // Switch does not exist: Create a new alert subscription
-        const created = await api.post('/api/api/alerts', { // Wait, make sure it is exactly one '/api' prefix:
-          topic: item.topic,
-          corpus: item.corpus
-        });
+  try {
+    if (existingAlert) {
+      // Switch exists: Toggle its active state
+      const updated = await api.patch(`/api/alerts/${existingAlert.id}`, {
+        is_active: !existingAlert.is_active
+      });
+      
+      setDbAlerts((prev) => ({
+        ...prev,
+        [item.topic]: updated.data
+      }));
+    } else {
+      // Switch does not exist: Create a new alert subscription
+      const created = await api.post('/api/alerts', {
+        topic: item.topic,
+        corpus: item.corpus
+      });
 
-        setDbAlerts((prev) => ({
-          ...prev,
-          [item.topic]: created.data
-        }));
-      }
-    } catch (err) {
-      console.error('Failed to update alert status:', err);
-      alert('Failed to save alert preference. Please try again.');
+      setDbAlerts((prev) => ({
+        ...prev,
+        [item.topic]: created.data
+      }));
     }
-  };
+  } catch (err) {
+    console.error('Failed to update alert status:', err);
+    alert('Failed to save alert preference. Please try again.');
+  }
+};
 
   const handleCheckoutUpgrade = (tier, cycle) => {
     alert(
