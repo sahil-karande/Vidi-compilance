@@ -40,6 +40,11 @@ def calculate_cosine_similarity(vec1: list, vec2: list) -> float:
     v2 = np.array(vec2)
     if v1.size == 0 or v2.size == 0:
         return 0.0
+    # Guardrail: Check if embedding vector shapes match perfectly
+    if v1.shape != v2.shape:
+        logger.warning("Vector shape mismatch detected. Forcing similarity index to 0.0")
+        return 0.0
+        
     dot_product = np.dot(v1, v2)
     norm_v1 = np.linalg.norm(v1)
     norm_v2 = np.linalg.norm(v2)
