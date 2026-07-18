@@ -35,3 +35,12 @@
 2026-07-17 00:12:27.620 | INFO     | __main__:run_diff_detection:215 - Initializing SentenceTransformer model layer for verification validation tasks...
 2026-07-17 00:13:55.108 | INFO     | __main__:detect_corpus_changes:116 - Running semantic similarity delta evaluations for corpus: GST
 2026-07-17 00:17:07.322 | INFO     | __main__:run_diff_detection:220 - Initializing SentenceTransformer model layer for verification validation tasks...
+2026-07-17 00:24:33.868 | INFO     | __main__:run_diff_detection:220 - Initializing SentenceTransformer model layer for verification validation tasks...
+2026-07-17 00:24:34.085 | INFO     | __main__:detect_corpus_changes:121 - Running semantic similarity delta evaluations for corpus: GST
+2026-07-17 00:24:34.166 | WARNING  | __main__:calculate_cosine_similarity:45 - Vector shape mismatch detected. Forcing similarity index to 0.0
+2026-07-17 00:24:34.166 | INFO     | __main__:detect_corpus_changes:163 - ⚠️ SEMANTIC DRIFT IDENTIFIED (< 0.85) in GST -> 01062019-GST-An-Update.pdf (Similarity: 0.00)
+2026-07-17 00:24:35.469 | INFO     | __main__:detect_corpus_changes:118 - First-time run execution profile setup for rbi. Skipping NLP diff engine tracking.
+2026-07-17 00:24:35.470 | INFO     | __main__:detect_corpus_changes:118 - First-time run execution profile setup for sebi. Skipping NLP diff engine tracking.
+2026-07-17 00:24:35.470 | INFO     | __main__:detect_corpus_changes:118 - First-time run execution profile setup for mca. Skipping NLP diff engine tracking.
+2026-07-17 00:24:35.470 | INFO     | __main__:detect_corpus_changes:118 - First-time run execution profile setup for fema. Skipping NLP diff engine tracking.
+2026-07-17 00:24:35.471 | INFO     | __main__:run_diff_detection:233 - Diff detection routine complete. Generated 1 compliance alert mutations.
