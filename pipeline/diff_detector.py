@@ -12,13 +12,18 @@ import json
 import numpy as np
 import difflib
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 from loguru import logger
 from groq import Groq
 from sentence_transformers import SentenceTransformer
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).parent.parent
 DATA_DIR = BASE_DIR / "data"
+
+# Explicitly point to the backend folder's .env file to load the GROQ_API_KEY
+ENV_PATH = BASE_DIR / "backend" / ".env"
+load_dotenv(dotenv_path=ENV_PATH)
 
 # Setup monitoring logs matching system layout
 logger.add(DATA_DIR / "diff_detector.log", rotation="5 MB", level="INFO")
@@ -70,7 +75,7 @@ def generate_llm_change_summary(source_doc: str, old_text: str, current_text: st
     """Generates a high-precision, human-readable compliance alert summary via Groq SDK."""
     api_key = os.getenv("GROQ_API_KEY")
     if not api_key:
-        logger.warning("GROQ_API_KEY environment variable missing. Skipping LLM summarization layer.")
+        logger.warning(f"GROQ_API_KEY environment variable missing in {ENV_PATH}. Skipping LLM summarization layer.")
         return "Regulatory updates detected. Review structural timeline and original notifications directly."
 
     try:
@@ -172,7 +177,7 @@ def detect_corpus_changes(corpus: str, backup_dir: Path, model: SentenceTransfor
                     "corpus": corpus,
                     "source_doc": doc_source,
                     "type": "modification",
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
                     "metrics": {
                         "cosine_similarity": round(similarity, 4),
                         "sentences_added": len(deltas["added"]),
@@ -194,7 +199,7 @@ def detect_corpus_changes(corpus: str, backup_dir: Path, model: SentenceTransfor
                 "corpus": corpus,
                 "source_doc": doc_source,
                 "type": "new_provision",
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
                 "metrics": {
                     "cosine_similarity": 0.0,
                     "sentences_added": len(deltas["added"]),
@@ -218,7 +223,6 @@ def run_diff_detection(backup_directory_name: str = "backup_historical") -> list
     all_system_alerts = []
 
     logger.info("Initializing SentenceTransformer model layer for verification validation tasks...")
-    # Force local cache fallback to prevent network requests from crashing the script
     model = SentenceTransformer("all-MiniLM-L6-v2", local_files_only=True)
 
     for corpus in corpora_list:
