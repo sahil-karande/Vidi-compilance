@@ -5,10 +5,20 @@ for pipeline diff alerts, database trigger logs, and email transmission via Rese
 """
 
 import os
+import sys
 import asyncio
-from datetime import datetime
+from pathlib import Path
+from datetime import datetime, timezone
 from dotenv import load_dotenv
 from supabase import create_client, Client
+
+# ─────────────────────────────────────────────────────────────
+#  DYNAMIC ROOT PATH INJECTION (Fixes No module named 'pipeline')
+# ─────────────────────────────────────────────────────────────
+project_root = Path(__file__).resolve().parent.parent
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
+# ─────────────────────────────────────────────────────────────
 
 load_dotenv()
 
@@ -51,7 +61,7 @@ async def test_checkpoint():
                 "corpus": "gst",
                 "topic": "GST rate changes",
                 "is_active": True,
-                "created_at": datetime.utcnow().isoformat()
+                "created_at": datetime.now(timezone.utc).isoformat()
             }
             insert_res = supabase.table("alerts").insert(seed_data).execute()
             if insert_res.data:
