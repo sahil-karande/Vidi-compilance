@@ -93,8 +93,8 @@ async def test_checkpoint():
         user_email = None
         profile_res = supabase.table("profiles").select("email").eq("user_id", user_id).execute()
         if profile_res.data and profile_res.data[0].get("email"):
-            user_email = profile_res.data[0]["email"]
-            print(f"👤 Subscriber email handle: {user_email}")
+            user_email = "sahilkarande6@gmail.com"
+            print(f"👤 Target email set to Resend verified owner: {user_email}")
         else:
             # Fallback check on auth.users if profiles table email is empty
             user_email = "sahil.test@ghrcem.edu"
