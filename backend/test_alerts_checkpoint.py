@@ -1,7 +1,7 @@
 """
 RegIQ — test_alerts_checkpoint.py
-Day 47 Checkpoint: Manual verification script for pipeline diff alerts,
-database trigger logs, and email transmission via Resend.
+Day 47 Checkpoint: Auto-seeding subscriber fallback + manual verification script
+for pipeline diff alerts, database trigger logs, and email transmission via Resend.
 """
 
 import os
@@ -13,7 +13,7 @@ from supabase import create_client, Client
 load_dotenv()
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_KEY") # Bypasses RLS to simulate cron execution
+SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_KEY") or os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 
 if not SUPABASE_URL or not SUPABASE_SERVICE_ROLE_KEY:
     print("❌ Error: Missing Supabase credentials in environment variables.")
@@ -28,17 +28,45 @@ async def test_checkpoint():
     print("\n🔍 Step 1: Checking for an active subscriber in 'alerts' table...")
     try:
         res = supabase.table("alerts").select("*").eq("is_active", True).limit(1).execute()
-        if not res.data:
-            print("❌ No active alert subscriptions found. Please create an alert in your Settings page first!")
-            return
         
-        target_alert = res.data[0]
+        target_alert = None
+        if res.data:
+            target_alert = res.data[0]
+            print(f"✅ Found active subscriber! User: {target_alert['user_id']} | Corpus: {target_alert['corpus']} | Topic: {target_alert['topic']}")
+        else:
+            print("⚠️ No active alert found. Automatically seeding a test subscription...")
+            
+            # Find a real registered user profile from Supabase
+            user_res = supabase.table("profiles").select("user_id").limit(1).execute()
+            
+            if not user_res.data:
+                print("❌ No profiles found in 'profiles' table. Creating seed subscription with default UUID...")
+                test_user_id = "00000000-0000-0000-0000-000000000000"
+            else:
+                test_user_id = user_res.data[0]["user_id"]
+
+            # Insert an active GST subscription row
+            seed_data = {
+                "user_id": test_user_id,
+                "corpus": "gst",
+                "topic": "GST rate changes",
+                "is_active": True,
+                "created_at": datetime.utcnow().isoformat()
+            }
+            insert_res = supabase.table("alerts").insert(seed_data).execute()
+            if insert_res.data:
+                target_alert = insert_res.data[0]
+                print(f"✅ Successfully seeded active alert for User ID: {test_user_id}!")
+            else:
+                print("❌ Failed to seed alert row into database.")
+                return
+
         user_id = target_alert["user_id"]
         corpus = target_alert["corpus"]
         topic = target_alert["topic"]
-        print(f"✅ Found active subscriber target! User: {user_id} | Corpus: {corpus} | Topic: {topic}")
+
     except Exception as e:
-        print(f"❌ Supabase lookup failure: {e}")
+        print(f"❌ Supabase lookup/seeding failure: {e}")
         return
 
     # 2. Simulate diff_detector catching a change
@@ -54,7 +82,6 @@ async def test_checkpoint():
     try:
         from pipeline.cron import process_notifications
         
-        # Pass the fake change through your real notification processing pipeline
         await process_notifications([fake_change])
         print("✅ Notification pipeline executed successfully.")
     except Exception as pipeline_err:
