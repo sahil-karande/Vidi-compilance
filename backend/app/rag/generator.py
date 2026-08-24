@@ -1,7 +1,9 @@
 import os
 import logging
 from typing import List, Dict, Any, Tuple
-from groq import AsyncGroq  # Clean, native asynchronous client choice
+from groq import AsyncGroq
+from langfuse.decorators import observe, langfuse_context
+
 from app.config import settings
 
 logger = logging.getLogger("regiq.generator")
@@ -12,7 +14,7 @@ LLM_PROVIDER = "groq"
 class RAGGenerator:
     """
     Generates grounded responses using the official Groq SDK.
-    Enforces compliance styling and anti-hallucination guardrails.
+    Enforces compliance styling, anti-hallucination guardrails, and LangFuse tracing.
     """
 
     SYSTEM_PROMPT_BASE = (
@@ -44,7 +46,6 @@ class RAGGenerator:
     )
 
     def __init__(self):
-        # Fallback tree to check both app settings context and system environment variables securely
         self.api_key = getattr(settings, "groq_api_key", None) or os.getenv("GROQ_API_KEY")
         
         if self.api_key:
@@ -53,7 +54,6 @@ class RAGGenerator:
             self.client = None
             logger.warning("Groq API Key missing from configuration context. Verify your .env environment parameters.")
             
-        # Llama 3.1 70B is incredibly precise for high-density legal and corporate circular analysis
         self.model = "llama-3.3-70b-versatile"
 
     def _format_context(self, chunks: List[Any]) -> Tuple[str, List[Dict[str, Any]]]:
@@ -90,16 +90,22 @@ class RAGGenerator:
                 "date": date,
                 "section": section,
                 "url": url,
-                "snippet": text  # 💡 FIXED: Truncation cutoff removed completely to deliver full information
+                "snippet": text
             })
 
         return context_str, citations
 
+    @observe(as_type="generation", name="groq_generator")
     async def generate_answer(
         self, query: str, chunks: List[Dict[str, Any]], mode: str = "plain"
     ) -> Dict[str, Any]:
-        """Coordinates context formulation and invokes the active API layer."""
+        """Coordinates context formulation and invokes the active API layer with LangFuse tracking."""
         if not chunks:
+            langfuse_context.update_current_observation(
+                input={"query": query, "chunks_count": 0, "mode": mode},
+                output="I could not find this in the available regulatory documents.",
+                metadata={"status": "no_chunks_provided"}
+            )
             return {
                 "answer": "I could not find this in the available regulatory documents.",
                 "citations": [],
@@ -107,13 +113,18 @@ class RAGGenerator:
             }
 
         if not self.client:
-            # Lazy load fallback catch if environment values were populated after init hook
             self.api_key = getattr(settings, "groq_api_key", None) or os.getenv("GROQ_API_KEY")
             if self.api_key:
                 self.client = AsyncGroq(api_key=self.api_key)
             else:
+                err = "Groq API token is misconfigured or completely missing from your backend server .env file."
+                langfuse_context.update_current_observation(
+                    input={"query": query, "mode": mode},
+                    output=err,
+                    metadata={"status": "auth_error"}
+                )
                 return {
-                    "answer": "Groq API token is misconfigured or completely missing from your backend server .env file.",
+                    "answer": err,
                     "citations": [],
                     "mode": mode
                 }
@@ -128,18 +139,42 @@ class RAGGenerator:
             f"Provide your response below, following all rules specified in the system instructions."
         )
 
+        messages = [
+            {"role": "system", "content": full_system_prompt},
+            {"role": "user", "content": user_prompt}
+        ]
+
+        # Update LangFuse observation with model inputs and hyper-parameters
+        langfuse_context.update_current_observation(
+            input=messages,
+            model=self.model,
+            model_parameters={"temperature": 0.0},
+            metadata={"mode": mode, "chunks_used": len(chunks)}
+        )
+
         try:
-            # 💡 Native asynchronous call using the official AsyncGroq wrapper client layer
             chat_completion = await self.client.chat.completions.create(
-                messages=[
-                    {"role": "system", "content": full_system_prompt},
-                    {"role": "user", "content": user_prompt}
-                ],
+                messages=messages,
                 model=self.model,
-                temperature=0.0,  # Zero out temperature for strict deterministic compliance alignment
+                temperature=0.0,
             )
             
             answer_text = chat_completion.choices[0].message.content.strip()
+            
+            # Extract token usage directly from Groq completion response
+            usage_dict = {}
+            if hasattr(chat_completion, "usage") and chat_completion.usage:
+                usage_dict = {
+                    "input": getattr(chat_completion.usage, "prompt_tokens", None),
+                    "output": getattr(chat_completion.usage, "completion_tokens", None),
+                    "total": getattr(chat_completion.usage, "total_tokens", None),
+                }
+
+            # Update LangFuse observation with response text and tokens
+            langfuse_context.update_current_observation(
+                output=answer_text,
+                usage=usage_dict
+            )
             
             return {
                 "answer": answer_text,
@@ -150,6 +185,11 @@ class RAGGenerator:
         except Exception as e:
             logger.error(f"Error during Groq LLM text generation loop: {str(e)}")
             err_msg = str(e)
+            
+            langfuse_context.update_current_observation(
+                output=err_msg,
+                metadata={"error": True, "exception_type": type(e).__name__}
+            )
             
             if "429" in err_msg:
                 return {
