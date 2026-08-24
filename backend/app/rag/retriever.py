@@ -1,14 +1,12 @@
 """
-Vidi — backend/app/rag/retriever.py
-Day 13 Task: ChromaDB Retriever
+RegIQ — backend/app/rag/retriever.py
+ChromaDB Retriever with LangFuse Observability
 
 Given a query + target corpus, retrieves the top-K most similar
 chunks from the corresponding ChromaDB collection along with
 full source metadata (circular_no, date, title, url, etc.)
 
-Used by:
-- /query endpoint (Day 15) — after classifier.py picks the corpus
-- reranker.py (this same Day 13) — reranks these top-K results
+Traced via LangFuse: latency, corpus target, chunk counts, similarity scores.
 """
 
 from pathlib import Path
@@ -19,6 +17,7 @@ import chromadb
 from chromadb.config import Settings
 from loguru import logger
 from sentence_transformers import SentenceTransformer
+from langfuse.decorators import observe, langfuse_context
 
 from app.models.user import Corpus
 from app.config import settings
@@ -29,11 +28,9 @@ from app.config import settings
 
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
 
-# Resolve vectordb path relative to backend/ — pipeline writes to
-# <project_root>/vectordb, backend runs from <project_root>/backend
+# Resolve vectordb path relative to backend/
 VECTORDB_DIR = Path(settings.vectordb_dir)
 if not VECTORDB_DIR.is_absolute():
-    # backend/app/rag/retriever.py → backend/ → project_root/
     project_root = Path(__file__).parent.parent.parent.parent
     VECTORDB_DIR = project_root / "vectordb"
 
@@ -60,7 +57,7 @@ class RetrievedChunk:
     total_chunks: int = 1
     extraction_method: str = "unknown"
 
-    # Populated by reranker.py (Day 13, second half)
+    # Populated by reranker.py
     rerank_score: float | None = field(default=None)
 
     def to_dict(self) -> dict:
@@ -119,9 +116,10 @@ def get_collection(corpus: str) -> chromadb.Collection | None:
 
 
 # ─────────────────────────────────────────────────────────────
-#  Main Retrieval Function
+#  Main Retrieval Function (Observed via LangFuse)
 # ─────────────────────────────────────────────────────────────
 
+@observe(name="chroma_retriever")
 def retrieve(
     query: str,
     corpus: Corpus | str,
@@ -130,33 +128,32 @@ def retrieve(
 ) -> list[RetrievedChunk]:
     """
     Retrieve top-K most similar chunks for a query from a given corpus.
-
-    Args:
-        query: Natural language question
-        corpus: Corpus enum or string (gst/rbi/sebi/mca/fema/user_docs)
-        top_k: Number of results to return (default 5)
-        min_similarity: Filter out results below this cosine similarity
-
-    Returns:
-        List of RetrievedChunk, sorted by similarity descending.
-        Empty list if collection doesn't exist or has no matches.
+    Traces retrieval metrics, latency, and input parameters in LangFuse.
     """
-    corpus_name = corpus.value if isinstance(corpus, Corpus) else corpus
+    corpus_name = corpus.value if isinstance(corpus, Corpus) else str(corpus)
+
+    # Attach observation input parameters to LangFuse trace
+    langfuse_context.update_current_observation(
+        input={"query": query, "corpus": corpus_name, "top_k": top_k, "min_similarity": min_similarity}
+    )
 
     if not query or not query.strip():
         logger.warning("[retriever] Empty query received")
+        langfuse_context.update_current_observation(output={"chunks_retrieved": 0, "status": "empty_query"})
         return []
 
     collection = get_collection(corpus_name)
     if collection is None:
         logger.error(f"[retriever] No collection for corpus '{corpus_name}'")
+        langfuse_context.update_current_observation(output={"chunks_retrieved": 0, "status": "collection_missing"})
         return []
 
     if collection.count() == 0:
         logger.warning(f"[retriever] Collection '{corpus_name}' is empty")
+        langfuse_context.update_current_observation(output={"chunks_retrieved": 0, "status": "collection_empty"})
         return []
 
-    # Embed the query (normalized — matches indexer.py's normalize_embeddings=True)
+    # Embed the query
     model = get_embedding_model()
     query_embedding = model.encode(query, normalize_embeddings=True).tolist()
 
@@ -169,9 +166,9 @@ def retrieve(
 
     chunks: list[RetrievedChunk] = []
 
-    docs      = results["documents"][0] if results["documents"] else []
-    metas     = results["metadatas"][0] if results["metadatas"] else []
-    distances = results["distances"][0] if results["distances"] else []
+    docs      = results["documents"][0] if results.get("documents") else []
+    metas     = results["metadatas"][0] if results.get("metadatas") else []
+    distances = results["distances"][0] if results.get("distances") else []
     ids       = results["ids"][0] if results.get("ids") else [None] * len(docs)
 
     for chunk_id, doc, meta, distance in zip(ids, docs, metas, distances):
@@ -203,9 +200,19 @@ def retrieve(
         f"[retriever] '{query[:50]}' → corpus={corpus_name} → 0 chunks"
     )
 
+    # Attach retrieval summaries to LangFuse
+    langfuse_context.update_current_observation(
+        output={
+            "chunks_retrieved": len(chunks),
+            "top_similarity": round(chunks[0].similarity, 4) if chunks else 0.0,
+            "circular_nos": [c.circular_no for c in chunks]
+        }
+    )
+
     return chunks
 
 
+@observe(name="multi_corpus_retriever")
 def retrieve_multi_corpus(
     query: str,
     corpora: list[Corpus | str],
@@ -214,9 +221,12 @@ def retrieve_multi_corpus(
 ) -> list[RetrievedChunk]:
     """
     Retrieve from multiple corpora and merge results by similarity.
-    Useful for queries spanning multiple regulatory domains
-    (e.g. "GST implications of foreign remittance" → gst + fema).
+    Useful for cross-domain queries spanning GST + FEMA / RBI.
     """
+    langfuse_context.update_current_observation(
+        input={"query": query, "corpora": [c.value if isinstance(c, Corpus) else str(c) for c in corpora]}
+    )
+
     all_chunks: list[RetrievedChunk] = []
 
     for corpus in corpora:
@@ -225,7 +235,13 @@ def retrieve_multi_corpus(
 
     # Sort merged results by similarity, take final_top_k
     all_chunks.sort(key=lambda c: c.similarity, reverse=True)
-    return all_chunks[:final_top_k]
+    final_results = all_chunks[:final_top_k]
+
+    langfuse_context.update_current_observation(
+        output={"total_merged_chunks": len(final_results)}
+    )
+
+    return final_results
 
 
 # ─────────────────────────────────────────────────────────────
@@ -257,7 +273,7 @@ TEST_CASES: list[tuple[str, Corpus]] = [
 
 def run_retriever_tests():
     print("=" * 70)
-    print("Vidi Retriever — Test Suite")
+    print("RegIQ Retriever — Test Suite")
     print("=" * 70)
 
     # Show collection status
