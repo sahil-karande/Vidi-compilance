@@ -60,8 +60,8 @@ class RAGGenerator:
             self.client = None
             logger.warning("Groq API Key missing from configuration context.")
             
-        # Change to the active production model on Groq
-        self.model = "llama-3.3-70b-versatile"
+        # Change to the active production model on openAI
+        self.model = "openai/gpt-oss-120b"
 
     def _format_context(self, chunks: List[Any]) -> Tuple[str, List[Dict[str, Any]]]:
         context_str = ""
