@@ -2,7 +2,7 @@ import os
 import logging
 from typing import List, Dict, Any, Tuple
 from groq import AsyncGroq
-from langfuse.decorators import observe, langfuse_context
+from langfuse import observe, langfuse_context
 
 from app.config import settings
 

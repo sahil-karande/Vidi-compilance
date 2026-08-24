@@ -17,7 +17,7 @@ import chromadb
 from chromadb.config import Settings
 from loguru import logger
 from sentence_transformers import SentenceTransformer
-from langfuse.decorators import observe, langfuse_context
+from langfuse import observe, langfuse_context
 
 from app.models.user import Corpus
 from app.config import settings
