@@ -143,33 +143,35 @@ async def query(
     except Exception as q_err:
         logger.warning(f"[Quota Bypass] {q_err}")
 
-    # ── Step 2: Thread Setup ───
+# ── Step 2: Thread Setup ───
     thread_id = request.thread_id
     is_new_thread = False
     thread_persisted = False
     
+    db_user_id = sanitize_db_uuid(user_id)
+
     if not thread_id:
         is_new_thread = True
         thread_id = str(uuid.uuid4())
         thread_title = request.query[:40] + "..." if len(request.query) > 40 else request.query
         
-        db_user_id = sanitize_db_uuid(user_id)
-        try:
-            thread_payload = {
-                "id": thread_id,
-                "title": thread_title,
-                "corpus_tags": []
-            }
-            if db_user_id:
-                thread_payload["user_id"] = db_user_id
-
-            thread_data = supabase_admin.table("threads").insert(thread_payload).execute()
-            if thread_data.data:
-                thread_persisted = True
-        except Exception as e:
-            logger.warning(f"[Database Note] Thread creation skipped for guest session: {str(e)}")
+        # Only persist to Supabase if an authenticated user exists (satisfies NOT NULL constraint)
+        if db_user_id:
+            try:
+                thread_payload = {
+                    "id": thread_id,
+                    "user_id": db_user_id,
+                    "title": thread_title,
+                    "corpus_tags": []
+                }
+                thread_data = supabase_admin.table("threads").insert(thread_payload).execute()
+                if thread_data.data:
+                    thread_persisted = True
+            except Exception as e:
+                logger.warning(f"[Database Note] Thread creation skipped: {str(e)}")
     else:
-        thread_persisted = True
+        if db_user_id:
+            thread_persisted = True
 
     # ── Step 3: Log User Message ───
     if thread_persisted:
