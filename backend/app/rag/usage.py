@@ -1,20 +1,19 @@
 """
 Vidi — backend/app/rag/usage.py
-Day 21 Task: Query Usage / Limit Enforcement (helper module)
+Query Usage / Limit Enforcement (helper module)
 
 Checks and increments daily query counts per user against the
 query_usage Supabase table. Used by api/query.py before answering.
 
-Limits (matches master prompt spec):
-    Guest:      3 queries/day  (no Supabase user_id — tracked by IP/session)
-    Free:       20 queries/day
-    Pro:        unlimited
-    Enterprise: unlimited
+Limits:
+    Guest:       3 queries/day  (no Supabase user_id — tracked in memory/session)
+    Free:        20 queries/day
+    Pro:         unlimited
+    Enterprise:  unlimited
 """
 
-from datetime import date, datetime
-from typing import Optional
-
+from datetime import date
+import uuid
 from loguru import logger
 from fastapi import HTTPException, status
 
@@ -42,6 +41,20 @@ def is_unlimited(role: UserRole) -> bool:
     return get_limit_for_role(role) == -1
 
 
+def is_guest_user(user_id: str | None) -> bool:
+    """Checks if a user_id represents an anonymous/guest session."""
+    if not user_id:
+        return True
+    user_str = str(user_id).lower()
+    if user_str.startswith("guest") or "anonymous" in user_str:
+        return True
+    try:
+        uuid.UUID(str(user_id))
+        return False
+    except (ValueError, AttributeError):
+        return True
+
+
 # ─────────────────────────────────────────────────────────────
 #  Get today's usage count
 # ─────────────────────────────────────────────────────────────
@@ -49,8 +62,11 @@ def is_unlimited(role: UserRole) -> bool:
 def get_today_usage(user_id: str) -> int:
     """
     Returns the current query count for this user today.
-    Returns 0 if no row exists yet (first query of the day).
+    Returns 0 if guest or no row exists yet.
     """
+    if is_guest_user(user_id):
+        return 0
+
     try:
         admin = get_supabase_admin()
         today = date.today().isoformat()
@@ -68,9 +84,7 @@ def get_today_usage(user_id: str) -> int:
         return 0
 
     except Exception as e:
-        logger.error(f"[usage] Failed to fetch usage for {user_id}: {e}")
-        # Fail open — don't block users if Supabase has a hiccup,
-        # but log loudly so it gets noticed
+        logger.warning(f"[usage] Could not query usage table for {user_id}: {e}")
         return 0
 
 
@@ -81,15 +95,6 @@ def get_today_usage(user_id: str) -> int:
 def check_quota(user_id: str, role: UserRole) -> dict:
     """
     Checks if the user has remaining quota for today.
-
-    Returns:
-        {
-            "allowed": bool,
-            "current_count": int,
-            "limit": int,           # -1 if unlimited
-            "remaining": int,       # -1 if unlimited
-        }
-
     Raises HTTPException(429) if quota is exceeded.
     """
     limit = get_limit_for_role(role)
@@ -137,16 +142,16 @@ def check_quota(user_id: str, role: UserRole) -> dict:
 
 def increment_usage(user_id: str) -> int:
     """
-    Increments today's query count by 1 for this user.
-    Uses upsert — creates the row if it doesn't exist yet.
-    Returns the new count.
+    Increments today's query count by 1 for this user in Supabase.
+    Bypasses write operations for guest sessions.
     """
+    if is_guest_user(user_id):
+        return 0
+
     try:
         admin = get_supabase_admin()
         today = date.today().isoformat()
 
-        # Fetch current count first (upsert with increment isn't atomic
-        # via REST API, so we read-then-write — acceptable for this scale)
         current = get_today_usage(user_id)
         new_count = current + 1
 
@@ -156,12 +161,12 @@ def increment_usage(user_id: str) -> int:
             "count": new_count,
         }, on_conflict="user_id,date").execute()
 
-        logger.debug(f"[usage] {user_id} → {new_count} queries today")
+        logger.debug(f"[usage] {user_id} -> {new_count} queries today")
         return new_count
 
     except Exception as e:
-        logger.error(f"[usage] Failed to increment usage for {user_id}: {e}")
-        return -1  # signal failure without blocking the response
+        logger.warning(f"[usage] Skipped increment for {user_id}: {e}")
+        return -1
 
 
 # ─────────────────────────────────────────────────────────────
@@ -170,8 +175,7 @@ def increment_usage(user_id: str) -> int:
 
 def get_usage_summary(user_id: str, role: UserRole) -> dict:
     """
-    Returns a full usage summary — used by GET /api/usage
-    for the frontend usage bar (useQueryLimit.js).
+    Returns a full usage summary for UI dashboards and limit bars.
     """
     limit = get_limit_for_role(role)
     current = get_today_usage(user_id)
