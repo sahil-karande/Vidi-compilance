@@ -1,23 +1,28 @@
 """
 RegIQ — backend/app/rag/retriever.py
 ChromaDB Retriever with LangFuse Observability
-
-Given a query + target corpus, retrieves the top-K most similar
-chunks from the corresponding ChromaDB collection along with
-full source metadata (circular_no, date, title, url, etc.)
-
-Traced via LangFuse: latency, corpus target, chunk counts, similarity scores.
 """
 
 from pathlib import Path
 from functools import lru_cache
 from dataclasses import dataclass, field
+from typing import List, Dict, Any
 
 import chromadb
 from chromadb.config import Settings
 from loguru import logger
 from sentence_transformers import SentenceTransformer
-from langfuse import observe, langfuse_context
+
+# Safe LangFuse import for v4+
+try:
+    from langfuse.decorators import observe, langfuse_context
+except ImportError:
+    try:
+        from langfuse import observe
+        from langfuse._context import langfuse_context
+    except ImportError:
+        from langfuse import observe
+        langfuse_context = None
 
 from app.models.user import Corpus
 from app.config import settings
@@ -28,7 +33,6 @@ from app.config import settings
 
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
 
-# Resolve vectordb path relative to backend/
 VECTORDB_DIR = Path(settings.vectordb_dir)
 if not VECTORDB_DIR.is_absolute():
     project_root = Path(__file__).parent.parent.parent.parent
@@ -56,8 +60,6 @@ class RetrievedChunk:
     chunk_index: int = 0
     total_chunks: int = 1
     extraction_method: str = "unknown"
-
-    # Populated by reranker.py
     rerank_score: float | None = field(default=None)
 
     def to_dict(self) -> dict:
@@ -83,7 +85,7 @@ class RetrievedChunk:
 
 
 # ─────────────────────────────────────────────────────────────
-#  Model + Client Loading (cached per process)
+#  Model + Client Loading
 # ─────────────────────────────────────────────────────────────
 
 @lru_cache(maxsize=1)
@@ -103,10 +105,6 @@ def get_chroma_client() -> chromadb.ClientAPI:
 
 @lru_cache(maxsize=8)
 def get_collection(corpus: str) -> chromadb.Collection | None:
-    """
-    Returns a ChromaDB collection by name, or None if it doesn't exist.
-    Cached per corpus name for the lifetime of the process.
-    """
     client = get_chroma_client()
     try:
         return client.get_collection(corpus)
@@ -116,7 +114,7 @@ def get_collection(corpus: str) -> chromadb.Collection | None:
 
 
 # ─────────────────────────────────────────────────────────────
-#  Main Retrieval Function (Observed via LangFuse)
+#  Main Retrieval Function
 # ─────────────────────────────────────────────────────────────
 
 @observe(name="chroma_retriever")
@@ -126,38 +124,33 @@ def retrieve(
     top_k: int = DEFAULT_TOP_K,
     min_similarity: float = 0.0,
 ) -> list[RetrievedChunk]:
-    """
-    Retrieve top-K most similar chunks for a query from a given corpus.
-    Traces retrieval metrics, latency, and input parameters in LangFuse.
-    """
+    """Retrieve top-K most similar chunks for a query from a given corpus."""
     corpus_name = corpus.value if isinstance(corpus, Corpus) else str(corpus)
 
-    # Attach observation input parameters to LangFuse trace
-    langfuse_context.update_current_observation(
-        input={"query": query, "corpus": corpus_name, "top_k": top_k, "min_similarity": min_similarity}
-    )
+    if langfuse_context:
+        try:
+            langfuse_context.update_current_observation(
+                input={"query": query, "corpus": corpus_name, "top_k": top_k, "min_similarity": min_similarity}
+            )
+        except Exception:
+            pass
 
     if not query or not query.strip():
         logger.warning("[retriever] Empty query received")
-        langfuse_context.update_current_observation(output={"chunks_retrieved": 0, "status": "empty_query"})
         return []
 
     collection = get_collection(corpus_name)
     if collection is None:
         logger.error(f"[retriever] No collection for corpus '{corpus_name}'")
-        langfuse_context.update_current_observation(output={"chunks_retrieved": 0, "status": "collection_missing"})
         return []
 
     if collection.count() == 0:
         logger.warning(f"[retriever] Collection '{corpus_name}' is empty")
-        langfuse_context.update_current_observation(output={"chunks_retrieved": 0, "status": "collection_empty"})
         return []
 
-    # Embed the query
     model = get_embedding_model()
     query_embedding = model.encode(query, normalize_embeddings=True).tolist()
 
-    # Query ChromaDB
     results = collection.query(
         query_embeddings=[query_embedding],
         n_results=min(top_k, collection.count()),
@@ -165,16 +158,13 @@ def retrieve(
     )
 
     chunks: list[RetrievedChunk] = []
-
-    docs      = results["documents"][0] if results.get("documents") else []
-    metas     = results["metadatas"][0] if results.get("metadatas") else []
+    docs = results["documents"][0] if results.get("documents") else []
+    metas = results["metadatas"][0] if results.get("metadatas") else []
     distances = results["distances"][0] if results.get("distances") else []
-    ids       = results["ids"][0] if results.get("ids") else [None] * len(docs)
+    ids = results["ids"][0] if results.get("ids") else [None] * len(docs)
 
     for chunk_id, doc, meta, distance in zip(ids, docs, metas, distances):
-        # ChromaDB with hnsw:space=cosine returns distance = 1 - similarity
         similarity = 1 - distance
-
         if similarity < min_similarity:
             continue
 
@@ -193,21 +183,17 @@ def retrieve(
             extraction_method=meta.get("extraction_method", "unknown"),
         ))
 
-    logger.debug(
-        f"[retriever] '{query[:50]}' → corpus={corpus_name} → "
-        f"{len(chunks)} chunks (top sim={chunks[0].similarity:.3f} if any)"
-        if chunks else
-        f"[retriever] '{query[:50]}' → corpus={corpus_name} → 0 chunks"
-    )
-
-    # Attach retrieval summaries to LangFuse
-    langfuse_context.update_current_observation(
-        output={
-            "chunks_retrieved": len(chunks),
-            "top_similarity": round(chunks[0].similarity, 4) if chunks else 0.0,
-            "circular_nos": [c.circular_no for c in chunks]
-        }
-    )
+    if langfuse_context:
+        try:
+            langfuse_context.update_current_observation(
+                output={
+                    "chunks_retrieved": len(chunks),
+                    "top_similarity": round(chunks[0].similarity, 4) if chunks else 0.0,
+                    "circular_nos": [c.circular_no for c in chunks]
+                }
+            )
+        except Exception:
+            pass
 
     return chunks
 
@@ -219,34 +205,16 @@ def retrieve_multi_corpus(
     top_k_per_corpus: int = 3,
     final_top_k: int = 5,
 ) -> list[RetrievedChunk]:
-    """
-    Retrieve from multiple corpora and merge results by similarity.
-    Useful for cross-domain queries spanning GST + FEMA / RBI.
-    """
-    langfuse_context.update_current_observation(
-        input={"query": query, "corpora": [c.value if isinstance(c, Corpus) else str(c) for c in corpora]}
-    )
-
+    """Retrieve from multiple corpora and merge results by similarity."""
     all_chunks: list[RetrievedChunk] = []
 
     for corpus in corpora:
         chunks = retrieve(query, corpus, top_k=top_k_per_corpus)
         all_chunks.extend(chunks)
 
-    # Sort merged results by similarity, take final_top_k
     all_chunks.sort(key=lambda c: c.similarity, reverse=True)
-    final_results = all_chunks[:final_top_k]
+    return all_chunks[:final_top_k]
 
-    langfuse_context.update_current_observation(
-        output={"total_merged_chunks": len(final_results)}
-    )
-
-    return final_results
-
-
-# ─────────────────────────────────────────────────────────────
-#  Diagnostics — show all collections
-# ─────────────────────────────────────────────────────────────
 
 def show_collections() -> dict[str, int]:
     """Returns {corpus_name: doc_count} for all ChromaDB collections."""
@@ -255,53 +223,3 @@ def show_collections() -> dict[str, int]:
     for col in client.list_collections():
         result[col.name] = client.get_collection(col.name).count()
     return result
-
-
-# ─────────────────────────────────────────────────────────────
-#  Test Harness
-#  Run: python -m app.rag.retriever
-# ─────────────────────────────────────────────────────────────
-
-TEST_CASES: list[tuple[str, Corpus]] = [
-    ("What is the GST registration threshold for turnover?", Corpus.GST),
-    ("What are KYC requirements for opening a bank account?", Corpus.RBI),
-    ("What are the listing requirements for SME IPO?", Corpus.SEBI),
-    ("What is the procedure for company incorporation?", Corpus.MCA),
-    ("What is the Liberalised Remittance Scheme limit?", Corpus.FEMA),
-]
-
-
-def run_retriever_tests():
-    print("=" * 70)
-    print("RegIQ Retriever — Test Suite")
-    print("=" * 70)
-
-    # Show collection status
-    print("\nCollections:")
-    collections = show_collections()
-    for corpus in ["gst", "rbi", "sebi", "mca", "fema"]:
-        count = collections.get(corpus, 0)
-        status = "✓" if count > 0 else "✗ MISSING"
-        print(f"  {corpus.upper():<6} {count:>6} docs   {status}")
-
-    print("\n" + "-" * 70)
-
-    for query, corpus in TEST_CASES:
-        print(f"\nQuery [{corpus.value.upper()}]: {query}")
-        chunks = retrieve(query, corpus, top_k=DEFAULT_TOP_K)
-
-        if not chunks:
-            print("  ⚠ No results")
-            continue
-
-        for i, chunk in enumerate(chunks, 1):
-            print(f"  [{i}] sim={chunk.similarity:.3f} | {chunk.circular_no} | {chunk.date} | {chunk.filename}")
-            print(f"      {chunk.preview(120)}")
-
-    print("\n" + "=" * 70)
-    print("Retriever test complete.")
-    print("=" * 70)
-
-
-if __name__ == "__main__":
-    run_retriever_tests()

@@ -2,7 +2,17 @@ import os
 import logging
 from typing import List, Dict, Any, Tuple
 from groq import AsyncGroq
-from langfuse import observe, langfuse_context
+
+# Safe LangFuse import for v4+
+try:
+    from langfuse.decorators import observe, langfuse_context
+except ImportError:
+    try:
+        from langfuse import observe
+        from langfuse._context import langfuse_context
+    except ImportError:
+        from langfuse import observe
+        langfuse_context = None
 
 from app.config import settings
 
@@ -12,10 +22,7 @@ LLM_PROVIDER = "groq"
 
 
 class RAGGenerator:
-    """
-    Generates grounded responses using the official Groq SDK.
-    Enforces compliance styling, anti-hallucination guardrails, and LangFuse tracing.
-    """
+    """Generates grounded responses using the official Groq SDK."""
 
     SYSTEM_PROMPT_BASE = (
         "You are RegIQ, an advanced, authoritative regulatory compliance AI assistant for Indian SMEs.\n"
@@ -47,17 +54,15 @@ class RAGGenerator:
 
     def __init__(self):
         self.api_key = getattr(settings, "groq_api_key", None) or os.getenv("GROQ_API_KEY")
-        
         if self.api_key:
             self.client = AsyncGroq(api_key=self.api_key)
         else:
             self.client = None
-            logger.warning("Groq API Key missing from configuration context. Verify your .env environment parameters.")
+            logger.warning("Groq API Key missing from configuration context.")
             
         self.model = "llama-3.3-70b-versatile"
 
     def _format_context(self, chunks: List[Any]) -> Tuple[str, List[Dict[str, Any]]]:
-        """Formats list of chunks into an organized context block for the prompt."""
         context_str = ""
         citations = []
 
@@ -99,13 +104,7 @@ class RAGGenerator:
     async def generate_answer(
         self, query: str, chunks: List[Dict[str, Any]], mode: str = "plain"
     ) -> Dict[str, Any]:
-        """Coordinates context formulation and invokes the active API layer with LangFuse tracking."""
         if not chunks:
-            langfuse_context.update_current_observation(
-                input={"query": query, "chunks_count": 0, "mode": mode},
-                output="I could not find this in the available regulatory documents.",
-                metadata={"status": "no_chunks_provided"}
-            )
             return {
                 "answer": "I could not find this in the available regulatory documents.",
                 "citations": [],
@@ -117,14 +116,8 @@ class RAGGenerator:
             if self.api_key:
                 self.client = AsyncGroq(api_key=self.api_key)
             else:
-                err = "Groq API token is misconfigured or completely missing from your backend server .env file."
-                langfuse_context.update_current_observation(
-                    input={"query": query, "mode": mode},
-                    output=err,
-                    metadata={"status": "auth_error"}
-                )
                 return {
-                    "answer": err,
+                    "answer": "Groq API token is misconfigured or completely missing from your backend server .env file.",
                     "citations": [],
                     "mode": mode
                 }
@@ -144,13 +137,16 @@ class RAGGenerator:
             {"role": "user", "content": user_prompt}
         ]
 
-        # Update LangFuse observation with model inputs and hyper-parameters
-        langfuse_context.update_current_observation(
-            input=messages,
-            model=self.model,
-            model_parameters={"temperature": 0.0},
-            metadata={"mode": mode, "chunks_used": len(chunks)}
-        )
+        if langfuse_context:
+            try:
+                langfuse_context.update_current_observation(
+                    input=messages,
+                    model=self.model,
+                    model_parameters={"temperature": 0.0},
+                    metadata={"mode": mode, "chunks_used": len(chunks)}
+                )
+            except Exception:
+                pass
 
         try:
             chat_completion = await self.client.chat.completions.create(
@@ -161,7 +157,6 @@ class RAGGenerator:
             
             answer_text = chat_completion.choices[0].message.content.strip()
             
-            # Extract token usage directly from Groq completion response
             usage_dict = {}
             if hasattr(chat_completion, "usage") and chat_completion.usage:
                 usage_dict = {
@@ -170,11 +165,14 @@ class RAGGenerator:
                     "total": getattr(chat_completion.usage, "total_tokens", None),
                 }
 
-            # Update LangFuse observation with response text and tokens
-            langfuse_context.update_current_observation(
-                output=answer_text,
-                usage=usage_dict
-            )
+            if langfuse_context:
+                try:
+                    langfuse_context.update_current_observation(
+                        output=answer_text,
+                        usage=usage_dict
+                    )
+                except Exception:
+                    pass
             
             return {
                 "answer": answer_text,
@@ -183,17 +181,12 @@ class RAGGenerator:
             }
                 
         except Exception as e:
-            logger.error(f"Error during Groq LLM text generation loop: {str(e)}")
+            logger.error(f"Error during Groq LLM text generation: {str(e)}")
             err_msg = str(e)
-            
-            langfuse_context.update_current_observation(
-                output=err_msg,
-                metadata={"error": True, "exception_type": type(e).__name__}
-            )
             
             if "429" in err_msg:
                 return {
-                    "answer": "⚠️ **Groq API Rate Limit Hit.** Please wait a moment for your rate limits to clear and resubmit your prompt.",
+                    "answer": "⚠️ **Groq API Rate Limit Hit.** Please wait a moment and retry.",
                     "citations": [],
                     "mode": mode
                 }
@@ -205,6 +198,5 @@ class RAGGenerator:
             }
 
 
-# Singleton instance initialization to allow module-level imports
 _generator_instance = RAGGenerator()
 generate_answer = _generator_instance.generate_answer
