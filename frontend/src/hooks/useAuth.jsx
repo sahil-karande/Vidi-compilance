@@ -55,10 +55,18 @@ export function AuthProvider({ children }) {
           const activeProfile = userProfile ? { ...userProfile, role: activeRole } : { role: activeRole };
           setProfile(activeProfile);
           
+          const resolveName = (profile, authUser) => {
+            if (profile?.name && profile.name !== 'Sahi') return profile.name;
+            if (authUser.user_metadata?.full_name) return authUser.user_metadata.full_name;
+            if (authUser.email?.includes('sahil')) return 'Sahil Karande';
+            return 'Sahil Karande';
+          };
+
           setUser({
             ...initialSession.user,
-            name: userProfile?.name || initialSession.user.user_metadata?.full_name || 'SME Operator',
-            role: activeRole
+            name: resolveName(userProfile, initialSession.user),
+            role: activeRole,
+            business_profile: userProfile?.business_profile || null
           });
         } else {
           setUser(null);
@@ -86,10 +94,18 @@ export function AuthProvider({ children }) {
         const activeProfile = userProfile ? { ...userProfile, role: activeRole } : { role: activeRole };
         setProfile(activeProfile);
         
+        const resolveName = (profile, authUser) => {
+          if (profile?.name && profile.name !== 'Sahi') return profile.name;
+          if (authUser.user_metadata?.full_name) return authUser.user_metadata.full_name;
+          if (authUser.email?.includes('sahil')) return 'Sahil Karande';
+          return 'Sahil Karande';
+        };
+
         setUser({
           ...currentSession.user,
-          name: userProfile?.name || currentSession.user.user_metadata?.full_name || 'SME Operator',
-          role: activeRole
+          name: resolveName(userProfile, currentSession.user),
+          role: activeRole,
+          business_profile: userProfile?.business_profile || null
         });
       } else {
         setUser(null);
@@ -116,13 +132,64 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const refreshUserSession = async () => {
+    try {
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      if (currentSession?.user) {
+        const userProfile = await fetchProfile(currentSession.user.id);
+        const sandboxOverride = sessionStorage.getItem("regiq_sandbox_role");
+        const activeRole = sandboxOverride || userProfile?.role || 'free';
+        const activeProfile = userProfile ? { ...userProfile, role: activeRole } : { role: activeRole };
+        setProfile(activeProfile);
+
+        const displayName = (userProfile?.name && userProfile.name !== 'Sahi') 
+          ? userProfile.name 
+          : (currentSession.user.user_metadata?.full_name || 'Sahil Karande');
+
+        setUser({
+          ...currentSession.user,
+          name: displayName,
+          role: activeRole,
+          business_profile: userProfile?.business_profile || null
+        });
+      }
+    } catch (err) {
+      console.error('[Vidi Auth] Failed to refresh session:', err);
+    }
+  };
+
+  const updateUserProfile = async (updates) => {
+    try {
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      const activeId = user?.id || currentSession?.user?.id;
+      if (!activeId) return;
+
+      const { error } = await supabase
+        .from('profiles')
+        .upsert({
+          user_id: activeId,
+          email: user?.email || currentSession?.user?.email,
+          ...updates,
+          updated_at: new Date().toISOString()
+        });
+
+      if (error) throw error;
+      await refreshUserSession();
+    } catch (err) {
+      console.error('[Vidi Auth] Error updating user profile:', err);
+      throw err;
+    }
+  };
+
   const value = {
     user,
     profile,
     session,
     loading,
     signOut,
-    syncSandboxRole, // Expose this helper clean state updater
+    syncSandboxRole,
+    refreshUserSession,
+    updateUserProfile,
     isAuthenticated: !!session
   };
 
