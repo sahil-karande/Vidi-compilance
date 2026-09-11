@@ -21,23 +21,36 @@ function WorkspaceLayout({ children }) {
   const { user } = useAuth(); // Hook invocation to access session matrix profile context securely
 
   return (
-    <div className="min-h-screen bg-[#030712] text-slate-200 font-sans flex flex-col">
+    <div className="min-h-screen w-full bg-[#030712] text-slate-200 font-sans flex flex-col antialiased">
       {/* Dynamic Cyber Header */}
-      <nav className="w-full bg-slate-950/80 backdrop-blur-md border-b border-slate-800 px-6 py-4 flex items-center justify-between sticky top-0 z-40">
-        <div className="flex items-center gap-8">
-          <Link to="/dashboard" className="text-lg font-black tracking-wider text-white flex items-center gap-2">
-            <span className="bg-gradient-to-r from-cyan-400 to-indigo-500 bg-clip-text text-transparent">RegIQ</span>
-            <span className="text-[9px] text-cyan-400 border border-cyan-400/30 px-1 py-0.2 rounded font-mono uppercase tracking-widest bg-cyan-950/30">Pro Matrix</span>
+      <nav className="w-full bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/80 px-6 lg:px-12 py-3.5 flex items-center justify-between sticky top-0 z-40 shadow-[0_4px_30px_rgba(0,0,0,0.5)]">
+        <div className="flex items-center gap-10">
+          <Link to="/dashboard" className="text-xl font-black tracking-wider text-white flex items-center gap-2.5 group">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-cyan-500 via-indigo-600 to-purple-600 flex items-center justify-center text-white text-xs font-black shadow-[0_0_15px_rgba(56,189,248,0.4)] group-hover:shadow-[0_0_25px_rgba(56,189,248,0.7)] transition-all">
+              V
+            </div>
+            <div className="flex items-baseline gap-1.5">
+              <span className="bg-gradient-to-r from-cyan-400 via-sky-300 to-indigo-400 bg-clip-text text-transparent font-black">RegIQ</span>
+              <span className="text-[10px] text-cyan-400 border border-cyan-500/30 px-1.5 py-0.5 rounded-md font-mono uppercase tracking-widest bg-cyan-950/40">
+                Matrix
+              </span>
+            </div>
           </Link>
           
-          <div className="hidden md:flex items-center gap-5 text-xs font-semibold tracking-wide text-slate-400">
-            <Link to="/dashboard" className="hover:text-white transition-colors">Dashboard</Link>
-            <Link to="/chat" className="hover:text-white transition-colors">RAG Chat</Link>
-            <Link to="/upload" className="hover:text-cyan-400 text-cyan-400/90 font-bold transition-colors flex items-center gap-1">
+          <div className="hidden md:flex items-center gap-6 text-xs font-semibold tracking-wide text-slate-400">
+            <Link to="/dashboard" className="hover:text-white transition-colors flex items-center gap-1.5 py-1 px-2.5 rounded-lg hover:bg-slate-900/60">
+              <span>📊</span> Dashboard
+            </Link>
+            <Link to="/chat" className="hover:text-white transition-colors flex items-center gap-1.5 py-1 px-2.5 rounded-lg hover:bg-slate-900/60">
+              <span>💬</span> RAG Chat
+            </Link>
+            <Link to="/upload" className="hover:text-cyan-400 text-cyan-400/90 font-bold transition-colors flex items-center gap-1.5 py-1 px-2.5 rounded-lg hover:bg-slate-900/60">
               <span>📁</span> Ingestion Upload
             </Link>
-            <Link to="/explorer" className="hover:text-white transition-colors">Citation Explorer</Link>
-            <Link to="/pricing" className="hover:text-emerald-400 text-slate-400 transition-colors flex items-center gap-1">
+            <Link to="/explorer" className="hover:text-white transition-colors flex items-center gap-1.5 py-1 px-2.5 rounded-lg hover:bg-slate-900/60">
+              <span>🕸️</span> Citation Explorer
+            </Link>
+            <Link to="/pricing" className="hover:text-emerald-400 text-slate-400 transition-colors flex items-center gap-1.5 py-1 px-2.5 rounded-lg hover:bg-slate-900/60">
               <span>💳</span> Plans
             </Link>
           </div>
@@ -45,20 +58,21 @@ function WorkspaceLayout({ children }) {
 
         <div className="flex items-center gap-4">
           {user?.role !== 'pro' && user?.role !== 'enterprise' && (
-            <Link to="/pricing" className="text-[11px] font-bold bg-emerald-950/40 border border-emerald-500/30 hover:border-emerald-400 px-3 py-1.5 rounded-xl text-emerald-400 transition-all">
-              ⚡ Upgrade
+            <Link to="/pricing" className="text-[11px] font-bold bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/40 hover:border-emerald-400 px-3.5 py-1.5 rounded-xl text-emerald-400 hover:text-emerald-300 transition-all shadow-[0_0_15px_rgba(16,185,129,0.15)] flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+              ⚡ Upgrade Pro
             </Link>
           )}
-          <Link to="/settings" className="text-xs bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl hover:bg-slate-800 transition-all text-slate-300">
+          <Link to="/settings" className="text-xs bg-slate-900/90 border border-slate-800 px-3.5 py-1.5 rounded-xl hover:bg-slate-800 hover:border-slate-700 transition-all text-slate-300 flex items-center gap-1.5">
             ⚙️ Settings
           </Link>
         </div>
       </nav>
       
-      {/* Page Body */}
-      <div className="flex-1 w-full">
+      {/* Page Body Full Screen */}
+      <main className="flex-1 w-full flex flex-col">
         {children}
-      </div>
+      </main>
     </div>
   );
 }

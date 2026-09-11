@@ -3,21 +3,40 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { chatAPI } from '../lib/api';
 import { useAuth } from '../hooks/useAuth';
 import ComplianceCalendar from '../components/ComplianceCalendar';
-import { Terminal, Activity, MessageSquare, Zap, ChevronRight, Server, Briefcase, Bell } from 'lucide-react';
+import { 
+  Terminal, 
+  Activity, 
+  MessageSquare, 
+  Zap, 
+  ChevronRight, 
+  Server, 
+  Briefcase, 
+  Bell,
+  Building2,
+  TrendingUp,
+  ShieldCheck,
+  CheckCircle2,
+  AlertCircle,
+  Share2,
+  Sliders,
+  Sparkles,
+  ArrowUpRight,
+  Compass
+} from 'lucide-react';
 
-// Day 37 Requirement: Lazy Load the Risk Scorecard
+// Lazy Load the Risk Scorecard
 const RiskScorecard = lazy(() => import('../components/RiskScorecard'));
 
 function SkeletonCard() {
   return (
-    <div className="w-full bg-slate-900/40 backdrop-blur-md border border-slate-700/50 rounded-2xl p-6 animate-pulse space-y-4">
+    <div className="w-full bg-slate-900/40 backdrop-blur-md border border-slate-800/80 rounded-2xl p-6 animate-pulse space-y-4">
       <div className="flex items-center justify-between">
-        <div className="h-4 bg-slate-700/50 rounded w-1/3 shadow-[0_0_10px_rgba(51,65,85,0.5)]"></div>
-        <div className="h-6 bg-slate-700/50 rounded-full w-12"></div>
+        <div className="h-4 bg-slate-800 rounded w-1/3 shadow-[0_0_10px_rgba(51,65,85,0.5)]"></div>
+        <div className="h-6 bg-slate-800 rounded-full w-12"></div>
       </div>
       <div className="space-y-2">
-        <div className="h-3 bg-slate-700/50 rounded w-full"></div>
-        <div className="h-3 bg-cyan-900/30 rounded w-5/6"></div>
+        <div className="h-3 bg-slate-800 rounded w-full"></div>
+        <div className="h-3 bg-cyan-950/40 rounded w-5/6"></div>
       </div>
     </div>
   );
@@ -27,14 +46,10 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const location = useLocation();
   
-  // Day 43 Fix: Pull real user metadata and session refresh callback from auth layer
   const { user, refreshUserSession, updateUserProfile } = useAuth() || {}; 
-
-  // Day 43 Fix: Dynamically track tier access parameters from profile attributes
   const userRole = user?.role || 'free'; 
   const isLocked = userRole === 'free' || userRole === 'guest';
 
-  // Toggle true profile form onboarding state if business details are missing
   const [showProfileForm, setShowProfileForm] = useState(!user?.business_profile);
   const [formData, setFormData] = useState({
     business_type: user?.business_profile?.business_type || "Private Limited",
@@ -74,11 +89,9 @@ export default function Dashboard() {
     }
   };
 
-  // Day 43 Interceptor: Sync user data reactively upon Razorpay modal completion parameter injection
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     if (searchParams.get('checkout') === 'success') {
-      console.log("[billing] Checkout param found. Fetching updated subscription payload...");
       if (refreshUserSession) {
         refreshUserSession();
       } else {
@@ -89,7 +102,6 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (showProfileForm) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsLoading(false);
       return;
     }
@@ -117,7 +129,6 @@ export default function Dashboard() {
 
         const activePayload = user?.business_profile || formData;
 
-        // Pull notifications regardless of subscription lock profiles to populate navbar icons or alerts cleanly
         try {
           activeAlerts = await chatAPI.getUnreadAlerts().catch(() => []);
         } catch (alertErr) {
@@ -169,7 +180,7 @@ export default function Dashboard() {
   }, [isLocked, userRole, showProfileForm, user?.business_profile, formData]);
 
   const handleProfileSubmit = async (e) => {
-    e.preventDefault();
+    e?.preventDefault();
     setIsSubmittingProfile(true);
     try {
       if (updateUserProfile) {
@@ -184,7 +195,6 @@ export default function Dashboard() {
     }
   };
 
-  // Clear unread notification badges from client state and database
   const handleAcknowledgeCorpusAlerts = async (corpusName) => {
     const alertIdsToClear = unreadAlerts
       .filter((a) => a.corpus.toLowerCase() === corpusName.toLowerCase())
@@ -215,16 +225,37 @@ export default function Dashboard() {
 
   const checkHasActiveAlert = (corpusName) => unreadAlerts.some((a) => a.corpus.toLowerCase() === corpusName.toLowerCase());
 
+  // Business types list
+  const CONSTITUTIONS = [
+    { id: "Private Limited", label: "Private Limited", desc: "Companies Act 2013, MCA Filings & Board Audits", icon: Building2 },
+    { id: "LLP", label: "Limited Liability (LLP)", desc: "LLP Act 2008, Form 11 & Annual Partners Filing", icon: Briefcase },
+    { id: "Partnership", label: "Partnership Firm", desc: "Partnership Act 1932, State Registrar & Tax Matrix", icon: Sliders },
+    { id: "Proprietorship", label: "Sole Proprietorship", desc: "Individual MSME Registration & Direct Compliance", icon: ShieldCheck }
+  ];
+
+  // Industry sectors
+  const INDUSTRIES = [
+    "Fintech", "SaaS / Tech Services", "Manufacturing", "E-commerce", "Healthcare & Pharma", "Logistics & Supply Chain"
+  ];
+
+  // Turnover tiers
+  const TURNOVER_TIERS = [
+    { id: "Under ₹20 Lakhs", label: "Under ₹20 Lakhs", note: "Below standard GST threshold" },
+    { id: "₹20 Lakhs - ₹1Cr", label: "₹20 Lakhs - ₹1Cr", note: "Mandatory GST in all states" },
+    { id: "₹1Cr - ₹5Cr", label: "₹1Cr - ₹5Cr", note: "Tax Audit & Regular Return Matrix" },
+    { id: "Above ₹5Cr", label: "Above ₹5Cr", note: "Comprehensive Corporate Governance" }
+  ];
+
   if (error) {
     return (
-      <div className="min-h-screen bg-[#030712] text-slate-200 flex flex-col items-center justify-center p-4">
-        <div className="p-6 bg-rose-950/30 backdrop-blur-md border border-rose-500/30 rounded-2xl max-w-md w-full shadow-[0_0_30px_rgba(225,29,72,0.15)] text-center">
-          <Server className="w-12 h-12 text-rose-500 mx-auto mb-4 animate-pulse" />
-          <h3 className="text-lg font-bold text-slate-100 mb-2">Vector Sync Failure</h3>
-          <p className="text-rose-400/80 text-sm mb-6">{error}</p>
+      <div className="min-h-screen w-full bg-[#030712] text-slate-200 flex flex-col items-center justify-center p-6">
+        <div className="p-8 bg-rose-950/30 backdrop-blur-xl border border-rose-500/30 rounded-3xl max-w-md w-full shadow-[0_0_50px_rgba(225,29,72,0.2)] text-center">
+          <Server className="w-12 h-12 text-rose-400 mx-auto mb-4 animate-pulse" />
+          <h3 className="text-xl font-black text-white mb-2">Vector Sync Failure</h3>
+          <p className="text-rose-300/80 text-xs mb-6 leading-relaxed">{error}</p>
           <button 
             onClick={() => window.location.reload()}
-            className="w-full py-3 bg-rose-600/20 hover:bg-rose-600/40 border border-rose-500/50 text-rose-100 rounded-xl text-sm font-semibold transition-all shadow-[0_0_15px_rgba(225,29,72,0.2)]"
+            className="w-full py-3.5 bg-rose-600 hover:bg-rose-500 text-white rounded-2xl text-xs font-bold transition-all shadow-[0_0_20px_rgba(225,29,72,0.4)]"
           >
             Reinitialize Connection
           </button>
@@ -234,252 +265,529 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-[#030712] text-slate-200 font-sans p-4 md:p-8 flex flex-col items-center antialiased relative overflow-hidden">
+    <div className="min-h-screen w-full bg-[#030712] text-slate-200 font-sans px-6 md:px-10 lg:px-16 py-8 flex flex-col antialiased relative overflow-x-hidden">
       
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-600/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-600/10 rounded-full blur-[120px] pointer-events-none" />
+      {/* ── Ambient Background Glows ── */}
+      <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none -z-10 animate-pulse-glow" />
+      <div className="absolute top-1/3 right-10 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[160px] pointer-events-none -z-10" />
+      <div className="absolute bottom-10 left-10 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[140px] pointer-events-none -z-10" />
 
-      {/* Day 43 Freemium Lock Overlay Banner View Layout */}
+      {/* Freemium Lock Overlay Banner */}
       {isLocked && !showProfileForm && (
-        <div className="absolute inset-x-0 bottom-0 top-[120px] z-40 bg-slate-950/70 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center">
-          <div className="max-w-md p-8 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl space-y-4">
-            <Zap className="w-12 h-12 text-indigo-400 mx-auto animate-bounce" />
-            <h3 className="text-xl font-extrabold text-white tracking-tight">RegIQ Pro Feature Locked</h3>
-            <p className="text-sm text-slate-400">
-              Interactive scorecards, statutory compliance calendars, and custom document blending RAG vectors are exclusively available to premium subscribers.
+        <div className="absolute inset-x-0 bottom-0 top-[140px] z-40 bg-slate-950/75 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center">
+          <div className="max-w-lg p-8 bg-slate-900/90 border border-slate-700/80 rounded-3xl shadow-2xl space-y-5">
+            <div className="w-14 h-14 rounded-2xl bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center mx-auto text-indigo-400">
+              <Zap className="w-7 h-7 animate-bounce" />
+            </div>
+            <h3 className="text-2xl font-black text-white tracking-tight">RegIQ Pro Matrix Locked</h3>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Interactive risk scorecards, automated statutory filing reminders, and custom document blending RAG vectors are exclusively enabled for Pro & Enterprise members.
             </p>
             <button
-              onClick={() => navigate('/settings')}
-              className="inline-flex items-center justify-center bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm px-6 py-3 rounded-xl transition-all shadow-lg shadow-indigo-600/30"
+              onClick={() => navigate('/pricing')}
+              className="inline-flex items-center justify-center bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 hover:from-cyan-400 hover:via-indigo-500 hover:to-purple-500 text-white font-bold text-xs px-8 py-3.5 rounded-2xl transition-all shadow-[0_0_25px_rgba(56,189,248,0.4)]"
             >
-              Unlock Features (₹499/mo)
+              Unlock Full Access (₹499/mo)
             </button>
           </div>
         </div>
       )}
 
-      <div className="w-full max-w-7xl flex flex-col gap-6 md:gap-8 relative z-10">
+      {/* ── Main Full-Width Content Canvas ── */}
+      <div className="w-full flex flex-col gap-8 relative z-10">
         
-        {/* Welcome Header */}
-        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-2xl">
-          <div>
-            <div className="flex items-center gap-3 mb-1">
-              <Terminal className="w-5 h-5 text-cyan-400" />
-              <span className="text-xs font-mono text-cyan-400/80 tracking-widest uppercase">System Online</span>
+        {/* ── Welcome Header Bar ── */}
+        <header className="w-full bg-slate-900/40 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 lg:p-8 shadow-2xl flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-bl from-cyan-500/10 via-indigo-500/5 to-transparent rounded-full blur-2xl pointer-events-none" />
+          
+          <div className="space-y-2">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/50 border border-cyan-500/30 text-cyan-400 text-[11px] font-mono font-semibold">
+                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
+                SYSTEM ONLINE
+              </div>
+              <span className="text-xs text-slate-500 font-mono">|</span>
+              <span className="text-[11px] text-slate-400 font-mono">5 Corpora Monitored</span>
+              <span className="text-xs text-slate-500 font-mono">|</span>
+              <span className="text-[11px] text-indigo-400 font-mono font-semibold">FastAPI + LangGraph v1.2</span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
-              Welcome back, <span className="bg-gradient-to-r from-cyan-400 to-indigo-400 bg-clip-text text-transparent">{user?.name || 'Sahil'}</span>
+
+            <h1 className="text-3xl lg:text-4xl font-black tracking-tight text-white">
+              Welcome back, <span className="bg-gradient-to-r from-cyan-400 via-sky-300 to-indigo-400 bg-clip-text text-transparent">{user?.name || 'Sahil'}</span>
             </h1>
-            <p className="text-sm text-slate-400 mt-1">
-              RegIQ RAG Engine active. Monitoring 5 regulatory corpora.
+
+            <p className="text-xs text-slate-400 max-w-2xl leading-relaxed">
+              RegIQ Continuous Compliance Matrix. Active real-time RAG intelligence spanning RBI, SEBI, MCA, GST, and FEMA.
             </p>
           </div>
           
-          {!showProfileForm && (
+          {/* Header Action Buttons */}
+          <div className="flex flex-wrap items-center gap-3">
             <button 
-              onClick={() => navigate('/chat')}
-              className="group flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white px-6 py-3 rounded-xl font-semibold shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all hover:shadow-[0_0_30px_rgba(6,182,212,0.5)]"
+              onClick={() => navigate('/explorer')}
+              className="px-5 py-3 rounded-2xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 hover:border-cyan-500/50 text-slate-200 text-xs font-bold transition-all shadow-lg flex items-center gap-2 group"
             >
-              <Zap className="w-4 h-4" />
-              New RAG Query
-              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <Share2 className="w-4 h-4 text-cyan-400 group-hover:rotate-45 transition-transform" />
+              <span>Citation Explorer</span>
             </button>
-          )}
+
+            {!showProfileForm ? (
+              <>
+                <button
+                  onClick={() => setShowProfileForm(true)}
+                  className="px-5 py-3 rounded-2xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 text-slate-300 text-xs font-bold transition-all flex items-center gap-2"
+                >
+                  <Sliders className="w-4 h-4 text-indigo-400" />
+                  <span>Edit Parameters</span>
+                </button>
+
+                <button 
+                  onClick={() => navigate('/chat')}
+                  className="group flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 hover:from-cyan-400 hover:via-indigo-500 hover:to-purple-500 text-white px-6 py-3 rounded-2xl text-xs font-bold shadow-[0_0_25px_rgba(56,189,248,0.35)] transition-all transform hover:-translate-y-0.5 active:scale-95"
+                >
+                  <Sparkles className="w-4 h-4 text-cyan-200 animate-spin" style={{ animationDuration: '4s' }} />
+                  <span>New RAG Query</span>
+                  <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </button>
+              </>
+            ) : (
+              <button 
+                onClick={() => navigate('/chat')}
+                className="group flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 hover:from-cyan-400 hover:via-indigo-500 hover:to-purple-500 text-white px-6 py-3 rounded-2xl text-xs font-bold shadow-[0_0_25px_rgba(56,189,248,0.35)] transition-all"
+              >
+                <Zap className="w-4 h-4" />
+                <span>Launch Assistant</span>
+              </button>
+            )}
+          </div>
         </header>
 
         {/* Global Pipeline Alert Notification Header Banner */}
         {unreadAlerts.length > 0 && !showProfileForm && (
-          <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 backdrop-blur-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-[0_0_20px_rgba(245,158,11,0.05)]">
+          <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 backdrop-blur-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-[0_0_20px_rgba(245,158,11,0.08)]">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30 animate-pulse">
+              <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30 animate-pulse">
                 <Bell className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-slate-100">Regulatory Notifications Triggered</h4>
+                <h4 className="text-sm font-bold text-slate-100">Statutory Regulatory Updates Triggered</h4>
                 <p className="text-xs text-amber-200/80 mt-0.5">
-                  The weekly ingestion cron has caught structural regulation changes in <strong>{new Set(unreadAlerts.map(a => a.corpus.toUpperCase())).size}</strong> tracked namespaces.
+                  Automated scraping cron has flagged updates in <strong>{new Set(unreadAlerts.map(a => a.corpus.toUpperCase())).size}</strong> monitored corpora.
                 </p>
               </div>
             </div>
+            <button 
+              onClick={() => navigate('/chat', { state: { initialQuery: 'Summarize the latest regulatory notifications and compliance changes across GST, RBI, and MCA.' } })}
+              className="text-xs font-bold text-amber-300 bg-amber-950/60 hover:bg-amber-900/60 border border-amber-500/30 px-4 py-2 rounded-xl transition-all"
+            >
+              Analyze Changes
+            </button>
           </div>
         )}
 
-        {/* Onboarding Profile Form Block */}
+        {/* ── Onboarding / Corporate Parameters Configuration Hub ── */}
         {showProfileForm ? (
-          <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 md:p-8 shadow-xl max-w-2xl mx-auto w-full">
-            <div className="flex items-center gap-3 mb-6">
-              <Briefcase className="w-6 h-6 text-indigo-400" />
-              <h2 className="text-xl font-bold text-white">Configure Corporate Parameters</h2>
+          <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            {/* Left Column: Scope & Jurisdictional Radar */}
+            <div className="lg:col-span-5 flex flex-col gap-6">
+              <div className="bg-slate-900/40 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 lg:p-8 shadow-2xl flex flex-col justify-between h-full space-y-6">
+                <div>
+                  <div className="flex items-center gap-2.5 mb-2">
+                    <Compass className="w-5 h-5 text-cyan-400" />
+                    <span className="text-xs font-mono font-bold tracking-widest text-cyan-400 uppercase">
+                      Corporate Parameterization
+                    </span>
+                  </div>
+                  <h2 className="text-2xl font-black text-white tracking-tight">
+                    Compliance Radar & Jurisdictional Scope
+                  </h2>
+                  <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                    RegIQ customizes your RAG retrieval, threshold alerts, and risk scorecard based on your corporate constitution, operational scale, and cross-border footprint.
+                  </p>
+                </div>
+
+                {/* Regulatory Authorities Active Matrix */}
+                <div className="space-y-3">
+                  <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider font-mono">
+                    Monitored Statutory Bodies
+                  </div>
+                  
+                  {[
+                    { code: "RBI", name: "Reserve Bank of India", desc: "Banking regulations, NBFC norms & lending caps", active: true, color: "text-sky-400 border-sky-500/30 bg-sky-500/10" },
+                    { code: "MCA", name: "Ministry of Corporate Affairs", desc: "Companies Act 2013, LLP rules, Director KYC", active: formData.business_type === "Private Limited" || formData.business_type === "LLP", color: "text-amber-400 border-amber-500/30 bg-amber-500/10" },
+                    { code: "GST", name: "Goods & Services Tax Network", desc: "Monthly outward GSTR-1, GSTR-3B & Invoicing", active: formData.gst_registered === "Yes", color: "text-emerald-400 border-emerald-500/30 bg-emerald-500/10" },
+                    { code: "SEBI", name: "Securities & Exchange Board", desc: "Fundraising, venture capital & securities laws", active: formData.industry === "Fintech" || formData.turnover_range === "Above ₹5Cr", color: "text-purple-400 border-purple-500/30 bg-purple-500/10" },
+                    { code: "FEMA", name: "Foreign Exchange Management", desc: "Cross-border capital inflows, Form FC-GPR & ECBs", active: formData.has_foreign_funding === "Yes", color: "text-pink-400 border-pink-500/30 bg-pink-500/10" }
+                  ].map((auth) => (
+                    <div 
+                      key={auth.code}
+                      className={`p-3.5 rounded-2xl border transition-all duration-300 flex items-start justify-between gap-3 ${
+                        auth.active 
+                          ? `${auth.color} shadow-[0_0_20px_rgba(0,0,0,0.4)]`
+                          : 'border-slate-800/60 bg-slate-950/40 opacity-40'
+                      }`}
+                    >
+                      <div className="space-y-0.5">
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono font-bold text-xs">{auth.code}</span>
+                          <span className="text-[11px] text-slate-300 font-medium">— {auth.name}</span>
+                        </div>
+                        <p className="text-[10px] text-slate-400">{auth.desc}</p>
+                      </div>
+                      <span className={`text-[10px] font-mono px-2 py-0.5 rounded-md font-bold uppercase ${auth.active ? 'bg-white/10 text-white' : 'text-slate-600'}`}>
+                        {auth.active ? 'Active Scope' : 'Standby'}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="p-4 rounded-2xl bg-cyan-950/30 border border-cyan-500/20 text-xs text-slate-300 flex items-center gap-3">
+                  <ShieldCheck className="w-5 h-5 text-cyan-400 shrink-0" />
+                  <span>All inputs remain encrypted and isolated within your tenant workspace.</span>
+                </div>
+              </div>
             </div>
-            <form onSubmit={handleProfileSubmit} className="space-y-5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-mono text-slate-400 uppercase tracking-wider mb-2">Business Constitution</label>
-                  <select 
-                    value={formData.business_type} 
-                    onChange={e => setFormData({...formData, business_type: e.target.value})}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-200 focus:border-indigo-500 outline-none transition-colors"
-                  >
-                    <option>Private Limited</option>
-                    <option>LLP</option>
-                    <option>Partnership</option>
-                    <option>Proprietorship</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-mono text-slate-400 uppercase tracking-wider mb-2">Industry Sector</label>
-                  <select 
-                    value={formData.industry} 
-                    onChange={e => setFormData({...formData, industry: e.target.value})}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-200 focus:border-indigo-500 outline-none transition-colors"
-                  >
-                    <option>Fintech</option>
-                    <option>SaaS / Tech Services</option>
-                    <option>Manufacturing</option>
-                    <option>E-commerce</option>
-                  </select>
-                </div>
-              </div>
 
-              <div>
-                <label className="block text-xs font-mono text-slate-400 uppercase tracking-wider mb-2">Annual Aggregate Turnover</label>
-                <select 
-                  value={formData.turnover_range} 
-                  onChange={e => setFormData({...formData, turnover_range: e.target.value})}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-slate-200 focus:border-indigo-500 outline-none transition-colors"
-                >
-                  <option>Under ₹20 Lakhs</option>
-                  <option>₹20 Lakhs - ₹1Cr</option>
-                  <option>₹1Cr - ₹5Cr</option>
-                  <option>Above ₹5Cr</option>
-                </select>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                <div className="flex items-center justify-between p-4 bg-slate-950/50 border border-slate-800 rounded-xl">
-                  <span className="text-sm text-slate-300">Registered for GST?</span>
-                  <select 
-                    value={formData.gst_registered} 
-                    onChange={e => setFormData({...formData, gst_registered: e.target.value})}
-                    className="bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-xs text-white"
-                  >
-                    <option>Yes</option>
-                    <option>No</option>
-                  </select>
+            {/* Right Column: Parameter Configuration Form */}
+            <div className="lg:col-span-7">
+              <div className="bg-slate-900/40 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 lg:p-8 shadow-2xl relative overflow-hidden">
+                <div className="flex items-center justify-between pb-6 border-b border-slate-800/80">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+                      <Briefcase className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-black text-white">Configure Corporate Parameters</h2>
+                      <p className="text-xs text-slate-400">Update company structure to generate tailored audit scorecards.</p>
+                    </div>
+                  </div>
+                  {user?.business_profile && (
+                    <button
+                      onClick={() => setShowProfileForm(false)}
+                      className="text-xs text-slate-400 hover:text-white transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  )}
                 </div>
-                <div className="flex items-center justify-between p-4 bg-slate-950/50 border border-slate-800 rounded-xl">
-                  <span className="text-sm text-slate-300">Foreign Funding (FDI)?</span>
-                  <select 
-                    value={formData.has_foreign_funding} 
-                    onChange={e => setFormData({...formData, has_foreign_funding: e.target.value})}
-                    className="bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-xs text-white"
-                  >
-                    <option>No</option>
-                    <option>Yes</option>
-                  </select>
-                </div>
-              </div>
 
-              <button
-                type="submit"
-                disabled={isSubmittingProfile}
-                className="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 text-white font-semibold py-3.5 rounded-xl transition-all shadow-lg shadow-indigo-600/20 hover:brightness-110 disabled:opacity-50 mt-4"
-              >
-                {isSubmittingProfile ? "Generating Audit Context Matrix..." : "Generate Compliance Scorecard"}
-              </button>
-            </form>
+                <form onSubmit={handleProfileSubmit} className="space-y-6 pt-6 text-xs">
+                  
+                  {/* 1. Business Constitution */}
+                  <div className="space-y-2.5">
+                    <label className="block text-[11px] font-mono text-slate-400 uppercase tracking-wider font-bold">
+                      1. Business Constitution Structure
+                    </label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {CONSTITUTIONS.map((c) => {
+                        const Icon = c.icon;
+                        const isSelected = formData.business_type === c.id;
+                        return (
+                          <div
+                            key={c.id}
+                            onClick={() => setFormData({ ...formData, business_type: c.id })}
+                            className={`p-4 rounded-2xl border cursor-pointer transition-all duration-200 flex items-start gap-3 ${
+                              isSelected
+                                ? 'bg-indigo-950/40 border-indigo-500/60 shadow-[0_0_20px_rgba(99,102,241,0.2)] text-white'
+                                : 'bg-slate-950/60 border-slate-800 hover:border-slate-700 text-slate-300'
+                            }`}
+                          >
+                            <div className={`p-2 rounded-xl ${isSelected ? 'bg-indigo-500 text-white' : 'bg-slate-900 text-slate-400'}`}>
+                              <Icon className="w-4 h-4" />
+                            </div>
+                            <div className="space-y-1">
+                              <div className="font-bold text-xs">{c.label}</div>
+                              <p className="text-[10px] text-slate-400 leading-snug">{c.desc}</p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* 2. Industry Sector */}
+                  <div className="space-y-2.5">
+                    <label className="block text-[11px] font-mono text-slate-400 uppercase tracking-wider font-bold">
+                      2. Primary Industry & Operational Domain
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                      {INDUSTRIES.map((ind) => {
+                        const isSelected = formData.industry === ind;
+                        return (
+                          <button
+                            type="button"
+                            key={ind}
+                            onClick={() => setFormData({ ...formData, industry: ind })}
+                            className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all border ${
+                              isSelected
+                                ? 'bg-cyan-950/50 border-cyan-500/60 text-cyan-300 shadow-[0_0_15px_rgba(56,189,248,0.2)]'
+                                : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                            }`}
+                          >
+                            {ind}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* 3. Turnover Range */}
+                  <div className="space-y-2.5">
+                    <label className="block text-[11px] font-mono text-slate-400 uppercase tracking-wider font-bold">
+                      3. Annual Aggregate Turnover (Fiscal Year)
+                    </label>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                      {TURNOVER_TIERS.map((tier) => {
+                        const isSelected = formData.turnover_range === tier.id;
+                        return (
+                          <div
+                            key={tier.id}
+                            onClick={() => setFormData({ ...formData, turnover_range: tier.id })}
+                            className={`p-3 rounded-2xl border cursor-pointer text-center transition-all ${
+                              isSelected
+                                ? 'bg-amber-950/40 border-amber-500/60 text-white shadow-[0_0_15px_rgba(245,158,11,0.2)]'
+                                : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                            }`}
+                          >
+                            <div className="font-bold text-xs">{tier.label}</div>
+                            <p className="text-[9px] text-slate-500 mt-1">{tier.note}</p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* 4. Binary Toggles: GST & FDI */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                    
+                    {/* GST Registration */}
+                    <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
+                      <div>
+                        <div className="font-bold text-slate-200">Registered for GST?</div>
+                        <div className="text-[10px] text-slate-500">Activates CBIC monthly compliance</div>
+                      </div>
+                      <div className="flex bg-slate-900 rounded-xl p-1 border border-slate-800">
+                        {["Yes", "No"].map((v) => (
+                          <button
+                            type="button"
+                            key={v}
+                            onClick={() => setFormData({ ...formData, gst_registered: v })}
+                            className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                              formData.gst_registered === v
+                                ? 'bg-emerald-500 text-slate-950 shadow-md'
+                                : 'text-slate-400 hover:text-white'
+                            }`}
+                          >
+                            {v}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* FDI Foreign Funding */}
+                    <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
+                      <div>
+                        <div className="font-bold text-slate-200">Foreign Funding (FDI)?</div>
+                        <div className="text-[10px] text-slate-500">Triggers FEMA & FC-GPR tracking</div>
+                      </div>
+                      <div className="flex bg-slate-900 rounded-xl p-1 border border-slate-800">
+                        {["Yes", "No"].map((v) => (
+                          <button
+                            type="button"
+                            key={v}
+                            onClick={() => setFormData({ ...formData, has_foreign_funding: v })}
+                            className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+                              formData.has_foreign_funding === v
+                                ? 'bg-pink-500 text-white shadow-md'
+                                : 'text-slate-400 hover:text-white'
+                            }`}
+                          >
+                            {v}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                  </div>
+
+                  {/* Submit Button with Shimmer & Glow */}
+                  <div className="pt-2">
+                    <button
+                      type="submit"
+                      disabled={isSubmittingProfile}
+                      className="w-full bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 hover:from-cyan-400 hover:via-indigo-500 hover:to-purple-500 text-white font-bold py-4 rounded-2xl transition-all shadow-[0_0_30px_rgba(99,102,241,0.35)] hover:shadow-[0_0_40px_rgba(99,102,241,0.55)] disabled:opacity-50 flex items-center justify-center gap-2 text-sm tracking-wide"
+                    >
+                      {isSubmittingProfile ? (
+                        <>
+                          <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <span>Generating Compliance Scorecard Matrix...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-5 h-5 text-cyan-200" />
+                          <span>Generate Compliance Scorecard & Matrix</span>
+                          <ArrowUpRight className="w-5 h-5 opacity-80" />
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
           </div>
         ) : isLoading ? (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 space-y-6">
+          /* Loading Skeletons Full Width */
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full">
+            <div className="lg:col-span-8 space-y-6">
               <SkeletonCard />
               <SkeletonCard />
             </div>
-            <div className="space-y-6">
+            <div className="lg:col-span-4 space-y-6">
               <SkeletonCard />
               <SkeletonCard />
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 space-y-6 flex flex-col gap-6">
+          /* ── Full Dashboard View ── */
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full">
+            
+            {/* Left Column (Main Analytics & Calendar) */}
+            <div className="lg:col-span-8 flex flex-col gap-8">
+              
+              {/* Risk Scorecard */}
               <Suspense fallback={<SkeletonCard />}>
-                <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl shadow-xl overflow-hidden relative">
+                <div className="bg-slate-900/40 backdrop-blur-2xl border border-slate-800/80 rounded-3xl shadow-2xl overflow-hidden relative">
                   <RiskScorecard data={scorecard} onMetricClick={handleOpenDrillDown} />
                 </div>
               </Suspense>
 
               {/* Dynamic Corpus Tracker Badging Panels */}
-              <div className="grid grid-cols-2 gap-4">
-                {['GST', 'RBI', 'SEBI', 'MCA'].map((corp) => {
-                  const hasAlert = checkHasActiveAlert(corp);
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[
+                  { code: 'GST', label: 'Goods & Services', color: 'border-emerald-500/30 text-emerald-400' },
+                  { code: 'RBI', label: 'Reserve Bank', color: 'border-sky-500/30 text-sky-400' },
+                  { code: 'SEBI', label: 'Securities Board', color: 'border-purple-500/30 text-purple-400' },
+                  { code: 'MCA', label: 'Corporate Affairs', color: 'border-amber-500/30 text-amber-400' }
+                ].map((corp) => {
+                  const hasAlert = checkHasActiveAlert(corp.code);
                   return (
                     <div 
-                      key={corp}
-                      className={`p-5 rounded-2xl border transition-all duration-300 bg-slate-900/30 backdrop-blur-xl flex flex-col justify-between ${
+                      key={corp.code}
+                      className={`p-5 rounded-3xl border transition-all duration-300 bg-slate-900/40 backdrop-blur-xl flex flex-col justify-between ${
                         hasAlert 
-                          ? 'border-amber-500/40 shadow-[0_0_15px_rgba(245,158,11,0.06)]' 
-                          : 'border-slate-800/80 hover:border-slate-700/50'
+                          ? 'border-amber-500/50 shadow-[0_0_20px_rgba(245,158,11,0.1)]' 
+                          : 'border-slate-800/80 hover:border-slate-700/80'
                       }`}
                     >
                       <div className="flex items-start justify-between w-full">
-                        <span className="text-xs font-mono font-bold tracking-wider text-slate-400">{corp} STATUS</span>
+                        <span className="text-xs font-mono font-bold tracking-wider text-slate-300">{corp.code}</span>
                         {hasAlert && (
                           <button
                             disabled={isClearingAlert}
-                            onClick={() => handleAcknowledgeCorpusAlerts(corp)}
-                            className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500 hover:bg-amber-400 text-slate-950 transition-colors disabled:opacity-40"
+                            onClick={() => handleAcknowledgeCorpusAlerts(corp.code)}
+                            className="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold transition-colors disabled:opacity-40"
                           >
                             Dismiss
                           </button>
                         )}
                       </div>
-                      <div className="mt-4 flex items-center gap-2">
-                        <div className={`h-2 w-2 rounded-full ${hasAlert ? 'bg-amber-400 animate-pulse' : 'bg-emerald-400'}`} />
-                        <span className={`text-sm font-bold ${hasAlert ? 'text-amber-300' : 'text-slate-200'}`}>
-                          {hasAlert ? 'Regulatory Action Update' : 'Synchronized'}
-                        </span>
+                      <div className="mt-4">
+                        <div className="text-[11px] text-slate-400">{corp.label}</div>
+                        <div className="mt-1 flex items-center gap-2">
+                          <div className={`h-2 w-2 rounded-full ${hasAlert ? 'bg-amber-400 animate-pulse' : 'bg-emerald-400'}`} />
+                          <span className={`text-xs font-bold ${hasAlert ? 'text-amber-300' : 'text-slate-200'}`}>
+                            {hasAlert ? 'Action Update' : 'Synchronized'}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   );
                 })}
               </div>
 
-              <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl shadow-xl overflow-hidden">
+              {/* Compliance Calendar */}
+              <div className="bg-slate-900/40 backdrop-blur-2xl border border-slate-800/80 rounded-3xl shadow-2xl overflow-hidden">
                 <ComplianceCalendar deadlines={deadlines} onDeadlineClick={handleAnalyzeDeadline} />
               </div>
             </div>
 
-            <div className="flex flex-col gap-6">
-              <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 shadow-xl relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-500/10 rounded-bl-full blur-xl group-hover:bg-cyan-500/20 transition-colors" />
+            {/* Right Column (Telemetry, Quick Launch & Threads) */}
+            <div className="lg:col-span-4 flex flex-col gap-6">
+              
+              {/* Quick Launch Card */}
+              <div className="bg-gradient-to-br from-slate-900/60 via-slate-900/30 to-indigo-950/20 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 shadow-2xl relative overflow-hidden space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-cyan-400" />
+                    <h3 className="text-sm font-bold text-white">Compliance Copilot</h3>
+                  </div>
+                  <span className="text-[10px] font-mono text-cyan-400 bg-cyan-950/40 border border-cyan-500/30 px-2 py-0.5 rounded-full">
+                    GPT-OSS 120B
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Ask specific questions about thresholds, filing dates, and penalties. Cites official circular numbers.
+                </p>
+                <div className="space-y-2">
+                  {[
+                    "What are the mandatory MCA annual returns for my LLP?",
+                    "What is the GST threshold exemption for services?",
+                    "Do I need RBI approval for FDI in Fintech?"
+                  ].map((samplePrompt, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => navigate('/chat', { state: { initialQuery: samplePrompt } })}
+                      className="w-full text-left p-3 rounded-2xl bg-slate-950/50 hover:bg-slate-800/80 border border-slate-800 hover:border-cyan-500/40 text-[11px] text-slate-300 hover:text-cyan-300 transition-all flex items-center justify-between group"
+                    >
+                      <span className="truncate pr-2">{samplePrompt}</span>
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-cyan-400 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* API Telemetry Dial */}
+              <div className="bg-slate-900/40 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 shadow-2xl relative overflow-hidden group">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-sm font-bold text-slate-300 flex items-center gap-2">
                     <Activity className="w-4 h-4 text-cyan-400" />
-                    API Telemetry
+                    Query Telemetry
                   </h3>
-                  <span className="text-xs font-mono bg-slate-800 text-cyan-400 px-2 py-1 rounded border border-slate-700">
-                    {userRole.toUpperCase()} TIER
+                  <span className="text-[10px] font-mono bg-cyan-950/50 text-cyan-400 px-2.5 py-1 rounded-lg border border-cyan-500/30 font-bold uppercase">
+                    {userRole} Tier
                   </span>
                 </div>
                 
                 <div className="mb-2 flex justify-between items-end">
-                  <span className="text-3xl font-bold text-white">{queryUsage.used}</span>
-                  <span className="text-sm text-slate-400 mb-1">/ {queryUsage.max} queries</span>
+                  <span className="text-3xl font-black text-white font-mono">{queryUsage.used}</span>
+                  <span className="text-xs text-slate-400 mb-1 font-mono">/ {queryUsage.max} daily limit</span>
                 </div>
                 
-                <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-2.5 w-full bg-slate-800/80 rounded-full overflow-hidden p-0.5">
                   <div 
-                    className={`h-full rounded-full shadow-[0_0_10px_rgba(6,182,212,0.8)] transition-all duration-1000 ${queryUsage.max && (queryUsage.used / queryUsage.max) * 100 > 80 ? 'bg-rose-500' : 'bg-cyan-400'}`} 
+                    className={`h-full rounded-full shadow-[0_0_12px_rgba(6,182,212,0.8)] transition-all duration-1000 ${
+                      queryUsage.max && (queryUsage.used / queryUsage.max) * 100 > 80 ? 'bg-rose-500' : 'bg-gradient-to-r from-cyan-400 to-indigo-500'
+                    }`} 
                     style={{ width: `${Math.min(((queryUsage.used / (queryUsage.max || 1)) * 100), 100)}%` }} 
                   />
                 </div>
               </div>
 
-              <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-700/50 rounded-2xl shadow-xl flex-1 flex flex-col overflow-hidden max-h-[450px]">
-                <div className="p-5 border-b border-slate-800 flex items-center gap-2">
-                  <MessageSquare className="w-4 h-4 text-indigo-400" />
-                  <h3 className="text-sm font-bold text-slate-300">Active Threads</h3>
+              {/* Active Audit Threads */}
+              <div className="bg-slate-900/40 backdrop-blur-2xl border border-slate-800/80 rounded-3xl shadow-2xl flex-1 flex flex-col overflow-hidden max-h-[420px]">
+                <div className="p-5 border-b border-slate-800/80 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <MessageSquare className="w-4 h-4 text-indigo-400" />
+                    <h3 className="text-sm font-bold text-slate-300">Active Audit Threads</h3>
+                  </div>
+                  <button 
+                    onClick={() => navigate('/chat')}
+                    className="text-[11px] text-cyan-400 hover:text-cyan-300 font-bold"
+                  >
+                    View All
+                  </button>
                 </div>
                 <div className="flex-1 divide-y divide-slate-800/50 overflow-y-auto custom-scrollbar">
                   {recentThreads.length === 0 ? (
@@ -491,21 +799,21 @@ export default function Dashboard() {
                       <div 
                         key={thread.id} 
                         onClick={() => navigate(`/chat?id=${thread.id}`)} 
-                        className="p-4 hover:bg-slate-800/50 cursor-pointer transition-colors group"
+                        className="p-4 hover:bg-slate-800/40 cursor-pointer transition-colors group"
                       >
                         <div className="flex justify-between items-center mb-1">
                           <div className="flex items-center gap-1.5 flex-wrap">
                             {(thread.corpus_tags && thread.corpus_tags.length > 0 ? thread.corpus_tags : [thread.corpus || 'RAG']).map((tag, i) => (
-                              <span key={i} className="text-[10px] font-mono text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-1.5 py-0.5 rounded uppercase">
+                              <span key={i} className="text-[9px] font-mono text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-1.5 py-0.5 rounded-md uppercase font-bold">
                                 {tag}
                               </span>
                             ))}
                           </div>
-                          <span className="text-xs text-slate-500">
+                          <span className="text-[10px] text-slate-500 font-mono">
                             {formatTimeAgo(thread.updated_at || thread.created_at || thread.date)}
                           </span>
                         </div>
-                        <p className="text-sm text-slate-300 group-hover:text-cyan-400 transition-colors line-clamp-2">
+                        <p className="text-xs text-slate-300 group-hover:text-cyan-400 transition-colors line-clamp-2 leading-relaxed">
                           {thread.title}
                         </p>
                       </div>
@@ -513,6 +821,7 @@ export default function Dashboard() {
                   )}
                 </div>
               </div>
+
             </div>
           </div>
         )}
@@ -520,13 +829,13 @@ export default function Dashboard() {
         {/* Drill-Down Modal */}
         {drillDownCategory && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-[#030712]/80 backdrop-blur-sm transition-opacity" onClick={() => setDrillDownCategory(null)} />
-            <div className="relative w-full max-w-xl bg-slate-900 border border-slate-700 shadow-[0_0_40px_rgba(0,0,0,0.5)] rounded-2xl p-6 overflow-hidden flex flex-col max-h-[85vh]">
+            <div className="absolute inset-0 bg-[#030712]/85 backdrop-blur-md transition-opacity" onClick={() => setDrillDownCategory(null)} />
+            <div className="relative w-full max-w-xl bg-slate-900/95 border border-slate-700/80 shadow-[0_0_60px_rgba(0,0,0,0.8)] rounded-3xl p-6 overflow-hidden flex flex-col max-h-[85vh]">
               <div className="flex justify-between items-center border-b border-slate-800 pb-4 mb-4">
                 <h3 className="text-sm font-bold text-cyan-400 tracking-wider flex items-center gap-2">
                   <Terminal className="w-4 h-4" /> {drillDownCategory} PARAMETERS AUDIT
                 </h3>
-                <button onClick={() => setDrillDownCategory(null)} className="text-slate-500 hover:text-rose-400 text-xs font-semibold focus:outline-none">
+                <button onClick={() => setDrillDownCategory(null)} className="text-slate-400 hover:text-rose-400 text-xs font-semibold focus:outline-none px-2 py-1 rounded-lg hover:bg-slate-800">
                   [ ESC ]
                 </button>
               </div>
@@ -535,9 +844,9 @@ export default function Dashboard() {
                   <p className="text-xs text-slate-500 font-mono text-center py-8">NO_VECTORS_INDEXED_FOR_BRANCH</p>
                 ) : (
                   drillDownChecks.map((check, idx) => (
-                    <div key={check.id || idx} className="p-4 rounded-xl bg-slate-950/50 border border-slate-800/80 hover:border-cyan-900/50 transition-colors">
+                    <div key={check.id || idx} className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800/80 hover:border-cyan-900/50 transition-colors">
                       <div className="flex items-start gap-3">
-                        <div className={`mt-1 h-2 w-2 rounded-full shrink-0 ${check.passed ? 'bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]' : 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]'}`} />
+                        <div className={`mt-1 h-2.5 w-2.5 rounded-full shrink-0 ${check.passed ? 'bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.8)]' : 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.8)]'}`} />
                         <div>
                           <h4 className="text-sm font-bold text-slate-200">{check.name || check.title || "Audit Compliance Check"}</h4>
                           <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">{check.description || check.desc || "No supplemental details logged."}</p>
