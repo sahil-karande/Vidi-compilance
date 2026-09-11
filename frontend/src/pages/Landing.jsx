@@ -6,7 +6,6 @@ import {
   Search, 
   Share2, 
   FileText, 
-  Bell, 
   Layers, 
   CheckCircle2, 
   Building2,
@@ -14,142 +13,137 @@ import {
   ExternalLink,
   ChevronRight,
   Database,
-  Lock,
   Cpu,
-  Terminal,
-  Activity
+  Activity,
+  Check,
+  Zap,
+  Sparkles
 } from 'lucide-react';
 
 export default function Landing() {
   const navigate = useNavigate();
+  const [billingCycle, setBillingCycle] = useState('monthly');
   const [activeTab, setActiveTab] = useState('query');
 
   return (
-    <div className="min-h-screen w-full bg-[#090d16] text-slate-200 font-sans flex flex-col antialiased selection:bg-indigo-500/20 selection:text-indigo-200">
+    <div className="min-h-screen w-full bg-[#0D0E12] text-slate-200 font-sans flex flex-col antialiased selection:bg-purple-500/20 selection:text-purple-200 overflow-x-hidden">
       
-      {/* ── Subtle Ambient Background ── */}
-      <div className="absolute top-0 inset-x-0 h-96 bg-gradient-to-b from-indigo-950/20 via-transparent to-transparent pointer-events-none -z-10" />
-      <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[1000px] h-[400px] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none -z-10" />
+      {/* ── Ambient Radial Background Glow (Exact NoteDeck style) ── */}
+      <div 
+        className="fixed inset-0 pointer-events-none -z-10"
+        style={{
+          background: 'radial-gradient(circle at 20% 15%, rgba(120, 80, 220, 0.12), transparent 55%), radial-gradient(circle at 80% 60%, rgba(100, 60, 200, 0.06), transparent 50%), #0D0E12'
+        }}
+      />
 
-      {/* ── Top Navigation Bar ── */}
-      <header className="w-full border-b border-slate-800/80 bg-[#090d16]/90 backdrop-blur-xl px-6 sm:px-12 lg:px-20 py-3.5 flex items-center justify-between sticky top-0 z-50">
+      {/* ── Top Navigation Bar (Exact NoteDeck style) ── */}
+      <header className="w-full border-b border-white/10 bg-[#0D0E12]/80 backdrop-blur-md px-6 sm:px-12 lg:px-20 py-4 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-10">
           <div 
             onClick={() => navigate('/')} 
-            className="flex items-center gap-3 cursor-pointer select-none"
+            className="flex items-center gap-2.5 cursor-pointer select-none group"
           >
-            <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-md">
+            <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-slate-950 font-black text-sm shadow-md transition-transform group-hover:scale-105">
               R
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-lg font-bold tracking-tight text-white">RegIQ</span>
-              <span className="text-[11px] text-slate-400 border border-slate-700/80 px-1.5 py-0.2 rounded font-mono">
-                Enterprise
-              </span>
-            </div>
+            <span className="text-xl font-bold tracking-tight text-white">RegIQ</span>
           </div>
 
-          <nav className="hidden md:flex items-center gap-8 text-xs font-medium text-slate-400">
-            <a href="#platform" className="hover:text-slate-200 transition-colors">Platform</a>
-            <a href="#corpora" className="hover:text-slate-200 transition-colors">Regulatory Coverage</a>
-            <a href="#architecture" className="hover:text-slate-200 transition-colors">Architecture</a>
-            <span onClick={() => navigate('/login')} className="hover:text-slate-200 cursor-pointer transition-colors">
-              Citation Graph
-            </span>
-            <span onClick={() => navigate('/login')} className="hover:text-slate-200 cursor-pointer transition-colors">
-              Pricing
-            </span>
+          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-400">
+            <a href="#features" className="hover:text-white transition-colors">Features</a>
+            <a href="#workflow" className="hover:text-white transition-colors">Workflow</a>
+            <a href="#corpora" className="hover:text-white transition-colors">Coverage</a>
+            <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
           </nav>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <button 
             onClick={() => navigate('/login')} 
-            className="text-xs font-medium text-slate-300 hover:text-white px-3 py-2 transition-colors"
+            className="text-sm font-medium text-slate-300 hover:text-white px-4 py-2 rounded-lg bg-slate-900 border border-white/10 hover:bg-slate-800 transition-all"
           >
             Sign In
           </button>
           <button 
             onClick={() => navigate('/login')} 
-            className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium transition-all shadow-sm flex items-center gap-1.5"
+            className="px-4 py-2 rounded-lg bg-white hover:bg-slate-200 text-slate-950 text-sm font-semibold transition-all shadow-sm flex items-center gap-1.5"
           >
             <span>Get Started</span>
-            <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
       </header>
 
-      {/* ── Main Hero Section ── */}
-      <main className="flex-1 w-full px-6 sm:px-12 lg:px-20 pt-16 pb-24 flex flex-col items-center text-center relative z-10 max-w-7xl mx-auto">
+      {/* ── Main Hero Section (Exact NoteDeck style) ── */}
+      <main className="flex-1 w-full px-6 sm:px-12 lg:px-20 pt-20 pb-28 flex flex-col items-center text-center relative z-10 max-w-6xl mx-auto">
         
-        {/* Release Pill */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-slate-300 text-xs font-medium mb-8 shadow-sm">
-          <span className="w-2 h-2 rounded-full bg-indigo-400" />
-          <span className="text-slate-400 font-normal">Indian Regulatory Intelligence</span>
+        {/* Release Tag Pill */}
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#181820] border border-white/10 text-slate-300 text-xs font-medium mb-8 shadow-sm">
+          <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+          <span className="text-slate-400 font-normal">Grounded Indian Legaltech</span>
           <span className="text-slate-600">•</span>
-          <span className="text-indigo-400 font-semibold">Grounded RAG Pipeline</span>
+          <span className="text-purple-300 font-semibold">Zero Hallucination RAG</span>
         </div>
 
-        {/* Hero Title */}
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white max-w-4xl leading-[1.15] mb-6">
-          Regulatory compliance and legal research for Indian businesses.
+        {/* Hero Title (NoteDeck typography) */}
+        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white max-w-4xl leading-[1.08] mb-6">
+          Indian compliance,<br />
+          now intelligent.
         </h1>
 
         {/* Hero Subtitle */}
         <p className="text-base sm:text-lg text-slate-400 max-w-2xl leading-relaxed mb-10">
-          Query official RBI master directions, SEBI circulars, GST notifications, and MCA filings in plain language. Every response is verified with clause-level citations.
+          RegIQ instantly transforms complex statutory circulars across GST, RBI, SEBI, and MCA into plain-language answers verified with clause-level citations.
         </p>
 
-        {/* Hero Action Buttons */}
-        <div className="flex flex-col sm:flex-row items-center gap-3.5 justify-center w-full max-w-md mb-16">
+        {/* Hero Action Buttons (NoteDeck styling: Dark Glass + Soft White) */}
+        <div className="flex flex-col sm:flex-row items-center gap-4 justify-center w-full max-w-md mb-20">
           <button 
             onClick={() => navigate('/login')} 
-            className="w-full sm:w-auto px-6 py-3 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition-all shadow-md flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-[#181820] hover:bg-[#20202c] border border-white/15 text-white font-semibold text-sm transition-all duration-300 shadow-lg hover:border-purple-500/40 hover:shadow-[0_0_25px_rgba(168,85,247,0.2)] hover:scale-[1.02] flex items-center justify-center gap-2"
           >
-            <span>Start Free Workspace</span>
-            <ArrowRight className="w-4 h-4" />
+            <span>Start Learning Smarter</span>
+            <ArrowRight className="w-4 h-4 text-purple-400" />
           </button>
 
           <button 
             onClick={() => navigate('/login')}
-            className="w-full sm:w-auto px-6 py-3 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 text-xs font-semibold transition-all flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-100 hover:bg-white text-slate-950 font-semibold text-sm transition-all duration-300 hover:scale-[1.02] shadow-sm flex items-center justify-center gap-2"
           >
-            <Share2 className="w-4 h-4 text-indigo-400" />
-            <span>View Citation Network</span>
+            <span>Try as Guest</span>
           </button>
         </div>
 
-        {/* ── Interactive Product Preview Window (Realistic SaaS Mockup) ── */}
-        <div className="w-full max-w-5xl rounded-2xl bg-slate-950 border border-slate-800 shadow-2xl overflow-hidden text-left mb-24">
+        {/* ── Interactive Product Preview Window (NoteDeck Dark Card Style) ── */}
+        <div className="w-full max-w-5xl rounded-2xl bg-[#13131A] border border-white/10 shadow-2xl overflow-hidden text-left mb-28">
           
           {/* Window Header */}
-          <div className="px-5 py-3 border-b border-slate-800/80 bg-slate-900/60 flex items-center justify-between">
+          <div className="px-5 py-3.5 border-b border-white/10 bg-[#0E0F14] flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-slate-700" />
-              <div className="w-3 h-3 rounded-full bg-slate-700" />
-              <div className="w-3 h-3 rounded-full bg-slate-700" />
-              <span className="text-[11px] font-mono text-slate-500 ml-2">app.regiq.in/chat</span>
+              <div className="w-2.5 h-2.5 rounded-full bg-slate-700" />
+              <div className="w-2.5 h-2.5 rounded-full bg-slate-700" />
+              <div className="w-2.5 h-2.5 rounded-full bg-slate-700" />
+              <span className="text-[11px] font-mono text-slate-400 ml-2">app.regiq.in/research</span>
             </div>
 
             {/* Interactive Preview Tabs */}
-            <div className="hidden sm:flex items-center gap-1 bg-slate-950/80 p-1 rounded-lg border border-slate-800 text-[11px]">
+            <div className="hidden sm:flex items-center gap-1 bg-[#181822] p-1 rounded-lg border border-white/10 text-xs">
               <button 
                 onClick={() => setActiveTab('query')}
-                className={`px-3 py-1 rounded-md transition-colors ${activeTab === 'query' ? 'bg-slate-800 text-white font-medium' : 'text-slate-400 hover:text-slate-200'}`}
+                className={`px-3 py-1 rounded-md transition-colors ${activeTab === 'query' ? 'bg-[#252535] text-white font-medium' : 'text-slate-400 hover:text-slate-200'}`}
               >
-                RAG Query Inspector
+                RAG Inspector
               </button>
               <button 
                 onClick={() => setActiveTab('citations')}
-                className={`px-3 py-1 rounded-md transition-colors ${activeTab === 'citations' ? 'bg-slate-800 text-white font-medium' : 'text-slate-400 hover:text-slate-200'}`}
+                className={`px-3 py-1 rounded-md transition-colors ${activeTab === 'citations' ? 'bg-[#252535] text-white font-medium' : 'text-slate-400 hover:text-slate-200'}`}
               >
                 Verified Citations (3)
               </button>
               <button 
                 onClick={() => setActiveTab('trace')}
-                className={`px-3 py-1 rounded-md transition-colors ${activeTab === 'trace' ? 'bg-slate-800 text-white font-medium' : 'text-slate-400 hover:text-slate-200'}`}
+                className={`px-3 py-1 rounded-md transition-colors ${activeTab === 'trace' ? 'bg-[#252535] text-white font-medium' : 'text-slate-400 hover:text-slate-200'}`}
               >
-                LangGraph Trace
+                LangGraph State
               </button>
             </div>
           </div>
@@ -159,27 +153,27 @@ export default function Landing() {
             
             {/* Simulated User Question */}
             <div className="flex items-start gap-3">
-              <div className="w-7 h-7 rounded-md bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-semibold text-slate-300 shrink-0">
+              <div className="w-7 h-7 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-semibold text-slate-300 shrink-0">
                 U
               </div>
-              <div className="bg-slate-900 border border-slate-800/80 rounded-xl px-4 py-2.5 max-w-xl text-xs text-slate-200">
+              <div className="bg-[#181820] border border-white/10 rounded-xl px-4 py-3 max-w-xl text-xs text-slate-200 leading-relaxed">
                 What is the threshold limit for mandatory GST registration for goods suppliers in Maharashtra, and what are the invoicing compliance requirements?
               </div>
             </div>
 
-            {/* Simulated RegIQ AI Response */}
+            {/* Simulated AI Response */}
             <div className="flex items-start gap-3">
-              <div className="w-7 h-7 rounded-md bg-indigo-600 flex items-center justify-center text-xs font-semibold text-white shrink-0">
+              <div className="w-7 h-7 rounded-lg bg-purple-600 flex items-center justify-center text-xs font-semibold text-white shrink-0 shadow-md">
                 R
               </div>
               <div className="space-y-4 flex-1">
-                <div className="bg-slate-900/50 border border-slate-800/80 rounded-xl p-5 space-y-3.5 text-xs leading-relaxed text-slate-300">
-                  <div className="flex items-center gap-2 pb-2 border-b border-slate-800/60">
+                <div className="bg-[#16161F] border border-white/10 rounded-xl p-5 space-y-3 text-xs leading-relaxed text-slate-300">
+                  <div className="flex items-center gap-2 pb-2 border-b border-white/5">
                     <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-500/30">
                       Grounded • 98.4% Confidence
                     </span>
-                    <span className="text-slate-500 text-[11px]">•</span>
-                    <span className="text-[11px] text-slate-400 font-mono">Corpus: GST (CBIC Portal)</span>
+                    <span className="text-slate-600">•</span>
+                    <span className="text-[11px] text-slate-400 font-mono">Corpus: GST (CBIC Master Portal)</span>
                   </div>
 
                   <p>
@@ -188,30 +182,30 @@ export default function Landing() {
 
                   <ul className="list-disc pl-5 space-y-1.5 text-slate-300">
                     <li>
-                      <strong>Threshold Limit:</strong> For businesses engaged exclusively in the intra-state supply of goods in Maharashtra (a normal category state), the aggregate turnover threshold for mandatory registration is <strong>₹40 Lakhs</strong> in a financial year.
+                      <strong>Threshold Limit:</strong> For businesses engaged exclusively in the intra-state supply of goods in Maharashtra (normal category state), the aggregate turnover threshold for mandatory registration is <strong>₹40 Lakhs</strong> in a financial year.
                     </li>
                     <li>
                       <strong>Service Providers:</strong> If your entity supplies taxable services or mixed supplies, the threshold remains <strong>₹20 Lakhs</strong>.
                     </li>
                     <li>
-                      <strong>E-Invoicing Applicability:</strong> If your aggregate annual turnover exceeds ₹5 Crores in any preceding fiscal year, generating e-invoices with an IRN (Invoice Reference Number) via the IRP portal is mandatory.
+                      <strong>E-Invoicing Applicability:</strong> If your aggregate annual turnover exceeds ₹5 Crores in any preceding fiscal year, generating e-invoices with an IRN (Invoice Reference Number) is mandatory.
                     </li>
                   </ul>
                 </div>
 
                 {/* Citation Cards Strip */}
                 <div className="flex flex-wrap gap-2.5 pt-1">
-                  <div className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-[11px] flex items-center gap-2 text-slate-300 hover:border-slate-700 transition-colors cursor-pointer">
+                  <div className="px-3 py-1.5 rounded-lg bg-[#181820] border border-white/10 text-[11px] flex items-center gap-2 text-slate-300 hover:border-white/20 transition-colors cursor-pointer">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                     <span>Notification No. 10/2019-CT</span>
                     <span className="text-slate-500 text-[10px] font-mono">p. 2</span>
                   </div>
-                  <div className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-[11px] flex items-center gap-2 text-slate-300 hover:border-slate-700 transition-colors cursor-pointer">
+                  <div className="px-3 py-1.5 rounded-lg bg-[#181820] border border-white/10 text-[11px] flex items-center gap-2 text-slate-300 hover:border-white/20 transition-colors cursor-pointer">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                     <span>CGST Act 2017, Sec 22</span>
                     <span className="text-slate-500 text-[10px] font-mono">cl. 1</span>
                   </div>
-                  <div className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-[11px] flex items-center gap-2 text-slate-300 hover:border-slate-700 transition-colors cursor-pointer">
+                  <div className="px-3 py-1.5 rounded-lg bg-[#181820] border border-white/10 text-[11px] flex items-center gap-2 text-slate-300 hover:border-white/20 transition-colors cursor-pointer">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                     <span>Circular No. 160/16/2021-GST</span>
                     <span className="text-slate-500 text-[10px] font-mono">p. 4</span>
@@ -223,12 +217,138 @@ export default function Landing() {
           </div>
         </div>
 
+        {/* ── Features Section (Exact NoteDeck style cards with hover lift) ── */}
+        <div id="features" className="w-full pt-12 pb-24 text-left space-y-12">
+          <div className="max-w-xl space-y-2">
+            <span className="text-xs font-mono font-semibold text-purple-400 uppercase tracking-wider">
+              Platform Features
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+              Instant AI answers, zero hallucination.
+            </h2>
+            <p className="text-sm text-slate-400">
+              From dense 60-page RBI master directions to weekly CBIC gazettes, our pipeline extracts the key clauses and builds your audit trail in seconds.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 hover:-translate-y-1 hover:border-white/20 transition-all duration-300 space-y-3 group">
+              <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-2">
+                <FileText className="w-5 h-5" />
+              </div>
+              <h3 className="text-base font-bold text-white">Clause-Level Citations</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Every generated statement links directly to official circular numbers, statutory clauses, gazette publication dates, and government portal URLs.
+              </p>
+            </div>
+
+            <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 hover:-translate-y-1 hover:border-white/20 transition-all duration-300 space-y-3 group">
+              <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-2">
+                <Share2 className="w-5 h-5" />
+              </div>
+              <h3 className="text-base font-bold text-white">Citation Graph Network</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Interactive D3 force-directed topological graph mapping 1,400+ regulatory circulars and cross-statutory citations across Indian financial jurisprudence.
+              </p>
+            </div>
+
+            <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 hover:-translate-y-1 hover:border-white/20 transition-all duration-300 space-y-3 group">
+              <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-2">
+                <Calendar className="w-5 h-5" />
+              </div>
+              <h3 className="text-base font-bold text-white">Filing Obligations Calendar</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Automated statutory deadlines for GSTR-1, GSTR-3B, MCA Form 11, and RBI FLA returns, complete with penalty clauses and one-click RAG analysis.
+              </p>
+            </div>
+
+            <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 hover:-translate-y-1 hover:border-white/20 transition-all duration-300 space-y-3 group">
+              <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-2">
+                <Cpu className="w-5 h-5" />
+              </div>
+              <h3 className="text-base font-bold text-white">LangGraph Routing</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Multi-corpus classification with automated conditional retry loops, ensuring cross-regulatory inquiries retrieve the highest-scoring candidate documents.
+              </p>
+            </div>
+
+            <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 hover:-translate-y-1 hover:border-white/20 transition-all duration-300 space-y-3 group">
+              <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-2">
+                <Building2 className="w-5 h-5" />
+              </div>
+              <h3 className="text-base font-bold text-white">Corporate Risk Scorecard</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Calculates real-time compliance health across 4 regulatory axes based on your corporate constitution, operational sector, and turnover.
+              </p>
+            </div>
+
+            <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 hover:-translate-y-1 hover:border-white/20 transition-all duration-300 space-y-3 group">
+              <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-2">
+                <Database className="w-5 h-5" />
+              </div>
+              <h3 className="text-base font-bold text-white">Private Document Ingestion</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Blend your internal company agreements, tax notices, and board resolutions with official statutory Indian regulatory databases.
+              </p>
+            </div>
+
+          </div>
+        </div>
+
+        {/* ── Workflow Section (Exact NoteDeck style: 1. Upload, 2. Generate, 3. Master) ── */}
+        <div id="workflow" className="w-full pt-10 pb-24 border-t border-white/10 text-left space-y-12">
+          <div className="max-w-xl space-y-2">
+            <span className="text-xs font-mono font-semibold text-purple-400 uppercase tracking-wider">
+              How It Works
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+              A frictionless workflow.
+            </h2>
+            <p className="text-sm text-slate-400">
+              Get grounded answers with verifiable official citations in three simple steps.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 space-y-3">
+              <div className="text-3xl font-extrabold text-white font-mono">01</div>
+              <h3 className="text-lg font-bold text-white">Specify Your Query</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Ask about compliance rules, thresholds, penalties, or filing dates in simple plain language.
+              </p>
+            </div>
+
+            <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 space-y-3">
+              <div className="text-3xl font-extrabold text-white font-mono">02</div>
+              <h3 className="text-lg font-bold text-white">Multi-Corpus Retrieval</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Our pipeline searches isolated ChromaDB vector stores across RBI, SEBI, GST, MCA, and FEMA.
+              </p>
+            </div>
+
+            <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 space-y-3">
+              <div className="text-3xl font-extrabold text-white font-mono">03</div>
+              <h3 className="text-lg font-bold text-white">Verified Ground Truth</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Receive answers with clause-level citations, direct government source links, and PDF audit exports.
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* ── Monitored Corpora Strip ── */}
-        <div id="corpora" className="w-full pt-6 pb-20 border-t border-slate-800/80">
-          <p className="text-xs font-mono text-slate-500 uppercase tracking-wider mb-6">
-            Monitored Statutory Regulatory Frameworks
-          </p>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3.5 text-xs text-left">
+        <div id="corpora" className="w-full pt-10 pb-24 border-t border-white/10 text-left space-y-8">
+          <div className="max-w-xl space-y-2">
+            <span className="text-xs font-mono font-semibold text-purple-400 uppercase tracking-wider">
+              Regulatory Coverage
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              Monitored Indian statutory frameworks.
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-xs">
             {[
               { code: 'RBI', title: 'Reserve Bank of India', desc: 'Master Directions, NBFC & Digital Lending' },
               { code: 'SEBI', title: 'Securities & Exchange', desc: 'Listing Regulations, Insider Trading & ICDR' },
@@ -236,140 +356,226 @@ export default function Landing() {
               { code: 'GST', title: 'Goods & Services Tax', desc: 'CBIC Notifications, Circulars & Rate Schedules' },
               { code: 'FEMA', title: 'Foreign Exchange', desc: 'FDI Regulations, Inbound Capital & Compounding' },
             ].map((c) => (
-              <div key={c.code} className="p-4 rounded-xl bg-slate-900/40 border border-slate-800/80 space-y-1">
-                <div className="font-bold text-slate-200 font-mono text-sm">{c.code}</div>
-                <div className="text-xs text-slate-400 font-medium">{c.title}</div>
+              <div key={c.code} className="p-5 rounded-xl bg-[#13131A] border border-white/10 space-y-1.5 hover:border-white/20 transition-colors">
+                <div className="font-bold text-white font-mono text-sm">{c.code}</div>
+                <div className="text-xs text-slate-300 font-medium">{c.title}</div>
                 <div className="text-[11px] text-slate-500 leading-snug">{c.desc}</div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* ── Core Platform Features (Enterprise Grid) ── */}
-        <div id="platform" className="w-full pt-10 pb-20 text-left space-y-12">
-          <div className="max-w-xl space-y-2">
-            <span className="text-xs font-mono font-semibold text-indigo-400 uppercase tracking-wider">
-              Platform Capabilities
+        {/* ── Pricing Section (Exact NoteDeck style pricing cards) ── */}
+        <div id="pricing" className="w-full pt-10 pb-24 border-t border-white/10 text-center space-y-10">
+          <div className="max-w-xl mx-auto space-y-3">
+            <span className="text-xs font-mono font-semibold text-purple-400 uppercase tracking-wider">
+              Transparent Pricing
             </span>
-            <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-              Engineered for compliance teams, chartered accountants, and founders.
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+              Find the plan that's right for you
             </h2>
-            <p className="text-xs text-slate-400">
-              A single authoritative platform replacing manual PDF searches across disjointed government portals.
+            <p className="text-sm text-slate-400">
+              Start for free, or unlock unlimited queries and personal document blending.
             </p>
+
+            {/* NoteDeck Capsule Billing Switcher */}
+            <div className="inline-flex items-center bg-slate-900 border border-white/10 rounded-full p-1 gap-2 mt-4">
+              <button
+                onClick={() => setBillingCycle('monthly')}
+                className={`px-4 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                  billingCycle === 'monthly' ? 'bg-white text-slate-950 font-semibold' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                Monthly
+              </button>
+              <button
+                onClick={() => setBillingCycle('yearly')}
+                className={`px-4 py-1.5 rounded-full text-xs font-medium transition-colors flex items-center gap-1.5 ${
+                  billingCycle === 'yearly' ? 'bg-white text-slate-950 font-semibold' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <span>Yearly</span>
+                <span className="bg-emerald-500/20 text-emerald-400 text-[10px] px-2 py-0.5 rounded-full font-bold">
+                  Save 25%
+                </span>
+              </button>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left items-stretch">
             
-            <div className="p-6 rounded-xl bg-slate-900/40 border border-slate-800/80 space-y-3">
-              <div className="w-9 h-9 rounded-lg bg-indigo-950/60 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
-                <FileText className="w-4 h-4" />
+            {/* Free Plan */}
+            <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 flex flex-col justify-between space-y-6 hover:-translate-y-1 transition-transform duration-300">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-bold text-white">Free</h3>
+                  <p className="text-xs text-slate-400 mt-1">Essential compliance monitoring for local SMEs.</p>
+                </div>
+                <div className="text-3xl font-extrabold text-white">₹0</div>
+                <ul className="space-y-2.5 text-xs text-slate-300">
+                  <li className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-slate-400 shrink-0" />
+                    <span>20 queries / day allocation</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-slate-400 shrink-0" />
+                    <span>All 4 core regulatory corpora</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-slate-400 shrink-0" />
+                    <span>Persistent chat history logs</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-slate-400 shrink-0" />
+                    <span>Plain / Legal toggle filters</span>
+                  </li>
+                </ul>
               </div>
-              <h3 className="text-sm font-bold text-white">Clause-Level Citations</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Every generated statement links to the exact circular number, clause, publication date, and official CBIC/RBI portal source. Zero hallucinations.
-              </p>
+              <button 
+                onClick={() => navigate('/login')}
+                className="w-full py-3 rounded-xl bg-slate-900 border border-white/10 hover:bg-slate-800 text-white text-xs font-semibold transition-colors"
+              >
+                Get Started
+              </button>
             </div>
 
-            <div className="p-6 rounded-xl bg-slate-900/40 border border-slate-800/80 space-y-3">
-              <div className="w-9 h-9 rounded-lg bg-indigo-950/60 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
-                <Share2 className="w-4 h-4" />
+            {/* Pro Plan (Featured NoteDeck Style) */}
+            <div className="p-8 rounded-2xl bg-[#161622] border-2 border-purple-500 shadow-[0_0_30px_rgba(168,85,247,0.25)] flex flex-col justify-between space-y-6 relative hover:-translate-y-1.5 transition-transform duration-300">
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-purple-400 text-slate-950 text-[11px] font-bold px-3 py-0.5 rounded-full shadow-sm uppercase tracking-wider">
+                Most Popular
+              </span>
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-bold text-white">Pro</h3>
+                  <p className="text-xs text-slate-400 mt-1">Complete automated compliance intelligence for expanding teams.</p>
+                </div>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-extrabold text-white">
+                    {billingCycle === 'monthly' ? '₹499' : '₹374'}
+                  </span>
+                  <span className="text-xs text-slate-400">/ month</span>
+                </div>
+                <ul className="space-y-2.5 text-xs text-slate-200">
+                  <li className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-purple-400 shrink-0" />
+                    <span>Unlimited regulatory queries</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-purple-400 shrink-0" />
+                    <span>Interactive Compliance Risk Scorecard</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-purple-400 shrink-0" />
+                    <span>Statutory Compliance Calendar</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-purple-400 shrink-0" />
+                    <span>Personal doc upload + RAG blending</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-purple-400 shrink-0" />
+                    <span>Server-side automated PDF exports</span>
+                  </li>
+                </ul>
               </div>
-              <h3 className="text-sm font-bold text-white">D3 Citation Network</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Interactive force-directed graph mapping 1,400+ regulatory circulars and their citation dependencies across Indian financial jurisprudence.
-              </p>
+              <button 
+                onClick={() => navigate('/login')}
+                className="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold transition-colors shadow-md"
+              >
+                Upgrade to Pro
+              </button>
             </div>
 
-            <div className="p-6 rounded-xl bg-slate-900/40 border border-slate-800/80 space-y-3">
-              <div className="w-9 h-9 rounded-lg bg-indigo-950/60 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
-                <Calendar className="w-4 h-4" />
+            {/* Enterprise Plan */}
+            <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 flex flex-col justify-between space-y-6 hover:-translate-y-1 transition-transform duration-300">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-bold text-white">Enterprise</h3>
+                  <p className="text-xs text-slate-400 mt-1">Dedicated scale parameters, SLAs, and custom on-premise vectors.</p>
+                </div>
+                <div className="text-3xl font-extrabold text-white">Custom</div>
+                <ul className="space-y-2.5 text-xs text-slate-300">
+                  <li className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-slate-400 shrink-0" />
+                    <span>Unlimited runtime access</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-slate-400 shrink-0" />
+                    <span>Custom ERP / DMS integrations</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-slate-400 shrink-0" />
+                    <span>Dedicated ChromaDB vector nodes</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="w-4 h-4 text-slate-400 shrink-0" />
+                    <span>Priority SLA line support</span>
+                  </li>
+                </ul>
               </div>
-              <h3 className="text-sm font-bold text-white">Statutory Filing Calendar</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Automated statutory deadlines for GSTR-1, GSTR-3B, MCA Form 11, and RBI FLA returns, complete with penalty clauses and one-click RAG analysis.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-xl bg-slate-900/40 border border-slate-800/80 space-y-3">
-              <div className="w-9 h-9 rounded-lg bg-indigo-950/60 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
-                <Cpu className="w-4 h-4" />
-              </div>
-              <h3 className="text-sm font-bold text-white">LangGraph Stateful Routing</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Multi-corpus classification with automated conditional retry loops, ensuring cross-regulatory inquiries retrieve the highest-scoring candidate documents.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-xl bg-slate-900/40 border border-slate-800/80 space-y-3">
-              <div className="w-9 h-9 rounded-lg bg-indigo-950/60 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
-                <Building2 className="w-4 h-4" />
-              </div>
-              <h3 className="text-sm font-bold text-white">Corporate Risk Scorecard</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Calculates real-time compliance health across 4 regulatory axes based on your corporate constitution, operational sector, and turnover.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-xl bg-slate-900/40 border border-slate-800/80 space-y-3">
-              <div className="w-9 h-9 rounded-lg bg-indigo-950/60 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
-                <Database className="w-4 h-4" />
-              </div>
-              <h3 className="text-sm font-bold text-white">Enterprise Blended RAG</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Upload internal board resolutions, contracts, or tax notices to query custom documents alongside statutory Indian regulatory databases.
-              </p>
+              <button 
+                onClick={() => navigate('/login')}
+                className="w-full py-3 rounded-xl bg-slate-900 border border-white/10 hover:bg-slate-800 text-white text-xs font-semibold transition-colors"
+              >
+                Contact Sales
+              </button>
             </div>
 
           </div>
         </div>
 
-        {/* ── Architecture Pipeline Summary ── */}
-        <div id="architecture" className="w-full pt-10 pb-20 border-t border-slate-800/80 text-left">
-          <div className="max-w-xl space-y-2 mb-10">
-            <span className="text-xs font-mono font-semibold text-indigo-400 uppercase tracking-wider">
-              Technical Pipeline
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-              Verified end-to-end retrieval architecture.
+        {/* ── Testimonials (Exact NoteDeck style) ── */}
+        <div className="w-full pt-10 pb-24 border-t border-white/10 text-left space-y-8">
+          <div className="max-w-xl space-y-2">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              Don't just take our word for it.
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 text-xs">
-            <div className="p-5 rounded-xl bg-slate-900/30 border border-slate-800/80 space-y-2">
-              <div className="text-[11px] font-mono text-indigo-400 font-bold">01 / INGESTION</div>
-              <h4 className="font-bold text-white">Automated Gazette Scraping</h4>
-              <p className="text-slate-400 leading-relaxed">Weekly cron jobs ingest official PDFs from rbi.org.in, cbic.gov.in, and mca.gov.in.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs">
+            <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 space-y-4">
+              <p className="text-slate-300 text-sm leading-relaxed italic">
+                "RegIQ is our secret weapon for monthly compliance audits. What used to take hours of searching government portals now takes seconds."
+              </p>
+              <div className="flex items-center gap-3 pt-2">
+                <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center font-bold text-white text-xs">
+                  CA
+                </div>
+                <div>
+                  <div className="font-semibold text-white">Rajesh Mehta, FCA</div>
+                  <div className="text-slate-500 text-[11px]">Senior Tax Partner, Mumbai</div>
+                </div>
+              </div>
             </div>
-            <div className="p-5 rounded-xl bg-slate-900/30 border border-slate-800/80 space-y-2">
-              <div className="text-[11px] font-mono text-indigo-400 font-bold">02 / EMBEDDING</div>
-              <h4 className="font-bold text-white">ChromaDB Vector Store</h4>
-              <p className="text-slate-400 leading-relaxed">15,900+ chunks embedded using all-MiniLM-L6-v2 across isolated namespace collections.</p>
-            </div>
-            <div className="p-5 rounded-xl bg-slate-900/30 border border-slate-800/80 space-y-2">
-              <div className="text-[11px] font-mono text-indigo-400 font-bold">03 / RERANKING</div>
-              <h4 className="font-bold text-white">Cross-Encoder Re-ranker</h4>
-              <p className="text-slate-400 leading-relaxed">ms-marco-MiniLM reranks top-10 candidate chunks down to top-5 high-relevance citations.</p>
-            </div>
-            <div className="p-5 rounded-xl bg-slate-900/30 border border-slate-800/80 space-y-2">
-              <div className="text-[11px] font-mono text-indigo-400 font-bold">04 / GENERATION</div>
-              <h4 className="font-bold text-white">Conversational Retrieval</h4>
-              <p className="text-slate-400 leading-relaxed">LangChain ConversationalRetrievalChain formats answers with strict zero-hallucination rules.</p>
+
+            <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 space-y-4">
+              <p className="text-slate-300 text-sm leading-relaxed italic">
+                "The best regulatory research tool on the market. The quality of the cited circulars and statutory clauses is consistently 100% accurate."
+              </p>
+              <div className="flex items-center gap-3 pt-2">
+                <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center font-bold text-white text-xs">
+                  VP
+                </div>
+                <div>
+                  <div className="font-semibold text-white">Ananya Sen</div>
+                  <div className="text-slate-500 text-[11px]">VP Compliance, Bengaluru Fintech</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         {/* ── Final Call to Action ── */}
-        <div className="w-full rounded-2xl bg-slate-900/80 border border-slate-800 p-10 lg:p-14 text-center space-y-6 shadow-xl">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+        <div className="w-full rounded-2xl bg-[#13131A] border border-white/10 p-12 lg:p-16 text-center space-y-6 shadow-2xl">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
             Start automating compliance research today.
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400 max-w-lg mx-auto leading-relaxed">
+          <p className="text-sm text-slate-400 max-w-md mx-auto leading-relaxed">
             Free tier includes 20 daily queries across GST, RBI, SEBI, and MCA. No credit card required.
           </p>
           <button 
             onClick={() => navigate('/login')}
-            className="px-6 py-3 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs transition-all shadow-sm inline-flex items-center gap-2"
+            className="px-6 py-3.5 rounded-xl bg-white hover:bg-slate-200 text-slate-950 font-semibold text-sm transition-all shadow-md inline-flex items-center gap-2"
           >
             <span>Create Free Account</span>
             <ArrowRight className="w-4 h-4" />
@@ -378,21 +584,18 @@ export default function Landing() {
 
       </main>
 
-      {/* ── Footer ── */}
-      <footer className="w-full border-t border-slate-800/80 px-6 sm:px-12 lg:px-20 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 bg-[#090d16]">
+      {/* ── Footer (Exact NoteDeck style) ── */}
+      <footer className="w-full border-t border-white/10 px-6 sm:px-12 lg:px-20 py-10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 bg-[#0A0B0E]">
         <div className="flex items-center gap-2">
-          <span className="font-bold text-slate-300">RegIQ</span>
+          <span className="font-bold text-white text-sm">RegIQ</span>
           <span>•</span>
           <span>© {new Date().getFullYear()} Regulatory Intelligence System. All rights reserved.</span>
         </div>
-        <div className="flex items-center gap-6 font-mono text-[11px]">
-          <span>FastAPI</span>
-          <span>•</span>
-          <span>ChromaDB</span>
-          <span>•</span>
-          <span>LangGraph</span>
-          <span>•</span>
-          <span>D3.js</span>
+        <div className="flex items-center gap-6 text-xs text-slate-400">
+          <a href="#features" className="hover:text-white transition-colors">Features</a>
+          <a href="#workflow" className="hover:text-white transition-colors">Workflow</a>
+          <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
+          <span onClick={() => navigate('/login')} className="hover:text-white cursor-pointer transition-colors">Sign In</span>
         </div>
       </footer>
     </div>

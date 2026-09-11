@@ -4,15 +4,15 @@
  */
 
 import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
-import { AuthProvider, useAuth } from './hooks/useAuth'; 
+import { AuthProvider, useAuth } from './hooks/useAuth';
 import { AuthGuard } from './components/AuthGuard';
-import Landing from './pages/Landing'; 
+import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
-import Chat from './pages/Chat'; 
-import Settings from './pages/Settings'; 
+import Chat from './pages/Chat';
+import Settings from './pages/Settings';
 import TestAuth from './pages/TestAuth';
-import Upload from './pages/Upload'; 
+import Upload from './pages/Upload';
 import Explorer from './pages/Explorer';
 import PricingPage from './components/PricingPage'; // <-- Import updated Pricing Page Component
 
@@ -36,41 +36,41 @@ function WorkspaceLayout({ children }) {
               </span>
             </div>
           </Link>
-          
+
           <div className="hidden md:flex items-center gap-1 text-xs font-medium text-slate-400">
-            <Link 
-              to="/dashboard" 
+            <Link
+              to="/dashboard"
               className="hover:text-slate-100 hover:bg-slate-800/60 px-3 py-1.5 rounded-md transition-colors flex items-center gap-2"
             >
-              <svg className="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+              <svg className="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="9" x="3" y="3" rx="1" /><rect width="7" height="5" x="14" y="3" rx="1" /><rect width="7" height="9" x="14" y="12" rx="1" /><rect width="7" height="5" x="3" y="16" rx="1" /></svg>
               <span>Dashboard</span>
             </Link>
-            <Link 
-              to="/chat" 
+            <Link
+              to="/chat"
               className="hover:text-slate-100 hover:bg-slate-800/60 px-3 py-1.5 rounded-md transition-colors flex items-center gap-2"
             >
-              <svg className="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+              <svg className="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" /></svg>
               <span>Research Assistant</span>
             </Link>
-            <Link 
-              to="/upload" 
+            <Link
+              to="/upload"
               className="hover:text-slate-100 hover:bg-slate-800/60 px-3 py-1.5 rounded-md transition-colors flex items-center gap-2"
             >
-              <svg className="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+              <svg className="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" x2="12" y1="3" y2="15" /></svg>
               <span>Document Repository</span>
             </Link>
-            <Link 
-              to="/explorer" 
+            <Link
+              to="/explorer"
               className="hover:text-slate-100 hover:bg-slate-800/60 px-3 py-1.5 rounded-md transition-colors flex items-center gap-2"
             >
-              <svg className="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
+              <svg className="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /><line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></svg>
               <span>Citation Network</span>
             </Link>
-            <Link 
-              to="/pricing" 
+            <Link
+              to="/pricing"
               className="hover:text-slate-100 hover:bg-slate-800/60 px-3 py-1.5 rounded-md transition-colors flex items-center gap-2"
             >
-              <svg className="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+              <svg className="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="5" rx="2" /><line x1="2" x2="22" y1="10" y2="10" /></svg>
               <span>Plans & Limits</span>
             </Link>
           </div>
@@ -78,20 +78,20 @@ function WorkspaceLayout({ children }) {
 
         <div className="flex items-center gap-3">
           {user?.role !== 'pro' && user?.role !== 'enterprise' && (
-            <Link 
-              to="/pricing" 
+            <Link
+              to="/pricing"
               className="text-xs font-medium bg-indigo-600/15 hover:bg-indigo-600/25 border border-indigo-500/30 text-indigo-300 hover:text-indigo-200 px-3 py-1.5 rounded-md transition-colors flex items-center gap-1.5"
             >
               <span>Upgrade Plan</span>
             </Link>
           )}
 
-          <Link 
-            to="/settings" 
+          <Link
+            to="/settings"
             className="text-xs text-slate-400 hover:text-slate-200 p-1.5 rounded-md hover:bg-slate-800 transition-colors"
             title="Settings"
           >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>
           </Link>
 
           {/* User initials avatar */}
@@ -105,7 +105,7 @@ function WorkspaceLayout({ children }) {
           </div>
         </div>
       </nav>
-      
+
       {/* Page Body Full Screen */}
       <main className="flex-1 w-full flex flex-col">
         {children}
@@ -122,50 +122,50 @@ export default function App() {
           {/* Public Routing Interfaces */}
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
-          
+
           {/* Protected SME Workspace Components Wrapped in the premium Layout */}
-          <Route 
-            path="/dashboard" 
+          <Route
+            path="/dashboard"
             element={
               <AuthGuard>
                 <WorkspaceLayout>
                   <Dashboard />
                 </WorkspaceLayout>
               </AuthGuard>
-            } 
+            }
           />
-          <Route 
-            path="/chat" 
+          <Route
+            path="/chat"
             element={
               <AuthGuard>
                 <WorkspaceLayout>
                   <Chat />
                 </WorkspaceLayout>
               </AuthGuard>
-            } 
+            }
           />
-          <Route 
-            path="/explorer" 
+          <Route
+            path="/explorer"
             element={
               <AuthGuard>
                 <WorkspaceLayout>
                   <Explorer />
                 </WorkspaceLayout>
               </AuthGuard>
-            } 
+            }
           />
-          <Route 
-            path="/upload" 
+          <Route
+            path="/upload"
             element={
               <AuthGuard>
                 <WorkspaceLayout>
                   <Upload />
                 </WorkspaceLayout>
               </AuthGuard>
-            } 
+            }
           />
-          <Route 
-            path="/pricing" 
+          <Route
+            path="/pricing"
             element={
               <AuthGuard>
                 <WorkspaceLayout>
@@ -173,25 +173,25 @@ export default function App() {
                   <PricingRoutingWrapper />
                 </WorkspaceLayout>
               </AuthGuard>
-            } 
+            }
           />
-          <Route 
-            path="/settings" 
+          <Route
+            path="/settings"
             element={
               <AuthGuard>
                 <WorkspaceLayout>
                   <Settings />
                 </WorkspaceLayout>
               </AuthGuard>
-            } 
+            }
           />
-          <Route 
-            path="/test-auth" 
+          <Route
+            path="/test-auth"
             element={
               <AuthGuard>
                 <TestAuth />
               </AuthGuard>
-            } 
+            }
           />
 
           <Route path="*" element={<Navigate to="/" replace />} />
@@ -205,15 +205,15 @@ export default function App() {
 // Inline component wrapper inside frontend/src/App.jsx
 function PricingRoutingWrapper() {
   const { user, syncSandboxRole } = useAuth(); // Destructure the clean state updater hook
-  
+
   return (
-    <PricingPage 
-      userEmail={user?.email || ''} 
+    <PricingPage
+      userEmail={user?.email || ''}
       onSelectPlan={(tier) => {
         if (tier === 'pro' && syncSandboxRole) {
           syncSandboxRole('pro'); // Triggers state change across the app
         }
-      }} 
+      }}
     />
   );
 }
