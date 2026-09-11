@@ -27,6 +27,7 @@ from app.rag.retriever import retrieve, get_chroma_client, get_embedding_model
 from app.rag.reranker import rerank
 from app.rag.generator import RAGGenerator
 from app.rag.agent import run_agent, AgentResult
+from app.rag.graph import run_graph, GraphResult
 
 router = APIRouter()
 generator_instance = RAGGenerator()
@@ -188,103 +189,149 @@ async def query(
         except Exception as e:
             logger.warning(f"[Database Note] User message persistence skipped: {str(e)}")
 
-    # ── Step 4 & 5: Agentic Multi-Corpus Routing (Day 49) ──────
-    # If the user explicitly pinned a corpus, bypass the agent and use
-    # the original single-corpus path to honour their explicit intent.
-    # Otherwise, delegate entirely to the ReAct agent which handles
-    # both single-corpus and cross-domain multi-corpus queries.
+    # ── Steps 4, 5 & 6: LangGraph Stateful Pipeline (Day 53) ──
+    #
+    # The StateGraph (graph.py) handles the full pipeline:
+    #   classify → retrieve → evaluate → [retry?] → generate
+    #
+    # If the user explicitly pinned a corpus, we bypass the graph
+    # and use the original single-corpus path to honour their intent.
+    # For all other queries, the graph's conditional retry edge
+    # automatically reduces "not_found" responses.
+
     routing_mode = "pinned"
     corpora_queried: list[str] = []
+    sanitized_chunks = []
+    result: dict = {}
 
     if request.corpus:
-        # Explicit corpus pin — honour it, skip agent
+        # ─ Explicit corpus pin — skip graph, use direct retrieval ─
         corpus = request.corpus
         corpus_str = corpus.value if hasattr(corpus, "value") else str(corpus).lower().split(".")[-1]
         candidates = retrieve(request.query, corpus, top_k=10) or []
         routing_mode = "pinned"
         corpora_queried = [corpus_str]
-        logger.info(f"[query] Corpus pinned to '{corpus_str}' — bypassing agent")
-    else:
-        # Delegate to ReAct multi-corpus agent
-        agent_result: AgentResult = run_agent(request.query)
-        candidates = agent_result.chunks
-        corpus_str = ", ".join(agent_result.corpora_queried) if agent_result.corpora_queried else "gst"
-        routing_mode = agent_result.routing_mode
-        corpora_queried = agent_result.corpora_queried
-        logger.info(
-            f"[query] Agent routing_mode={routing_mode} | "
-            f"corpora={corpora_queried} | chunks={len(candidates)} | "
-            f"top_sim={agent_result.top_similarity:.3f} | "
-            f"retry={agent_result.retry_triggered}"
+        logger.info(f"[query] Corpus pinned to '{corpus_str}' — bypassing graph")
+
+        # Blended RAG: inject Pro/Enterprise user-doc context
+        if role in [UserRole.PRO, UserRole.ENTERPRISE] and not user_id.startswith("guest"):
+            collection_id = f"user_docs_{user_id}"
+            try:
+                chroma_client = get_chroma_client()
+                existing_cols = [c.name for c in chroma_client.list_collections()]
+                if collection_id in existing_cols:
+                    logger.info(f"[Blended RAG] Fetching context from user workspace: {collection_id}")
+                    user_collection = chroma_client.get_collection(name=collection_id)
+                    embedding_model = get_embedding_model()
+                    query_vector = embedding_model.encode([request.query], normalize_embeddings=True).tolist()
+                    user_results = user_collection.query(query_embeddings=query_vector, n_results=5)
+                    if user_results and 'documents' in user_results and user_results['documents']:
+                        for idx, doc in enumerate(user_results['documents'][0]):
+                            meta = user_results['metadatas'][0][idx] if user_results['metadatas'] else {}
+                            score = user_results['distances'][0][idx] if 'distances' in user_results else 0.5
+                            class BlendedChunk:
+                                def __init__(self, text, metadata, score, chunk_id):
+                                    self.text = text
+                                    self.metadata = metadata
+                                    self.score = score
+                                    self.id = chunk_id
+                                def to_dict(self):
+                                    return {"text": self.text, "metadata": self.metadata, "score": self.score, "id": self.id}
+                            user_chunk = BlendedChunk(
+                                text=doc,
+                                metadata={
+                                    "corpus": "user_docs",
+                                    "source": meta.get("filename", "User Workspace Document"),
+                                    "title": meta.get("title", "Custom Document Context"),
+                                    "filename": meta.get("filename", "Custom Document Context"),
+                                    "circular_no": meta.get("circular_no", "Internal Analysis"),
+                                    "date": meta.get("date", datetime.utcnow().date().isoformat()),
+                                    "section": meta.get("section", "Uploaded Content File"),
+                                    "url": "#",
+                                    "chunk_id": user_results['ids'][0][idx]
+                                },
+                                score=float(score),
+                                chunk_id=user_results['ids'][0][idx]
+                            )
+                            candidates.append(user_chunk)
+            except Exception as blended_err:
+                logger.error(f"[Blended RAG Failure] {str(blended_err)}")
+
+        chunks = rerank(request.query, candidates, top_n=5) if candidates else []
+        sanitized_chunks = clean_document_chunks(chunks)
+
+        # Generate answer for pinned path
+        result = await generator_instance.generate_answer(
+            query=request.query,
+            chunks=sanitized_chunks,
+            mode=request.mode
         )
 
-    # ── Blended RAG: inject Pro/Enterprise user-doc context ──────
-    if role in [UserRole.PRO, UserRole.ENTERPRISE] and not user_id.startswith("guest"):
-        collection_id = f"user_docs_{user_id}"
-        try:
-            chroma_client = get_chroma_client()
-            existing_cols = [c.name for c in chroma_client.list_collections()]
-
-            if collection_id in existing_cols:
-                logger.info(f"[Blended RAG] Fetching context from user workspace: {collection_id}")
-                user_collection = chroma_client.get_collection(name=collection_id)
-                embedding_model = get_embedding_model()
-                query_vector = embedding_model.encode([request.query], normalize_embeddings=True).tolist()
-
-                user_results = user_collection.query(
-                    query_embeddings=query_vector,
-                    n_results=5
-                )
-
-                if user_results and 'documents' in user_results and user_results['documents']:
-                    for idx, doc in enumerate(user_results['documents'][0]):
-                        meta = user_results['metadatas'][0][idx] if user_results['metadatas'] else {}
-                        score = user_results['distances'][0][idx] if 'distances' in user_results else 0.5
-
-                        class BlendedChunk:
-                            def __init__(self, text, metadata, score, chunk_id):
-                                self.text = text
-                                self.metadata = metadata
-                                self.score = score
-                                self.id = chunk_id
-                            def to_dict(self):
-                                return {"text": self.text, "metadata": self.metadata, "score": self.score, "id": self.id}
-
-                        user_chunk = BlendedChunk(
-                            text=doc,
-                            metadata={
-                                "corpus": "user_docs",
-                                "source": meta.get("filename", "User Workspace Document"),
-                                "title": meta.get("title", "Custom Document Context"),
-                                "filename": meta.get("filename", "Custom Document Context"),
-                                "circular_no": meta.get("circular_no", "Internal Analysis"),
-                                "date": meta.get("date", datetime.utcnow().date().isoformat()),
-                                "section": meta.get("section", "Uploaded Content File"),
-                                "url": "#",
-                                "chunk_id": user_results['ids'][0][idx]
-                            },
-                            score=float(score),
-                            chunk_id=user_results['ids'][0][idx]
-                        )
-                        candidates.append(user_chunk)
-
-        except Exception as blended_err:
-            logger.error(f"[Blended RAG Failure] Bypassing user-doc context: {str(blended_err)}")
-
-    # Agent already reranked in multi-corpus mode; rerank again only for pinned/single
-    if routing_mode in ("pinned", "single"):
-        chunks = rerank(request.query, candidates, top_n=5) if candidates else []
     else:
-        # Already reranked by agent — just take top 5
-        chunks = candidates[:5]
-    sanitized_chunks = clean_document_chunks(chunks)
+        # ─ LangGraph stateful pipeline — handles everything ─
+        graph_result: GraphResult = run_graph(request.query, mode=request.mode)
 
-    # ── Step 6: Generate answer via custom RAG prompt routing ───
-    result = await generator_instance.generate_answer(
-        query=request.query, 
-        chunks=sanitized_chunks, 
-        mode=request.mode
-    )
+        # Blended RAG: append user-doc context to graph chunks for Pro users
+        graph_chunks = list(graph_result.chunks)
+        if role in [UserRole.PRO, UserRole.ENTERPRISE] and not user_id.startswith("guest"):
+            collection_id = f"user_docs_{user_id}"
+            try:
+                chroma_client = get_chroma_client()
+                existing_cols = [c.name for c in chroma_client.list_collections()]
+                if collection_id in existing_cols:
+                    user_collection = chroma_client.get_collection(name=collection_id)
+                    embedding_model = get_embedding_model()
+                    query_vector = embedding_model.encode([request.query], normalize_embeddings=True).tolist()
+                    user_results = user_collection.query(query_embeddings=query_vector, n_results=3)
+                    if user_results and 'documents' in user_results and user_results['documents']:
+                        for idx, doc in enumerate(user_results['documents'][0]):
+                            meta = user_results['metadatas'][0][idx] if user_results['metadatas'] else {}
+                            score = user_results['distances'][0][idx] if 'distances' in user_results else 0.5
+                            class BlendedChunk:
+                                def __init__(self, text, metadata, score, chunk_id):
+                                    self.text = text
+                                    self.metadata = metadata
+                                    self.score = score
+                                    self.id = chunk_id
+                                def to_dict(self):
+                                    return {"text": self.text, "metadata": self.metadata, "score": self.score, "id": self.id}
+                            graph_chunks.append(BlendedChunk(
+                                text=doc,
+                                metadata={
+                                    "corpus": "user_docs",
+                                    "source": meta.get("filename", "User Workspace Document"),
+                                    "title": meta.get("title", "Custom Document Context"),
+                                    "filename": meta.get("filename", "Custom Document Context"),
+                                    "circular_no": meta.get("circular_no", "Internal Analysis"),
+                                    "date": meta.get("date", datetime.utcnow().date().isoformat()),
+                                    "section": meta.get("section", "Uploaded Content File"),
+                                    "url": "#",
+                                    "chunk_id": user_results['ids'][0][idx]
+                                },
+                                score=float(score),
+                                chunk_id=user_results['ids'][0][idx]
+                            ))
+            except Exception as blended_err:
+                logger.error(f"[Blended RAG Failure] {str(blended_err)}")
+
+        sanitized_chunks = clean_document_chunks(graph_chunks)
+        corpus_str = ", ".join(graph_result.corpora_queried) if graph_result.corpora_queried else "gst"
+        routing_mode = graph_result.routing_mode
+        corpora_queried = graph_result.corpora_queried
+
+        # Graph already generated the answer; use it directly
+        result = {
+            "answer": graph_result.answer,
+            "citations": graph_result.citations,
+            "mode": request.mode,
+        }
+
+        logger.info(
+            f"[query] Graph routing={routing_mode} | "
+            f"corpora={corpora_queried} | chunks={len(sanitized_chunks)} | "
+            f"confidence={graph_result.confidence} | retry={graph_result.retry_triggered} | "
+            f"top_sim={graph_result.top_similarity:.3f} | latency={graph_result.latency_ms}ms"
+        )
 
     ans_text = result.get("answer", "")
     is_rate_limited = "quota" in ans_text.lower() or "429" in ans_text if ans_text else False
