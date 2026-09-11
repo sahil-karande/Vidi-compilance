@@ -17,13 +17,22 @@ import {
   Activity,
   Check,
   Zap,
-  Sparkles
+  Sparkles,
+  RotateCw
 } from 'lucide-react';
 
 export default function Landing() {
   const navigate = useNavigate();
   const [billingCycle, setBillingCycle] = useState('monthly');
   const [activeTab, setActiveTab] = useState('query');
+  const [flippedCards, setFlippedCards] = useState({});
+
+  const toggleCardFlip = (code) => {
+    setFlippedCards(prev => ({
+      ...prev,
+      [code]: !prev[code]
+    }));
+  };
 
   return (
     <div className="min-h-screen w-full bg-[#0D0E12] text-slate-200 font-sans flex flex-col antialiased selection:bg-purple-500/20 selection:text-purple-200 overflow-x-hidden">
@@ -337,31 +346,191 @@ export default function Landing() {
           </div>
         </div>
 
-        {/* ── Monitored Corpora Strip ── */}
+        {/* ── Monitored Corpora Strip: Interactive 3D Flip Flashcards ── */}
         <div id="corpora" className="w-full pt-10 pb-24 border-t border-white/10 text-left space-y-8">
-          <div className="max-w-xl space-y-2">
-            <span className="text-xs font-mono font-semibold text-purple-400 uppercase tracking-wider">
-              Regulatory Coverage
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              Monitored Indian statutory frameworks.
-            </h2>
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div className="max-w-xl space-y-2">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-mono font-semibold text-purple-400 uppercase tracking-wider">
+                  Interactive Flashcards
+                </span>
+                <span className="text-[11px] bg-purple-500/10 text-purple-300 border border-purple-500/20 px-2 py-0.5 rounded-full font-mono">
+                  Click card to flip
+                </span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                Monitored Indian statutory frameworks.
+              </h2>
+            </div>
+
+            {/* Quick Actions: Flip All / Reset */}
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  const allFlipped = { RBI: true, SEBI: true, MCA: true, GST: true, FEMA: true };
+                  setFlippedCards(allFlipped);
+                }}
+                className="text-xs font-medium text-slate-400 hover:text-white px-3 py-1.5 rounded-lg border border-white/10 hover:border-white/20 bg-[#13131A] transition-colors"
+              >
+                Flip all
+              </button>
+              <button
+                type="button"
+                onClick={() => setFlippedCards({})}
+                className="text-xs font-medium text-slate-400 hover:text-white px-3 py-1.5 rounded-lg border border-white/10 hover:border-white/20 bg-[#13131A] transition-colors"
+              >
+                Reset
+              </button>
+            </div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {[
-              { code: 'RBI', title: 'Reserve Bank of India', desc: 'Master Directions, NBFC & Digital Lending' },
-              { code: 'SEBI', title: 'Securities & Exchange', desc: 'Listing Regulations, Insider Trading & ICDR' },
-              { code: 'MCA', title: 'Corporate Affairs', desc: 'Companies Act 2013, LLP Rules & Annual Returns' },
-              { code: 'GST', title: 'Goods & Services Tax', desc: 'CBIC Notifications, Circulars & Rate Schedules' },
-              { code: 'FEMA', title: 'Foreign Exchange', desc: 'FDI Regulations, Inbound Capital & Compounding' },
-            ].map((c) => (
-              <div key={c.code} className="p-5 rounded-xl bg-[#13131A] border border-white/10 space-y-1.5 hover:border-white/20 transition-colors">
-                <div className="font-bold text-white font-mono text-sm">{c.code}</div>
-                <div className="text-xs text-slate-300 font-medium">{c.title}</div>
-                <div className="text-[11px] text-slate-500 leading-snug">{c.desc}</div>
-              </div>
-            ))}
+              {
+                code: 'RBI',
+                category: 'Banking & Fintech',
+                title: 'Reserve Bank of India',
+                desc: 'Master Directions, NBFC & Digital Lending Guidelines',
+                act: 'RBI Act 1934',
+                circulars: '520+ Circulars'
+              },
+              {
+                code: 'SEBI',
+                category: 'Securities Market',
+                title: 'Securities & Exchange',
+                desc: 'LODR Reg. 30, PIT & ICDR Material Disclosures',
+                act: 'SEBI Act 1992',
+                circulars: '380+ Circulars'
+              },
+              {
+                code: 'MCA',
+                category: 'Corporate Law',
+                title: 'Corporate Affairs',
+                desc: 'Companies Act 2013, LLP Rules & Annual Returns',
+                act: 'Companies Act 2013',
+                circulars: '640+ Circulars'
+              },
+              {
+                code: 'GST',
+                category: 'Indirect Taxation',
+                title: 'Goods & Services Tax',
+                desc: 'CBIC Notifications, Rule 42/43 ITC & Schedules',
+                act: 'CGST Act 2017',
+                circulars: '750+ Circulars'
+              },
+              {
+                code: 'FEMA',
+                category: 'Cross-Border FX',
+                title: 'Foreign Exchange',
+                desc: 'FDI Regulations, Inbound Capital & Compounding',
+                act: 'FEMA 1999',
+                circulars: '180+ Circulars'
+              },
+            ].map((c) => {
+              const isFlipped = !!flippedCards[c.code];
+              return (
+                <div
+                  key={c.code}
+                  onClick={() => toggleCardFlip(c.code)}
+                  className="group perspective-1000 h-64 cursor-pointer select-none"
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      toggleCardFlip(c.code);
+                    }
+                  }}
+                  title={`Click to flip ${c.code} card`}
+                >
+                  <div
+                    className={`relative w-full h-full transition-transform duration-500 transform-style-3d ${
+                      isFlipped ? 'rotate-y-180' : ''
+                    }`}
+                  >
+                    {/* ── Front Face: Acronym Flashcard ── */}
+                    <div className="absolute inset-0 w-full h-full backface-hidden rounded-2xl bg-[#13131A] border border-white/10 p-5 flex flex-col justify-between group-hover:border-purple-500/40 group-hover:shadow-[0_0_25px_rgba(168,85,247,0.12)] transition-all">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20">
+                          {c.category}
+                        </span>
+                        <div className="flex items-center gap-1 text-[11px] text-slate-500 group-hover:text-purple-300 transition-colors">
+                          <RotateCw className="w-3.5 h-3.5 transition-transform duration-500 group-hover:rotate-180" />
+                        </div>
+                      </div>
+
+                      <div className="space-y-1 my-auto text-center py-2">
+                        <div className="text-4xl sm:text-5xl font-black font-mono tracking-wider text-white group-hover:text-purple-200 transition-colors">
+                          {c.code}
+                        </div>
+                        <div className="text-xs font-semibold text-slate-300">
+                          {c.title}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-3 border-t border-white/5 text-[11px] text-slate-500">
+                        <span className="font-mono text-[10px]">{c.act}</span>
+                        <span className="text-purple-400 font-medium group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
+                          Flip card ↺
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* ── Back Face: Framework Details ── */}
+                    <div className="absolute inset-0 w-full h-full backface-hidden rotate-y-180 rounded-2xl bg-[#161622] border border-purple-500/30 p-5 flex flex-col justify-between shadow-[0_0_30px_rgba(168,85,247,0.2)]">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-mono font-bold text-white bg-white/10 px-2 py-0.5 rounded">
+                            {c.code}
+                          </span>
+                          <span className="text-[11px] text-purple-300 font-medium truncate max-w-[110px]">
+                            {c.title}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleCardFlip(c.code);
+                          }}
+                          className="text-[10px] text-slate-400 hover:text-white flex items-center gap-1 bg-white/5 hover:bg-white/10 px-2 py-1 rounded transition-colors"
+                          title="Flip back"
+                        >
+                          <RotateCw className="w-3 h-3" />
+                        </button>
+                      </div>
+
+                      <div className="space-y-2 my-auto py-1 text-left">
+                        <div className="text-xs text-slate-200 leading-snug font-normal">
+                          {c.desc}
+                        </div>
+                        <div className="flex flex-wrap gap-1.5 pt-1">
+                          <span className="text-[10px] font-mono bg-purple-500/10 text-purple-300 border border-purple-500/20 px-2 py-0.5 rounded">
+                            {c.act}
+                          </span>
+                          <span className="text-[10px] font-mono bg-white/5 text-slate-400 border border-white/10 px-2 py-0.5 rounded">
+                            {c.circulars}
+                          </span>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/chat?corpus=${c.code}`);
+                        }}
+                        className="w-full py-2 px-3 rounded-lg bg-white hover:bg-slate-100 text-slate-950 font-semibold text-xs transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98]"
+                      >
+                        <span>Ask about {c.code}</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
