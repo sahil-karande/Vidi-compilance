@@ -157,55 +157,55 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
         'Real-time automated change alerts'
       ],
       tier: 'pro',
-      actionText: 'Upgrade via Razorpay 💳',
+      actionText: 'Upgrade to Pro',
       popular: true
     },
     {
       name: 'Enterprise',
       price: 'Custom',
       period: '',
-      subtext: 'Dedicated scale parameters',
-      desc: 'Customized baseline isolation parameters and SLA uptime contracts.',
+      subtext: 'Dedicated scale & on-premise vectors',
+      desc: 'Custom SLA uptime guarantees, dedicated vector nodes, and white-label deployment.',
       features: [
-        'Unlimited runtime access parameters',
-        'All standard corpora + custom data integration',
-        'Up to 20 user console seats',
-        'Full custom white-label system branding',
-        'Dedicated secure vector nodes',
-        'Priority SLA backend line support'
+        'Unlimited regulatory queries',
+        'All standard corpora + custom ERP / DMS integration',
+        'Unlimited user console seats',
+        'Full custom compliance audit exports',
+        'Dedicated isolated ChromaDB vector nodes',
+        '24/7 dedicated legal engineer SLA support'
       ],
       tier: 'enterprise',
-      actionText: 'Contact Sales Engineers'
+      actionText: 'Contact Enterprise Sales'
     }
   ];
 
   return (
-    <div style={{ width: '100%', maxWidth: '1200px', margin: '0 auto', padding: '24px 16px', boxSizing: 'border-box', position: 'relative' }}>
+    <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 py-12 text-slate-200">
       
+      {/* Sandbox Modal */}
       {showSandboxModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(2, 6, 23, 0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, backdropFilter: 'blur(8px)' }}>
-          <div style={{ background: '#0f172a', border: '2px solid #6366f1', borderRadius: '16px', padding: '32px', maxWidth: '420px', width: '90%', textAlign: 'center', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)' }}>
-            <div style={{ fontSize: '40px', marginBottom: '16px' }}>💳</div>
-            <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#ffffff', margin: '0 0 8px 0' }}>Simulated Razorpay Gateway</h3>
-            <span style={{ display: 'inline-block', background: 'rgba(99, 102, 241, 0.15)', color: '#818cf8', fontSize: '11px', fontWeight: 'bold', padding: '2px 8px', borderRadius: '6px', marginBottom: '16px' }}>DEVELOPMENT SANDBOX MODE</span>
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-slate-900 border border-indigo-500/50 rounded-2xl p-6 sm:p-8 max-w-md w-full text-center shadow-2xl space-y-4">
+            <span className="inline-block px-2.5 py-1 rounded bg-indigo-500/10 text-indigo-400 text-xs font-semibold font-mono">
+              DEVELOPMENT SANDBOX MODE
+            </span>
+            <h3 className="text-lg font-bold text-white">Simulated Payment Gateway</h3>
             
-            <p style={{ fontSize: '13px', color: '#94a3b8', margin: '0 0 6px 0', textAlign: 'left' }}>
-              <strong>Sub ID:</strong> <code style={{ color: '#38bdf8' }}>{activeSubId}</code>
-            </p>
-            <p style={{ fontSize: '13px', color: '#94a3b8', margin: '0 0 24px 0', textAlign: 'left' }}>
-              <strong>Prefill Context:</strong> <code style={{ color: '#38bdf8' }}>{userEmail || 'dev@regiq.in'}</code>
-            </p>
+            <div className="text-left text-xs bg-slate-950/60 p-3.5 rounded-xl border border-slate-800 space-y-1.5 font-mono text-slate-400">
+              <p>Sub ID: <span className="text-indigo-400">{activeSubId}</span></p>
+              <p>Account: <span className="text-slate-200">{userEmail || 'dev@regiq.in'}</span></p>
+            </div>
 
-            <div style={{ display: 'flex', gap: '12px' }}>
+            <div className="flex gap-3 pt-2">
               <button 
                 onClick={() => setShowSandboxModal(false)}
-                style={{ flex: 1, padding: '10px', background: 'rgba(51, 65, 85, 0.5)', border: '1px solid #334155', borderRadius: '8px', color: '#94a3b8', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}
+                className="flex-1 py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs rounded-lg transition-colors"
               >
                 Cancel
               </button>
               <button 
                 onClick={handleSandboxSuccess}
-                style={{ flex: 1, padding: '10px', background: '#6366f1', border: 'none', borderRadius: '8px', color: '#ffffff', fontSize: '13px', fontWeight: '600', cursor: 'pointer', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)' }}
+                className="flex-1 py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs rounded-lg transition-colors shadow-sm"
               >
                 Simulate Success
               </button>
@@ -214,50 +214,45 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
         </div>
       )}
 
-      <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-        <h2 style={{ fontSize: '32px', fontWeight: '800', margin: '0 0 12px 0', color: '#ffffff', letterSpacing: '-0.02em' }}>
-          Predictable Workspace Tiers
-        </h2>
-        <p style={{ fontSize: '15px', color: '#94a3b8', margin: '0 0 28px 0' }}>
-          Select a tier that matches your ongoing corporate compliance parameters.
+      {/* Header Section */}
+      <div className="text-center max-w-2xl mx-auto mb-12 space-y-3">
+        <span className="text-xs font-mono font-semibold text-indigo-400 uppercase tracking-wider">
+          Transparent Pricing
+        </span>
+        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
+          Predictable plans for growing businesses.
+        </h1>
+        <p className="text-xs sm:text-sm text-slate-400">
+          Scale your legal research and compliance monitoring with grounded, zero-hallucination accuracy.
         </p>
 
         {errorMessage && (
-          <div style={{ margin: '0 auto 20px auto', maxWidth: '500px', padding: '12px', background: 'rgba(239, 68, 68, 0.15)', border: '1px solid #ef4444', color: '#fca5a5', borderRadius: '8px', fontSize: '13px' }}>
+          <div className="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-300 rounded-lg text-xs">
             {errorMessage}
           </div>
         )}
 
-        <div style={{ display: 'inline-flex', alignItems: 'center', background: 'rgba(30, 41, 59, 0.4)', padding: '6px', borderRadius: '12px', border: '1px solid rgba(51, 65, 85, 0.6)', gap: '4px' }}>
+        {/* Billing Cycle Switcher */}
+        <div className="inline-flex items-center bg-slate-900 border border-slate-800 p-1 rounded-xl gap-1 mt-4">
           {['monthly', 'quarterly', 'yearly'].map((cycle) => (
             <button
               key={cycle}
               onClick={() => setBillingCycle(cycle)}
-              style={{
-                background: billingCycle === cycle ? '#4f46e5' : 'transparent',
-                color: billingCycle === cycle ? '#ffffff' : '#94a3b8',
-                border: 'none',
-                borderRadius: '8px',
-                padding: '8px 16px',
-                fontSize: '13px',
-                fontWeight: '600',
-                textTransform: 'capitalize',
-                cursor: 'pointer',
-                transition: 'all 0.15s',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px'
-              }}
+              className={`px-4 py-2 rounded-lg text-xs font-medium capitalize transition-colors flex items-center gap-1.5 ${
+                billingCycle === cycle 
+                  ? 'bg-indigo-600 text-white shadow-sm' 
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
             >
-              {cycle}
+              <span>{cycle}</span>
               {cycle === 'quarterly' && (
-                <span style={{ fontSize: '10px', background: billingCycle === cycle ? '#818cf8' : 'rgba(99, 102, 241, 0.15)', color: billingCycle === cycle ? '#ffffff' : '#818cf8', padding: '2px 6px', borderRadius: '4px', fontWeight: '700' }}>
-                  Save 10%
+                <span className="text-[10px] bg-indigo-950 text-indigo-300 px-1.5 py-0.2 rounded font-semibold">
+                  -10%
                 </span>
               )}
               {cycle === 'yearly' && (
-                <span style={{ fontSize: '10px', background: billingCycle === cycle ? '#10b981' : 'rgba(16, 185, 129, 0.15)', color: billingCycle === cycle ? '#ffffff' : '#10b981', padding: '2px 6px', borderRadius: '4px', fontWeight: '700' }}>
-                  Save 25%
+                <span className="text-[10px] bg-emerald-950 text-emerald-400 px-1.5 py-0.2 rounded font-semibold">
+                  -25%
                 </span>
               )}
             </button>
@@ -265,86 +260,68 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '20px', alignItems: 'stretch' }}>
+      {/* Tier Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
         {plans.map((plan) => (
           <div
             key={plan.name}
-            style={{
-              background: 'rgba(15, 23, 42, 0.4)',
-              border: plan.popular ? '2px solid #6366f1' : '1px solid rgba(51, 65, 85, 0.6)',
-              borderRadius: '16px',
-              padding: '24px',
-              display: 'flex',
-              flexDirection: 'column',
-              position: 'relative',
-              boxSizing: 'border-box',
-              backdropFilter: 'blur(12px)'
-            }}
+            className={`rounded-2xl p-6 flex flex-col justify-between relative transition-colors ${
+              plan.popular 
+                ? 'bg-slate-900/90 border-2 border-indigo-500 shadow-xl shadow-indigo-950/20' 
+                : 'bg-slate-900/40 border border-slate-800/80 hover:border-slate-700'
+            }`}
           >
             {plan.popular && (
-              <span style={{ position: 'absolute', top: '-12px', right: '20px', background: '#4f46e5', color: '#ffffff', fontSize: '10px', fontWeight: '700', padding: '4px 10px', borderRadius: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                RECOMMENDED
+              <span className="absolute -top-3 right-6 bg-indigo-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
+                Most Popular
               </span>
             )}
 
-            <h3 style={{ margin: '0 0 6px 0', fontSize: '18px', fontWeight: '700', color: '#ffffff' }}>{plan.name}</h3>
-            <p style={{ margin: '0 0 20px 0', fontSize: '12px', color: '#64748b', lineHeight: '1.4', minHeight: '34px', textAlign: 'left' }}>{plan.desc}</p>
-            
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', marginBottom: '2px' }}>
-              <span style={{ fontSize: '32px', fontWeight: '800', color: '#ffffff', letterSpacing: '-0.01em' }}>{plan.price}</span>
-              <span style={{ fontSize: '13px', color: '#64748b' }}>{plan.period}</span>
-            </div>
-            
-            <div style={{ fontSize: '12px', color: plan.popular ? '#818cf8' : '#475569', fontWeight: '500', marginBottom: '20px', textAlign: 'left' }}>
-              {plan.subtext}
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-base font-bold text-white">{plan.name}</h3>
+                <p className="text-xs text-slate-400 mt-1 min-h-[36px]">{plan.desc}</p>
+              </div>
+
+              <div className="py-2 border-y border-slate-800/60">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-bold tracking-tight text-white">{plan.price}</span>
+                  <span className="text-xs text-slate-500">{plan.period}</span>
+                </div>
+                <div className="text-[11px] text-slate-500 mt-1">{plan.subtext}</div>
+              </div>
+
+              {/* Features List */}
+              <ul className="space-y-2.5 text-xs text-slate-300">
+                {plan.features.map((feat) => {
+                  const isCrossed = feat.startsWith('✗');
+                  return (
+                    <li key={feat} className={`flex items-start gap-2.5 ${isCrossed ? 'text-slate-600' : 'text-slate-300'}`}>
+                      <span className={`font-bold ${isCrossed ? 'text-slate-600' : 'text-indigo-400'}`}>
+                        {isCrossed ? '—' : '✓'}
+                      </span>
+                      <span>{isCrossed ? feat.substring(2) : feat}</span>
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
 
-            <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 28px 0', flex: 1, display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {plan.features.map((feat) => {
-                const isCrossed = feat.startsWith('✗');
-                return (
-                  <li key={feat} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', fontSize: '13px', color: isCrossed ? '#475569' : '#94a3b8', textAlign: 'left', lineHeight: '1.4' }}>
-                    <span style={{ color: isCrossed ? '#ef4444' : '#6366f1', fontWeight: 'bold' }}>
-                      {isCrossed ? '•' : '✓'}
-                    </span>
-                    {isCrossed ? feat.substring(2) : feat}
-                  </li>
-                );
-              })}
-            </ul>
-
-            <button
-              onClick={() => !plan.disabled && plan.tier !== 'free' && executeCheckoutSequence(plan.tier, billingCycle)}
-              disabled={plan.tier === 'free' || plan.disabled || (plan.tier === 'pro' && loadingTier !== null)}
-              style={{
-                width: '100%',
-                background: plan.popular ? 'linear-gradient(135deg, #4f46e5 0%, #4338ca 100%)' : 'rgba(30, 41, 59, 0.3)',
-                color: plan.tier === 'free' ? '#475569' : '#ffffff',
-                border: plan.popular || plan.tier === 'free' ? 'none' : '1px solid #334155',
-                borderRadius: '10px',
-                padding: '12px 16px',
-                fontSize: '13px',
-                fontWeight: '600',
-                cursor: (plan.tier === 'free' || plan.disabled || (plan.tier === 'pro' && loadingTier !== null)) ? 'default' : 'pointer',
-                transition: 'all 0.2s',
-                boxShadow: plan.popular ? '0 4px 14px rgba(79, 70, 229, 0.2)' : 'none',
-                opacity: plan.disabled ? 0.3 : 1
-              }}
-              onMouseEnter={(e) => {
-                if (plan.tier !== 'free' && !plan.popular && !plan.disabled) {
-                  e.currentTarget.style.borderColor = '#6366f1';
-                  e.currentTarget.style.background = 'rgba(99, 102, 241, 0.05)';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (plan.tier !== 'free' && !plan.popular && !plan.disabled) {
-                  e.currentTarget.style.borderColor = '#334155';
-                  e.currentTarget.style.background = 'rgba(30, 41, 59, 0.3)';
-                }
-              }}
-            >
-              {plan.tier === 'free' ? 'Active Framework' : (plan.tier === 'pro' && loadingTier !== null) ? 'Contacting Gateway...' : plan.actionText}
-            </button>
+            <div className="pt-6 mt-4">
+              <button
+                onClick={() => !plan.disabled && plan.tier !== 'free' && executeCheckoutSequence(plan.tier, billingCycle)}
+                disabled={plan.tier === 'free' || plan.disabled || (plan.tier === 'pro' && loadingTier !== null)}
+                className={`w-full py-2.5 px-4 rounded-lg text-xs font-medium transition-colors ${
+                  plan.popular 
+                    ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm' 
+                    : plan.tier === 'free' 
+                    ? 'bg-slate-800/60 text-slate-500 cursor-default border border-slate-700/40' 
+                    : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
+                } disabled:opacity-40`}
+              >
+                {plan.tier === 'free' ? 'Current Baseline' : (plan.tier === 'pro' && loadingTier !== null) ? 'Connecting Gateway...' : plan.actionText}
+              </button>
+            </div>
           </div>
         ))}
       </div>

@@ -16,56 +16,93 @@ import Upload from './pages/Upload';
 import Explorer from './pages/Explorer';
 import PricingPage from './components/PricingPage'; // <-- Import updated Pricing Page Component
 
-// Premium Navbar Wrapper Layout
+// Premium Enterprise Navigation Layout
 function WorkspaceLayout({ children }) {
-  const { user } = useAuth(); // Hook invocation to access session matrix profile context securely
+  const { user } = useAuth();
 
   return (
-    <div className="min-h-screen w-full bg-[#030712] text-slate-200 font-sans flex flex-col antialiased">
-      {/* Dynamic Cyber Header */}
-      <nav className="w-full bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/80 px-6 lg:px-12 py-3.5 flex items-center justify-between sticky top-0 z-40 shadow-[0_4px_30px_rgba(0,0,0,0.5)]">
-        <div className="flex items-center gap-10">
-          <Link to="/dashboard" className="text-xl font-black tracking-wider text-white flex items-center gap-2.5 group">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-cyan-500 via-indigo-600 to-purple-600 flex items-center justify-center text-white text-xs font-black shadow-[0_0_15px_rgba(56,189,248,0.4)] group-hover:shadow-[0_0_25px_rgba(56,189,248,0.7)] transition-all">
-              V
+    <div className="min-h-screen w-full bg-[#090d16] text-slate-200 font-sans flex flex-col antialiased">
+      {/* Sleek Enterprise Top Navbar */}
+      <nav className="w-full bg-[#090d16]/95 backdrop-blur-md border-b border-slate-800/80 px-6 lg:px-10 py-2.5 flex items-center justify-between sticky top-0 z-40">
+        <div className="flex items-center gap-8">
+          <Link to="/dashboard" className="flex items-center gap-2.5 group">
+            <div className="w-7 h-7 rounded-md bg-indigo-600 flex items-center justify-center text-white text-xs font-bold shadow-sm">
+              R
             </div>
-            <div className="flex items-baseline gap-1.5">
-              <span className="bg-gradient-to-r from-cyan-400 via-sky-300 to-indigo-400 bg-clip-text text-transparent font-black">RegIQ</span>
-              <span className="text-[10px] text-cyan-400 border border-cyan-500/30 px-1.5 py-0.5 rounded-md font-mono uppercase tracking-widest bg-cyan-950/40">
-                Matrix
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-semibold tracking-tight text-white">RegIQ</span>
+              <span className="text-[10px] text-slate-400 bg-slate-800/60 border border-slate-700/60 px-1.5 py-0.5 rounded font-mono">
+                Compliance Hub
               </span>
             </div>
           </Link>
           
-          <div className="hidden md:flex items-center gap-6 text-xs font-semibold tracking-wide text-slate-400">
-            <Link to="/dashboard" className="hover:text-white transition-colors flex items-center gap-1.5 py-1 px-2.5 rounded-lg hover:bg-slate-900/60">
-              <span>📊</span> Dashboard
+          <div className="hidden md:flex items-center gap-1 text-xs font-medium text-slate-400">
+            <Link 
+              to="/dashboard" 
+              className="hover:text-slate-100 hover:bg-slate-800/60 px-3 py-1.5 rounded-md transition-colors flex items-center gap-2"
+            >
+              <svg className="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+              <span>Dashboard</span>
             </Link>
-            <Link to="/chat" className="hover:text-white transition-colors flex items-center gap-1.5 py-1 px-2.5 rounded-lg hover:bg-slate-900/60">
-              <span>💬</span> RAG Chat
+            <Link 
+              to="/chat" 
+              className="hover:text-slate-100 hover:bg-slate-800/60 px-3 py-1.5 rounded-md transition-colors flex items-center gap-2"
+            >
+              <svg className="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+              <span>Research Assistant</span>
             </Link>
-            <Link to="/upload" className="hover:text-cyan-400 text-cyan-400/90 font-bold transition-colors flex items-center gap-1.5 py-1 px-2.5 rounded-lg hover:bg-slate-900/60">
-              <span>📁</span> Ingestion Upload
+            <Link 
+              to="/upload" 
+              className="hover:text-slate-100 hover:bg-slate-800/60 px-3 py-1.5 rounded-md transition-colors flex items-center gap-2"
+            >
+              <svg className="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+              <span>Document Repository</span>
             </Link>
-            <Link to="/explorer" className="hover:text-white transition-colors flex items-center gap-1.5 py-1 px-2.5 rounded-lg hover:bg-slate-900/60">
-              <span>🕸️</span> Citation Explorer
+            <Link 
+              to="/explorer" 
+              className="hover:text-slate-100 hover:bg-slate-800/60 px-3 py-1.5 rounded-md transition-colors flex items-center gap-2"
+            >
+              <svg className="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
+              <span>Citation Network</span>
             </Link>
-            <Link to="/pricing" className="hover:text-emerald-400 text-slate-400 transition-colors flex items-center gap-1.5 py-1 px-2.5 rounded-lg hover:bg-slate-900/60">
-              <span>💳</span> Plans
+            <Link 
+              to="/pricing" 
+              className="hover:text-slate-100 hover:bg-slate-800/60 px-3 py-1.5 rounded-md transition-colors flex items-center gap-2"
+            >
+              <svg className="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+              <span>Plans & Limits</span>
             </Link>
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           {user?.role !== 'pro' && user?.role !== 'enterprise' && (
-            <Link to="/pricing" className="text-[11px] font-bold bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-500/40 hover:border-emerald-400 px-3.5 py-1.5 rounded-xl text-emerald-400 hover:text-emerald-300 transition-all shadow-[0_0_15px_rgba(16,185,129,0.15)] flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-              ⚡ Upgrade Pro
+            <Link 
+              to="/pricing" 
+              className="text-xs font-medium bg-indigo-600/15 hover:bg-indigo-600/25 border border-indigo-500/30 text-indigo-300 hover:text-indigo-200 px-3 py-1.5 rounded-md transition-colors flex items-center gap-1.5"
+            >
+              <span>Upgrade Plan</span>
             </Link>
           )}
-          <Link to="/settings" className="text-xs bg-slate-900/90 border border-slate-800 px-3.5 py-1.5 rounded-xl hover:bg-slate-800 hover:border-slate-700 transition-all text-slate-300 flex items-center gap-1.5">
-            ⚙️ Settings
+
+          <Link 
+            to="/settings" 
+            className="text-xs text-slate-400 hover:text-slate-200 p-1.5 rounded-md hover:bg-slate-800 transition-colors"
+            title="Settings"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
           </Link>
+
+          {/* User initials avatar */}
+          <div className="flex items-center gap-2 pl-2 border-l border-slate-800">
+            <div className="w-6 h-6 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px] font-semibold text-slate-300">
+              {user?.name ? user.name.charAt(0).toUpperCase() : 'S'}
+            </div>
+            <span className="text-xs font-medium text-slate-300 hidden lg:inline max-w-[120px] truncate">
+              {user?.name || 'Sahil Karande'}
+            </span>
+          </div>
         </div>
       </nav>
       

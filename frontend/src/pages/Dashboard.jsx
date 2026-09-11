@@ -296,67 +296,65 @@ export default function Dashboard() {
       {/* ── Main Full-Width Content Canvas ── */}
       <div className="w-full flex flex-col gap-8 relative z-10">
         
-        {/* ── Welcome Header Bar ── */}
-        <header className="w-full bg-slate-900/40 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 lg:p-8 shadow-2xl flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-bl from-cyan-500/10 via-indigo-500/5 to-transparent rounded-full blur-2xl pointer-events-none" />
-          
+        {/* ── Welcome Header Bar (Enterprise Grade) ── */}
+        <header className="w-full bg-slate-900/50 border border-slate-800/90 rounded-2xl p-6 lg:p-7 flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative overflow-hidden">
           <div className="space-y-2">
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/50 border border-cyan-500/30 text-cyan-400 text-[11px] font-mono font-semibold">
-                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-                SYSTEM ONLINE
-              </div>
-              <span className="text-xs text-slate-500 font-mono">|</span>
-              <span className="text-[11px] text-slate-400 font-mono">5 Corpora Monitored</span>
-              <span className="text-xs text-slate-500 font-mono">|</span>
-              <span className="text-[11px] text-indigo-400 font-mono font-semibold">FastAPI + LangGraph v1.2</span>
+            <div className="flex flex-wrap items-center gap-2.5 text-xs text-slate-400">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-950/40 border border-emerald-500/30 text-emerald-400 font-medium text-[11px]">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                Active Monitor
+              </span>
+              <span className="text-slate-600">•</span>
+              <span className="text-slate-300 font-medium">5 Statutory Corpora</span>
+              <span className="text-slate-600">•</span>
+              <span className="text-slate-400 font-mono text-[11px]">RBI • SEBI • MCA • CBIC • FEMA</span>
             </div>
 
-            <h1 className="text-3xl lg:text-4xl font-black tracking-tight text-white">
-              Welcome back, <span className="bg-gradient-to-r from-cyan-400 via-sky-300 to-indigo-400 bg-clip-text text-transparent">{user?.name || 'Sahil'}</span>
+            <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-white">
+              Welcome back, {user?.name || 'Sahil Karande'}
             </h1>
 
             <p className="text-xs text-slate-400 max-w-2xl leading-relaxed">
-              RegIQ Continuous Compliance Matrix. Active real-time RAG intelligence spanning RBI, SEBI, MCA, GST, and FEMA.
+              Real-time statutory intelligence workspace. Query circulars, verify clause citations, and track filing obligations across Indian regulatory bodies.
             </p>
           </div>
           
           {/* Header Action Buttons */}
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5">
             <button 
               onClick={() => navigate('/explorer')}
-              className="px-5 py-3 rounded-2xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 hover:border-cyan-500/50 text-slate-200 text-xs font-bold transition-all shadow-lg flex items-center gap-2 group"
+              className="px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-700/80 hover:bg-slate-800 hover:border-slate-600 text-slate-200 text-xs font-medium transition-colors flex items-center gap-2 shadow-sm"
             >
-              <Share2 className="w-4 h-4 text-cyan-400 group-hover:rotate-45 transition-transform" />
-              <span>Citation Explorer</span>
+              <Share2 className="w-3.5 h-3.5 text-indigo-400" />
+              <span>Citation Network</span>
             </button>
 
             {!showProfileForm ? (
               <>
                 <button
                   onClick={() => setShowProfileForm(true)}
-                  className="px-5 py-3 rounded-2xl bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 text-slate-300 text-xs font-bold transition-all flex items-center gap-2"
+                  className="px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-700/80 hover:bg-slate-800 hover:border-slate-600 text-slate-300 text-xs font-medium transition-colors flex items-center gap-2"
                 >
-                  <Sliders className="w-4 h-4 text-indigo-400" />
-                  <span>Edit Parameters</span>
+                  <Sliders className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Entity Parameters</span>
                 </button>
 
                 <button 
                   onClick={() => navigate('/chat')}
-                  className="group flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 hover:from-cyan-400 hover:via-indigo-500 hover:to-purple-500 text-white px-6 py-3 rounded-2xl text-xs font-bold shadow-[0_0_25px_rgba(56,189,248,0.35)] transition-all transform hover:-translate-y-0.5 active:scale-95"
+                  className="px-4 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium transition-colors shadow-sm flex items-center gap-2"
                 >
-                  <Sparkles className="w-4 h-4 text-cyan-200 animate-spin" style={{ animationDuration: '4s' }} />
-                  <span>New RAG Query</span>
-                  <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <MessageSquare className="w-3.5 h-3.5" />
+                  <span>New Research Query</span>
+                  <ChevronRight className="w-3.5 h-3.5 opacity-80" />
                 </button>
               </>
             ) : (
               <button 
                 onClick={() => navigate('/chat')}
-                className="group flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 hover:from-cyan-400 hover:via-indigo-500 hover:to-purple-500 text-white px-6 py-3 rounded-2xl text-xs font-bold shadow-[0_0_25px_rgba(56,189,248,0.35)] transition-all"
+                className="px-4 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium transition-colors shadow-sm flex items-center gap-2"
               >
-                <Zap className="w-4 h-4" />
-                <span>Launch Assistant</span>
+                <MessageSquare className="w-3.5 h-3.5" />
+                <span>Open Assistant</span>
               </button>
             )}
           </div>
@@ -611,23 +609,22 @@ export default function Dashboard() {
 
                   </div>
 
-                  {/* Submit Button with Shimmer & Glow */}
+                  {/* Submit Button */}
                   <div className="pt-2">
                     <button
                       type="submit"
                       disabled={isSubmittingProfile}
-                      className="w-full bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 hover:from-cyan-400 hover:via-indigo-500 hover:to-purple-500 text-white font-bold py-4 rounded-2xl transition-all shadow-[0_0_30px_rgba(99,102,241,0.35)] hover:shadow-[0_0_40px_rgba(99,102,241,0.55)] disabled:opacity-50 flex items-center justify-center gap-2 text-sm tracking-wide"
+                      className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-3 rounded-xl transition-colors shadow-sm disabled:opacity-50 flex items-center justify-center gap-2 text-xs tracking-wide"
                     >
                       {isSubmittingProfile ? (
                         <>
-                          <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                          <span>Generating Compliance Scorecard Matrix...</span>
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <span>Generating Compliance Scorecard...</span>
                         </>
                       ) : (
                         <>
-                          <Sparkles className="w-5 h-5 text-cyan-200" />
-                          <span>Generate Compliance Scorecard & Matrix</span>
-                          <ArrowUpRight className="w-5 h-5 opacity-80" />
+                          <span>Save Corporate Parameters & Generate Scorecard</span>
+                          <ChevronRight className="w-4 h-4 opacity-80" />
                         </>
                       )}
                     </button>
@@ -658,7 +655,7 @@ export default function Dashboard() {
               
               {/* Risk Scorecard */}
               <Suspense fallback={<SkeletonCard />}>
-                <div className="bg-slate-900/40 backdrop-blur-2xl border border-slate-800/80 rounded-3xl shadow-2xl overflow-hidden relative">
+                <div className="bg-slate-900/50 border border-slate-800/80 rounded-2xl shadow-sm overflow-hidden relative">
                   <RiskScorecard data={scorecard} onMetricClick={handleOpenDrillDown} />
                 </div>
               </Suspense>
@@ -675,30 +672,30 @@ export default function Dashboard() {
                   return (
                     <div 
                       key={corp.code}
-                      className={`p-5 rounded-3xl border transition-all duration-300 bg-slate-900/40 backdrop-blur-xl flex flex-col justify-between ${
+                      className={`p-4 rounded-xl border transition-all duration-200 bg-slate-900/50 flex flex-col justify-between ${
                         hasAlert 
-                          ? 'border-amber-500/50 shadow-[0_0_20px_rgba(245,158,11,0.1)]' 
+                          ? 'border-amber-500/50 bg-amber-950/20' 
                           : 'border-slate-800/80 hover:border-slate-700/80'
                       }`}
                     >
                       <div className="flex items-start justify-between w-full">
-                        <span className="text-xs font-mono font-bold tracking-wider text-slate-300">{corp.code}</span>
+                        <span className="text-xs font-mono font-semibold tracking-wider text-slate-300">{corp.code}</span>
                         {hasAlert && (
                           <button
                             disabled={isClearingAlert}
                             onClick={() => handleAcknowledgeCorpusAlerts(corp.code)}
-                            className="text-[10px] font-mono px-2 py-0.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold transition-colors disabled:opacity-40"
+                            className="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold transition-colors disabled:opacity-40"
                           >
                             Dismiss
                           </button>
                         )}
                       </div>
-                      <div className="mt-4">
+                      <div className="mt-3">
                         <div className="text-[11px] text-slate-400">{corp.label}</div>
                         <div className="mt-1 flex items-center gap-2">
-                          <div className={`h-2 w-2 rounded-full ${hasAlert ? 'bg-amber-400 animate-pulse' : 'bg-emerald-400'}`} />
-                          <span className={`text-xs font-bold ${hasAlert ? 'text-amber-300' : 'text-slate-200'}`}>
-                            {hasAlert ? 'Action Update' : 'Synchronized'}
+                          <div className={`h-1.5 w-1.5 rounded-full ${hasAlert ? 'bg-amber-400 animate-pulse' : 'bg-emerald-400'}`} />
+                          <span className={`text-[11px] font-medium ${hasAlert ? 'text-amber-300' : 'text-slate-300'}`}>
+                            {hasAlert ? 'Update Available' : 'Up to date'}
                           </span>
                         </div>
                       </div>
@@ -708,29 +705,29 @@ export default function Dashboard() {
               </div>
 
               {/* Compliance Calendar */}
-              <div className="bg-slate-900/40 backdrop-blur-2xl border border-slate-800/80 rounded-3xl shadow-2xl overflow-hidden">
+              <div className="bg-slate-900/50 border border-slate-800/80 rounded-2xl shadow-sm overflow-hidden">
                 <ComplianceCalendar deadlines={deadlines} onDeadlineClick={handleAnalyzeDeadline} />
               </div>
             </div>
 
-            {/* Right Column (Telemetry, Quick Launch & Threads) */}
+            {/* Right Column (Telemetry, Quick Inquiries & Audit Threads) */}
             <div className="lg:col-span-4 flex flex-col gap-6">
               
               {/* Quick Launch Card */}
-              <div className="bg-gradient-to-br from-slate-900/60 via-slate-900/30 to-indigo-950/20 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 shadow-2xl relative overflow-hidden space-y-4">
+              <div className="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-5 shadow-sm space-y-3.5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-cyan-400" />
-                    <h3 className="text-sm font-bold text-white">Compliance Copilot</h3>
+                    <MessageSquare className="w-4 h-4 text-indigo-400" />
+                    <h3 className="text-xs font-semibold text-white">Suggested Inquiries</h3>
                   </div>
-                  <span className="text-[10px] font-mono text-cyan-400 bg-cyan-950/40 border border-cyan-500/30 px-2 py-0.5 rounded-full">
-                    GPT-OSS 120B
+                  <span className="text-[10px] font-mono text-slate-400 bg-slate-800/80 border border-slate-700/60 px-2 py-0.5 rounded">
+                    Statutory RAG
                   </span>
                 </div>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Ask specific questions about thresholds, filing dates, and penalties. Cites official circular numbers.
+                <p className="text-[11px] text-slate-400 leading-relaxed">
+                  Direct statutory questions mapped to circular numbers, penalty clauses, and exemptions.
                 </p>
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   {[
                     "What are the mandatory MCA annual returns for my LLP?",
                     "What is the GST threshold exemption for services?",
@@ -739,36 +736,36 @@ export default function Dashboard() {
                     <button
                       key={idx}
                       onClick={() => navigate('/chat', { state: { initialQuery: samplePrompt } })}
-                      className="w-full text-left p-3 rounded-2xl bg-slate-950/50 hover:bg-slate-800/80 border border-slate-800 hover:border-cyan-500/40 text-[11px] text-slate-300 hover:text-cyan-300 transition-all flex items-center justify-between group"
+                      className="w-full text-left p-2.5 rounded-lg bg-slate-950/40 hover:bg-slate-800/80 border border-slate-800/80 hover:border-slate-700 text-[11px] text-slate-300 hover:text-white transition-colors flex items-center justify-between group"
                     >
                       <span className="truncate pr-2">{samplePrompt}</span>
-                      <ChevronRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-cyan-400 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                      <ChevronRight className="w-3 h-3 text-slate-500 group-hover:text-slate-300 shrink-0" />
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* API Telemetry Dial */}
-              <div className="bg-slate-900/40 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 shadow-2xl relative overflow-hidden group">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-bold text-slate-300 flex items-center gap-2">
-                    <Activity className="w-4 h-4 text-cyan-400" />
-                    Query Telemetry
+              {/* Usage Allocation Card */}
+              <div className="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-5 shadow-sm">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-xs font-semibold text-slate-300 flex items-center gap-2">
+                    <Activity className="w-3.5 h-3.5 text-indigo-400" />
+                    Query Allocation
                   </h3>
-                  <span className="text-[10px] font-mono bg-cyan-950/50 text-cyan-400 px-2.5 py-1 rounded-lg border border-cyan-500/30 font-bold uppercase">
+                  <span className="text-[10px] font-mono bg-slate-800 text-slate-300 px-2 py-0.5 rounded border border-slate-700 uppercase">
                     {userRole} Tier
                   </span>
                 </div>
                 
-                <div className="mb-2 flex justify-between items-end">
-                  <span className="text-3xl font-black text-white font-mono">{queryUsage.used}</span>
-                  <span className="text-xs text-slate-400 mb-1 font-mono">/ {queryUsage.max} daily limit</span>
+                <div className="mb-2 flex justify-between items-baseline">
+                  <span className="text-2xl font-bold text-white font-mono">{queryUsage.used}</span>
+                  <span className="text-xs text-slate-400 font-mono">/ {queryUsage.max} daily allocation</span>
                 </div>
                 
-                <div className="h-2.5 w-full bg-slate-800/80 rounded-full overflow-hidden p-0.5">
+                <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
                   <div 
-                    className={`h-full rounded-full shadow-[0_0_12px_rgba(6,182,212,0.8)] transition-all duration-1000 ${
-                      queryUsage.max && (queryUsage.used / queryUsage.max) * 100 > 80 ? 'bg-rose-500' : 'bg-gradient-to-r from-cyan-400 to-indigo-500'
+                    className={`h-full rounded-full transition-all duration-500 ${
+                      queryUsage.max && (queryUsage.used / queryUsage.max) * 100 > 80 ? 'bg-amber-500' : 'bg-indigo-500'
                     }`} 
                     style={{ width: `${Math.min(((queryUsage.used / (queryUsage.max || 1)) * 100), 100)}%` }} 
                   />
@@ -776,35 +773,35 @@ export default function Dashboard() {
               </div>
 
               {/* Active Audit Threads */}
-              <div className="bg-slate-900/40 backdrop-blur-2xl border border-slate-800/80 rounded-3xl shadow-2xl flex-1 flex flex-col overflow-hidden max-h-[420px]">
-                <div className="p-5 border-b border-slate-800/80 flex items-center justify-between">
+              <div className="bg-slate-900/50 border border-slate-800/80 rounded-2xl shadow-sm flex-1 flex flex-col overflow-hidden max-h-[420px]">
+                <div className="p-4 border-b border-slate-800/80 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <MessageSquare className="w-4 h-4 text-indigo-400" />
-                    <h3 className="text-sm font-bold text-slate-300">Active Audit Threads</h3>
+                    <MessageSquare className="w-3.5 h-3.5 text-indigo-400" />
+                    <h3 className="text-xs font-semibold text-slate-200">Recent Sessions</h3>
                   </div>
                   <button 
                     onClick={() => navigate('/chat')}
-                    className="text-[11px] text-cyan-400 hover:text-cyan-300 font-bold"
+                    className="text-xs text-indigo-400 hover:text-indigo-300 font-medium"
                   >
                     View All
                   </button>
                 </div>
-                <div className="flex-1 divide-y divide-slate-800/50 overflow-y-auto custom-scrollbar">
+                <div className="flex-1 divide-y divide-slate-800/50 overflow-y-auto">
                   {recentThreads.length === 0 ? (
-                    <div className="p-8 text-center text-slate-500 text-xs font-mono py-12">
-                      NO_ACTIVE_THREADS_FOUND
+                    <div className="p-8 text-center text-slate-500 text-xs py-12">
+                      No active research sessions found
                     </div>
                   ) : (
                     recentThreads.map(thread => (
                       <div 
                         key={thread.id} 
                         onClick={() => navigate(`/chat?id=${thread.id}`)} 
-                        className="p-4 hover:bg-slate-800/40 cursor-pointer transition-colors group"
+                        className="p-3.5 hover:bg-slate-800/40 cursor-pointer transition-colors group"
                       >
                         <div className="flex justify-between items-center mb-1">
                           <div className="flex items-center gap-1.5 flex-wrap">
                             {(thread.corpus_tags && thread.corpus_tags.length > 0 ? thread.corpus_tags : [thread.corpus || 'RAG']).map((tag, i) => (
-                              <span key={i} className="text-[9px] font-mono text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-1.5 py-0.5 rounded-md uppercase font-bold">
+                              <span key={i} className="text-[9px] font-mono text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-1.5 py-0.5 rounded uppercase font-semibold">
                                 {tag}
                               </span>
                             ))}
@@ -813,7 +810,7 @@ export default function Dashboard() {
                             {formatTimeAgo(thread.updated_at || thread.created_at || thread.date)}
                           </span>
                         </div>
-                        <p className="text-xs text-slate-300 group-hover:text-cyan-400 transition-colors line-clamp-2 leading-relaxed">
+                        <p className="text-xs text-slate-300 group-hover:text-white transition-colors line-clamp-2 leading-relaxed">
                           {thread.title}
                         </p>
                       </div>
@@ -829,27 +826,31 @@ export default function Dashboard() {
         {/* Drill-Down Modal */}
         {drillDownCategory && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-[#030712]/85 backdrop-blur-md transition-opacity" onClick={() => setDrillDownCategory(null)} />
-            <div className="relative w-full max-w-xl bg-slate-900/95 border border-slate-700/80 shadow-[0_0_60px_rgba(0,0,0,0.8)] rounded-3xl p-6 overflow-hidden flex flex-col max-h-[85vh]">
+            <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity" onClick={() => setDrillDownCategory(null)} />
+            <div className="relative w-full max-w-xl bg-slate-900 border border-slate-700/80 shadow-2xl rounded-2xl p-6 overflow-hidden flex flex-col max-h-[85vh]">
               <div className="flex justify-between items-center border-b border-slate-800 pb-4 mb-4">
-                <h3 className="text-sm font-bold text-cyan-400 tracking-wider flex items-center gap-2">
-                  <Terminal className="w-4 h-4" /> {drillDownCategory} PARAMETERS AUDIT
+                <h3 className="text-sm font-semibold text-slate-100 flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-indigo-400" />
+                  <span>{drillDownCategory} Compliance Review</span>
                 </h3>
-                <button onClick={() => setDrillDownCategory(null)} className="text-slate-400 hover:text-rose-400 text-xs font-semibold focus:outline-none px-2 py-1 rounded-lg hover:bg-slate-800">
-                  [ ESC ]
+                <button 
+                  onClick={() => setDrillDownCategory(null)} 
+                  className="text-slate-400 hover:text-slate-200 text-xs font-medium px-2 py-1 rounded hover:bg-slate-800 transition-colors"
+                >
+                  Close
                 </button>
               </div>
-              <div className="flex-1 overflow-y-auto flex flex-col gap-3 pr-2 custom-scrollbar">
+              <div className="flex-1 overflow-y-auto flex flex-col gap-2.5 pr-1">
                 {drillDownChecks.length === 0 ? (
-                  <p className="text-xs text-slate-500 font-mono text-center py-8">NO_VECTORS_INDEXED_FOR_BRANCH</p>
+                  <p className="text-xs text-slate-500 text-center py-8">No specific compliance checks registered for this category.</p>
                 ) : (
                   drillDownChecks.map((check, idx) => (
-                    <div key={check.id || idx} className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800/80 hover:border-cyan-900/50 transition-colors">
+                    <div key={check.id || idx} className="p-3.5 rounded-xl bg-slate-950/50 border border-slate-800/80">
                       <div className="flex items-start gap-3">
-                        <div className={`mt-1 h-2.5 w-2.5 rounded-full shrink-0 ${check.passed ? 'bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.8)]' : 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.8)]'}`} />
+                        <div className={`mt-1 h-2 w-2 rounded-full shrink-0 ${check.passed ? 'bg-emerald-400' : 'bg-rose-400'}`} />
                         <div>
-                          <h4 className="text-sm font-bold text-slate-200">{check.name || check.title || "Audit Compliance Check"}</h4>
-                          <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">{check.description || check.desc || "No supplemental details logged."}</p>
+                          <h4 className="text-xs font-semibold text-slate-200">{check.name || check.title || "Compliance Check"}</h4>
+                          <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">{check.description || check.desc || "Standard statutory guideline applies."}</p>
                         </div>
                       </div>
                     </div>

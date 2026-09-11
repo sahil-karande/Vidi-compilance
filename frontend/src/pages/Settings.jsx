@@ -1,14 +1,24 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import PricingPage from '../components/PricingPage';
-import { chatAPI } from '../lib/api'; // Fixed: Import unified chatAPI wrapper configuration instance
+import { chatAPI } from '../lib/api';
+import { 
+  User, 
+  CreditCard, 
+  Bell, 
+  ShieldAlert, 
+  LogOut, 
+  Check, 
+  Building2,
+  Trash2
+} from 'lucide-react';
 
 // Map our UI list directly to official backend ALERT_TOPICS
 const AVAILABLE_ALERTS = [
-  { id: 'gst_revisions', topic: 'GST rate changes', corpus: 'gst', title: 'GST Goods & Services Rates Notifications', desc: 'Alert notifications detailing CBIC adjustments.' },
-  { id: 'rbi_notifications', topic: 'RBI NBFC regulations', corpus: 'rbi', title: 'RBI Non-Banking Master Circular Revisions', desc: 'Monitors currency, credit policy, and FEMA directives.' },
-  { id: 'sebi_circulars', topic: 'SEBI mutual fund regulations', corpus: 'sebi', title: 'SEBI Mutual Fund Prudential Guidelines', desc: 'Tracks investment guidelines and security frameworks.' },
-  { id: 'mca_filing_deadlines', topic: 'MCA annual filing', corpus: 'mca', title: 'MCA Companies Act Statutory Deadlines', desc: 'Updates concerning filing formats and rules.' }
+  { id: 'gst_revisions', topic: 'GST rate changes', corpus: 'gst', title: 'GST Rates & Circular Notifications', desc: 'CBIC rate adjustments, exemptions, and compliance schedules.' },
+  { id: 'rbi_notifications', topic: 'RBI NBFC regulations', corpus: 'rbi', title: 'RBI Non-Banking Master Circulars', desc: 'Prudential guidelines, credit policies, and FEMA circulars.' },
+  { id: 'sebi_circulars', topic: 'SEBI mutual fund regulations', corpus: 'sebi', title: 'SEBI Prudential & Disclosure Guidelines', desc: 'LODR compliance, insider trading, and mutual fund circulars.' },
+  { id: 'mca_filing_deadlines', topic: 'MCA annual filing', corpus: 'mca', title: 'MCA Companies Act Statutory Deadlines', desc: 'Statutory filing timelines, Form 11, and Director KYC rules.' }
 ];
 
 export default function Settings() {
@@ -16,8 +26,8 @@ export default function Settings() {
   const [activeTab, setActiveTab] = useState('profile');
   const [loadingAlerts, setLoadingAlerts] = useState(false);
   const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
 
-  // Profile Tab State Matrix aligned with onboard database schemas
   const [profileForm, setProfileForm] = useState({
     name: user?.name || 'Sahil Karande',
     business_type: user?.business_profile?.business_type || 'Private Limited',
@@ -27,15 +37,12 @@ export default function Settings() {
     has_foreign_funding: user?.business_profile?.has_foreign_funding || 'No'
   });
 
-  // Lookup map for alerts from database
   const [dbAlerts, setDbAlerts] = useState({});
 
-  // Fetch active alerts from backend on mount
   const fetchAlertSubscriptions = async () => {
     try {
       setLoadingAlerts(true);
       const data = await chatAPI.listAlerts();
-      
       const alertMap = {};
       if (Array.isArray(data)) {
         data.forEach((alert) => {
@@ -52,16 +59,14 @@ export default function Settings() {
 
   useEffect(() => {
     if (user) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setProfileForm({
-        name: user.name || '',
+        name: user.name || 'Sahil Karande',
         business_type: user.business_profile?.business_type || 'Private Limited',
         industry: user.business_profile?.industry || 'Fintech',
         turnover_range: user.business_profile?.turnover_range || '₹1Cr - ₹5Cr',
         gst_registered: user.business_profile?.gst_registered || 'Yes',
         has_foreign_funding: user.business_profile?.has_foreign_funding || 'No'
       });
-      
       fetchAlertSubscriptions();
     }
   }, [user]);
@@ -69,6 +74,7 @@ export default function Settings() {
   const handleProfileSave = async (e) => {
     e.preventDefault();
     setIsSavingProfile(true);
+    setSaveSuccess(false);
     try {
       if (updateUserProfile) {
         await updateUserProfile({
@@ -81,7 +87,8 @@ export default function Settings() {
             has_foreign_funding: profileForm.has_foreign_funding
           }
         });
-        alert('Profile configurations committed successfully to your database storage!');
+        setSaveSuccess(true);
+        setTimeout(() => setSaveSuccess(false), 3000);
       }
     } catch (err) {
       console.error('Failed to update business configuration profile:', err);
@@ -93,277 +100,267 @@ export default function Settings() {
 
   const handleToggleAlert = async (item) => {
     const existingAlert = dbAlerts[item.topic];
-
     try {
       if (existingAlert) {
         const updated = await chatAPI.updateAlert(existingAlert.id, {
           is_active: !existingAlert.is_active
         });
-        
-        setDbAlerts((prev) => ({
-          ...prev,
-          [item.topic]: updated
-        }));
+        setDbAlerts((prev) => ({ ...prev, [item.topic]: updated }));
       } else {
-        const created = await chatAPI.createAlert({
-          topic: item.topic,
-          corpus: item.corpus
-        });
-
-        setDbAlerts((prev) => ({
-          ...prev,
-          [item.topic]: created
-        }));
+        const created = await chatAPI.createAlert({ topic: item.topic, corpus: item.corpus });
+        setDbAlerts((prev) => ({ ...prev, [item.topic]: created }));
       }
     } catch (err) {
       console.error('Failed to update alert status:', err);
-      alert('Failed to save alert preference. Please try again.');
     }
-  };
-
-  const handleCheckoutUpgrade = (tier, cycle) => {
-    console.log(`Razorpay billing sequence dispatched for tier: ${tier}, cycle: ${cycle}`);
   };
 
   const handleDeleteAccount = () => {
-    if (window.confirm('WARNING: Are you sure you want to permanently delete your account? This action purges all profiles, saved history, and active query capacities immediately.')) {
-      alert('Account deletion token initialized. Contact system administrator to complete validation.');
+    if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+      alert('Account deletion request registered. Please contact support to complete.');
     }
   };
 
-  const renderTabButton = (id, label, icon) => {
-    const isActive = activeTab === id;
-    return (
-      <button
-        onClick={() => setActiveTab(id)}
-        style={{
-          background: isActive ? 'rgba(99, 102, 241, 0.15)' : 'transparent',
-          color: isActive ? '#818cf8' : '#94a3b8',
-          border: 'none',
-          borderBottom: isActive ? '2px solid #6366f1' : '2px solid transparent',
-          padding: '12px 20px',
-          fontSize: '14px',
-          fontWeight: '600',
-          cursor: 'pointer',
-          transition: 'all 0.2s',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px'
-        }}
-      >
-        <span>{icon}</span> {label}
-      </button>
-    );
-  };
+  const TABS = [
+    { id: 'profile', label: 'Company Profile', icon: Building2 },
+    { id: 'plan', label: 'Plan & Billing', icon: CreditCard },
+    { id: 'alerts', label: 'Regulatory Alerts', icon: Bell },
+    { id: 'account', label: 'Account Security', icon: User }
+  ];
 
   return (
-    <div style={{ minHeight: '100vh', background: '#020617', color: '#f8fafc', padding: '32px 24px', boxSizing: 'border-box', fontFamily: 'sans-serif' }}>
+    <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 py-10 text-slate-100 font-sans">
       
-      <div style={{ maxWidth: '1200px', margin: '0 auto', marginBottom: '32px', borderBottom: '1px solid rgba(51, 65, 85, 0.4)', paddingBottom: '16px', textAlign: 'left' }}>
-        <h1 style={{ margin: 0, fontSize: '24px', fontWeight: '700', color: '#ffffff', letterSpacing: '-0.01em' }}>
-          Workspace Configurations
+      {/* Header */}
+      <div className="mb-8 pb-6 border-b border-slate-800/80">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+          Workspace Settings
         </h1>
-        <p style={{ margin: '4px 0 0 0', fontSize: '14px', color: '#64748b' }}>
-          Configure operational profile fields, notification alert rules, and checkout parameters.
+        <p className="text-xs text-slate-400 mt-1">
+          Manage corporate entity parameters, statutory notifications, and subscription tiers.
         </p>
       </div>
 
-      <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      {/* Tabs Row */}
+      <div className="flex border-b border-slate-800 gap-2 mb-8">
+        {TABS.map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-2 px-4 py-2.5 text-xs font-medium border-b-2 transition-colors -mb-px ${
+                isActive 
+                  ? 'border-indigo-500 text-white font-semibold' 
+                  : 'border-transparent text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Icon className="w-3.5 h-3.5" />
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Tab Content Box */}
+      <div className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 sm:p-8">
         
-        <div style={{ display: 'flex', borderBottom: '1px solid #1e293b', gap: '8px' }}>
-          {renderTabButton('profile', 'Business Profile', '👤')}
-          {renderTabButton('plan', 'Plan & Billing', 'card')}
-          {renderTabButton('alerts', 'Regulation Alerts', '🔔')}
-          {renderTabButton('account', 'Account Safety', '⚙️')}
-        </div>
+        {/* Profile Tab */}
+        {activeTab === 'profile' && (
+          <form onSubmit={handleProfileSave} className="max-w-xl space-y-5 text-xs">
+            <div>
+              <h3 className="text-sm font-bold text-white mb-1">Entity Details</h3>
+              <p className="text-xs text-slate-400">These parameters configure your automated risk scorecard and compliance calendar.</p>
+            </div>
 
-        <div style={{ background: 'rgba(15, 23, 42, 0.4)', border: '1px solid rgba(51, 65, 85, 0.6)', borderRadius: '16px', padding: '32px', boxSizing: 'border-box', backdropFilter: 'blur(12px)', minHeight: '400px', textAlign: 'left' }}>
-          
-          {activeTab === 'profile' && (
-            <form onSubmit={handleProfileSave} style={{ maxWidth: '600px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <h3 style={{ margin: '0 0 4px 0', fontSize: '18px', color: '#ffffff' }}>Corporate Meta parameters</h3>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '13px', color: '#94a3b8', fontWeight: '600' }}>Operator / Full Name</label>
-                <input 
-                  type="text" 
-                  value={profileForm.name} 
-                  onChange={(e) => setProfileForm({...profileForm, name: e.target.value})}
-                  style={{ background: '#020617', border: '1px solid #334155', borderRadius: '8px', padding: '10px 14px', color: '#f8fafc', outline: 'none' }}
-                />
+            {saveSuccess && (
+              <div className="p-3 rounded-lg bg-emerald-950/50 border border-emerald-500/30 text-emerald-400 flex items-center gap-2">
+                <Check className="w-4 h-4" />
+                <span>Company parameters successfully saved.</span>
               </div>
+            )}
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '13px', color: '#94a3b8', fontWeight: '600' }}>Business Entity Constitution</label>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-slate-300">Operator / Full Name</label>
+              <input 
+                type="text" 
+                value={profileForm.name} 
+                onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
+                className="w-full bg-slate-950 border border-slate-800 focus:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 outline-none"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-slate-300">Corporate Constitution</label>
+              <select 
+                value={profileForm.business_type} 
+                onChange={(e) => setProfileForm({ ...profileForm, business_type: e.target.value })}
+                className="w-full bg-slate-950 border border-slate-800 focus:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 outline-none"
+              >
+                <option value="Private Limited">Private Limited</option>
+                <option value="LLP">LLP</option>
+                <option value="Partnership">Partnership</option>
+                <option value="Proprietorship">Proprietorship</option>
+              </select>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-slate-300">Industry Sector</label>
+              <select 
+                value={profileForm.industry} 
+                onChange={(e) => setProfileForm({ ...profileForm, industry: e.target.value })}
+                className="w-full bg-slate-950 border border-slate-800 focus:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 outline-none"
+              >
+                <option value="Fintech">Fintech</option>
+                <option value="SaaS / Tech Services">SaaS / Tech Services</option>
+                <option value="Manufacturing">Manufacturing</option>
+                <option value="E-commerce">E-commerce</option>
+              </select>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-slate-300">Annual Financial Turnover</label>
+              <select 
+                value={profileForm.turnover_range} 
+                onChange={(e) => setProfileForm({ ...profileForm, turnover_range: e.target.value })}
+                className="w-full bg-slate-950 border border-slate-800 focus:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 outline-none"
+              >
+                <option value="Under ₹20 Lakhs">Under ₹20 Lakhs</option>
+                <option value="₹20 Lakhs - ₹1Cr">₹20 Lakhs - ₹1Cr</option>
+                <option value="₹1Cr - ₹5Cr">₹1Cr - ₹5Cr</option>
+                <option value="Above ₹5Cr">Above ₹5Cr</option>
+              </select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-slate-300">Registered for GST?</label>
                 <select 
-                  value={profileForm.business_type} 
-                  onChange={(e) => setProfileForm({...profileForm, business_type: e.target.value})}
-                  style={{ background: '#020617', border: '1px solid #334155', borderRadius: '8px', padding: '10px 14px', color: '#f8fafc', outline: 'none' }}
+                  value={profileForm.gst_registered} 
+                  onChange={(e) => setProfileForm({ ...profileForm, gst_registered: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-800 focus:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 outline-none"
                 >
-                  <option value="Private Limited">Private Limited</option>
-                  <option value="LLP">LLP</option>
-                  <option value="Partnership">Partnership</option>
-                  <option value="Proprietorship">Proprietorship</option>
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
                 </select>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '13px', color: '#94a3b8', fontWeight: '600' }}>Industry Sector</label>
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium text-slate-300">Foreign Inflow / FDI?</label>
                 <select 
-                  value={profileForm.industry} 
-                  onChange={(e) => setProfileForm({...profileForm, industry: e.target.value})}
-                  style={{ background: '#020617', border: '1px solid #334155', borderRadius: '8px', padding: '10px 14px', color: '#f8fafc', outline: 'none' }}
+                  value={profileForm.has_foreign_funding} 
+                  onChange={(e) => setProfileForm({ ...profileForm, has_foreign_funding: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-800 focus:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 outline-none"
                 >
-                  <option value="Fintech">Fintech</option>
-                  <option value="SaaS / Tech Services">SaaS / Tech Services</option>
-                  <option value="Manufacturing">Manufacturing</option>
-                  <option value="E-commerce">E-commerce</option>
+                  <option value="No">No</option>
+                  <option value="Yes">Yes</option>
                 </select>
               </div>
+            </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '13px', color: '#94a3b8', fontWeight: '600' }}>Annual Financial Turnover Tier</label>
-                <select 
-                  value={profileForm.turnover_range} 
-                  onChange={(e) => setProfileForm({...profileForm, turnover_range: e.target.value})}
-                  style={{ background: '#020617', border: '1px solid #334155', borderRadius: '8px', padding: '10px 14px', color: '#f8fafc', outline: 'none' }}
-                >
-                  <option value="Under ₹20 Lakhs">Under ₹20 Lakhs</option>
-                  <option value="₹20 Lakhs - ₹1Cr">₹20 Lakhs - ₹1Cr</option>
-                  <option value="₹1Cr - ₹5Cr">₹1Cr - ₹5Cr</option>
-                  <option value="Above ₹5Cr">Above ₹5Cr</option>
-                </select>
-              </div>
-
-              <div style={{ display: 'flex', gap: '16px' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1 }}>
-                  <label style={{ fontSize: '13px', color: '#94a3b8', fontWeight: '600' }}>Registered for GST?</label>
-                  <select 
-                    value={profileForm.gst_registered} 
-                    onChange={(e) => setProfileForm({...profileForm, gst_registered: e.target.value})}
-                    style={{ background: '#020617', border: '1px solid #334155', borderRadius: '8px', padding: '10px 14px', color: '#f8fafc', outline: 'none' }}
-                  >
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                  </select>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1 }}>
-                  <label style={{ fontSize: '13px', color: '#94a3b8', fontWeight: '600' }}>Foreign Funding (FDI)?</label>
-                  <select 
-                    value={profileForm.has_foreign_funding} 
-                    onChange={(e) => setProfileForm({...profileForm, has_foreign_funding: e.target.value})}
-                    style={{ background: '#020617', border: '1px solid #334155', borderRadius: '8px', padding: '10px 14px', color: '#f8fafc', outline: 'none' }}
-                  >
-                    <option value="No">No</option>
-                    <option value="Yes">Yes</option>
-                  </select>
-                </div>
-              </div>
-
+            <div className="pt-2">
               <button 
                 type="submit" 
                 disabled={isSavingProfile}
-                style={{ width: 'fit-content', background: '#4f46e5', color: '#fff', border: 'none', borderRadius: '8px', padding: '10px 24px', fontSize: '14px', fontWeight: '600', cursor: 'pointer', marginTop: '10px', opacity: isSavingProfile ? 0.6 : 1 }}
+                className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs rounded-lg transition-colors shadow-sm disabled:opacity-50"
               >
-                {isSavingProfile ? 'Saving Parameters...' : 'Save Profile Meta'}
+                {isSavingProfile ? 'Saving...' : 'Save Parameters'}
               </button>
-            </form>
-          )}
-
-          {activeTab === 'plan' && (
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(30, 41, 59, 0.4)', padding: '20px', borderRadius: '12px', border: '1px solid #1e293b', marginBottom: '32px' }}>
-                <div>
-                  <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase' }}>Current Workspace Active Plan</div>
-                  <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#818cf8', marginTop: '4px' }}>{user?.role?.toUpperCase() || 'FREE'} Tier</div>
-                </div>
-                <div>
-                  <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 'bold', textTransform: 'uppercase', textAlign: 'right' }}>Status</div>
-                  <div style={{ fontSize: '14px', fontWeight: '600', color: '#f8fafc', marginTop: '4px', textAlign: 'right' }}>Active Operational Space</div>
-                </div>
-              </div>
-              <PricingPage onSelectPlan={handleCheckoutUpgrade} userEmail={user?.email} />
             </div>
-          )}
+          </form>
+        )}
 
-          {activeTab === 'alerts' && (
-            <div style={{ maxWidth: '600px' }}>
-              <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', color: '#ffffff' }}>Weekly Legislative Change Digests</h3>
-              <p style={{ margin: '0 0 24px 0', fontSize: '13px', color: '#64748b', lineHeight: '1.5' }}>
-                Configure background NLP cron diff monitors to push updates right to your matching email handles.
-              </p>
-
-              {loadingAlerts ? (
-                <div style={{ color: '#94a3b8', fontSize: '14px' }}>Synchronizing preferences with database...</div>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  {AVAILABLE_ALERTS.map((item) => {
-                    const isSubscribed = dbAlerts[item.topic]?.is_active || false;
-
-                    return (
-                      <div key={item.id} style={{ display: 'flex', alignItems: 'center', justifyOrigin: 'center', justifyContent: 'space-between', background: 'rgba(30, 41, 59, 0.2)', padding: '16px', borderRadius: '10px', border: '1px solid rgba(51, 65, 85, 0.3)' }}>
-                        <div>
-                          <div style={{ fontSize: '14px', fontWeight: '600', color: '#ffffff' }}>{item.title}</div>
-                          <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>{item.desc}</div>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => handleToggleAlert(item)}
-                          style={{
-                            background: isSubscribed ? '#10b981' : '#334155',
-                            color: '#ffffff',
-                            border: 'none',
-                            borderRadius: '20px',
-                            padding: '6px 16px',
-                            fontSize: '12px',
-                            fontWeight: '700',
-                            cursor: 'pointer',
-                            transition: 'background-color 0.2s'
-                          }}
-                        >
-                          {isSubscribed ? 'Active' : 'Muted'}
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          )}
-
-          {activeTab === 'account' && (
-            <div style={{ maxWidth: '600px', display: 'flex', flexDirection: 'column', gap: '28px' }}>
+        {/* Plan Tab */}
+        {activeTab === 'plan' && (
+          <div className="space-y-8">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-xl bg-slate-950 border border-slate-800">
               <div>
-                <h3 style={{ margin: '0 0 6px 0', fontSize: '18px', color: '#ffffff' }}>Terminate active sessions</h3>
-                <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: '#64748b' }}>Logs your identity credentials safely out of this client framework workspace node.</p>
-                <button 
-                  type="button"
-                  onClick={signOut}
-                  style={{ background: 'transparent', color: '#f8fafc', border: '1px solid #334155', borderRadius: '8px', padding: '10px 20px', fontSize: '13px', fontWeight: '600', cursor: 'pointer', transition: 'border-color 0.2s' }}
-                  onMouseEnter={(e) => e.currentTarget.style.borderColor = '#ef4444'}
-                  onMouseLeave={(e) => e.currentTarget.style.borderColor = '#334155'}
-                >
-                  Sign Out of RegIQ
-                </button>
+                <span className="text-[11px] font-mono uppercase text-slate-500 tracking-wider font-semibold">Active Plan</span>
+                <div className="text-xl font-bold text-white mt-0.5 capitalize">{user?.role || 'Free'} Tier</div>
               </div>
-
-              <div style={{ borderTop: '1px solid rgba(51, 65, 85, 0.4)', paddingTop: '24px' }}>
-                <h3 style={{ margin: '0 0 6px 0', fontSize: '18px', color: '#ef4444' }}>Danger Zone Layout</h3>
-                <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: '#64748b' }}>Permanently purges historical references, custom datasets, billing leases, and account profile schemas completely.</p>
-                <button 
-                  type="button"
-                  onClick={handleDeleteAccount}
-                  style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.4)', borderRadius: '8px', padding: '10px 20px', fontSize: '13px', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s' }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = '#ef4444'; e.currentTarget.style.color = '#fff'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)'; e.currentTarget.style.color = '#ef4444'; }}
-                >
-                  Delete Account Permanently
-                </button>
+              <div className="text-right">
+                <span className="text-[11px] font-mono uppercase text-slate-500 tracking-wider font-semibold">Status</span>
+                <div className="text-xs font-medium text-emerald-400 mt-0.5 flex items-center gap-1.5 justify-end">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                  <span>Active Workspace</span>
+                </div>
               </div>
             </div>
-          )}
 
-        </div>
+            <PricingPage userEmail={user?.email} />
+          </div>
+        )}
+
+        {/* Alerts Tab */}
+        {activeTab === 'alerts' && (
+          <div className="max-w-2xl space-y-6">
+            <div>
+              <h3 className="text-sm font-bold text-white mb-1">Statutory Circular Notification Feeds</h3>
+              <p className="text-xs text-slate-400">Toggle active push updates when new notifications or master directions are published.</p>
+            </div>
+
+            {loadingAlerts ? (
+              <div className="text-xs text-slate-500 py-4">Synchronizing notification feeds...</div>
+            ) : (
+              <div className="space-y-3">
+                {AVAILABLE_ALERTS.map((item) => {
+                  const isSubscribed = dbAlerts[item.topic]?.is_active || false;
+                  return (
+                    <div key={item.id} className="p-4 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-4">
+                      <div>
+                        <div className="text-xs font-semibold text-white">{item.title}</div>
+                        <div className="text-[11px] text-slate-400 mt-0.5">{item.desc}</div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleToggleAlert(item)}
+                        className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                          isSubscribed 
+                            ? 'bg-emerald-950 text-emerald-400 border border-emerald-500/30' 
+                            : 'bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-700'
+                        }`}
+                      >
+                        {isSubscribed ? 'Active' : 'Muted'}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Account Tab */}
+        {activeTab === 'account' && (
+          <div className="max-w-xl space-y-8">
+            <div className="space-y-3">
+              <h3 className="text-sm font-bold text-white">Session Management</h3>
+              <p className="text-xs text-slate-400">Sign out of your active session on this device.</p>
+              <button 
+                type="button"
+                onClick={signOut}
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg text-xs font-medium transition-colors flex items-center gap-2"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Sign Out</span>
+              </button>
+            </div>
+
+            <div className="pt-6 border-t border-slate-800 space-y-3">
+              <h3 className="text-sm font-bold text-rose-400">Danger Zone</h3>
+              <p className="text-xs text-slate-400">Permanently delete your account, session logs, and personal documents.</p>
+              <button 
+                type="button"
+                onClick={handleDeleteAccount}
+                className="px-4 py-2 bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-500/30 rounded-lg text-xs font-medium transition-colors flex items-center gap-2"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Delete Account</span>
+              </button>
+            </div>
+          </div>
+        )}
 
       </div>
     </div>

@@ -547,36 +547,36 @@ export default function Explorer() {
     <div className="relative w-full h-[calc(100vh-65px)] bg-[#030712] text-slate-200 flex flex-col overflow-hidden font-sans">
       
       {/* ── Top Header Bar ── */}
-      <div className="w-full bg-slate-950/80 backdrop-blur-md border-b border-slate-800/80 px-6 py-3.5 flex flex-wrap items-center justify-between gap-4 z-20">
+      <div className="w-full bg-[#090d16] border-b border-slate-800/80 px-6 py-3 flex flex-wrap items-center justify-between gap-4 z-20">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500/20 via-indigo-500/20 to-purple-500/20 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shadow-[0_0_15px_rgba(56,189,248,0.2)]">
-            <Share2 className="w-5 h-5" />
+          <div className="w-8 h-8 rounded-lg bg-indigo-600/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+            <Share2 className="w-4 h-4" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-base font-bold text-white tracking-tight">Regulation Citation Explorer</h1>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-indigo-950/60 border border-indigo-500/30 text-indigo-300 font-semibold tracking-wider uppercase">
-                IEEE Graph Matrix
+              <h1 className="text-sm font-semibold text-white tracking-tight">Regulation Citation Network</h1>
+              <span className="text-[10px] font-mono px-2 py-0.2 rounded bg-slate-800 border border-slate-700 text-slate-300">
+                Network Topology
               </span>
             </div>
             <p className="text-[11px] text-slate-400">
-              Interactive topological force graph mapping cross-regulatory circular citations across Indian financial jurisprudence.
+              Interactive dependency graph mapping statutory cross-references across RBI, SEBI, MCA, and GST.
             </p>
           </div>
         </div>
 
         {/* Macro Metrics Scorecards */}
         {stats && (
-          <div className="hidden lg:flex items-center gap-4 text-xs">
-            <div className="bg-slate-900/60 border border-slate-800 px-3 py-1.5 rounded-xl flex items-center gap-2">
-              <Layers className="w-3.5 h-3.5 text-cyan-400" />
+          <div className="hidden lg:flex items-center gap-3 text-xs">
+            <div className="bg-slate-900 border border-slate-800/80 px-3 py-1.5 rounded-lg flex items-center gap-2">
+              <Layers className="w-3.5 h-3.5 text-indigo-400" />
               <span className="text-slate-400">Circular Nodes:</span>
-              <span className="font-bold text-white font-mono">{stats.total_nodes}</span>
+              <span className="font-semibold text-white font-mono">{stats.total_nodes}</span>
             </div>
-            <div className="bg-slate-900/60 border border-slate-800 px-3 py-1.5 rounded-xl flex items-center gap-2">
+            <div className="bg-slate-900 border border-slate-800/80 px-3 py-1.5 rounded-lg flex items-center gap-2">
               <TrendingUp className="w-3.5 h-3.5 text-indigo-400" />
               <span className="text-slate-400">Citations Mapped:</span>
-              <span className="font-bold text-white font-mono">{stats.total_edges}</span>
+              <span className="font-semibold text-white font-mono">{stats.total_edges}</span>
             </div>
             <div className="bg-slate-900/60 border border-slate-800 px-3 py-1.5 rounded-xl flex items-center gap-2">
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />

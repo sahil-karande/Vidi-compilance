@@ -6,6 +6,21 @@ import ChatThread from '../components/ChatThread';
 import { CitationDrawer } from '../components/CitationCard';
 import PlainLegalToggle, { useLegalMode } from '../components/PlainLegalToggle';
 import { useQueryLimit } from '../hooks/useQueryLimit';
+import { 
+  Plus, 
+  MessageSquare, 
+  Trash2, 
+  Folder, 
+  Download, 
+  Send, 
+  AlertTriangle, 
+  AlertCircle, 
+  Sparkles, 
+  X, 
+  Menu,
+  FileText,
+  ChevronRight
+} from 'lucide-react';
 
 export default function Chat() {
   const { signOut } = useAuth();
@@ -242,199 +257,248 @@ export default function Chat() {
   const groupedThreads = getGroupedThreads();
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 flex items-center justify-center p-0 md:p-6 font-sans antialiased">
-      <div className="flex w-full max-w-7xl h-screen md:h-[85vh] bg-slate-900/40 border-0 md:border border-slate-800 rounded-none md:rounded-2xl overflow-hidden backdrop-blur-xl relative">
-        
-        {isMobileSidebarOpen && (
-          <div 
-            className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-40 md:hidden transition-opacity duration-200"
+    <div className="w-full h-[calc(100vh-53px)] bg-[#090d16] text-slate-100 flex overflow-hidden font-sans antialiased">
+      
+      {/* Mobile Backdrop */}
+      {isMobileSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-40 md:hidden transition-opacity duration-200"
+          onClick={() => setIsMobileSidebarOpen(false)}
+        />
+      )}
+
+      {/* ── Left Sidebar: Sessions & Threads ── */}
+      <aside className={`
+        fixed md:static inset-y-0 left-0 w-72 bg-slate-950 border-r border-slate-800/80 flex flex-col p-4 z-50 shrink-0
+        transform transition-transform duration-200 ease-in-out md:translate-x-0
+        ${isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
+        <div className="flex items-center justify-between mb-3 md:hidden">
+          <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Research Sessions</span>
+          <button 
             onClick={() => setIsMobileSidebarOpen(false)}
-          />
-        )}
-
-        <aside className={`
-          fixed md:static inset-y-0 left-0 w-72 bg-slate-900 border-r border-slate-800 flex flex-col p-4 z-50 
-          transform transition-transform duration-200 ease-in-out md:translate-x-0
-          ${isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        `}>
-          <div className="flex items-center justify-between mb-4 md:hidden">
-            <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">RegIQ Workspace</span>
-            <button 
-              onClick={() => setIsMobileSidebarOpen(false)}
-              className="p-1.5 text-slate-400 hover:bg-slate-800 rounded-lg"
-            >
-              ✕
-            </button>
-          </div>
-
-          <button
-            onClick={handleStartNewChat}
-            className="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 text-white border-0 rounded-xl py-3 px-4 text-sm font-semibold shadow-lg shadow-indigo-600/10 hover:brightness-110 active:scale-[0.98] transition-all mb-4"
+            className="p-1 text-slate-400 hover:text-white rounded"
           >
-            + New Chat Session
+            <X className="w-4 h-4" />
           </button>
+        </div>
 
-          <div className="text-[11px] text-indigo-400 font-bold uppercase tracking-wider mb-3 text-left border-b border-slate-800/60 pb-1">
-            Saved History
-          </div>
-          
-          <div className="flex-1 overflow-y-auto space-y-4 pr-1 scrollbar-thin">
-            {isSidebarLoading ? (
-              <div className="space-y-2 mt-4">
-                <div className="h-7 bg-slate-800 rounded animate-pulse w-3/4"></div>
-                <div className="h-7 bg-slate-800 rounded animate-pulse w-5/6"></div>
-              </div>
-            ) : threads.length === 0 ? (
-              <div className="text-slate-500 text-xs text-center mt-6">No session logs found</div>
-            ) : (
-              Object.entries(groupedThreads).map(([groupName, items]) => (
-                <div key={groupName} className="flex flex-col gap-1">
-                  <div className="text-[10px] text-slate-500 font-bold text-left pl-1 uppercase tracking-wider mb-1">
-                    📁 {groupName}
-                  </div>
-                  {items.map((thread, index) => {
-                    const isActive = thread.id === activeThreadId;
-                    const displayId = thread.id ? String(thread.id).substring(0, 6) : index;
-                    return (
-                      <div
-                        key={thread.id || index}
-                        onClick={() => handleSelectThread(thread.id)}
-                        className={`group w-full flex items-center justify-between rounded-xl px-3 py-2.5 cursor-pointer transition-all border
-                          ${isActive 
-                            ? 'bg-indigo-600/15 border-indigo-500/40 text-indigo-400' 
-                            : 'bg-transparent border-transparent hover:bg-slate-800/50 text-slate-400 hover:text-slate-200'
-                          }`}
-                      >
-                        <span className="text-sm text-left truncate flex-1 pr-2">
-                          💬 {thread.title || `Session ${displayId}`}
-                        </span>
-                        <button
-                          onClick={(e) => handleDeleteThread(e, thread.id)}
-                          title="Delete session"
-                          className="text-slate-600 hover:text-red-400 hover:bg-red-500/10 p-1 rounded-md opacity-100 md:opacity-0 group-hover:opacity-100 transition-all duration-150"
-                        >
-                          🗑️
-                        </button>
-                      </div>
-                    );
-                  })}
+        <button
+          onClick={handleStartNewChat}
+          className="w-full bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg py-2.5 px-3.5 text-xs font-medium transition-colors shadow-sm flex items-center justify-center gap-2 mb-4"
+        >
+          <Plus className="w-3.5 h-3.5" />
+          <span>New Research Session</span>
+        </button>
+
+        <div className="text-[10px] text-slate-500 font-mono font-semibold uppercase tracking-wider mb-2 px-1">
+          Historical Inquiries
+        </div>
+        
+        <div className="flex-1 overflow-y-auto space-y-3.5 pr-1 text-xs">
+          {isSidebarLoading ? (
+            <div className="space-y-2 mt-2">
+              <div className="h-6 bg-slate-800/60 rounded animate-pulse w-3/4" />
+              <div className="h-6 bg-slate-800/60 rounded animate-pulse w-5/6" />
+            </div>
+          ) : threads.length === 0 ? (
+            <div className="text-slate-500 text-xs text-center py-6">No previous inquiries</div>
+          ) : (
+            Object.entries(groupedThreads).map(([groupName, items]) => (
+              <div key={groupName} className="flex flex-col gap-1">
+                <div className="text-[10px] text-slate-400 font-medium px-1 flex items-center gap-1.5 uppercase tracking-wider">
+                  <Folder className="w-3 h-3 text-slate-500" />
+                  <span>{groupName}</span>
                 </div>
-              ))
-            )}
-          </div>
-        </aside>
+                {items.map((thread, index) => {
+                  const isActive = thread.id === activeThreadId;
+                  const displayId = thread.id ? String(thread.id).substring(0, 6) : index;
+                  return (
+                    <div
+                      key={thread.id || index}
+                      onClick={() => handleSelectThread(thread.id)}
+                      className={`group w-full flex items-center justify-between rounded-lg px-2.5 py-2 cursor-pointer transition-colors border ${
+                        isActive 
+                          ? 'bg-indigo-600/15 border-indigo-500/30 text-indigo-300 font-medium' 
+                          : 'bg-transparent border-transparent hover:bg-slate-900 text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0 pr-1">
+                        <MessageSquare className="w-3 h-3 text-slate-500 shrink-0" />
+                        <span className="truncate text-xs">
+                          {thread.title || `Session ${displayId}`}
+                        </span>
+                      </div>
+                      <button
+                        onClick={(e) => handleDeleteThread(e, thread.id)}
+                        title="Delete session"
+                        className="text-slate-600 hover:text-rose-400 p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            ))
+          )}
+        </div>
+      </aside>
 
-        <div className="flex-1 flex flex-col bg-transparent relative overflow-hidden h-full">
+      {/* ── Main Chat Stream Workspace ── */}
+      <div className="flex-1 flex flex-col bg-[#090d16] relative overflow-hidden h-full">
+        
+        {/* Workspace Sub-Header */}
+        <header className="px-6 py-3 bg-[#090d16] border-b border-slate-800/80 flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsMobileSidebarOpen(true)}
+              className="p-1.5 text-slate-400 hover:text-white rounded-md md:hidden focus:outline-none"
+            >
+              <Menu className="w-4 h-4" />
+            </button>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="text-sm font-semibold text-white">Regulatory Research Assistant</h2>
+                <span className="text-[10px] text-slate-400 font-mono bg-slate-800 px-1.5 py-0.2 rounded border border-slate-700">
+                  Zero Hallucination
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-500">Statutory ground truth across GST, RBI, SEBI, MCA, and FEMA</p>
+            </div>
+          </div>
           
-          <header className="p-4 px-6 bg-slate-900/40 border-b border-slate-800 flex items-center justify-between w-full box-border">
-            <div className="flex items-center gap-3 text-left">
+          <div className="flex items-center gap-3">
+            {activeThreadId && messages.length > 0 && (
               <button
-                onClick={() => setIsMobileSidebarOpen(true)}
-                className="p-2 -ml-2 text-slate-400 hover:bg-slate-800 rounded-xl md:hidden block focus:outline-none"
+                onClick={handleExportPDF}
+                disabled={isExporting}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-slate-700/80 rounded-md bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white transition-colors disabled:opacity-40"
               >
-                ☰
+                {isExporting ? (
+                  <>
+                    <span className="w-3 h-3 border-2 border-slate-400 border-t-indigo-500 rounded-full animate-spin" />
+                    <span>Rendering...</span>
+                  </>
+                ) : (
+                  <>
+                    <Download className="w-3.5 h-3.5 text-indigo-400" />
+                    <span>Export PDF</span>
+                  </>
+                )}
               </button>
-              <div>
-                <h2 className="margin-0 text-base md:text-lg text-indigo-400 font-semibold tracking-tight">RegIQ Compliance Feed</h2>
-                <p className="margin-0 text-[11px] text-slate-500 hidden sm:block">Grounded Legal Analysis and Source Citation</p>
+            )}
+            <PlainLegalToggle mode={ragMode} onModeChange={handleModeChange} />
+          </div>
+        </header>
+
+        {/* Messages Stream */}
+        <div className="flex-1 overflow-y-auto p-6 md:px-12 flex flex-col w-full space-y-5">
+          {messages.length === 0 ? (
+            <div className="flex flex-col items-center justify-center text-center max-w-xl mx-auto my-auto py-12">
+              <div className="w-10 h-10 rounded-xl bg-indigo-600/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 mb-4">
+                <FileText className="w-5 h-5" />
+              </div>
+              <h3 className="text-base font-semibold text-white mb-1">
+                Indian Statutory Compliance Intelligence
+              </h3>
+              <p className="text-xs text-slate-400 max-w-md leading-relaxed mb-6">
+                Query official circulars, master directions, and notifications. Every response cites exact sections and gazette publications.
+              </p>
+
+              {/* Suggested Questions Grid */}
+              <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-2 text-left">
+                {[
+                  { text: "GST Input Tax Credit reversal conditions under Rule 42/43", tag: "GST" },
+                  { text: "RBI Overseas Direct Investment reporting compliance via Form FC-GPR", tag: "RBI" },
+                  { text: "SEBI LODR Regulation 30 material event disclosure timeline", tag: "SEBI" },
+                  { text: "MCA annual filing deadlines and DIR-3 KYC compliance for Directors", tag: "MCA" }
+                ].map((item, i) => (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      setInput(item.text);
+                      executeAutomatedQuery(item.text, ragMode);
+                    }}
+                    className="p-3 rounded-lg bg-slate-900/60 hover:bg-slate-900 border border-slate-800/80 hover:border-slate-700 text-xs text-slate-300 hover:text-white transition-colors flex flex-col justify-between group"
+                  >
+                    <span className="leading-snug mb-2">{item.text}</span>
+                    <span className="text-[10px] font-mono font-semibold text-indigo-400 self-start">
+                      {item.tag} Framework →
+                    </span>
+                  </button>
+                ))}
               </div>
             </div>
-            
-            <div className="flex items-center gap-3">
-              {activeThreadId && messages.length > 0 && (
-                <button
-                  onClick={handleExportPDF}
-                  disabled={isExporting}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-slate-700 rounded-xl bg-slate-800/40 hover:bg-slate-800 text-slate-300 hover:text-white transition-all disabled:opacity-40 shrink-0"
+          ) : (
+            <div className="w-full max-w-5xl mx-auto flex flex-col">
+              <ChatThread messages={messages} mode={ragMode} onSelectCitation={setActiveCitation} />
+            </div>
+          )}
+
+          {isLoading && (
+            <div className="flex items-center gap-3 p-3.5 bg-slate-900/40 border border-slate-800/60 rounded-lg text-indigo-400 text-xs max-w-xl mx-auto">
+              <div className="w-4 h-4 border-2 border-indigo-400/30 border-t-indigo-400 rounded-full animate-spin shrink-0" />
+              <span>Matching statutory clauses and re-ranking candidate circulars...</span>
+            </div>
+          )}
+
+          {errorState && (
+            <div className={`p-4 rounded-lg border max-w-xl mx-auto w-full text-xs space-y-2 ${
+              errorState.type === 'LIMIT_EXHAUSTED' 
+                ? 'bg-amber-500/10 border-amber-500/30 text-amber-300' 
+                : 'bg-rose-500/10 border-rose-500/30 text-rose-300'
+            }`}>
+              <div className="font-semibold flex items-center gap-2">
+                {errorState.type === 'LIMIT_EXHAUSTED' ? (
+                  <AlertTriangle className="w-4 h-4 text-amber-400" />
+                ) : (
+                  <AlertCircle className="w-4 h-4 text-rose-400" />
+                )}
+                <span>{errorState.type === 'LIMIT_EXHAUSTED' ? 'Daily Allocation Reached' : 'System Notice'}</span>
+              </div>
+              <p className="text-slate-400 leading-relaxed">{errorState.message}</p>
+              {errorState.type === 'LIMIT_EXHAUSTED' && (
+                <button 
+                  onClick={() => navigate('/pricing')} 
+                  className="mt-1 px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded text-xs transition-colors"
                 >
-                  {isExporting ? (
-                    <>
-                      <span className="w-3 h-3 border-2 border-slate-400 border-t-indigo-500 rounded-full animate-spin"></span>
-                      Exporting...
-                    </>
-                  ) : (
-                    <>
-                      📄 Export PDF
-                    </>
-                  )}
+                  Upgrade to Unlimited Plan
                 </button>
               )}
-              <PlainLegalToggle mode={ragMode} onModeChange={handleModeChange} />
-              <button 
-                onClick={signOut} 
-                className="bg-transparent text-slate-400 border border-slate-800 hover:border-red-500/40 hover:text-red-400 px-3.5 py-1.5 rounded-xl cursor-pointer text-xs transition-colors hidden sm:block"
-              >
-                Sign Out
-              </button>
             </div>
-          </header>
-
-          <div className="flex-1 overflow-y-auto p-4 md:p-6 flex flex-col w-full box-border space-y-4">
-            {messages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center text-slate-500 text-center gap-3 w-full h-full my-auto px-4 box-border">
-                <div className="text-4xl animate-bounce">⚡</div>
-                <p className="text-sm md:text-base text-slate-300 font-medium">Ask an Indian business compliance query.</p>
-                <p className="text-xs text-slate-500 max-w-sm">RegIQ extracts vectors directly across verified RBI, SEBI, GST, and MCA portals without hallucinations.</p>
-              </div>
-            ) : (
-              <div className="w-full flex flex-col">
-                <ChatThread messages={messages} mode={ragMode} onSelectCitation={setActiveCitation} />
-              </div>
-            )}
-
-            {isLoading && (
-              <div className="flex items-center gap-2.5 p-4 bg-slate-900/30 border border-slate-800/40 rounded-xl text-indigo-400 text-xs italic animate-pulse max-w-xl">
-                <div className="w-2 h-2 rounded-full bg-indigo-500 shadow-sm shadow-indigo-500/50"></div>
-                Searching vector namespaces and cross-matching compliance items...
-              </div>
-            )}
-
-            {errorState && (
-              <div className={`p-4 rounded-xl border flex flex-col gap-2 max-w-xl text-sm ${
-                errorState.type === 'LIMIT_EXHAUSTED' 
-                  ? 'bg-amber-500/10 border-amber-500/30 text-amber-300' 
-                  : 'bg-red-500/10 border-red-500/30 text-red-400'
-              }`}>
-                <div className="font-semibold flex items-center gap-2">
-                  {errorState.type === 'LIMIT_EXHAUSTED' ? '⚠️ Plan Limit Reached' : '🚨 System Connection Error'}
-                </div>
-                <p className="text-xs text-slate-400 leading-relaxed">{errorState.message}</p>
-                {errorState.type === 'LIMIT_EXHAUSTED' && (
-                  <a href="#/settings" className="mt-1 self-start px-3 py-1 bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold rounded-lg text-xs tracking-wide transition-colors">
-                    Upgrade Tier
-                  </a>
-                )}
-              </div>
-            )}
-            <div ref={messagesEndRef} />
-          </div>
-
-          <footer className="p-4 bg-slate-950 border-t border-slate-800 w-full box-border">
-            <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto flex gap-3">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder={usage >= limit ? "Query limit hit. Upgrade to resume compliance searches..." : (ragMode === 'plain' ? "Ask about compliance rules in plain language..." : "Query exact legal clauses/circular context...")}
-                className="flex-1 bg-slate-900 border border-slate-800 focus:border-indigo-500 rounded-xl px-4 py-3.5 text-slate-100 text-sm outline-none transition-colors disabled:opacity-40"
-                disabled={isLoading || usage >= limit}
-              />
-              <button 
-                type="submit" 
-                disabled={isLoading || !input.trim() || usage >= limit} 
-                className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-600 text-white border-none rounded-xl px-6 text-sm font-semibold transition-all shadow-lg shadow-indigo-600/5 shrink-0"
-              >
-                {isLoading ? 'Processing...' : 'Send'}
-              </button>
-            </form>
-          </footer>
-
-          <CitationDrawer 
-            citation={mapCitationToCardProps(activeCitation)} 
-            onClose={() => setActiveCitation(null)} 
-          />
-
+          )}
+          <div ref={messagesEndRef} />
         </div>
+
+        {/* Bottom Command Bar */}
+        <footer className="p-4 bg-[#090d16] border-t border-slate-800/80 w-full shrink-0">
+          <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto flex items-center gap-2 bg-slate-900 border border-slate-800/90 rounded-xl p-1.5 focus-within:border-slate-700 transition-colors">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder={usage >= limit ? "Daily allocation reached. Upgrade plan to continue..." : (ragMode === 'plain' ? "Ask any business compliance question in plain language..." : "Search official circular numbers, statutory clauses, or notifications...")}
+              className="flex-1 bg-transparent px-3 py-2 text-slate-100 text-xs outline-none placeholder:text-slate-500 disabled:opacity-40"
+              disabled={isLoading || usage >= limit}
+            />
+            <button 
+              type="submit" 
+              disabled={isLoading || !input.trim() || usage >= limit} 
+              className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-600 text-white rounded-lg px-4 py-2 text-xs font-medium transition-colors flex items-center gap-1.5 shrink-0"
+            >
+              <span>Query</span>
+              <Send className="w-3 h-3" />
+            </button>
+          </form>
+        </footer>
+
+        {/* Citation Metadata Inspector Drawer */}
+        <CitationDrawer 
+          citation={mapCitationToCardProps(activeCitation)} 
+          onClose={() => setActiveCitation(null)} 
+        />
+
       </div>
     </div>
   );
