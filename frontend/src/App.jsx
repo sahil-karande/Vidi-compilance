@@ -13,6 +13,7 @@ import Chat from './pages/Chat';
 import Settings from './pages/Settings'; 
 import TestAuth from './pages/TestAuth';
 import Upload from './pages/Upload'; 
+import Explorer from './pages/Explorer';
 import PricingPage from './components/PricingPage'; // <-- Import updated Pricing Page Component
 
 // Premium Navbar Wrapper Layout
@@ -62,13 +63,6 @@ function WorkspaceLayout({ children }) {
   );
 }
 
-const ExplorerView = () => (
-  <div className="p-8 min-h-screen bg-slate-950 text-slate-200 font-sans">
-    <h2 className="text-xl font-bold tracking-tight text-indigo-400">Vidi Regulation Explorer</h2>
-    <p className="text-xs text-slate-400 mt-1">D3.js dynamic structural force graph mapping cross-regulatory circular citations.</p>
-  </div>
-);
-
 export default function App() {
   return (
     <AuthProvider>
@@ -104,7 +98,7 @@ export default function App() {
             element={
               <AuthGuard>
                 <WorkspaceLayout>
-                  <ExplorerView />
+                  <Explorer />
                 </WorkspaceLayout>
               </AuthGuard>
             } 

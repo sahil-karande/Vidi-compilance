@@ -18,7 +18,8 @@ from app.api import (
     scorecard, 
     calendar, 
     upload, 
-    billing
+    billing,
+    graph
 )
 
 # ─────────────────────────────────────────────────────────────
@@ -102,3 +103,6 @@ app.include_router(upload.router, prefix="/api", tags=["Pro Upload"])
 
 # Subscription Tier Webhooks and Processing
 app.include_router(billing.router, prefix="/api", tags=["Billing"])
+
+# D3 Citation Graph & Topological Explorer
+app.include_router(graph.router, prefix="/api", tags=["Regulation Graph"])

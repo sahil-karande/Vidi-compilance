@@ -235,6 +235,28 @@ export const billingAPI = {
   }
 };
 
+// ── 🕸️ D3 REGULATION EXPLORER GRAPH API ──
+export const graphAPI = {
+  getGraph: async (params = {}) => {
+    const response = await api.get('/api/graph', { params });
+    return response.data;
+  },
+  getStats: async () => {
+    try {
+      const response = await api.get('/api/graph/stats');
+      return response.data;
+    } catch (err) {
+      console.warn('Could not fetch graph stats:', err);
+      return null;
+    }
+  },
+  getNodeDetails: async (nodeId) => {
+    const response = await api.get(`/api/graph/node/${encodeURIComponent(nodeId)}`);
+    return response.data;
+  }
+};
+
+
 function printFallbackWarning(methodName) {
   console.warn(
     `[Vidi Telemetry Core]: Connection failed or missing endpoint router at chatAPI.${methodName}(). Mounting defensive fallback dataset structures.`
