@@ -135,6 +135,7 @@ class QueryState(TypedDict, total=False):
     # Input
     query: str
     mode: str                             # "plain" | "legal"
+    chat_history: list[dict]              # Day 53: Conversation memory logs
 
     # Classification
     primary_corpus: str
@@ -423,15 +424,16 @@ def node_generate_sync(state: QueryState) -> QueryState:
     query = state["query"]
     mode = state.get("mode", "plain")
     chunks = state.get("chunks", [])
+    chat_history = state.get("chat_history", [])
     trace = list(state.get("trace", []))
 
-    trace.append(f"[generate] chunks={len(chunks)} mode={mode}")
+    trace.append(f"[generate] chunks={len(chunks)} mode={mode} history_turns={len(chat_history)}")
 
     try:
         # Run async generator in sync context
         loop = asyncio.new_event_loop()
         result = loop.run_until_complete(
-            _generator.generate_answer(query=query, chunks=chunks, mode=mode)
+            _generator.generate_answer(query=query, chunks=chunks, mode=mode, chat_history=chat_history)
         )
         loop.close()
     except Exception as e:
@@ -527,7 +529,11 @@ _compiled_graph: Any = _build_graph()
 # ─────────────────────────────────────────────────────────────
 
 @observe(name="regiq_langgraph_pipeline")
-def run_graph(query: str, mode: str = "plain") -> GraphResult:
+def run_graph(
+    query: str,
+    mode: str = "plain",
+    chat_history: list[dict] | None = None,
+) -> GraphResult:
     """
     Execute the full LangGraph RAG pipeline synchronously.
 
@@ -540,6 +546,7 @@ def run_graph(query: str, mode: str = "plain") -> GraphResult:
     Args:
         query: Raw user question.
         mode:  "plain" | "legal"
+        chat_history: Optional message thread history for conversational memory.
 
     Returns:
         GraphResult with chunks, answer, citations, and observability metadata.
@@ -549,8 +556,9 @@ def run_graph(query: str, mode: str = "plain") -> GraphResult:
     initial_state: QueryState = {
         "query": query,
         "mode": mode,
+        "chat_history": chat_history or [],
         "retry_count": 0,
-        "trace": [f"[START] query='{query[:60]}' mode={mode}"],
+        "trace": [f"[START] query='{query[:60]}' mode={mode} history_turns={len(chat_history or [])}"],
     }
 
     if _compiled_graph is not None:

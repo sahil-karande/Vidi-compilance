@@ -175,8 +175,30 @@ async def query(
         if db_user_id:
             thread_persisted = True
 
-    # ── Step 3: Log User Message ───
+    # ── Step 3: Log User Message & Fetch Conversation Memory (Day 53) ───
+    chat_history: list[dict[str, str]] = []
     if thread_persisted:
+        # Fetch prior messages in this thread BEFORE logging new message
+        if not is_new_thread and db_user_id:
+            try:
+                history_query = (
+                    supabase_admin.table("messages")
+                    .select("role, content")
+                    .eq("thread_id", thread_id)
+                    .order("created_at", desc=False)
+                    .limit(10)
+                    .execute()
+                )
+                if history_query.data:
+                    chat_history = [
+                        {"role": m["role"], "content": m["content"]}
+                        for m in history_query.data
+                        if m.get("content") and m.get("role") in ("user", "assistant")
+                    ]
+                    logger.info(f"[ConversationalMemory] Loaded {len(chat_history)} prior turns for thread {thread_id}")
+            except Exception as hist_err:
+                logger.warning(f"[ConversationalMemory] Notice: Thread history retrieval skipped ({hist_err})")
+
         try:
             supabase_admin.table("messages").insert({
                 "id": str(uuid.uuid4()),
@@ -260,16 +282,17 @@ async def query(
         chunks = rerank(request.query, candidates, top_n=5) if candidates else []
         sanitized_chunks = clean_document_chunks(chunks)
 
-        # Generate answer for pinned path
+        # Generate answer for pinned path with LangChain Conversation Memory
         result = await generator_instance.generate_answer(
             query=request.query,
             chunks=sanitized_chunks,
-            mode=request.mode
+            mode=request.mode,
+            chat_history=chat_history
         )
 
     else:
-        # ─ LangGraph stateful pipeline — handles everything ─
-        graph_result: GraphResult = run_graph(request.query, mode=request.mode)
+        # ─ LangGraph stateful pipeline — with Conversation Memory ─
+        graph_result: GraphResult = run_graph(request.query, mode=request.mode, chat_history=chat_history)
 
         # Blended RAG: append user-doc context to graph chunks for Pro users
         graph_chunks = list(graph_result.chunks)
