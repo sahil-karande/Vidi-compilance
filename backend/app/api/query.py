@@ -26,6 +26,7 @@ from app.rag.classifier import classify_query
 from app.rag.retriever import retrieve, get_chroma_client, get_embedding_model
 from app.rag.reranker import rerank
 from app.rag.generator import RAGGenerator
+from app.rag.agent import run_agent, AgentResult
 
 router = APIRouter()
 generator_instance = RAGGenerator()
@@ -187,36 +188,59 @@ async def query(
         except Exception as e:
             logger.warning(f"[Database Note] User message persistence skipped: {str(e)}")
 
-    # ── Step 4: Classify corpus ──────
-    corpus = request.corpus if request.corpus else classify_query(request.query)
-    corpus_str = corpus.value if hasattr(corpus, "value") else str(corpus).lower().split(".")[-1]
+    # ── Step 4 & 5: Agentic Multi-Corpus Routing (Day 49) ──────
+    # If the user explicitly pinned a corpus, bypass the agent and use
+    # the original single-corpus path to honour their explicit intent.
+    # Otherwise, delegate entirely to the ReAct agent which handles
+    # both single-corpus and cross-domain multi-corpus queries.
+    routing_mode = "pinned"
+    corpora_queried: list[str] = []
 
-    # ── Step 5: Retrieve Candidates ──────────────────────────────
-    candidates = retrieve(request.query, corpus, top_k=10) or []
-    
+    if request.corpus:
+        # Explicit corpus pin — honour it, skip agent
+        corpus = request.corpus
+        corpus_str = corpus.value if hasattr(corpus, "value") else str(corpus).lower().split(".")[-1]
+        candidates = retrieve(request.query, corpus, top_k=10) or []
+        routing_mode = "pinned"
+        corpora_queried = [corpus_str]
+        logger.info(f"[query] Corpus pinned to '{corpus_str}' — bypassing agent")
+    else:
+        # Delegate to ReAct multi-corpus agent
+        agent_result: AgentResult = run_agent(request.query)
+        candidates = agent_result.chunks
+        corpus_str = ", ".join(agent_result.corpora_queried) if agent_result.corpora_queried else "gst"
+        routing_mode = agent_result.routing_mode
+        corpora_queried = agent_result.corpora_queried
+        logger.info(
+            f"[query] Agent routing_mode={routing_mode} | "
+            f"corpora={corpora_queried} | chunks={len(candidates)} | "
+            f"top_sim={agent_result.top_similarity:.3f} | "
+            f"retry={agent_result.retry_triggered}"
+        )
+
+    # ── Blended RAG: inject Pro/Enterprise user-doc context ──────
     if role in [UserRole.PRO, UserRole.ENTERPRISE] and not user_id.startswith("guest"):
         collection_id = f"user_docs_{user_id}"
         try:
             chroma_client = get_chroma_client()
             existing_cols = [c.name for c in chroma_client.list_collections()]
-            
+
             if collection_id in existing_cols:
-                logger.info(f"[Blended RAG] Fetching context matches from custom workspace collection: {collection_id}")
+                logger.info(f"[Blended RAG] Fetching context from user workspace: {collection_id}")
                 user_collection = chroma_client.get_collection(name=collection_id)
                 embedding_model = get_embedding_model()
-                
                 query_vector = embedding_model.encode([request.query], normalize_embeddings=True).tolist()
-                
+
                 user_results = user_collection.query(
                     query_embeddings=query_vector,
                     n_results=5
                 )
-                
+
                 if user_results and 'documents' in user_results and user_results['documents']:
                     for idx, doc in enumerate(user_results['documents'][0]):
                         meta = user_results['metadatas'][0][idx] if user_results['metadatas'] else {}
                         score = user_results['distances'][0][idx] if 'distances' in user_results else 0.5
-                        
+
                         class BlendedChunk:
                             def __init__(self, text, metadata, score, chunk_id):
                                 self.text = text
@@ -243,11 +267,16 @@ async def query(
                             chunk_id=user_results['ids'][0][idx]
                         )
                         candidates.append(user_chunk)
-                        
-        except Exception as blended_err:
-            logger.error(f"[Blended RAG Failure] Bypassing custom document context insertion safely: {str(blended_err)}")
 
-    chunks = rerank(request.query, candidates, top_n=5) if candidates else []
+        except Exception as blended_err:
+            logger.error(f"[Blended RAG Failure] Bypassing user-doc context: {str(blended_err)}")
+
+    # Agent already reranked in multi-corpus mode; rerank again only for pinned/single
+    if routing_mode in ("pinned", "single"):
+        chunks = rerank(request.query, candidates, top_n=5) if candidates else []
+    else:
+        # Already reranked by agent — just take top 5
+        chunks = candidates[:5]
     sanitized_chunks = clean_document_chunks(chunks)
 
     # ── Step 6: Generate answer via custom RAG prompt routing ───
@@ -355,10 +384,10 @@ async def query(
 
     return QueryResponse(
         answer=str(result.get("answer", "No response generated.")),
-        response=str(result.get("answer", "No response generated.")),  
-        citations=formatted_citations,  
+        response=str(result.get("answer", "No response generated.")),
+        citations=formatted_citations,
         mode=str(request.mode),
-        corpus_used=str(corpus_str),
+        corpus_used=str(corpus_str),           # now reflects ALL corpora queried
         thread_id=str(thread_id),
         confidence=confidence_literal,
         response_time_ms=int(result.get("response_ms", 450)),
