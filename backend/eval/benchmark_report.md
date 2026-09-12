@@ -1,6 +1,6 @@
 # RegIQ IEEE Evaluation Benchmark Report (Day 57)
 
-**Execution Date:** 2026-09-12 18:21:26 UTC  
+**Execution Date:** 2026-09-12 18:46:16 UTC  
 **Evaluation Dataset:** `backend/eval/benchmark.json` (50 Verified SME Regulatory Questions)  
 **Observability Engine:** LangFuse (Automatic Pipeline Tracing & Metric Scoring)  
 
@@ -10,12 +10,12 @@
 
 | Evaluation Metric | Baseline (Single-Pass RAG) | RegIQ LangGraph (Stateful Retry) | Absolute Delta | Relative Gain |
 |---|---|---|---|---|
-| **Retrieval Precision@5** | `0.4000` | **`0.4000`** | `0.0000` | **+0.0%** |
+| **Retrieval Precision@5** | `0.6000` | **`0.6000`** | `0.0000` | **+0.0%** |
 | **Citation Accuracy** | `80.0%` | **`80.0%`** | `0.0%` | — |
-| **Answer Faithfulness** | `87.5%` | **`92.9%`** | `+5.4%` | **+6.1%** |
-| **Hallucination Rate** | `12.5%` | **`7.1%`** | `-5.4%` | **-5.4%** |
+| **Answer Faithfulness** | `100.0%` | **`100.0%`** | `0.0%` | **+0.0%** |
+| **Hallucination Rate** | `0.0%` | **`0.0%`** | `-0.0%` | **-0.0%** |
 | **Conditional Retry Rate** | `0.0%` (No retry) | **`0.0%`** | — | Active |
-| **Avg Response Latency** | `33.50s` | `6.57s` | `-26.93s` | — |
+| **Avg Response Latency** | `22.06s` | `13.52s` | `-8.54s` | — |
 
 ---
 
@@ -23,7 +23,7 @@
 
 | Regulatory Authority / Corpus | Baseline P@5 | LangGraph P@5 | Baseline Faithfulness | LangGraph Faithfulness | LangGraph Retry Rate |
 |---|---|---|---|---|---|
-| **GST** (10 questions) | `0.400` | **`0.400`** | `87.5%` | **`92.9%`** | `0.0%` |
+| **GST** (10 questions) | `0.600` | **`0.600`** | `100.0%` | **`100.0%`** | `0.0%` |
 
 ---
 
@@ -42,12 +42,12 @@ Below is the LaTeX source code ready to be pasted directly into Sahil's IEEE man
 \toprule
 \textbf{Corpus / Pipeline} & \textbf{Precision@5} & \textbf{Citation Acc.} & \textbf{Faithfulness} & \textbf{Hallucination} & \textbf{Retry Rate} & \textbf{Avg Latency} \\
 \midrule
-\textit{GST (Baseline)} & 0.40 & 80.0\% & 87.5\% & 12.5\% & 0.0\% & 33.50s \\
-\textit{GST (RegIQ LangGraph)} & \textbf{0.40} & \textbf{80.0\%} & \textbf{92.9\%} & \textbf{7.1\%} & 0.0\% & 6.57s \\
+\textit{GST (Baseline)} & 0.60 & 80.0\% & 100.0\% & 0.0\% & 0.0\% & 22.06s \\
+\textit{GST (RegIQ LangGraph)} & \textbf{0.60} & \textbf{80.0\%} & \textbf{100.0\%} & \textbf{0.0\%} & 0.0\% & 13.52s \\
 \addlinespace
 \midrule
-\textbf{Overall Baseline} & 0.400 & 80.0\% & 87.5\% & 12.5\% & 0.0\% & 33.50s \\
-\textbf{Overall RegIQ LangGraph} & \textbf{0.400} & \textbf{80.0\%} & \textbf{92.9\%} & \textbf{7.1\%} & \textbf{0.0\%} & 6.57s \\
+\textbf{Overall Baseline} & 0.600 & 80.0\% & 100.0\% & 0.0\% & 0.0\% & 22.06s \\
+\textbf{Overall RegIQ LangGraph} & \textbf{0.600} & \textbf{80.0\%} & \textbf{100.0\%} & \textbf{0.0\%} & \textbf{0.0\%} & 13.52s \\
 \bottomrule
 \end{tabular}
 \end{table}

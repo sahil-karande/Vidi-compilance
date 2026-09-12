@@ -9,6 +9,7 @@ while preserving strict regulatory grounding rules.
 """
 
 import os
+import asyncio
 import logging
 from typing import List, Dict, Any, Tuple, Optional
 from groq import AsyncGroq
@@ -231,6 +232,74 @@ class RAGGenerator:
 
         return memory
 
+    async def _generate_with_gemini(
+        self,
+        query: str,
+        context_text: str,
+        full_system_prompt: str,
+        citations: List[Dict[str, Any]],
+        mode: str,
+        chat_history: Optional[List[Dict[str, Any]]] = None,
+    ) -> Dict[str, Any]:
+        """
+        Automatic Failover LLM Engine using Google Gemini 2.5 Flash.
+        Executes seamlessly when Groq encounters 429 rate limits, token quotas, or timeouts.
+        """
+        gemini_key = getattr(settings, "gemini_api_key", None) or os.getenv("GEMINI_API_KEY")
+        if not gemini_key:
+            raise ValueError("GEMINI_API_KEY is not configured.")
+
+        logger.info("[generator][failover] Invoking Google Gemini 2.5 Flash fallback engine...")
+        import google.generativeai as genai
+        genai.configure(api_key=gemini_key)
+
+        model = genai.GenerativeModel(
+            model_name="gemini-2.5-flash",
+            system_instruction=full_system_prompt
+        )
+
+        history_context = ""
+        if chat_history:
+            history_context = "Previous Conversation:\n"
+            for item in chat_history[-6:]:
+                role = item.get("role", "user").capitalize()
+                content = item.get("content", "")
+                history_context += f"{role}: {content}\n"
+            history_context += "\n"
+
+        prompt_content = (
+            f"{history_context}"
+            f"Context Documents:\n====================\n{context_text}\n====================\n\n"
+            f"User Question: {query}\n\n"
+            f"Provide your response below following all rules specified in the system instructions."
+        )
+
+        loop = asyncio.get_running_loop()
+        response = await loop.run_in_executor(
+            None,
+            lambda: model.generate_content(prompt_content)
+        )
+
+        answer_text = response.text.strip() if response and response.text else "I could not find this in the available regulatory documents."
+
+        if langfuse_context:
+            try:
+                langfuse_context.update_current_observation(
+                    output=answer_text,
+                    model="gemini-2.5-flash",
+                    metadata={"provider": "gemini-failover", "mode": mode, "history_turns": len(chat_history or [])}
+                )
+            except Exception:
+                pass
+
+        logger.info(f"[generator][failover] Gemini 2.5 Flash responded successfully ({len(answer_text)} chars).")
+        return {
+            "answer": answer_text,
+            "citations": citations,
+            "mode": mode,
+            "provider": "gemini-failover",
+        }
+
     @observe(as_type="generation", name="langchain_conversational_generator")
     async def generate_answer(
         self,
@@ -302,7 +371,8 @@ class RAGGenerator:
                 return {
                     "answer": answer_text,
                     "citations": citations,
-                    "mode": mode
+                    "mode": mode,
+                    "provider": "groq",
                 }
 
             except Exception as chain_err:
@@ -314,11 +384,15 @@ class RAGGenerator:
             if self.api_key:
                 self.client = AsyncGroq(api_key=self.api_key)
             else:
-                return {
-                    "answer": "Groq API token is misconfigured or completely missing from your backend server .env file.",
-                    "citations": [],
-                    "mode": mode
-                }
+                # Groq key missing; attempt direct Gemini execution
+                try:
+                    return await self._generate_with_gemini(query, context_text, full_system_prompt, citations, mode, chat_history)
+                except Exception as direct_gemini_err:
+                    return {
+                        "answer": "Both Groq and Gemini API configurations are missing from backend server.",
+                        "citations": [],
+                        "mode": mode
+                    }
 
         user_prompt = (
             f"Context Documents:\n====================\n{context_text}\n====================\n\n"
@@ -367,23 +441,35 @@ class RAGGenerator:
             return {
                 "answer": answer_text,
                 "citations": citations,
-                "mode": mode
+                "mode": mode,
+                "provider": "groq",
             }
 
         except Exception as e:
-            logger.error(f"Error during Groq LLM text generation: {str(e)}")
-            err_msg = str(e)
-            if "429" in err_msg:
+            logger.warning(f"[generator] Primary Groq LLM error: {e} -> Attempting Google Gemini 2.5 Flash failover...")
+            try:
+                return await self._generate_with_gemini(
+                    query=query,
+                    context_text=context_text,
+                    full_system_prompt=full_system_prompt,
+                    citations=citations,
+                    mode=mode,
+                    chat_history=chat_history,
+                )
+            except Exception as gemini_err:
+                logger.error(f"[generator] Gemini failover also failed: {gemini_err}")
+                err_msg = str(e)
+                if "429" in err_msg:
+                    return {
+                        "answer": "⚠️ **Service Capacity Limit.** The compliance engine is currently experiencing high load. Please retry in a few moments.",
+                        "citations": [],
+                        "mode": mode
+                    }
                 return {
-                    "answer": "⚠️ **Groq API Rate Limit Hit.** Please wait a moment and retry.",
+                    "answer": f"An error occurred while generating your compliance response: {err_msg}.",
                     "citations": [],
                     "mode": mode
                 }
-            return {
-                "answer": f"An error occurred while generating your response via Groq: {err_msg}.",
-                "citations": [],
-                "mode": mode
-            }
 
 
 _generator_instance = RAGGenerator()
