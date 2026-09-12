@@ -1,0 +1,3 @@
+question_id,corpus,category,question,baseline_p_at_5,baseline_citation_acc,baseline_faithfulness,baseline_hallucination_rate,baseline_latency_s,langgraph_p_at_5,langgraph_citation_acc,langgraph_faithfulness,langgraph_hallucination_rate,langgraph_latency_s,langgraph_retry_triggered,langgraph_routing_mode,p5_improvement,faithfulness_improvement
+GST-01,gst,Input Tax Credit,What is the statutory deadline for claiming Input Tax Credit (ITC) for a given financial year under GST?,0.8,0.8,0.75,0.25,60.98,0.8,0.8,0.8571,0.1429,8.671,False,single,0.0,+0.1071
+GST-02,gst,Blocked Credit,Which inward supplies are categorized as blocked input tax credits under Section 17(5) of the CGST Act?,0.0,0.8,1.0,0.0,6.023,0.0,0.8,1.0,0.0,4.463,False,single,0.0,0.0

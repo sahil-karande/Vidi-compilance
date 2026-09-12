@@ -157,7 +157,12 @@ class RAGGenerator:
                 metadata = chunk.get("metadata", {}) or {}
                 text = chunk.get("text", chunk.get("page_content", ""))
             
-            source_doc = metadata.get("source", "Unknown Document")
+            source_doc = (
+                metadata.get("source")
+                or metadata.get("title")
+                or metadata.get("filename")
+                or f"{metadata.get('corpus', 'regulatory').upper()} Compliance Document"
+            )
             circular_no = metadata.get("circular_no", "N/A")
             date = metadata.get("date", "N/A")
             section = metadata.get("section", "N/A")
