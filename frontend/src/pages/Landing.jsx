@@ -624,12 +624,34 @@ export default function Landing() {
                   <h3 className="text-lg font-bold text-white">Pro</h3>
                   <p className="text-xs text-slate-400 mt-1">Complete automated compliance intelligence for expanding teams.</p>
                 </div>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-extrabold text-white">
-                    {billingCycle === 'monthly' ? '₹499' : '₹374'}
-                  </span>
-                  <span className="text-xs text-slate-400">/ month</span>
-                </div>
+                {billingCycle === 'yearly' ? (
+                  <div className="space-y-1.5">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-3xl font-extrabold text-white">₹4,488</span>
+                      <span className="text-xs text-slate-400 font-medium">/ year</span>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                        -25% OFF
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs">
+                      <span className="text-purple-300 font-semibold bg-purple-500/15 px-2 py-0.5 rounded border border-purple-500/30">
+                        ₹374 / month
+                      </span>
+                      <span className="text-slate-500 line-through">₹5,988</span>
+                      <span className="text-emerald-400 font-medium">Save ₹1,500/yr</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-1">
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-3xl font-extrabold text-white">₹499</span>
+                      <span className="text-xs text-slate-400">/ month</span>
+                    </div>
+                    <div className="text-xs text-slate-400">
+                      Standard monthly entry lease · ₹5,988/yr
+                    </div>
+                  </div>
+                )}
                 <ul className="space-y-2.5 text-xs text-slate-200">
                   <li className="flex items-center gap-2">
                     <Check className="w-4 h-4 text-purple-400 shrink-0" />

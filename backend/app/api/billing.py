@@ -57,9 +57,11 @@ async def create_subscription(
     
     # Pricing configuration map in Paisa (1 INR = 100 Paisa)
     amount_map = {
-        "monthly": 49900,     # ₹499
-        "quarterly": 134700,  # ₹1347
-        "yearly": 448800      # ₹4488
+        "monthly": 49900,         # ₹499
+        "quarterly": 134700,      # ₹1347
+        "yearly": 448800,         # ₹4488
+        "notice_pass": 9900,      # ₹99 (One-time Deep Notice Analyzer)
+        "student_monthly": 19900  # ₹199 (CA Article / Law Student Pass)
     }
 
     if plan_lower not in amount_map:
