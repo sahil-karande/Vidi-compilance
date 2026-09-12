@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import BackgroundOrbs from '../components/BackgroundOrbs';
 import { 
   ShieldCheck, 
   ArrowRight, 
@@ -26,6 +27,7 @@ export default function Landing() {
   const [billingCycle, setBillingCycle] = useState('monthly');
   const [activeTab, setActiveTab] = useState('query');
   const [flippedCards, setFlippedCards] = useState({});
+  const [copiedLink, setCopiedLink] = useState(false);
 
   const toggleCardFlip = (code) => {
     setFlippedCards(prev => ({
@@ -34,16 +36,17 @@ export default function Landing() {
     }));
   };
 
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2000);
+  };
+
   return (
-    <div className="min-h-screen w-full bg-[#0D0E12] text-slate-200 font-sans flex flex-col antialiased selection:bg-purple-500/20 selection:text-purple-200 overflow-x-hidden">
+    <div className="min-h-screen w-full bg-[#0D0E12] text-slate-200 font-sans flex flex-col antialiased selection:bg-purple-500/20 selection:text-purple-200 overflow-x-hidden relative">
       
-      {/* ── Ambient Radial Background Glow (Exact NoteDeck style) ── */}
-      <div 
-        className="fixed inset-0 pointer-events-none -z-10"
-        style={{
-          background: 'radial-gradient(circle at 20% 15%, rgba(120, 80, 220, 0.12), transparent 55%), radial-gradient(circle at 80% 60%, rgba(100, 60, 200, 0.06), transparent 50%), #0D0E12'
-        }}
-      />
+      {/* ── 3 Big Animated Floating Purple Circles with Intensity Pulses & Fade ── */}
+      <BackgroundOrbs />
 
       {/* ── Top Navigation Bar (Exact NoteDeck style) ── */}
       <header className="w-full border-b border-white/10 bg-[#0D0E12]/80 backdrop-blur-md px-6 sm:px-12 lg:px-20 py-4 flex items-center justify-between sticky top-0 z-50">

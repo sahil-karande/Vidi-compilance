@@ -15,27 +15,16 @@ import TestAuth from './pages/TestAuth';
 import Upload from './pages/Upload';
 import Explorer from './pages/Explorer';
 import PricingPage from './components/PricingPage'; // <-- Import updated Pricing Page Component
+import BackgroundOrbs from './components/BackgroundOrbs';
 
 // Premium Enterprise Navigation Layout
 function WorkspaceLayout({ children }) {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen w-full bg-[#0D0E12] text-slate-200 font-sans flex flex-col antialiased selection:bg-purple-500/20 selection:text-purple-200 relative">
-      {/* Background glow and subtle grid texture across entire app */}
-      <div 
-        className="fixed inset-0 pointer-events-none -z-10"
-        style={{
-          background: 'radial-gradient(circle at 20% 15%, rgba(120, 80, 220, 0.12), transparent 55%), radial-gradient(circle at 80% 60%, rgba(100, 60, 200, 0.06), transparent 50%), #0D0E12'
-        }}
-      />
-      <div 
-        className="fixed inset-0 pointer-events-none -z-10 opacity-[0.03]"
-        style={{
-          backgroundImage: 'linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px)',
-          backgroundSize: '48px 48px'
-        }}
-      />
+    <div className="min-h-screen w-full bg-[#0D0E12] text-slate-200 font-sans flex flex-col antialiased selection:bg-purple-500/20 selection:text-purple-200 relative overflow-x-hidden">
+      {/* 3 Big Animated Floating Purple Circles with Intensity Pulses and Fade */}
+      <BackgroundOrbs />
 
       {/* Sleek Enterprise Top Navbar */}
       <nav className="w-full bg-[#0D0E12]/90 backdrop-blur-md border-b border-white/10 px-6 lg:px-10 py-3 flex items-center justify-between sticky top-0 z-40">

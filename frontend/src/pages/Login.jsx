@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
+import BackgroundOrbs from '../components/BackgroundOrbs';
 import { ShieldCheck, ArrowRight, ArrowLeft, Mail, KeyRound, CheckCircle2 } from 'lucide-react';
 
 export default function Login() {
@@ -95,13 +96,8 @@ export default function Login() {
   return (
     <div className="min-h-screen w-full bg-[#0D0E12] text-slate-200 font-sans flex flex-col antialiased selection:bg-purple-500/20 selection:text-purple-200 overflow-x-hidden relative">
       
-      {/* ── Ambient Radial Background Glow (Identical to Landing page) ── */}
-      <div 
-        className="fixed inset-0 pointer-events-none -z-10"
-        style={{
-          background: 'radial-gradient(circle at 50% 18%, rgba(120, 80, 220, 0.15), transparent 55%), radial-gradient(circle at 80% 65%, rgba(100, 60, 200, 0.08), transparent 50%), #0D0E12'
-        }}
-      />
+      {/* ── 3 Big Animated Floating Purple Circles with Intensity Pulses & Fade ── */}
+      <BackgroundOrbs />
 
       {/* ── Subtle Geometric Grid Texture ── */}
       <div 
