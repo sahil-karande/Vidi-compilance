@@ -4,12 +4,16 @@ Finalized Core Routing Aggregator Engine
 Orchestrates API modules, handles global exception layers, and cleans up pre-flight CORS.
 """
 
+import asyncio
+from contextlib import asynccontextmanager
+from datetime import datetime
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from datetime import datetime
+from loguru import logger
 
 from app.config import settings
+from app.rag.cache import query_cache
 from app.api import (
     query, 
     threads_api, 
@@ -22,6 +26,49 @@ from app.api import (
     graph
 )
 
+async def _warmup_rag_pipeline():
+    """Asynchronously pre-warms embedding models, centroids, ChromaDB, and BM25 indexes on boot."""
+    try:
+        logger.info("[lifespan] Starting background pre-warming of RAG models & indexes...")
+        loop = asyncio.get_running_loop()
+
+        def _do_warmup():
+            from app.rag.classifier import get_embedding_model as get_cls_model, get_centroids
+            from app.rag.retriever import get_embedding_model as get_ret_model, get_chroma_client, get_bm25_index
+            from app.rag.reranker import get_reranker_model
+
+            # 1. Warm sentence-transformers and classifier centroids
+            get_cls_model()
+            get_centroids()
+            get_ret_model()
+
+            # 2. Warm ChromaDB connection
+            get_chroma_client()
+
+            # 3. Warm BM25 index for primary corpora
+            for corpus in ["gst", "rbi", "sebi", "mca", "fema"]:
+                try:
+                    get_bm25_index(corpus)
+                except Exception as bm_err:
+                    logger.warning(f"[lifespan] BM25 pre-warm for '{corpus}' notice: {bm_err}")
+
+            # 4. Warm Cross-Encoder reranker
+            get_reranker_model()
+
+        await loop.run_in_executor(None, _do_warmup)
+        logger.info("[lifespan] Pre-warming completed! All RAG models and BM25 indexes are hot.")
+    except Exception as e:
+        logger.warning(f"[lifespan] Warmup completed with notice: {e}")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Non-blocking async background warmup so server binds and serves health check immediately
+    warmup_task = asyncio.create_task(_warmup_rag_pipeline())
+    yield
+    if not warmup_task.done():
+        warmup_task.cancel()
+    logger.info("[lifespan] RegIQ backend shutdown.")
+
 # ─────────────────────────────────────────────────────────────
 #  FastAPI App Initialization
 # ─────────────────────────────────────────────────────────────
@@ -32,6 +79,7 @@ app = FastAPI(
     version="0.1.0",
     docs_url="/docs" if settings.environment == "development" else None,
     redoc_url="/redoc" if settings.environment == "development" else None,
+    lifespan=lifespan,
 )
 
 # ─────────────────────────────────────────────────────────────
@@ -67,6 +115,22 @@ def health():
         "environment": settings.environment,
         "timestamp": datetime.utcnow().isoformat(),
     }
+
+
+@app.get("/api/cache/stats", tags=["System"])
+def get_cache_stats():
+    """Returns telemetry on in-memory query cache hits, misses, and active size."""
+    return {
+        "status": "ok",
+        "cache": query_cache.get_stats(),
+    }
+
+
+@app.post("/api/cache/clear", tags=["System"])
+def clear_cache():
+    """Flushes the query cache."""
+    query_cache.clear()
+    return {"status": "ok", "message": "Query cache flushed successfully"}
 
 
 # ─────────────────────────────────────────────────────────────

@@ -430,12 +430,23 @@ def node_generate_sync(state: QueryState) -> QueryState:
     trace.append(f"[generate] chunks={len(chunks)} mode={mode} history_turns={len(chat_history)}")
 
     try:
-        # Run async generator in sync context
-        loop = asyncio.new_event_loop()
-        result = loop.run_until_complete(
-            _generator.generate_answer(query=query, chunks=chunks, mode=mode, chat_history=chat_history)
-        )
-        loop.close()
+        # Run async generator in sync context (safe for running event loops in FastAPI)
+        try:
+            running_loop = asyncio.get_running_loop()
+        except RuntimeError:
+            running_loop = None
+
+        if running_loop and running_loop.is_running():
+            import concurrent.futures
+            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+                result = pool.submit(
+                    asyncio.run,
+                    _generator.generate_answer(query=query, chunks=chunks, mode=mode, chat_history=chat_history)
+                ).result()
+        else:
+            result = asyncio.run(
+                _generator.generate_answer(query=query, chunks=chunks, mode=mode, chat_history=chat_history)
+            )
     except Exception as e:
         logger.error(f"[graph][generate] Generation failed: {e}")
         result = {
