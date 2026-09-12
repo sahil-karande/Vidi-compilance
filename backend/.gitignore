@@ -32,6 +32,7 @@ vectordb/
 
 # Catch any stray massive JSON blocks or binaries
 *.json
+!eval/*.json
 *.pdf
 *.csv
 # Python bytecode cache

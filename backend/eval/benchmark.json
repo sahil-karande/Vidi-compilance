@@ -1,0 +1,765 @@
+{
+  "metadata": {
+    "title": "RegIQ IEEE Benchmark Evaluation Dataset",
+    "version": "1.0",
+    "total_questions": 50,
+    "corpora_count": 5,
+    "per_corpus_count": 10,
+    "target_jurisdiction": "India",
+    "domains": ["gst", "rbi", "sebi", "mca", "fema"],
+    "created_by": "Sahil Pankaj Karande (GHRCEM Nagpur)",
+    "purpose": "Evaluation of Retrieval Precision@5, Multi-Corpus Routing, Hallucination Rate, and Statutory Faithfulness for Agentic RAG"
+  },
+  "questions": [
+    {
+      "id": "GST-01",
+      "corpus": "gst",
+      "category": "Input Tax Credit",
+      "question": "What is the statutory deadline for claiming Input Tax Credit (ITC) for a given financial year under GST?",
+      "expected_answer": "Under Section 16(4) of the CGST Act, 2017, a registered person cannot avail Input Tax Credit in respect of any invoice or debit note for supply of goods or services after 30th November following the end of the financial year to which such invoice pertains, or the date of furnishing of the relevant annual return, whichever is earlier.",
+      "expected_citation": {
+        "authority": "CBIC",
+        "statute_or_circular": "Central Goods and Services Tax Act, 2017",
+        "section_or_rule": "Section 16(4)",
+        "date": "2017-07-01",
+        "title": "Eligibility and conditions for taking input tax credit"
+      },
+      "domain_keywords": ["itc", "input tax credit", "section 16(4)", "30th november", "annual return", "statutory deadline"]
+    },
+    {
+      "id": "GST-02",
+      "corpus": "gst",
+      "category": "Blocked Credit",
+      "question": "Which inward supplies are categorized as blocked input tax credits under Section 17(5) of the CGST Act?",
+      "expected_answer": "Section 17(5) of the CGST Act explicitly blocks ITC on motor vehicles for transportation of persons having approved seating capacity up to 13 persons (except when used for taxable supply of further vehicles, passenger transportation, or driving training), food and beverages, outdoor catering, beauty treatment, health services, life/health insurance, travel benefits to employees, goods lost, stolen, destroyed, written off, or disposed of by way of gift or free samples, and goods/services used for personal consumption.",
+      "expected_citation": {
+        "authority": "CBIC",
+        "statute_or_circular": "Central Goods and Services Tax Act, 2017",
+        "section_or_rule": "Section 17(5)",
+        "date": "2017-07-01",
+        "title": "Apportionment of credit and blocked credits"
+      },
+      "domain_keywords": ["blocked credit", "section 17(5)", "motor vehicles", "food and beverages", "free samples", "personal consumption"]
+    },
+    {
+      "id": "GST-03",
+      "corpus": "gst",
+      "category": "Reverse Charge Mechanism",
+      "question": "When does the recipient become liable to pay GST under the Reverse Charge Mechanism (RCM) for Goods Transport Agency (GTA) services?",
+      "expected_answer": "Under Notification No. 13/2017-Central Tax (Rate) issued under Section 9(3) of the CGST Act, GST is payable under reverse charge by the recipient (factory, registered society, co-operative society, registered person, body corporate, partnership firm, or casual taxable person) on supply of services by a Goods Transport Agency (GTA) who has not paid central tax at 12% under forward charge.",
+      "expected_citation": {
+        "authority": "CBIC",
+        "statute_or_circular": "Notification No. 13/2017-Central Tax (Rate)",
+        "section_or_rule": "Section 9(3)",
+        "date": "2017-06-28",
+        "title": "Supply of services taxable under reverse charge mechanism"
+      },
+      "domain_keywords": ["rcm", "reverse charge mechanism", "gta", "goods transport agency", "notification 13/2017", "section 9(3)"]
+    },
+    {
+      "id": "GST-04",
+      "corpus": "gst",
+      "category": "E-Invoicing",
+      "question": "What is the mandatory aggregate turnover threshold for business-to-business (B2B) e-invoicing under GST?",
+      "expected_answer": "As per Notification No. 10/2023-Central Tax read with Rule 48(4) of the CGST Rules, 2017, e-invoicing is mandatory for all registered businesses whose aggregate turnover in any preceding financial year from 2017-18 onwards exceeds Rs. 5 crore for B2B supplies and exports.",
+      "expected_citation": {
+        "authority": "CBIC",
+        "statute_or_circular": "Notification No. 10/2023-Central Tax & CGST Rule 48(4)",
+        "section_or_rule": "Rule 48(4)",
+        "date": "2023-05-10",
+        "title": "Mandatory generation of e-invoices for registered persons"
+      },
+      "domain_keywords": ["e-invoicing", "aggregate turnover", "rule 48(4)", "5 crore", "b2b", "notification 10/2023"]
+    },
+    {
+      "id": "GST-05",
+      "corpus": "gst",
+      "category": "E-Way Bill",
+      "question": "What is the consignment value threshold and validity period for generating an E-Way Bill under GST?",
+      "expected_answer": "Under Rule 138 of the CGST Rules, 2017, an e-way bill must be generated before the commencement of movement of goods when the consignment value exceeds Rs. 50,000. Under Rule 138(10), the validity period is one day for every 200 km (or part thereof) for other than over dimensional cargo, and one day for every 20 km for over dimensional cargo.",
+      "expected_citation": {
+        "authority": "CBIC",
+        "statute_or_circular": "CGST Rules, 2017",
+        "section_or_rule": "Rule 138 & Rule 138(10)",
+        "date": "2017-06-28",
+        "title": "Information to be furnished prior to commencement of movement of goods and generation of e-way bill"
+      },
+      "domain_keywords": ["e-way bill", "rule 138", "consignment value", "50000", "validity", "200 km"]
+    },
+    {
+      "id": "GST-06",
+      "corpus": "gst",
+      "category": "Registration",
+      "question": "What are the threshold limits for mandatory GST registration for suppliers of goods versus suppliers of services?",
+      "expected_answer": "Under Section 22 of the CGST Act, 2017 read with Notification No. 10/2019-Central Tax, the threshold limit for mandatory registration is an aggregate turnover exceeding Rs. 40 lakh in a financial year for persons engaged exclusively in the supply of goods in normal states (Rs. 20 lakh in Special Category States). For persons engaged in the supply of services or mixed supplies, the threshold is an aggregate turnover exceeding Rs. 20 lakh (Rs. 10 lakh in Special Category States).",
+      "expected_citation": {
+        "authority": "CBIC",
+        "statute_or_circular": "Central Goods and Services Tax Act, 2017",
+        "section_or_rule": "Section 22 & Notification 10/2019-CT",
+        "date": "2019-03-07",
+        "title": "Persons liable for registration under GST"
+      },
+      "domain_keywords": ["gst registration", "threshold limit", "section 22", "40 lakh", "20 lakh", "goods and services"]
+    },
+    {
+      "id": "GST-07",
+      "corpus": "gst",
+      "category": "Composition Levy",
+      "question": "What is the turnover threshold and tax rate applicable for the Composition Scheme under Section 10 of the CGST Act?",
+      "expected_answer": "Under Section 10 of the CGST Act, 2017 read with Notification No. 14/2019-Central Tax, an eligible registered person whose aggregate turnover in the preceding financial year did not exceed Rs. 1.5 crore (Rs. 75 lakh in North-Eastern states) may opt for the composition scheme. The tax rate is 1% of turnover for manufacturers and traders, and 5% of turnover for restaurant services.",
+      "expected_citation": {
+        "authority": "CBIC",
+        "statute_or_circular": "Central Goods and Services Tax Act, 2017",
+        "section_or_rule": "Section 10 & Notification 14/2019-CT",
+        "date": "2019-03-07",
+        "title": "Composition levy and aggregate turnover limit"
+      },
+      "domain_keywords": ["composition scheme", "section 10", "1.5 crore", "tax rate", "aggregate turnover", "1 percent"]
+    },
+    {
+      "id": "GST-08",
+      "corpus": "gst",
+      "category": "Tax Invoicing",
+      "question": "What is the statutory time limit for issuing a tax invoice for the supply of taxable goods?",
+      "expected_answer": "Under Section 31(1) of the CGST Act, 2017, a registered person supplying taxable goods must issue a tax invoice showing the description, quantity, and value of goods, the tax charged, and other prescribed particulars, before or at the time of removal of goods for supply to the recipient where supply involves movement of goods, or delivery of goods or making available thereof to the recipient in any other case.",
+      "expected_citation": {
+        "authority": "CBIC",
+        "statute_or_circular": "Central Goods and Services Tax Act, 2017",
+        "section_or_rule": "Section 31(1)",
+        "date": "2017-07-01",
+        "title": "Tax invoice requirements for supply of goods"
+      },
+      "domain_keywords": ["tax invoice", "section 31(1)", "removal of goods", "delivery", "statutory time limit"]
+    },
+    {
+      "id": "GST-09",
+      "corpus": "gst",
+      "category": "GSTR-2B Matching",
+      "question": "What is the requirement under Section 16(2)(aa) of the CGST Act regarding invoice reporting in GSTR-2B for claiming ITC?",
+      "expected_answer": "Section 16(2)(aa) of the CGST Act mandates that a registered person is entitled to claim Input Tax Credit on an invoice or debit note only if the details of such invoice or debit note have been furnished by the supplier in their statement of outward supplies (GSTR-1 or IFF) and such details have been communicated to the recipient in GSTR-2B.",
+      "expected_citation": {
+        "authority": "CBIC",
+        "statute_or_circular": "Central Goods and Services Tax Act, 2017",
+        "section_or_rule": "Section 16(2)(aa)",
+        "date": "2022-01-01",
+        "title": "Conditions for availing input tax credit based on GSTR-2B communication"
+      },
+      "domain_keywords": ["gstr-2b", "section 16(2)(aa)", "gstr-1", "itc matching", "statement of outward supplies"]
+    },
+    {
+      "id": "GST-10",
+      "corpus": "gst",
+      "category": "Exports & Zero-Rated Supply",
+      "question": "What are the five mandatory conditions for a supply of service to qualify as an 'export of services' under the IGST Act?",
+      "expected_answer": "Under Section 2(6) of the Integrated Goods and Services Tax (IGST) Act, 2017, an 'export of services' requires all five conditions: (i) the supplier of service is located in India; (ii) the recipient of service is located outside India; (iii) the place of supply of service is outside India; (iv) payment has been received in convertible foreign exchange or Indian rupees wherever permitted by the RBI; and (v) the supplier and recipient are not merely establishments of a distinct person.",
+      "expected_citation": {
+        "authority": "CBIC",
+        "statute_or_circular": "Integrated Goods and Services Tax Act, 2017",
+        "section_or_rule": "Section 2(6)",
+        "date": "2017-07-01",
+        "title": "Definition of export of services and zero-rated supply"
+      },
+      "domain_keywords": ["export of services", "section 2(6)", "igst act", "convertible foreign exchange", "place of supply", "zero-rated"]
+    },
+    {
+      "id": "RBI-01",
+      "corpus": "rbi",
+      "category": "Priority Sector Lending",
+      "question": "What is the overall Priority Sector Lending (PSL) target for domestic commercial banks in India?",
+      "expected_answer": "Under the RBI Master Directions on Priority Sector Lending (FIDD.CO.Plan.BC.5/04.09.01/2020-21), domestic commercial banks and foreign banks with 20 branches and above are required to allocate a minimum of 40% of Adjusted Net Bank Credit (ANBC) or Credit Equivalent Amount of Off-Balance Sheet Exposure (CEOBE), whichever is higher, towards priority sectors including agriculture, micro and small enterprises, export credit, education, and housing.",
+      "expected_citation": {
+        "authority": "Reserve Bank of India",
+        "statute_or_circular": "Master Direction - Priority Sector Lending (PSL) Targets and Classification",
+        "section_or_rule": "FIDD.CO.Plan.BC.5/04.09.01/2020-21",
+        "date": "2020-09-04",
+        "title": "Master Direction - Priority Sector Lending Targets"
+      },
+      "domain_keywords": ["psl", "priority sector lending", "40 percent", "anbc", "domestic commercial banks", "rbi master direction"]
+    },
+    {
+      "id": "RBI-02",
+      "corpus": "rbi",
+      "category": "NBFC Capital Adequacy",
+      "question": "What is the minimum Capital to Risk-Weighted Assets Ratio (CRAR) required for Non-Banking Financial Companies (NBFCs)?",
+      "expected_answer": "Under the RBI Master Direction - Non-Banking Financial Company - Systemically Important Non-Deposit taking Company and Deposit taking Company (Reserve Bank) Directions, 2016, every applicable NBFC must maintain a minimum Capital to Risk-Weighted Assets Ratio (CRAR) of 15% on an ongoing basis, of which Tier 1 capital must not be less than 10%.",
+      "expected_citation": {
+        "authority": "Reserve Bank of India",
+        "statute_or_circular": "Master Direction DNBR.PD.008/03.10.119/2016-17",
+        "section_or_rule": "Paragraph 16 (Capital Adequacy Requirement)",
+        "date": "2016-09-01",
+        "title": "Master Direction - Non-Banking Financial Company Capital Adequacy"
+      },
+      "domain_keywords": ["crar", "capital adequacy", "nbfc", "15 percent", "tier 1 capital", "risk weighted assets"]
+    },
+    {
+      "id": "RBI-03",
+      "corpus": "rbi",
+      "category": "KYC & AML",
+      "question": "What is the mandatory periodicity for periodic updation of KYC (re-KYC) for high-risk customers under RBI norms?",
+      "expected_answer": "According to the RBI Master Direction - Know Your Customer (KYC) Direction, 2016 (DBR.AML.BC.No.81/14.01.001/2015-16), regulated entities must undertake periodic updating of KYC documents at least once every two years for high-risk customers, at least once every eight years for medium-risk customers, and at least once every ten years for low-risk customers.",
+      "expected_citation": {
+        "authority": "Reserve Bank of India",
+        "statute_or_circular": "Master Direction - Know Your Customer (KYC) Direction, 2016",
+        "section_or_rule": "Section 38 (Periodic Updation)",
+        "date": "2016-02-25",
+        "title": "Master Direction on KYC Periodic Updation"
+      },
+      "domain_keywords": ["kyc", "re-kyc", "periodic updation", "high risk", "two years", "rbi kyc direction"]
+    },
+    {
+      "id": "RBI-04",
+      "corpus": "rbi",
+      "category": "Asset Classification",
+      "question": "When is a loan or advance classified as a Non-Performing Asset (NPA) by commercial banks?",
+      "expected_answer": "Under the RBI Master Circular on Prudential Norms on Income Recognition, Asset Classification and Provisioning pertaining to Advances (DOR.STR.REC.4/21.04.048/2023-24), an asset is classified as an NPA if interest and/or installment of principal remains overdue for a period of more than 90 days in respect of a term loan, or if the account remains 'out of order' in respect of an Overdraft/Cash Credit (OD/CC) facility.",
+      "expected_citation": {
+        "authority": "Reserve Bank of India",
+        "statute_or_circular": "Master Circular DOR.STR.REC.4/21.04.048/2023-24",
+        "section_or_rule": "Paragraph 2.1 (Non-Performing Assets)",
+        "date": "2023-04-01",
+        "title": "Prudential Norms on Income Recognition, Asset Classification and Provisioning"
+      },
+      "domain_keywords": ["npa", "non-performing asset", "90 days", "asset classification", "overdue", "prudential norms"]
+    },
+    {
+      "id": "RBI-05",
+      "corpus": "rbi",
+      "category": "Digital Lending",
+      "question": "What does the RBI mandate regarding the disbursement and repayment of digital loans through Lending Service Providers (LSPs)?",
+      "expected_answer": "Under the RBI Guidelines on Digital Lending (DOR.CRE.REC.66/21.07.001/2022-23), all loan servicing, disbursements, and repayments must be executed directly between the bank account of the Regulated Entity (RE) and the borrower's bank account, without any pass-through, pool account, or involvement of any third-party account of the Lending Service Provider (LSP) or Digital Lending App (DLA).",
+      "expected_citation": {
+        "authority": "Reserve Bank of India",
+        "statute_or_circular": "Circular DOR.CRE.REC.66/21.07.001/2022-23",
+        "section_or_rule": "Clause 3 (Loan Servicing and Disbursal)",
+        "date": "2022-09-02",
+        "title": "Guidelines on Digital Lending - Direct Disbursal to Borrower Account"
+      },
+      "domain_keywords": ["digital lending", "lsp", "pass-through account", "disbursement", "borrower account", "regulated entity"]
+    },
+    {
+      "id": "RBI-06",
+      "corpus": "rbi",
+      "category": "Statutory Liquidity Ratio",
+      "question": "In what eligible forms must commercial banks maintain the Statutory Liquidity Ratio (SLR) under the Banking Regulation Act?",
+      "expected_answer": "Under Section 24 of the Banking Regulation Act, 1949 and RBI Master Direction - Financial Statements - Presentation and Disclosures, scheduled commercial banks must maintain SLR in the form of cash, gold valued at current market price, or unencumbered approved securities (chiefly Central and State Government Securities) as specified by the Reserve Bank.",
+      "expected_citation": {
+        "authority": "Reserve Bank of India",
+        "statute_or_circular": "Banking Regulation Act, 1949 & Master Direction DOR.No.RET.REC.32/12.01.001/2021-22",
+        "section_or_rule": "Section 24",
+        "date": "2021-07-20",
+        "title": "Maintenance of Statutory Liquidity Ratio (SLR)"
+      },
+      "domain_keywords": ["slr", "statutory liquidity ratio", "section 24", "banking regulation act", "government securities", "gold"]
+    },
+    {
+      "id": "RBI-07",
+      "corpus": "rbi",
+      "category": "Large Exposures",
+      "question": "What is the single counterparty exposure limit under the RBI Large Exposure Framework (LEF)?",
+      "expected_answer": "Under the RBI Large Exposure Framework (DBR.No.BP.BC.43/21.01.003/2018-19), the sum of all exposure values of a bank to a single counterparty must not exceed 20% of the bank's eligible capital base (Tier 1 capital). In exceptional cases, the Board of Directors may approve an additional 5% exposure.",
+      "expected_citation": {
+        "authority": "Reserve Bank of India",
+        "statute_or_circular": "Circular DBR.No.BP.BC.43/21.01.003/2018-19",
+        "section_or_rule": "Paragraph 4 (Prudential Limits)",
+        "date": "2019-06-03",
+        "title": "Large Exposures Framework (LEF) Prudential Limits"
+      },
+      "domain_keywords": ["large exposure framework", "lef", "single counterparty", "20 percent", "tier 1 capital", "prudential limits"]
+    },
+    {
+      "id": "RBI-08",
+      "corpus": "rbi",
+      "category": "Ombudsman Scheme",
+      "question": "Which Non-Banking Financial Companies are covered under the Reserve Bank - Integrated Ombudsman Scheme?",
+      "expected_answer": "Under the Reserve Bank - Integrated Ombudsman Scheme, 2021, the scheme covers all deposit-taking NBFCs (NBFCs-D) and all non-deposit taking NBFCs having customer interface and an asset size of Rs. 100 crore and above, excluding Core Investment Companies (CICs), Infrastructure Debt Funds (IDFs), and NBFCs without customer interface.",
+      "expected_citation": {
+        "authority": "Reserve Bank of India",
+        "statute_or_circular": "Reserve Bank - Integrated Ombudsman Scheme, 2021",
+        "section_or_rule": "Clause 2 (Applicability)",
+        "date": "2021-11-12",
+        "title": "The Reserve Bank - Integrated Ombudsman Scheme 2021"
+      },
+      "domain_keywords": ["integrated ombudsman", "nbfc ombudsman", "100 crore", "deposit-taking nbfc", "customer interface"]
+    },
+    {
+      "id": "RBI-09",
+      "corpus": "rbi",
+      "category": "NBFC Registration",
+      "question": "What is the minimum Net Owned Fund (NOF) requirement for the registration of an NBFC with the Reserve Bank of India?",
+      "expected_answer": "Under Section 45-IA of the Reserve Bank of India Act, 1934 read with Circular DOR.CRE.REC.No.60/03.10.001/2021-22 (Scale Based Regulation for NBFCs), the minimum Net Owned Fund (NOF) required for new registration of NBFC-Investment and Credit Company (NBFC-ICC), NBFC-MFI, and NBFC-Factor is Rs. 10 crore.",
+      "expected_citation": {
+        "authority": "Reserve Bank of India",
+        "statute_or_circular": "Circular DOR.CRE.REC.No.60/03.10.001/2021-22",
+        "section_or_rule": "Section 45-IA & Paragraph 3 (Regulatory Minimum NOF)",
+        "date": "2021-10-22",
+        "title": "Scale Based Regulation (SBR): A Revised Regulatory Framework for NBFCs"
+      },
+      "domain_keywords": ["net owned fund", "nof", "section 45-ia", "10 crore", "nbfc registration", "scale based regulation"]
+    },
+    {
+      "id": "RBI-10",
+      "corpus": "rbi",
+      "category": "Cash Transactions & PAN",
+      "question": "At what threshold is quoting of Permanent Account Number (PAN) mandatory for cash deposits in a bank account?",
+      "expected_answer": "Under Rule 114B of the Income Tax Rules, 1962 and RBI Master Direction on KYC, quoting of PAN is mandatory for cash deposits with a banking company or a co-operative bank exceeding Rs. 50,000 during any one day, or aggregating to more than Rs. 20 lakh in a financial year across one or more accounts.",
+      "expected_citation": {
+        "authority": "Reserve Bank of India & CBDT",
+        "statute_or_circular": "Income Tax Rules, 1962 & RBI Master Direction - KYC",
+        "section_or_rule": "Rule 114B & Section 40 (RBI KYC Direction)",
+        "date": "2022-05-10",
+        "title": "Mandatory quoting of PAN for cash deposits exceeding statutory thresholds"
+      },
+      "domain_keywords": ["pan quoting", "cash deposits", "50000", "rule 114b", "kyc directions", "banking transaction"]
+    },
+    {
+      "id": "SEBI-01",
+      "corpus": "sebi",
+      "category": "Insider Trading",
+      "question": "How is Unpublished Price Sensitive Information (UPSI) defined under SEBI (Prohibition of Insider Trading) Regulations?",
+      "expected_answer": "Under Regulation 2(1)(n) of the SEBI (Prohibition of Insider Trading) Regulations, 2015, UPSI means any information relating to a company or its securities, directly or indirectly, that is not generally available, which upon becoming generally available is likely to materially affect the price of the securities. It ordinarily includes financial results, dividends, change in capital structure, mergers/demergers/acquisitions, and changes in key managerial personnel.",
+      "expected_citation": {
+        "authority": "SEBI",
+        "statute_or_circular": "SEBI (Prohibition of Insider Trading) Regulations, 2015",
+        "section_or_rule": "Regulation 2(1)(n)",
+        "date": "2015-01-15",
+        "title": "Definition of Unpublished Price Sensitive Information (UPSI)"
+      },
+      "domain_keywords": ["upsi", "unpublished price sensitive information", "insider trading", "regulation 2(1)(n)", "financial results"]
+    },
+    {
+      "id": "SEBI-02",
+      "corpus": "sebi",
+      "category": "Trading Window Closure",
+      "question": "What is the mandatory trading window closure period for financial results under SEBI PIT Regulations?",
+      "expected_answer": "Under Clause 4 of Schedule B read with Regulation 9 of SEBI (PIT) Regulations, 2015 and SEBI Circular dated April 2, 2019, the trading window must be closed from the end of every quarter until 48 hours after the declaration of financial results to the stock exchanges.",
+      "expected_citation": {
+        "authority": "SEBI",
+        "statute_or_circular": "SEBI (PIT) Regulations, 2015 & Circular LIST/COMP/01/2019-20",
+        "section_or_rule": "Schedule B, Clause 4",
+        "date": "2019-04-02",
+        "title": "Trading window closure timing for declaration of financial results"
+      },
+      "domain_keywords": ["trading window", "schedule b", "48 hours", "quarter end", "financial results", "insider trading"]
+    },
+    {
+      "id": "SEBI-03",
+      "corpus": "sebi",
+      "category": "Material Disclosures",
+      "question": "What are the disclosure timelines for material events and board decisions under Regulation 30 of SEBI LODR?",
+      "expected_answer": "Under Regulation 30(6) of the SEBI (Listing Obligations and Disclosure Requirements) Regulations, 2015, decisions of the Board of Directors relating to dividends, financial results, or fund-raising must be disclosed within 30 minutes of the closure of the board meeting. Material events originating from within the listed entity must be disclosed within 12 hours, and events not originating from within the entity within 24 hours.",
+      "expected_citation": {
+        "authority": "SEBI",
+        "statute_or_circular": "SEBI (Listing Obligations and Disclosure Requirements) Regulations, 2015",
+        "section_or_rule": "Regulation 30(6)",
+        "date": "2023-06-14",
+        "title": "Disclosure of events or information and updated timelines"
+      },
+      "domain_keywords": ["regulation 30", "lodr", "material events", "30 minutes", "12 hours", "board meeting disclosure"]
+    },
+    {
+      "id": "SEBI-04",
+      "corpus": "sebi",
+      "category": "Minimum Public Shareholding",
+      "question": "What is the mandatory Minimum Public Shareholding (MPS) percentage required for listed companies in India?",
+      "expected_answer": "Under Rule 19A of the Securities Contracts (Regulation) Rules, 1957 (SCRR) and Regulation 38 of the SEBI (LODR) Regulations, 2015, every listed company must maintain a Minimum Public Shareholding (MPS) of at least 25% of its total share capital. Companies falling below this threshold must bring public shareholding back to 25% within statutory curing periods.",
+      "expected_citation": {
+        "authority": "SEBI",
+        "statute_or_circular": "Securities Contracts (Regulation) Rules, 1957 & SEBI LODR",
+        "section_or_rule": "Rule 19A & Regulation 38",
+        "date": "2015-09-02",
+        "title": "Minimum Public Shareholding (MPS) requirement"
+      },
+      "domain_keywords": ["mps", "minimum public shareholding", "25 percent", "rule 19a", "regulation 38", "scrr"]
+    },
+    {
+      "id": "SEBI-05",
+      "corpus": "sebi",
+      "category": "Takeover Code",
+      "question": "What threshold of voting rights triggers a mandatory open offer under the SEBI (SAST) Takeover Regulations?",
+      "expected_answer": "Under Regulation 3(1) of the SEBI (Substantial Acquisition of Shares and Takeovers) Regulations, 2011, an acquirer who, together with persons acting in concert (PAC), acquires shares or voting rights in a target company that entitle them to exercise 25% or more of the voting rights, must make a public announcement of an open offer to acquire at least an additional 26% of the target company's shares.",
+      "expected_citation": {
+        "authority": "SEBI",
+        "statute_or_circular": "SEBI (Substantial Acquisition of Shares and Takeovers) Regulations, 2011",
+        "section_or_rule": "Regulation 3(1)",
+        "date": "2011-09-23",
+        "title": "Substantial acquisition of shares or voting rights and open offer trigger"
+      },
+      "domain_keywords": ["sast", "takeover code", "open offer", "25 percent", "26 percent", "voting rights"]
+    },
+    {
+      "id": "SEBI-06",
+      "corpus": "sebi",
+      "category": "Public Issues & IPO",
+      "question": "What is the minimum subscription requirement for an Initial Public Offering (IPO) under SEBI (ICDR) Regulations?",
+      "expected_answer": "Under Regulation 45 of the SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018, the minimum subscription to be received in an initial public offering (IPO) is 90% of the offer through the offer document. If the minimum subscription is not received within statutory timelines, the issuer must refund all application moneys forthwith.",
+      "expected_citation": {
+        "authority": "SEBI",
+        "statute_or_circular": "SEBI (Issue of Capital and Disclosure Requirements) Regulations, 2018",
+        "section_or_rule": "Regulation 45",
+        "date": "2018-09-11",
+        "title": "Minimum subscription and refund of application money in public offerings"
+      },
+      "domain_keywords": ["icdr", "minimum subscription", "90 percent", "ipo", "public issue", "refund"]
+    },
+    {
+      "id": "SEBI-07",
+      "corpus": "sebi",
+      "category": "Board Governance",
+      "question": "What proportion of independent directors is mandated on the Board of Directors of a listed company under SEBI LODR?",
+      "expected_answer": "Under Regulation 17(1)(b) of the SEBI (LODR) Regulations, 2015, where the chairperson of the board of directors is a non-executive director, at least one-third of the board must comprise independent directors; and where the listed entity does not have a regular non-executive chairperson or the chairperson is a promoter, at least half (50%) of the board must comprise independent directors.",
+      "expected_citation": {
+        "authority": "SEBI",
+        "statute_or_circular": "SEBI (Listing Obligations and Disclosure Requirements) Regulations, 2015",
+        "section_or_rule": "Regulation 17(1)(b)",
+        "date": "2015-09-02",
+        "title": "Composition of board of directors and independent directors requirement"
+      },
+      "domain_keywords": ["independent directors", "regulation 17", "lodr", "board composition", "one-third", "half"]
+    },
+    {
+      "id": "SEBI-08",
+      "corpus": "sebi",
+      "category": "Mutual Funds Limits",
+      "question": "What is the single issuer investment ceiling for a mutual fund debt scheme under SEBI regulations?",
+      "expected_answer": "Under the Seventh Schedule of the SEBI (Mutual Funds) Regulations, 1996 as amended, a mutual fund debt scheme shall not invest more than 10% of its Net Asset Value (NAV) in debt and money market instruments issued by a single issuer, which may be extended to 12% of NAV with prior approval of the Board of Trustees and the Board of AMC.",
+      "expected_citation": {
+        "authority": "SEBI",
+        "statute_or_circular": "SEBI (Mutual Funds) Regulations, 1996",
+        "section_or_rule": "Seventh Schedule, Clause 1",
+        "date": "2019-11-06",
+        "title": "Investment limits in debt and money market instruments of a single issuer"
+      },
+      "domain_keywords": ["mutual fund", "single issuer limit", "10 percent", "seventh schedule", "nav", "debt scheme"]
+    },
+    {
+      "id": "SEBI-09",
+      "corpus": "sebi",
+      "category": "Structured Digital Database",
+      "question": "What is the requirement for maintaining a Structured Digital Database (SDD) under SEBI PIT Regulations?",
+      "expected_answer": "Under Regulation 3(5) of the SEBI (Prohibition of Insider Trading) Regulations, 2015, the board of directors of every listed company and intermediary must ensure that a structured digital database (SDD) is maintained containing the nature of unpublished price sensitive information (UPSI), the names of persons who have shared the information, and the names of persons with whom information is shared, along with their Permanent Account Number (PAN) or other legal identifier, with time-stamping and audit trails.",
+      "expected_citation": {
+        "authority": "SEBI",
+        "statute_or_circular": "SEBI (Prohibition of Insider Trading) Regulations, 2015",
+        "section_or_rule": "Regulation 3(5) & 3(6)",
+        "date": "2020-07-17",
+        "title": "Maintenance of Structured Digital Database (SDD) for UPSI"
+      },
+      "domain_keywords": ["sdd", "structured digital database", "regulation 3(5)", "upsi", "audit trail", "pan"]
+    },
+    {
+      "id": "SEBI-10",
+      "corpus": "sebi",
+      "category": "Audit Committee",
+      "question": "What are the minimum size and independent director requirements for the Audit Committee of a listed entity under SEBI LODR?",
+      "expected_answer": "Under Regulation 18(1) of the SEBI (LODR) Regulations, 2015, the audit committee of a listed company must have a minimum of three directors as members, with at least two-thirds of the members being independent directors. Furthermore, all members must be financially literate, and at least one member must possess accounting or related financial management expertise.",
+      "expected_citation": {
+        "authority": "SEBI",
+        "statute_or_circular": "SEBI (Listing Obligations and Disclosure Requirements) Regulations, 2015",
+        "section_or_rule": "Regulation 18(1)",
+        "date": "2015-09-02",
+        "title": "Constitution and composition of the Audit Committee"
+      },
+      "domain_keywords": ["audit committee", "regulation 18", "two-thirds", "independent directors", "financially literate"]
+    },
+    {
+      "id": "MCA-01",
+      "corpus": "mca",
+      "category": "CSR Applicability",
+      "question": "What are the net worth, turnover, or net profit criteria that mandate Corporate Social Responsibility (CSR) compliance under the Companies Act, 2013?",
+      "expected_answer": "Under Section 135(1) of the Companies Act, 2013, CSR provisions apply to every company having a net worth of Rs. 500 crore or more, or a turnover of Rs. 1,000 crore or more, or a net profit of Rs. 5 crore or more during the immediately preceding financial year.",
+      "expected_citation": {
+        "authority": "Ministry of Corporate Affairs",
+        "statute_or_circular": "Companies Act, 2013",
+        "section_or_rule": "Section 135(1)",
+        "date": "2014-04-01",
+        "title": "Corporate Social Responsibility applicability thresholds"
+      },
+      "domain_keywords": ["csr", "corporate social responsibility", "section 135(1)", "500 crore", "1000 crore", "5 crore net profit"]
+    },
+    {
+      "id": "MCA-02",
+      "corpus": "mca",
+      "category": "CSR Expenditure",
+      "question": "What is the statutory percentage of net profits that an applicable company must spend on Corporate Social Responsibility (CSR)?",
+      "expected_answer": "Under Section 135(5) of the Companies Act, 2013, the Board of every applicable company must ensure that the company spends, in every financial year, at least 2% of the average net profits of the company made during the three immediately preceding financial years, in pursuance of its Corporate Social Responsibility Policy.",
+      "expected_citation": {
+        "authority": "Ministry of Corporate Affairs",
+        "statute_or_circular": "Companies Act, 2013",
+        "section_or_rule": "Section 135(5)",
+        "date": "2014-04-01",
+        "title": "Mandatory 2% CSR expenditure requirement"
+      },
+      "domain_keywords": ["csr expenditure", "section 135(5)", "2 percent", "average net profits", "three preceding financial years"]
+    },
+    {
+      "id": "MCA-03",
+      "corpus": "mca",
+      "category": "Annual Filings (AOC-4)",
+      "question": "What is the statutory timeline for filing financial statements in Form AOC-4 with the Registrar of Companies (ROC)?",
+      "expected_answer": "Under Section 137(1) of the Companies Act, 2013, a copy of the financial statements, including consolidated financial statement, along with all documents required to be attached, must be filed with the Registrar in Form AOC-4 within thirty days of the date on which the Annual General Meeting (AGM) was held.",
+      "expected_citation": {
+        "authority": "Ministry of Corporate Affairs",
+        "statute_or_circular": "Companies Act, 2013",
+        "section_or_rule": "Section 137(1) & Rule 12 of Companies (Accounts) Rules",
+        "date": "2014-04-01",
+        "title": "Copy of financial statement to be filed with Registrar (Form AOC-4)"
+      },
+      "domain_keywords": ["aoc-4", "financial statements", "section 137", "30 days", "agm", "roc filing"]
+    },
+    {
+      "id": "MCA-04",
+      "corpus": "mca",
+      "category": "Annual Return (MGT-7)",
+      "question": "What is the statutory deadline for filing the Annual Return in Form MGT-7 with the ROC?",
+      "expected_answer": "Under Section 92(4) of the Companies Act, 2013 read with Rule 11 of the Companies (Management and Administration) Rules, 2014, every company must file a copy of the annual return in Form MGT-7 with the Registrar within sixty days from the date on which the Annual General Meeting is held, or where no AGM is held, within sixty days from the date on which the AGM should have been held.",
+      "expected_citation": {
+        "authority": "Ministry of Corporate Affairs",
+        "statute_or_circular": "Companies Act, 2013",
+        "section_or_rule": "Section 92(4)",
+        "date": "2014-04-01",
+        "title": "Filing of annual return with Registrar (Form MGT-7)"
+      },
+      "domain_keywords": ["mgt-7", "annual return", "section 92(4)", "60 days", "agm", "roc filing"]
+    },
+    {
+      "id": "MCA-05",
+      "corpus": "mca",
+      "category": "Board Meetings Interval",
+      "question": "What is the maximum permissible interval between two consecutive meetings of the Board of Directors?",
+      "expected_answer": "Under Section 173(1) of the Companies Act, 2013, every company must hold a minimum number of four meetings of its Board of Directors every year in such a manner that not more than one hundred and twenty (120) days shall intervene between two consecutive meetings of the Board.",
+      "expected_citation": {
+        "authority": "Ministry of Corporate Affairs",
+        "statute_or_circular": "Companies Act, 2013",
+        "section_or_rule": "Section 173(1)",
+        "date": "2014-04-01",
+        "title": "Meetings of Board and maximum gap of 120 days"
+      },
+      "domain_keywords": ["board meetings", "section 173(1)", "120 days", "four meetings", "consecutive meetings gap"]
+    },
+    {
+      "id": "MCA-06",
+      "corpus": "mca",
+      "category": "Board Quorum",
+      "question": "What constitutes a valid quorum for a meeting of the Board of Directors under the Companies Act, 2013?",
+      "expected_answer": "Under Section 174(1) of the Companies Act, 2013, the quorum for a meeting of the Board of Directors of a company shall be one-third of its total strength or two directors, whichever is higher, and the participation of the directors by video conferencing or other audio visual means shall also be counted for the purposes of quorum.",
+      "expected_citation": {
+        "authority": "Ministry of Corporate Affairs",
+        "statute_or_circular": "Companies Act, 2013",
+        "section_or_rule": "Section 174(1)",
+        "date": "2014-04-01",
+        "title": "Quorum for meetings of Board of Directors"
+      },
+      "domain_keywords": ["board quorum", "section 174(1)", "one-third", "two directors", "total strength", "video conferencing"]
+    },
+    {
+      "id": "MCA-07",
+      "corpus": "mca",
+      "category": "Directorship Limits",
+      "question": "What is the maximum number of directorships an individual can hold simultaneously under Section 165 of the Companies Act?",
+      "expected_answer": "Under Section 165(1) of the Companies Act, 2013, no person shall hold office as a director, including any alternate directorship, in more than twenty (20) companies at the same time, provided that the maximum number of public companies in which a person can be appointed as a director shall not exceed ten (10).",
+      "expected_citation": {
+        "authority": "Ministry of Corporate Affairs",
+        "statute_or_circular": "Companies Act, 2013",
+        "section_or_rule": "Section 165(1)",
+        "date": "2014-04-01",
+        "title": "Number of directorships limit"
+      },
+      "domain_keywords": ["directorship limits", "section 165", "20 companies", "10 public companies", "maximum directorships"]
+    },
+    {
+      "id": "MCA-08",
+      "corpus": "mca",
+      "category": "Woman Director",
+      "question": "Which classes of companies are legally mandated to appoint at least one Woman Director to their Board?",
+      "expected_answer": "Under Section 149(1) of the Companies Act, 2013 read with Rule 3 of the Companies (Appointment and Qualification of Directors) Rules, 2014, the following classes of companies must appoint at least one woman director: (i) every listed company; and (ii) every other public company having paid-up share capital of Rs. 100 crore or more, or turnover of Rs. 300 crore or more.",
+      "expected_citation": {
+        "authority": "Ministry of Corporate Affairs",
+        "statute_or_circular": "Companies Act, 2013",
+        "section_or_rule": "Section 149(1) & Rule 3",
+        "date": "2014-04-01",
+        "title": "Mandatory appointment of woman director"
+      },
+      "domain_keywords": ["woman director", "section 149(1)", "listed company", "100 crore paid up", "300 crore turnover"]
+    },
+    {
+      "id": "MCA-09",
+      "corpus": "mca",
+      "category": "First AGM Timeline",
+      "question": "Within what timeline must a newly incorporated company hold its First Annual General Meeting (AGM)?",
+      "expected_answer": "Under Section 96(1) of the Companies Act, 2013, a newly incorporated company must hold its first annual general meeting within a period of nine (9) months from the date of closing of the first financial year of the company, and in any other case, within a period of six (6) months from the date of closing of the financial year.",
+      "expected_citation": {
+        "authority": "Ministry of Corporate Affairs",
+        "statute_or_circular": "Companies Act, 2013",
+        "section_or_rule": "Section 96(1)",
+        "date": "2014-04-01",
+        "title": "Annual general meeting and first AGM timeline"
+      },
+      "domain_keywords": ["first agm", "section 96(1)", "annual general meeting", "nine months", "financial year closing"]
+    },
+    {
+      "id": "MCA-10",
+      "corpus": "mca",
+      "category": "Minimum Paid-Up Capital",
+      "question": "Is there any statutory minimum paid-up share capital required to incorporate a private or public company in India?",
+      "expected_answer": "Pursuant to the Companies (Amendment) Act, 2015, which amended Section 2(68) and Section 2(71) of the Companies Act, 2013, the requirement of having a minimum paid-up share capital of Rs. 1 lakh for a private company and Rs. 5 lakh for a public company has been omitted. There is currently no statutory minimum paid-up capital requirement to incorporate a company in India.",
+      "expected_citation": {
+        "authority": "Ministry of Corporate Affairs",
+        "statute_or_circular": "Companies (Amendment) Act, 2015",
+        "section_or_rule": "Section 2(68) & Section 2(71)",
+        "date": "2015-05-29",
+        "title": "Omission of minimum paid-up share capital requirement"
+      },
+      "domain_keywords": ["minimum paid up capital", "section 2(68)", "section 2(71)", "companies amendment act 2015", "no minimum capital"]
+    },
+    {
+      "id": "FEMA-01",
+      "corpus": "fema",
+      "category": "LRS Limit",
+      "question": "What is the annual permissible ceiling for remittances by resident individuals under the Liberalised Remittance Scheme (LRS)?",
+      "expected_answer": "Under the Master Direction on Other Remittance Facilities for Residents (FED Master Direction No. 8/2015-16), resident individuals are permitted to remit up to USD 250,000 (or its equivalent) per financial year (April-March) for any permitted current or capital account transactions, including education, medical treatment, travel, gift/donation, and purchase of foreign shares or real estate.",
+      "expected_citation": {
+        "authority": "Reserve Bank of India (FEMA)",
+        "statute_or_circular": "Master Direction - Other Remittance Facilities for Residents",
+        "section_or_rule": "FED Master Direction No. 8/2015-16, Section 1",
+        "date": "2016-01-01",
+        "title": "Liberalised Remittance Scheme (LRS) ceiling of USD 250,000"
+      },
+      "domain_keywords": ["lrs", "liberalised remittance scheme", "usd 250000", "financial year", "resident individual", "fema"]
+    },
+    {
+      "id": "FEMA-02",
+      "corpus": "fema",
+      "category": "Export Realization",
+      "question": "What is the statutory time limit for realization and repatriation of export proceeds to India under FEMA?",
+      "expected_answer": "Under Regulation 9 of the Foreign Exchange Management (Export of Goods and Services) Regulations, 2016 read with Master Direction No. 16/2015-16, the amount representing the full value of goods, software, or services exported shall be realized and repatriated to India within nine (9) months from the date of export.",
+      "expected_citation": {
+        "authority": "Reserve Bank of India (FEMA)",
+        "statute_or_circular": "Master Direction - Export of Goods and Services",
+        "section_or_rule": "FED Master Direction No. 16/2015-16, Part B, Section B.1",
+        "date": "2016-01-01",
+        "title": "Period of realization and repatriation of export proceeds"
+      },
+      "domain_keywords": ["export realization", "repatriation", "nine months", "fema export regulations", "softex", "export proceeds"]
+    },
+    {
+      "id": "FEMA-03",
+      "corpus": "fema",
+      "category": "FDI Reporting (FC-GPR)",
+      "question": "What is the mandatory reporting timeline for filing Form FC-GPR upon issuing capital instruments to a foreign investor?",
+      "expected_answer": "Under the Foreign Exchange Management (Mode of Payment and Reporting of Non-Debt Instruments) Regulations, 2019, an Indian company issuing capital instruments to a person resident outside India and receiving foreign investment must report the details in Form FC-GPR through the FIRMS portal within thirty (30) days from the date of issue of the capital instruments.",
+      "expected_citation": {
+        "authority": "Reserve Bank of India (FEMA)",
+        "statute_or_circular": "FEMA (Mode of Payment and Reporting of Non-Debt Instruments) Regulations, 2019",
+        "section_or_rule": "Regulation 4(1) & FIRMS Guidelines",
+        "date": "2019-10-17",
+        "title": "Reporting of FDI in Form FC-GPR within 30 days of allotment"
+      },
+      "domain_keywords": ["fc-gpr", "firms portal", "fdi reporting", "30 days", "capital instruments", "allotment"]
+    },
+    {
+      "id": "FEMA-04",
+      "corpus": "fema",
+      "category": "ECB Ceiling",
+      "question": "What is the annual borrowing ceiling under the Automatic Route for External Commercial Borrowings (ECB)?",
+      "expected_answer": "Under the Master Direction on External Commercial Borrowings, Trade Credits and Structured Obligations (FED Master Direction No. 5/2018-19), eligible borrowers can raise External Commercial Borrowings (ECB) under the Automatic Route up to USD 750 million or equivalent per financial year without prior approval of the Reserve Bank of India.",
+      "expected_citation": {
+        "authority": "Reserve Bank of India (FEMA)",
+        "statute_or_circular": "Master Direction - External Commercial Borrowings",
+        "section_or_rule": "FED Master Direction No. 5/2018-19, Section 2.1",
+        "date": "2019-03-26",
+        "title": "ECB Automatic Route limit of USD 750 million per financial year"
+      },
+      "domain_keywords": ["ecb", "external commercial borrowings", "automatic route", "usd 750 million", "financial year limit"]
+    },
+    {
+      "id": "FEMA-05",
+      "corpus": "fema",
+      "category": "ECB Maturity",
+      "question": "What is the standard Minimum Average Maturity Period (MAMP) required for External Commercial Borrowings?",
+      "expected_answer": "Under paragraph 2.1 of the RBI Master Direction on External Commercial Borrowings, the standard Minimum Average Maturity Period (MAMP) for an ECB is three (3) years for borrowings up to USD 50 million or its equivalent in INR or foreign currency.",
+      "expected_citation": {
+        "authority": "Reserve Bank of India (FEMA)",
+        "statute_or_circular": "Master Direction - External Commercial Borrowings",
+        "section_or_rule": "FED Master Direction No. 5/2018-19, Section 2.1 (MAMP)",
+        "date": "2019-03-26",
+        "title": "Minimum Average Maturity Period (MAMP) for ECB"
+      },
+      "domain_keywords": ["mamp", "minimum average maturity", "three years", "ecb", "external commercial borrowings"]
+    },
+    {
+      "id": "FEMA-06",
+      "corpus": "fema",
+      "category": "Prohibited FDI Sectors",
+      "question": "Which business sectors are strictly prohibited from receiving Foreign Direct Investment (FDI) in India?",
+      "expected_answer": "Under the Consolidated FDI Policy read with Schedule I of the Foreign Exchange Management (Non-debt Instruments) Rules, 2019, FDI is strictly prohibited in: (i) Lottery business including government/private lotteries; (ii) Gambling and betting including casinos; (iii) Chit funds; (iv) Nidhi companies; (v) Trading in Transferable Development Rights (TDRs); (vi) Real estate business or construction of farm houses; (vii) Manufacturing of cigars, cheroots, cigarillos and cigarettes; and (viii) Sectors not open to private sector investment like Atomic Energy and Railway Operations.",
+      "expected_citation": {
+        "authority": "DPIIT & RBI",
+        "statute_or_circular": "FEMA (Non-debt Instruments) Rules, 2019",
+        "section_or_rule": "Rule 15 read with Schedule I",
+        "date": "2019-10-17",
+        "title": "Prohibited sectors for Foreign Direct Investment"
+      },
+      "domain_keywords": ["prohibited fdi", "lottery", "gambling", "chit funds", "nidhi company", "non-debt instruments rules"]
+    },
+    {
+      "id": "FEMA-07",
+      "corpus": "fema",
+      "category": "FLA Return",
+      "question": "What is the statutory deadline for submitting the Annual Return on Foreign Liabilities and Assets (FLA)?",
+      "expected_answer": "Under the Master Direction on Reporting under Foreign Exchange Management Act, 1999 (FED Master Direction No. 18/2015-16), all Indian companies that have received Foreign Direct Investment (FDI) or made Overseas Direct Investment (ODI) must submit the Annual Return on Foreign Liabilities and Assets (FLA Return) on or before July 15 of every year on the RBI FLAIR portal based on unaudited or audited accounts.",
+      "expected_citation": {
+        "authority": "Reserve Bank of India (FEMA)",
+        "statute_or_circular": "Master Direction - Reporting under Foreign Exchange Management Act, 1999",
+        "section_or_rule": "Part II, Section 2 (Annual Return on FLA)",
+        "date": "2016-01-01",
+        "title": "Annual Return on Foreign Liabilities and Assets (FLA) deadline of July 15"
+      },
+      "domain_keywords": ["fla return", "foreign liabilities and assets", "july 15", "flair portal", "fdi reporting", "annual return"]
+    },
+    {
+      "id": "FEMA-08",
+      "corpus": "fema",
+      "category": "SOFTEX Form",
+      "question": "What is the requirement for filing a SOFTEX form for the export of computer software under FEMA?",
+      "expected_answer": "Under the Master Direction - Export of Goods and Services (FED Master Direction No. 16/2015-16), every exporter of computer software in non-physical form (through internet/data link) must declare the export on a SOFTEX form in triplicate and submit it to the designated official of the STPI (Software Technology Parks of India) or SEZ for certification within thirty (30) days from the date of invoice.",
+      "expected_citation": {
+        "authority": "Reserve Bank of India (FEMA)",
+        "statute_or_circular": "Master Direction - Export of Goods and Services",
+        "section_or_rule": "Part B, Section B.6 (Software Exports)",
+        "date": "2016-01-01",
+        "title": "Declaration and certification of software exports in SOFTEX form"
+      },
+      "domain_keywords": ["softex", "software export", "stpi", "30 days", "non-physical form", "export declaration"]
+    },
+    {
+      "id": "FEMA-09",
+      "corpus": "fema",
+      "category": "Overseas Direct Investment (ODI)",
+      "question": "What is the financial commitment limit under the Automatic Route for Overseas Direct Investment (ODI) by an Indian entity?",
+      "expected_answer": "Under the Foreign Exchange Management (Overseas Investment) Rules, 2022 and Regulations, the total financial commitment made by an Indian entity in all foreign entities under the Automatic Route shall not exceed 400% of its net worth as per the last audited balance sheet, or USD 1 billion per financial year (whichever is less).",
+      "expected_citation": {
+        "authority": "Reserve Bank of India (FEMA)",
+        "statute_or_circular": "Foreign Exchange Management (Overseas Investment) Rules, 2022",
+        "section_or_rule": "Rule 13 & Schedule I",
+        "date": "2022-08-22",
+        "title": "Financial commitment limit of 400% of net worth for Overseas Direct Investment"
+      },
+      "domain_keywords": ["odi", "overseas direct investment", "400 percent", "net worth", "automatic route", "overseas investment rules"]
+    },
+    {
+      "id": "FEMA-10",
+      "corpus": "fema",
+      "category": "TCS on Foreign Remittances",
+      "question": "What is the rate of Tax Collected at Source (TCS) on foreign outward remittances under the Liberalised Remittance Scheme?",
+      "expected_answer": "Under Section 206C(1G) of the Income Tax Act, 1961 read with RBI LRS guidelines, TCS on foreign remittances for overseas tour packages is 5% up to Rs. 7 lakh and 20% thereafter. For other remittances under LRS (investment, gift, maintenance), no TCS applies up to Rs. 7 lakh per financial year, and a TCS of 20% applies on amounts exceeding Rs. 7 lakh (with lower rates of 0.5% to 5% for education/medical remittances).",
+      "expected_citation": {
+        "authority": "CBDT & RBI",
+        "statute_or_circular": "Income Tax Act, 1961 & Circular No. 10/2023",
+        "section_or_rule": "Section 206C(1G)",
+        "date": "2023-06-30",
+        "title": "Tax Collected at Source (TCS) on Liberalised Remittance Scheme (LRS)"
+      },
+      "domain_keywords": ["tcs", "tax collected at source", "lrs", "20 percent", "7 lakh", "foreign remittance"]
+    }
+  ]
+}
