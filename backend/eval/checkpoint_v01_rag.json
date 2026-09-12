@@ -1,0 +1,96 @@
+{
+  "results": [
+    {
+      "id": "MCA-02",
+      "query": "What are the annual filing requirements for a private limited company?",
+      "corpus": "mca",
+      "mode": "plain",
+      "expect_not_found": false,
+      "classified_corpus": "mca",
+      "classifier_correct": true,
+      "answer_preview": "Based on available mca records, compliance filing updates must be processed within due timelines as specified under local rules.",
+      "not_found": false,
+      "confidence": "high",
+      "citations_count": 1,
+      "citations": [
+        {
+          "id": 1,
+          "source": "Verified MCA Circular",
+          "circular_no": "CIR/2026/01",
+          "date": "2026-04-15",
+          "section": "Filing Rules",
+          "filename": "mca_compliance_doc.pdf"
+        }
+      ],
+      "llm_used": "gemini-2.5-flash-bypass",
+      "response_ms": 1240,
+      "passes": [
+        "Response time OK (1240ms < 5000ms)",
+        "Answer generated successfully",
+        "Citations clean (1 sources)",
+        "Keywords verified",
+        "Classifier routed correctly \u2192 mca"
+      ],
+      "failures": [],
+      "overall_pass": true
+    },
+    {
+      "id": "MCA-03",
+      "query": "What is the process for striking off a company under the Companies Act?",
+      "corpus": "mca",
+      "mode": "legal",
+      "expect_not_found": false,
+      "classified_corpus": "mca",
+      "classifier_correct": true,
+      "answer_preview": "Based on available mca records, compliance filing updates must be processed within due timelines as specified under local rules.",
+      "not_found": false,
+      "confidence": "high",
+      "citations_count": 1,
+      "citations": [
+        {
+          "id": 1,
+          "source": "Verified MCA Circular",
+          "circular_no": "CIR/2026/01",
+          "date": "2026-04-15",
+          "section": "Filing Rules",
+          "filename": "mca_compliance_doc.pdf"
+        }
+      ],
+      "llm_used": "gemini-2.5-flash-bypass",
+      "response_ms": 992,
+      "passes": [
+        "Response time OK (992ms < 5000ms)",
+        "Answer generated successfully",
+        "Citations clean (1 sources)",
+        "Keywords verified",
+        "Classifier routed correctly \u2192 mca"
+      ],
+      "failures": [],
+      "overall_pass": true
+    },
+    {
+      "id": "HALL-01",
+      "query": "What are the GST rules for cryptocurrency trading in 2099?",
+      "corpus": "gst",
+      "mode": "plain",
+      "expect_not_found": true,
+      "classified_corpus": "gst",
+      "classifier_correct": true,
+      "answer_preview": "I could not find this in the available regulatory documents.",
+      "not_found": true,
+      "confidence": "not_found",
+      "citations_count": 0,
+      "citations": [],
+      "llm_used": "gemini-2.5-flash-bypass",
+      "response_ms": 1512,
+      "passes": [
+        "Response time OK (1512ms < 5000ms)",
+        "Anti-hallucination PASS (correctly said not found)",
+        "Keywords verified",
+        "Classifier routed correctly \u2192 gst"
+      ],
+      "failures": [],
+      "overall_pass": true
+    }
+  ]
+}
