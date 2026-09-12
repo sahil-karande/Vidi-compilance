@@ -13,16 +13,23 @@ import {
   Sparkles, 
   Layers, 
   Share2, 
-  Info,
-  Play,
-  Pause,
-  ArrowRight,
-  TrendingUp,
-  FileText
+  Play, 
+  Pause, 
+  ArrowRight, 
+  TrendingUp, 
+  FileText,
+  List,
+  Network,
+  Maximize2,
+  SlidersHorizontal,
+  ChevronRight,
+  Hash
 } from 'lucide-react';
 import { graphAPI } from '../lib/api';
 
-// Regulatory Authority Color Palette
+// ─────────────────────────────────────────────────────────────
+//  Regulatory Authority Color Palette & Themes
+// ─────────────────────────────────────────────────────────────
 const CORPUS_COLORS = {
   rbi: {
     base: '#38bdf8', // Sky Cyan
@@ -53,7 +60,8 @@ const CORPUS_COLORS = {
     bg: 'bg-emerald-500/10',
     border: 'border-emerald-500/30',
     text: 'text-emerald-400',
-    glow: 'rgba(16, 185, 129, 0.4)',
+    glow: 'rgba(168, 85, 247, 0.4)',
+    glowEmerald: 'rgba(16, 185, 129, 0.4)',
     label: 'Goods & Services Tax (GST)'
   },
   fema: {
@@ -92,6 +100,10 @@ export default function Explorer() {
   const simulationRef = useRef(null);
   const zoomBehaviorRef = useRef(null);
 
+  // Responsive Device State (< 768px)
+  const [isMobile, setIsMobile] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 768 : false));
+  const [viewMode, setViewMode] = useState(() => (typeof window !== 'undefined' && window.innerWidth < 768 ? 'list' : 'graph'));
+
   // Data States
   const [graphData, setGraphData] = useState({ nodes: [], links: [], meta: {} });
   const [stats, setStats] = useState(null);
@@ -111,6 +123,17 @@ export default function Explorer() {
   const [nodeDetails, setNodeDetails] = useState(null);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [hoveredNode, setHoveredNode] = useState(null);
+  const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0, visible: false });
+
+  // Handle Window Resize for Mobile Viewport detection
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Fetch macro statistics once
   useEffect(() => {
@@ -210,7 +233,6 @@ export default function Explorer() {
   // Helper to compute node radius
   const getNodeRadius = useCallback((node) => {
     const citations = node.citation_count || 0;
-    // Scale logarithmically from 7px to 28px
     if (citations <= 0) return 7;
     return Math.min(28, 7 + Math.log2(citations + 1) * 3);
   }, []);
@@ -229,8 +251,28 @@ export default function Explorer() {
     return connected;
   }, [selectedNode, hoveredNode, graphData.links]);
 
+  // Client-side search / filter for mobile list view
+  const filteredNodesList = useMemo(() => {
+    let list = graphData.nodes || [];
+    if (selectedCorpus !== 'all') {
+      list = list.filter(n => getCorpusKey(n.corpus) === selectedCorpus);
+    }
+    if (searchTerm.trim()) {
+      const term = searchTerm.toLowerCase().trim();
+      list = list.filter(n => 
+        (n.id && n.id.toLowerCase().includes(term)) ||
+        (n.label && n.label.toLowerCase().includes(term)) ||
+        (n.title && n.title.toLowerCase().includes(term)) ||
+        (n.circular_no && n.circular_no.toLowerCase().includes(term))
+      );
+    }
+    // Sort by citation count descending
+    return [...list].sort((a, b) => (b.citation_count || 0) - (a.citation_count || 0));
+  }, [graphData.nodes, selectedCorpus, searchTerm]);
+
   // ── D3 Force-Directed Simulation Renderer ──
   useEffect(() => {
+    if (viewMode !== 'graph') return;
     if (!svgRef.current || !containerRef.current) return;
     if (!graphData.nodes.length) {
       d3.select(svgRef.current).selectAll('*').remove();
@@ -409,12 +451,25 @@ export default function Explorer() {
       svg.transition().duration(600).call(zoom.transform, transform);
     });
 
-    // Node Hover Handlers
+    // Dynamic Contextual Hover Handlers (Coordinates-based Tooltip)
     node.on('mouseenter', (event, d) => {
       setHoveredNode(d);
+      const rect = container.getBoundingClientRect();
+      const clientX = event.clientX - rect.left;
+      const clientY = event.clientY - rect.top;
+      setTooltipPos({ x: clientX, y: clientY, visible: true });
     });
+
+    node.on('mousemove', (event) => {
+      const rect = container.getBoundingClientRect();
+      const clientX = event.clientX - rect.left;
+      const clientY = event.clientY - rect.top;
+      setTooltipPos({ x: clientX, y: clientY, visible: true });
+    });
+
     node.on('mouseleave', () => {
       setHoveredNode(null);
+      setTooltipPos(prev => ({ ...prev, visible: false }));
     });
 
     // Background Click to deselect
@@ -436,16 +491,15 @@ export default function Explorer() {
     return () => {
       simulation.stop();
     };
-  }, [graphData, getNodeRadius, showLabels]);
+  }, [graphData, getNodeRadius, showLabels, viewMode]);
 
   // Update visual styles on hover or selected node change
   useEffect(() => {
-    if (!svgRef.current) return;
+    if (viewMode !== 'graph' || !svgRef.current) return;
     const svg = d3.select(svgRef.current);
     const activeTarget = selectedNode || hoveredNode;
 
     if (!activeTarget) {
-      // Reset all nodes & links
       svg.selectAll('.node-circle')
         .attr('stroke', '#0f172a')
         .attr('stroke-width', 2)
@@ -498,7 +552,7 @@ export default function Explorer() {
         .attr('stroke-width', isConnected ? 2.5 : 1)
         .attr('marker-end', isConnected ? 'url(#citation-arrow-active)' : 'url(#citation-arrow)');
     });
-  }, [selectedNode, hoveredNode, activeConnectedNodeIds, showLabels]);
+  }, [selectedNode, hoveredNode, activeConnectedNodeIds, showLabels, viewMode]);
 
   // Zoom control buttons
   const handleZoomIn = () => {
@@ -513,8 +567,6 @@ export default function Explorer() {
 
   const handleResetZoom = () => {
     if (!svgRef.current || !zoomBehaviorRef.current || !containerRef.current) return;
-    const width = containerRef.current.clientWidth || 900;
-    const height = containerRef.current.clientHeight || 650;
     d3.select(svgRef.current).transition().duration(500).call(
       zoomBehaviorRef.current.transform,
       d3.zoomIdentity.translate(0, 0).scale(1)
@@ -547,7 +599,7 @@ export default function Explorer() {
     <div className="relative w-full h-[calc(100vh-65px)] bg-[#030712] text-slate-200 flex flex-col overflow-hidden font-sans">
       
       {/* ── Top Header Bar ── */}
-      <div className="w-full bg-[#090d16] border-b border-slate-800/80 px-6 py-3 flex flex-wrap items-center justify-between gap-4 z-20">
+      <div className="w-full bg-[#090d16] border-b border-slate-800/80 px-4 md:px-6 py-3 flex flex-wrap items-center justify-between gap-3 z-20">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-indigo-600/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
             <Share2 className="w-4 h-4" />
@@ -555,60 +607,85 @@ export default function Explorer() {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-sm font-semibold text-white tracking-tight">Regulation Citation Network</h1>
-              <span className="text-[10px] font-mono px-2 py-0.2 rounded bg-slate-800 border border-slate-700 text-slate-300">
-                Network Topology
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-cyan-300">
+                v0.5 Explorer
               </span>
             </div>
-            <p className="text-[11px] text-slate-400">
+            <p className="hidden sm:block text-[11px] text-slate-400">
               Interactive dependency graph mapping statutory cross-references across RBI, SEBI, MCA, and GST.
             </p>
           </div>
         </div>
 
-        {/* Macro Metrics Scorecards */}
-        {stats && (
-          <div className="hidden lg:flex items-center gap-3 text-xs">
-            <div className="bg-slate-900 border border-slate-800/80 px-3 py-1.5 rounded-lg flex items-center gap-2">
-              <Layers className="w-3.5 h-3.5 text-indigo-400" />
-              <span className="text-slate-400">Circular Nodes:</span>
-              <span className="font-semibold text-white font-mono">{stats.total_nodes}</span>
-            </div>
-            <div className="bg-slate-900 border border-slate-800/80 px-3 py-1.5 rounded-lg flex items-center gap-2">
-              <TrendingUp className="w-3.5 h-3.5 text-indigo-400" />
-              <span className="text-slate-400">Citations Mapped:</span>
-              <span className="font-semibold text-white font-mono">{stats.total_edges}</span>
-            </div>
-            <div className="bg-slate-900/60 border border-slate-800 px-3 py-1.5 rounded-xl flex items-center gap-2">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span className="text-slate-400">Cross-Corpus Links:</span>
-              <span className="font-bold text-white font-mono">{stats.cross_corpus_citations}</span>
-            </div>
+        {/* View Mode Switcher (Graph vs Mobile List Fallback) */}
+        <div className="flex items-center gap-2">
+          <div className="bg-slate-900 border border-slate-800 p-0.5 rounded-xl flex items-center">
+            <button
+              onClick={() => setViewMode('graph')}
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
+                viewMode === 'graph'
+                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 shadow-sm'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+              title="Interactive D3 Force Graph"
+            >
+              <Network className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Graph</span>
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
+                viewMode === 'list'
+                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 shadow-sm'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+              title="Mobile Responsive List View"
+            >
+              <List className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">List View</span>
+            </button>
           </div>
-        )}
+
+          {/* Macro Metrics Scorecards */}
+          {stats && (
+            <div className="hidden xl:flex items-center gap-2 text-xs">
+              <div className="bg-slate-900 border border-slate-800/80 px-2.5 py-1 rounded-lg flex items-center gap-1.5">
+                <Layers className="w-3.5 h-3.5 text-indigo-400" />
+                <span className="text-slate-400">Nodes:</span>
+                <span className="font-semibold text-white font-mono">{stats.total_nodes}</span>
+              </div>
+              <div className="bg-slate-900 border border-slate-800/80 px-2.5 py-1 rounded-lg flex items-center gap-1.5">
+                <TrendingUp className="w-3.5 h-3.5 text-indigo-400" />
+                <span className="text-slate-400">Citations:</span>
+                <span className="font-semibold text-white font-mono">{stats.total_edges}</span>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* ── Filter Bar ── */}
-      <div className="w-full bg-slate-950/40 border-b border-slate-800/60 px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs z-10">
+      {/* ── Filter Bar: Search by Circular Number & Jurisdiction ── */}
+      <div className="w-full bg-slate-950/60 border-b border-slate-800/60 px-4 md:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs z-10 backdrop-blur-md">
         
         {/* Corpus Pill Filter */}
-        <div className="flex items-center gap-1.5 overflow-x-auto py-1">
-          <span className="text-slate-500 font-medium mr-1 flex items-center gap-1">
-            <Filter className="w-3.5 h-3.5" /> Corpus:
+        <div className="flex items-center gap-1.5 overflow-x-auto py-1 max-w-full no-scrollbar">
+          <span className="text-slate-500 font-medium mr-1 flex items-center gap-1 shrink-0">
+            <Filter className="w-3.5 h-3.5" /> Filter:
           </span>
           {[
             { id: 'all', label: 'All Corpora' },
-            { id: 'rbi', label: 'RBI', color: 'text-sky-400 border-sky-500/30' },
-            { id: 'sebi', label: 'SEBI', color: 'text-purple-400 border-purple-500/30' },
-            { id: 'mca', label: 'MCA', color: 'text-amber-400 border-amber-500/30' },
-            { id: 'gst', label: 'GST', color: 'text-emerald-400 border-emerald-500/30' },
-            { id: 'fema', label: 'FEMA', color: 'text-pink-400 border-pink-500/30' },
+            { id: 'rbi', label: 'RBI' },
+            { id: 'sebi', label: 'SEBI' },
+            { id: 'mca', label: 'MCA' },
+            { id: 'gst', label: 'GST' },
+            { id: 'fema', label: 'FEMA' },
           ].map((c) => {
             const isActive = selectedCorpus === c.id;
             return (
               <button
                 key={c.id}
                 onClick={() => setSelectedCorpus(c.id)}
-                className={`px-2.5 py-1 rounded-lg font-medium transition-all text-[11px] ${
+                className={`px-2.5 py-1 rounded-lg font-medium transition-all text-[11px] shrink-0 ${
                   isActive
                     ? 'bg-slate-800 text-white border border-cyan-400/50 shadow-[0_0_10px_rgba(56,189,248,0.2)]'
                     : 'bg-slate-900/50 text-slate-400 border border-slate-800/80 hover:bg-slate-800/50 hover:text-slate-200'
@@ -620,16 +697,16 @@ export default function Explorer() {
           })}
         </div>
 
-        {/* Search & Density Control */}
-        <div className="flex items-center gap-3">
-          <div className="relative">
+        {/* Circular Number / Statute Search Input */}
+        <div className="flex items-center gap-2.5 w-full sm:w-auto">
+          <div className="relative flex-1 sm:w-64">
             <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
             <input
               type="text"
-              placeholder="Search circular or Act..."
+              placeholder="Search circular no. (e.g. DOR.CRE, SEBI)..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="bg-slate-900/80 border border-slate-800 rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 w-44 md:w-56 transition-all"
+              className="bg-slate-900/80 border border-slate-800 rounded-xl pl-8 pr-7 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 w-full transition-all"
             />
             {searchTerm && (
               <button
@@ -641,8 +718,9 @@ export default function Explorer() {
             )}
           </div>
 
-          {/* Node Density limit */}
-          <div className="hidden md:flex items-center gap-2 text-[11px] text-slate-400 bg-slate-900/60 border border-slate-800 px-3 py-1 rounded-xl">
+          {/* Node Density limit (Desktop only) */}
+          <div className="hidden lg:flex items-center gap-1.5 text-[11px] text-slate-400 bg-slate-900/60 border border-slate-800 px-2.5 py-1 rounded-xl">
+            <SlidersHorizontal className="w-3 h-3 text-slate-500" />
             <span>Nodes:</span>
             <select
               value={nodeLimit}
@@ -656,21 +734,23 @@ export default function Explorer() {
             </select>
           </div>
 
-          {/* Label Toggle */}
-          <button
-            onClick={() => setShowLabels(!showLabels)}
-            className={`px-2.5 py-1.5 rounded-xl border text-[11px] font-medium transition-all ${
-              showLabels
-                ? 'bg-cyan-950/30 border-cyan-500/40 text-cyan-400'
-                : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            Labels {showLabels ? 'On' : 'Off'}
-          </button>
+          {/* Label Toggle (Graph mode only) */}
+          {viewMode === 'graph' && (
+            <button
+              onClick={() => setShowLabels(!showLabels)}
+              className={`hidden sm:inline-flex px-2.5 py-1.5 rounded-xl border text-[11px] font-medium transition-all ${
+                showLabels
+                  ? 'bg-cyan-950/30 border-cyan-500/40 text-cyan-400'
+                  : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              Labels {showLabels ? 'On' : 'Off'}
+            </button>
+          )}
         </div>
       </div>
 
-      {/* ── Main Interactive Graph Stage ── */}
+      {/* ── Main Viewport Area ── */}
       <div className="relative flex-1 w-full h-full overflow-hidden" ref={containerRef}>
         
         {/* Loading Overlay */}
@@ -690,90 +770,191 @@ export default function Explorer() {
           </div>
         )}
 
-        {/* SVG Visualization Canvas */}
-        <svg ref={svgRef} className="w-full h-full cursor-grab active:cursor-grabbing select-none" />
+        {/* ─────────────────────────────────────────────────── */}
+        {/* MODE 1: D3 Interactive Force Graph                 */}
+        {/* ─────────────────────────────────────────────────── */}
+        {viewMode === 'graph' && (
+          <>
+            <svg ref={svgRef} className="w-full h-full cursor-grab active:cursor-grabbing select-none" />
 
-        {/* ── Floating Controls ── */}
-        <div className="absolute bottom-6 left-6 flex flex-col gap-2 z-20">
-          <div className="bg-slate-900/80 backdrop-blur-md border border-slate-800/80 rounded-2xl p-1.5 flex flex-col gap-1 shadow-2xl">
-            <button
-              onClick={handleZoomIn}
-              title="Zoom In"
-              className="p-2 hover:bg-slate-800 rounded-xl text-slate-300 hover:text-white transition-colors"
-            >
-              <ZoomIn className="w-4 h-4" />
-            </button>
-            <button
-              onClick={handleZoomOut}
-              title="Zoom Out"
-              className="p-2 hover:bg-slate-800 rounded-xl text-slate-300 hover:text-white transition-colors"
-            >
-              <ZoomOut className="w-4 h-4" />
-            </button>
-            <button
-              onClick={handleResetZoom}
-              title="Reset View"
-              className="p-2 hover:bg-slate-800 rounded-xl text-slate-300 hover:text-white transition-colors"
-            >
-              <RotateCcw className="w-4 h-4" />
-            </button>
-            <div className="w-full h-[1px] bg-slate-800 my-0.5" />
-            <button
-              onClick={handleTogglePhysics}
-              title={isPhysicsRunning ? "Pause Physics Simulation" : "Resume Physics Simulation"}
-              className={`p-2 rounded-xl transition-colors ${
-                isPhysicsRunning ? 'text-cyan-400 hover:bg-slate-800' : 'text-amber-400 hover:bg-slate-800'
-              }`}
-            >
-              {isPhysicsRunning ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-            </button>
-          </div>
-        </div>
-
-        {/* ── Legend Floating Overlay ── */}
-        <div className="absolute bottom-6 right-6 hidden md:flex flex-col gap-2 z-20">
-          <div className="bg-slate-900/80 backdrop-blur-md border border-slate-800/80 rounded-2xl p-3 shadow-2xl text-xs space-y-2 max-w-xs">
-            <div className="flex items-center justify-between text-slate-300 font-semibold text-[11px] pb-1 border-b border-slate-800">
-              <span>Jurisdiction Legend</span>
-              <span className="text-[10px] text-slate-500 font-mono">Node Size = Citations</span>
+            {/* Floating Zoom & Pan Controls */}
+            <div className="absolute bottom-6 left-4 md:left-6 flex flex-col gap-2 z-20">
+              <div className="bg-slate-900/90 backdrop-blur-md border border-slate-800/80 rounded-2xl p-1.5 flex flex-col gap-1 shadow-2xl">
+                <button
+                  onClick={handleZoomIn}
+                  title="Zoom In (+)"
+                  className="p-2 hover:bg-slate-800 rounded-xl text-slate-300 hover:text-white transition-colors"
+                >
+                  <ZoomIn className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={handleZoomOut}
+                  title="Zoom Out (-)"
+                  className="p-2 hover:bg-slate-800 rounded-xl text-slate-300 hover:text-white transition-colors"
+                >
+                  <ZoomOut className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={handleResetZoom}
+                  title="Reset & Fit to Screen"
+                  className="p-2 hover:bg-slate-800 rounded-xl text-slate-300 hover:text-white transition-colors"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                </button>
+                <div className="w-full h-[1px] bg-slate-800 my-0.5" />
+                <button
+                  onClick={handleTogglePhysics}
+                  title={isPhysicsRunning ? "Pause Physics Simulation" : "Resume Physics Simulation"}
+                  className={`p-2 rounded-xl transition-colors ${
+                    isPhysicsRunning ? 'text-cyan-400 hover:bg-slate-800' : 'text-amber-400 hover:bg-slate-800'
+                  }`}
+                >
+                  {isPhysicsRunning ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-[11px]">
-              {Object.entries(CORPUS_COLORS).map(([key, config]) => (
-                <div key={key} className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: config.base }} />
-                  <span className="text-slate-400 uppercase font-mono text-[10px]">{key}</span>
+
+            {/* Jurisdiction Legend */}
+            <div className="absolute bottom-6 right-6 hidden lg:flex flex-col gap-2 z-20">
+              <div className="bg-slate-900/85 backdrop-blur-md border border-slate-800/80 rounded-2xl p-3 shadow-2xl text-xs space-y-2 max-w-xs">
+                <div className="flex items-center justify-between text-slate-300 font-semibold text-[11px] pb-1 border-b border-slate-800">
+                  <span>Jurisdiction Legend</span>
+                  <span className="text-[10px] text-slate-500 font-mono">Radius ∝ Citations</span>
                 </div>
-              ))}
+                <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-[11px]">
+                  {Object.entries(CORPUS_COLORS).map(([key, config]) => (
+                    <div key={key} className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: config.base }} />
+                      <span className="text-slate-400 uppercase font-mono text-[10px]">{key}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        {/* ── Hover Tooltip (When not clicked) ── */}
-        {hoveredNode && !selectedNode && (
-          <div className="absolute top-6 left-6 z-20 pointer-events-none bg-slate-900/90 backdrop-blur-md border border-slate-700/80 rounded-2xl p-3.5 shadow-2xl max-w-sm space-y-1.5 animate-fadeIn">
-            <div className="flex items-center gap-2">
-              <span
-                className="w-2.5 h-2.5 rounded-full animate-pulse"
-                style={{ backgroundColor: CORPUS_COLORS[getCorpusKey(hoveredNode.corpus)]?.base || '#64748b' }}
-              />
-              <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-400 font-bold">
-                {hoveredNode.corpus || 'Statutory'}
-              </span>
+            {/* Contextual Floating Tooltip on Hover (Follows Cursor) */}
+            {hoveredNode && !selectedNode && tooltipPos.visible && (
+              <div 
+                className="absolute z-30 pointer-events-none bg-slate-950/95 backdrop-blur-xl border border-cyan-500/30 rounded-2xl p-3 shadow-[0_10px_30px_rgba(0,0,0,0.8)] max-w-xs space-y-1.5 transform -translate-x-1/2 -translate-y-full mb-3"
+                style={{
+                  left: Math.max(160, Math.min(tooltipPos.x, (containerRef.current?.clientWidth || 800) - 160)),
+                  top: Math.max(120, tooltipPos.y - 12),
+                }}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span
+                    className="w-2 h-2 rounded-full animate-ping"
+                    style={{ backgroundColor: CORPUS_COLORS[getCorpusKey(hoveredNode.corpus)]?.base || '#64748b' }}
+                  />
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-400 font-bold">
+                    {hoveredNode.corpus || 'Statutory'}
+                  </span>
+                  <span className="text-[9px] text-slate-500 font-mono">
+                    {hoveredNode.citation_count || 0} citations
+                  </span>
+                </div>
+                <h4 className="text-xs font-bold text-white line-clamp-2">{hoveredNode.label || hoveredNode.id}</h4>
+                {hoveredNode.title && (
+                  <p className="text-[11px] text-slate-400 line-clamp-2">{hoveredNode.title}</p>
+                )}
+                <div className="text-[9px] text-cyan-300/80 font-mono pt-1 border-t border-slate-800/80 flex items-center justify-between">
+                  <span>Click node to inspect details</span>
+                  <span>→</span>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* ─────────────────────────────────────────────────── */}
+        {/* MODE 2: Mobile Fallback List View (< 768px)         */}
+        {/* ─────────────────────────────────────────────────── */}
+        {viewMode === 'list' && (
+          <div className="w-full h-full overflow-y-auto p-4 md:p-6 space-y-3 pb-24">
+            <div className="flex items-center justify-between text-xs text-slate-400 pb-1">
+              <span>Found <strong className="text-cyan-400">{filteredNodesList.length}</strong> regulatory circulars</span>
+              <span className="text-[11px] text-slate-500">Sorted by citation weight</span>
             </div>
-            <h4 className="text-xs font-bold text-white line-clamp-2">{hoveredNode.label || hoveredNode.id}</h4>
-            <div className="flex items-center gap-3 text-[11px] text-slate-400 font-mono pt-1 border-t border-slate-800/80">
-              <span>📥 {hoveredNode.citation_count || 0} cited</span>
-              <span>📤 {hoveredNode.outbound_count || 0} cites</span>
-            </div>
+
+            {filteredNodesList.length === 0 ? (
+              <div className="h-64 flex flex-col items-center justify-center text-center gap-2 text-slate-500">
+                <Hash className="w-8 h-8 text-slate-600" />
+                <p className="text-sm">No circulars match your search or filter.</p>
+                <button
+                  onClick={() => { setSelectedCorpus('all'); setSearchTerm(''); }}
+                  className="text-xs text-cyan-400 underline hover:text-cyan-300"
+                >
+                  Reset all filters
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {filteredNodesList.map((node) => {
+                  const corpusKey = getCorpusKey(node.corpus);
+                  const colorConfig = CORPUS_COLORS[corpusKey] || CORPUS_COLORS.unknown;
+                  const isSelected = selectedNode?.id === node.id;
+
+                  return (
+                    <div
+                      key={node.id}
+                      onClick={() => setSelectedNode(node)}
+                      className={`p-4 rounded-2xl border transition-all cursor-pointer bg-slate-900/60 backdrop-blur-md hover:bg-slate-800/80 flex flex-col justify-between gap-3 ${
+                        isSelected 
+                          ? 'border-cyan-400/80 shadow-[0_0_20px_rgba(56,189,248,0.2)] bg-slate-800/90' 
+                          : 'border-slate-800/80 hover:border-slate-700'
+                      }`}
+                    >
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className={`text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded-full border ${colorConfig.bg} ${colorConfig.border} ${colorConfig.text}`}>
+                            {node.corpus?.toUpperCase() || 'STATUTE'}
+                          </span>
+                          <span className="text-[11px] font-mono text-slate-400">
+                            <strong>{node.citation_count || 0}</strong> citations
+                          </span>
+                        </div>
+                        <h3 className="text-xs font-bold text-white leading-snug break-words">
+                          {node.label || node.id}
+                        </h3>
+                        {node.title && (
+                          <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed">
+                            {node.title}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="flex items-center justify-between pt-2 border-t border-slate-800/80 text-xs">
+                        <span className="text-[11px] text-cyan-400 flex items-center gap-1 font-medium">
+                          Inspect Network <ChevronRight className="w-3.5 h-3.5" />
+                        </span>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleAskAboutCircular(node);
+                          }}
+                          className="px-2.5 py-1 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-[11px] font-semibold flex items-center gap-1 transition-all"
+                        >
+                          <Sparkles className="w-3 h-3 text-cyan-400" />
+                          <span>Ask AI</span>
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
 
-        {/* ── Selected Node Metadata Inspector Drawer ── */}
+        {/* ─────────────────────────────────────────────────── */}
+        {/* Selected Node Metadata Inspector Drawer (Responsive)*/}
+        {/* Desktop: Right Sidebar | Mobile: Sliding Bottom Sheet */}
+        {/* ─────────────────────────────────────────────────── */}
         {selectedNode && (
-          <div className="absolute top-4 right-4 bottom-4 w-96 max-w-[calc(100vw-2rem)] bg-slate-950/95 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 shadow-2xl flex flex-col z-30 animate-in slide-in-from-right duration-300">
+          <div className="fixed md:absolute inset-x-0 bottom-0 md:inset-x-auto md:top-4 md:right-4 md:bottom-4 md:w-96 max-h-[85vh] md:max-h-none md:max-w-[calc(100vw-2rem)] bg-slate-950/95 backdrop-blur-2xl border-t md:border border-slate-800 rounded-t-3xl md:rounded-3xl p-5 md:p-6 shadow-2xl flex flex-col z-40 animate-in slide-in-from-bottom md:slide-in-from-right duration-300">
             
             {/* Header / Dismiss */}
-            <div className="flex items-start justify-between gap-3 pb-4 border-b border-slate-800/80">
+            <div className="flex items-start justify-between gap-3 pb-3 border-b border-slate-800/80">
               <div className="space-y-1">
                 <span
                   className={`inline-block text-[10px] font-mono uppercase tracking-widest px-2 py-0.5 rounded-full border ${activeCorpusColor?.bg} ${activeCorpusColor?.border} ${activeCorpusColor?.text} font-bold`}
@@ -787,13 +968,14 @@ export default function Explorer() {
               <button
                 onClick={() => setSelectedNode(null)}
                 className="p-1.5 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition-colors"
+                title="Close Drawer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* Scrollable Body */}
-            <div className="flex-1 overflow-y-auto py-4 space-y-5 text-xs text-slate-300 custom-scrollbar pr-1">
+            <div className="flex-1 overflow-y-auto py-3 space-y-4 text-xs text-slate-300 custom-scrollbar pr-1">
               
               {/* Metrics Pills */}
               <div className="grid grid-cols-2 gap-2.5">
@@ -815,7 +997,7 @@ export default function Explorer() {
 
               {/* Title / Description */}
               {selectedNode.title && (
-                <div className="space-y-1 bg-slate-900/40 border border-slate-800/60 rounded-2xl p-3.5">
+                <div className="space-y-1 bg-slate-900/40 border border-slate-800/60 rounded-2xl p-3">
                   <div className="text-[10px] text-slate-500 uppercase font-mono flex items-center gap-1.5">
                     <FileText className="w-3 h-3 text-cyan-400" /> Regulatory Subject
                   </div>
@@ -827,14 +1009,14 @@ export default function Explorer() {
               <div className="space-y-2">
                 <div className="text-[11px] font-bold text-slate-300 flex items-center justify-between">
                   <span>Cited By ({nodeDetails?.incoming_citations?.length || 0})</span>
-                  <span className="text-[9px] text-slate-500 font-mono">Click to jump</span>
+                  <span className="text-[9px] text-slate-500 font-mono">Tap to jump</span>
                 </div>
                 {isLoadingDetails ? (
-                  <div className="h-16 flex items-center justify-center text-slate-500 font-mono text-[11px] animate-pulse">
+                  <div className="h-14 flex items-center justify-center text-slate-500 font-mono text-[11px] animate-pulse">
                     Loading citation matrix...
                   </div>
                 ) : (nodeDetails?.incoming_citations?.length || 0) > 0 ? (
-                  <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+                  <div className="space-y-1.5 max-h-32 overflow-y-auto pr-1">
                     {nodeDetails.incoming_citations.slice(0, 10).map((inc, i) => (
                       <div
                         key={i}
@@ -860,14 +1042,14 @@ export default function Explorer() {
               <div className="space-y-2">
                 <div className="text-[11px] font-bold text-slate-300 flex items-center justify-between">
                   <span>Cites Statutes ({nodeDetails?.outgoing_citations?.length || 0})</span>
-                  <span className="text-[9px] text-slate-500 font-mono">Click to jump</span>
+                  <span className="text-[9px] text-slate-500 font-mono">Tap to jump</span>
                 </div>
                 {isLoadingDetails ? (
-                  <div className="h-16 flex items-center justify-center text-slate-500 font-mono text-[11px] animate-pulse">
+                  <div className="h-14 flex items-center justify-center text-slate-500 font-mono text-[11px] animate-pulse">
                     Loading statutory links...
                   </div>
                 ) : (nodeDetails?.outgoing_citations?.length || 0) > 0 ? (
-                  <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+                  <div className="space-y-1.5 max-h-32 overflow-y-auto pr-1">
                     {nodeDetails.outgoing_citations.slice(0, 10).map((out, i) => (
                       <div
                         key={i}
@@ -891,13 +1073,13 @@ export default function Explorer() {
             </div>
 
             {/* ── Action Footer: "Ask about this" ── */}
-            <div className="pt-4 border-t border-slate-800/80 space-y-2">
+            <div className="pt-3 border-t border-slate-800/80 space-y-2">
               <button
                 onClick={() => handleAskAboutCircular(selectedNode)}
                 className="w-full bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 hover:from-cyan-400 hover:via-indigo-500 hover:to-purple-500 text-white font-bold py-2.5 px-4 rounded-2xl flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(56,189,248,0.3)] transition-all transform active:scale-95 text-xs"
               >
-                <Sparkles className="w-4 h-4 text-cyan-200 animate-spin" style={{ animationDuration: '3s' }} />
-                <span>Ask about this circular</span>
+                <Sparkles className="w-4 h-4 text-cyan-200" />
+                <span>Ask RegIQ AI about this circular</span>
                 <MessageSquare className="w-3.5 h-3.5 opacity-80 ml-1" />
               </button>
 
