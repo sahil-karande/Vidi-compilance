@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BackgroundOrbs from '../components/BackgroundOrbs';
+import IntroSplash from '../components/IntroSplash';
 import { 
   ShieldCheck, 
   ArrowRight, 
@@ -24,6 +25,7 @@ import {
 
 export default function Landing() {
   const navigate = useNavigate();
+  const [showIntro, setShowIntro] = useState(true);
   const [billingCycle, setBillingCycle] = useState('monthly');
   const [activeTab, setActiveTab] = useState('query');
   const [flippedCards, setFlippedCards] = useState({});
@@ -45,6 +47,11 @@ export default function Landing() {
   return (
     <div className="min-h-screen w-full bg-[#0D0E12] text-slate-200 font-sans flex flex-col antialiased selection:bg-purple-500/20 selection:text-purple-200 overflow-x-hidden relative">
       
+      {/* ── Cinematic Opening Animation Sequence ── */}
+      {showIntro && (
+        <IntroSplash onComplete={() => setShowIntro(false)} />
+      )}
+
       {/* ── 3 Big Animated Floating Purple Circles with Intensity Pulses & Fade ── */}
       <BackgroundOrbs />
 

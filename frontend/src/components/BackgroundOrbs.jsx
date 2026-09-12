@@ -1,22 +1,31 @@
 export default function BackgroundOrbs() {
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10 select-none">
-      {/* Circle 1 - Primary Big Purple Glowing Orb */}
+    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 select-none">
+      {/* Circle 1 - Top-Left to Bottom-Right Corner Drifter */}
       <div 
-        className="absolute -top-[12%] -left-[10%] w-[550px] h-[550px] sm:w-[720px] sm:h-[720px] rounded-full bg-gradient-to-tr from-purple-600/40 via-violet-600/25 to-indigo-600/10 blur-[100px] sm:blur-[135px] animate-float-orb-1" 
+        className="absolute -top-[10%] -left-[10%] w-[500px] h-[500px] sm:w-[650px] sm:h-[650px] rounded-full blur-[75px] sm:blur-[100px] animate-float-orb-1" 
+        style={{
+          background: 'radial-gradient(circle, rgba(168, 85, 247, 0.45) 0%, rgba(147, 51, 234, 0.22) 42%, rgba(126, 34, 206, 0.08) 68%, transparent 85%)'
+        }}
       />
 
-      {/* Circle 2 - Big Deep Violet / Indigo Floating Orb */}
+      {/* Circle 2 - Bottom-Right to Top-Left Corner Drifter */}
       <div 
-        className="absolute -bottom-[15%] -right-[12%] w-[520px] h-[520px] sm:w-[680px] sm:h-[680px] rounded-full bg-gradient-to-br from-indigo-600/35 via-purple-700/25 to-fuchsia-600/10 blur-[110px] sm:blur-[145px] animate-float-orb-2" 
+        className="absolute -bottom-[10%] -right-[10%] w-[480px] h-[480px] sm:w-[620px] sm:h-[620px] rounded-full blur-[80px] sm:blur-[105px] animate-float-orb-2" 
+        style={{
+          background: 'radial-gradient(circle, rgba(139, 92, 246, 0.42) 0%, rgba(124, 58, 237, 0.20) 42%, rgba(91, 33, 182, 0.07) 68%, transparent 85%)'
+        }}
       />
 
-      {/* Circle 3 - Big Ambient Mid-Center Floating Orb */}
+      {/* Circle 3 - Top-Right to Bottom-Left Corner Drifter */}
       <div 
-        className="absolute top-[35%] left-[25%] w-[450px] h-[450px] sm:w-[600px] sm:h-[600px] rounded-full bg-gradient-to-r from-purple-500/30 via-fuchsia-500/20 to-violet-600/10 blur-[95px] sm:blur-[130px] animate-float-orb-3" 
+        className="absolute -top-[8%] right-[5%] w-[420px] h-[420px] sm:w-[560px] sm:h-[560px] rounded-full blur-[70px] sm:blur-[95px] animate-float-orb-3" 
+        style={{
+          background: 'radial-gradient(circle, rgba(192, 132, 252, 0.38) 0%, rgba(168, 85, 247, 0.18) 42%, rgba(147, 51, 234, 0.06) 68%, transparent 85%)'
+        }}
       />
 
-      {/* Subtle Geometric Overlay Texture */}
+      {/* Subtle Geometric Texture */}
       <div 
         className="absolute inset-0 opacity-[0.025]"
         style={{
