@@ -52,20 +52,20 @@ export default function ComplianceCalendar({ deadlines = [], onDeadlineClick }) 
   ).sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 w-full text-slate-200">
+    <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 w-full text-slate-200 font-sans">
       
       {/* 1. INTERACTIVE SYSTEM MONTH GRID */}
-      <div className="xl:col-span-2 bg-slate-900/40 backdrop-blur-sm rounded-xl border border-slate-800/80 p-5 flex flex-col">
+      <div className="xl:col-span-2 bg-[#12131A]/90 backdrop-blur-xl rounded-2xl border border-white/10 p-6 flex flex-col shadow-xl">
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-2">
-            <CalendarIcon className="h-4 w-4 text-indigo-400" />
+            <CalendarIcon className="h-4 w-4 text-purple-400" />
             <h3 className="text-base font-bold text-slate-100">{monthsStr[month]} {year}</h3>
           </div>
           <div className="flex items-center gap-1.5">
-            <button onClick={prevMonth} className="p-1.5 hover:bg-slate-800 rounded-lg border border-slate-800 transition text-slate-400 hover:text-slate-200">
+            <button onClick={prevMonth} className="p-1.5 hover:bg-white/5 rounded-xl border border-white/10 transition text-slate-400 hover:text-slate-200">
               <ChevronLeft className="h-4 w-4" />
             </button>
-            <button onClick={nextMonth} className="p-1.5 hover:bg-slate-800 rounded-lg border border-slate-800 transition text-slate-400 hover:text-slate-200">
+            <button onClick={nextMonth} className="p-1.5 hover:bg-white/5 rounded-xl border border-white/10 transition text-slate-400 hover:text-slate-200">
               <ChevronRight className="h-4 w-4" />
             </button>
           </div>
@@ -79,7 +79,7 @@ export default function ComplianceCalendar({ deadlines = [], onDeadlineClick }) 
         {/* Matrix Mapping */}
         <div className="grid grid-cols-7 gap-2 flex-1">
           {Array.from({ length: firstDayIndex }).map((_, i) => (
-            <div key={`empty-${i}`} className="h-20 bg-slate-950/20 rounded-lg border border-slate-900/40"></div>
+            <div key={`empty-${i}`} className="h-20 bg-white/[0.02] rounded-xl border border-white/5"></div>
           ))}
           
           {Array.from({ length: daysInMonth }).map((_, i) => {
@@ -93,11 +93,11 @@ export default function ComplianceCalendar({ deadlines = [], onDeadlineClick }) 
             return (
               <div 
                 key={`day-${dayNum}`} 
-                className={`h-20 p-1.5 border rounded-lg flex flex-col justify-between transition relative overflow-hidden group ${
-                  isToday ? 'border-indigo-500 bg-indigo-500/5' : 'border-slate-800/60 bg-slate-900/10'
+                className={`h-20 p-2 border rounded-xl flex flex-col justify-between transition-all relative overflow-hidden group ${
+                  isToday ? 'border-purple-500/80 bg-purple-500/10 shadow-[0_0_15px_rgba(168,85,247,0.15)]' : 'border-white/10 bg-[#16161F] hover:border-white/20'
                 }`}
               >
-                <span className={`text-[11px] font-bold ${isToday ? 'text-indigo-400 font-extrabold' : 'text-slate-500'}`}>
+                <span className={`text-[11px] font-bold ${isToday ? 'text-purple-400 font-extrabold' : 'text-slate-500'}`}>
                   {dayNum}
                 </span>
                 
@@ -123,17 +123,17 @@ export default function ComplianceCalendar({ deadlines = [], onDeadlineClick }) 
       </div>
 
       {/* 2. CHRONOLOGICAL ACTION LIST & TIMELINE SCOPE */}
-      <div className="bg-slate-900/40 backdrop-blur-sm rounded-xl border border-slate-800/80 p-5 flex flex-col max-h-[475px]">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+      <div className="bg-[#12131A]/90 backdrop-blur-xl rounded-2xl border border-white/10 p-6 flex flex-col max-h-[475px] shadow-xl">
+        <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
           <div className="flex items-center gap-2">
-            <AlertCircle className="h-4 w-4 text-indigo-400" />
+            <AlertCircle className="h-4 w-4 text-purple-400" />
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Timeline Queue</h3>
           </div>
 
           <select
             value={selectedAuthority}
             onChange={(e) => setSelectedAuthority(e.target.value)}
-            className="text-[11px] bg-slate-950 border border-slate-800 text-slate-300 rounded-md focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 px-2 py-1 font-medium cursor-pointer"
+            className="text-[11px] bg-[#181820] border border-white/10 text-slate-300 rounded-xl focus:ring-1 focus:ring-purple-500/50 focus:border-purple-500/60 px-2.5 py-1 font-medium cursor-pointer transition-all"
           >
             <option value="ALL">All Authorities</option>
             <option value="GST">GST</option>
@@ -161,7 +161,7 @@ export default function ComplianceCalendar({ deadlines = [], onDeadlineClick }) 
               return (
                 <div 
                   key={item.id} 
-                  className="p-3 border border-slate-800/70 bg-slate-900/30 rounded-xl hover:border-slate-700/60 transition flex flex-col justify-between group"
+                  className="p-3.5 border border-white/10 bg-[#16161F] rounded-xl hover:border-purple-500/40 transition-all flex flex-col justify-between group"
                 >
                   <div>
                     <div className="flex items-center justify-between mb-1.5">
@@ -187,7 +187,7 @@ export default function ComplianceCalendar({ deadlines = [], onDeadlineClick }) 
                   {onDeadlineClick && (
                     <button
                       onClick={() => onDeadlineClick(item)}
-                      className="mt-3 w-full flex items-center justify-center gap-1.5 bg-slate-950 hover:bg-indigo-600 border border-slate-800 hover:border-indigo-500 text-indigo-400 hover:text-white rounded-lg py-1.5 text-xs font-semibold shadow-inner transition-all duration-200"
+                      className="mt-3 w-full flex items-center justify-center gap-1.5 bg-[#181820] hover:bg-purple-600 border border-white/10 hover:border-purple-500 text-purple-300 hover:text-white rounded-xl py-2 text-xs font-semibold shadow-sm transition-all duration-200"
                     >
                       <MessageSquare className="h-3.5 w-3.5" />
                       <span>Analyze with Vidi RAG</span>

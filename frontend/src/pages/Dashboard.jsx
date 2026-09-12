@@ -265,18 +265,28 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-[#030712] text-slate-200 font-sans px-6 md:px-10 lg:px-16 py-8 flex flex-col antialiased relative overflow-x-hidden">
+    <div className="min-h-screen w-full bg-[#0D0E12] text-slate-200 font-sans px-6 md:px-10 lg:px-16 py-8 flex flex-col antialiased selection:bg-purple-500/20 selection:text-purple-200 relative overflow-x-hidden">
       
-      {/* ── Ambient Background Glows ── */}
-      <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none -z-10 animate-pulse-glow" />
-      <div className="absolute top-1/3 right-10 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-[160px] pointer-events-none -z-10" />
-      <div className="absolute bottom-10 left-10 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[140px] pointer-events-none -z-10" />
+      {/* ── Ambient Radial Background Glow (Exact Landing Page style) ── */}
+      <div 
+        className="fixed inset-0 pointer-events-none -z-10"
+        style={{
+          background: 'radial-gradient(circle at 20% 15%, rgba(120, 80, 220, 0.12), transparent 55%), radial-gradient(circle at 80% 60%, rgba(100, 60, 200, 0.06), transparent 50%), #0D0E12'
+        }}
+      />
+      <div 
+        className="fixed inset-0 pointer-events-none -z-10 opacity-[0.03]"
+        style={{
+          backgroundImage: 'linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px)',
+          backgroundSize: '48px 48px'
+        }}
+      />
 
       {/* Freemium Lock Overlay Banner */}
       {isLocked && !showProfileForm && (
         <div className="absolute inset-x-0 bottom-0 top-[140px] z-40 bg-slate-950/75 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center">
-          <div className="max-w-lg p-8 bg-slate-900/90 border border-slate-700/80 rounded-3xl shadow-2xl space-y-5">
-            <div className="w-14 h-14 rounded-2xl bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center mx-auto text-indigo-400">
+          <div className="max-w-lg p-8 bg-[#12131A] border border-white/15 rounded-3xl shadow-2xl space-y-5">
+            <div className="w-14 h-14 rounded-2xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center mx-auto text-purple-400 shadow-[0_0_20px_rgba(168,85,247,0.3)]">
               <Zap className="w-7 h-7 animate-bounce" />
             </div>
             <h3 className="text-2xl font-black text-white tracking-tight">RegIQ Pro Matrix Locked</h3>
@@ -285,7 +295,7 @@ export default function Dashboard() {
             </p>
             <button
               onClick={() => navigate('/pricing')}
-              className="inline-flex items-center justify-center bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 hover:from-cyan-400 hover:via-indigo-500 hover:to-purple-500 text-white font-bold text-xs px-8 py-3.5 rounded-2xl transition-all shadow-[0_0_25px_rgba(56,189,248,0.4)]"
+              className="inline-flex items-center justify-center bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs px-8 py-3.5 rounded-2xl transition-all shadow-[0_0_25px_rgba(168,85,247,0.4)]"
             >
               Unlock Full Access (₹499/mo)
             </button>
@@ -297,7 +307,7 @@ export default function Dashboard() {
       <div className="w-full flex flex-col gap-8 relative z-10">
         
         {/* ── Welcome Header Bar (Enterprise Grade) ── */}
-        <header className="w-full bg-slate-900/50 border border-slate-800/90 rounded-2xl p-6 lg:p-7 flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative overflow-hidden">
+        <header className="w-full bg-[#12131A]/90 backdrop-blur-xl border border-white/10 rounded-2xl p-6 lg:p-7 flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative overflow-hidden shadow-xl">
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2.5 text-xs text-slate-400">
               <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-emerald-950/40 border border-emerald-500/30 text-emerald-400 font-medium text-[11px]">
@@ -323,9 +333,9 @@ export default function Dashboard() {
           <div className="flex flex-wrap items-center gap-2.5">
             <button 
               onClick={() => navigate('/explorer')}
-              className="px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-700/80 hover:bg-slate-800 hover:border-slate-600 text-slate-200 text-xs font-medium transition-colors flex items-center gap-2 shadow-sm"
+              className="px-4 py-2.5 rounded-lg bg-[#181820] border border-white/10 hover:bg-[#20202c] hover:border-white/20 text-slate-200 text-xs font-medium transition-colors flex items-center gap-2 shadow-sm"
             >
-              <Share2 className="w-3.5 h-3.5 text-indigo-400" />
+              <Share2 className="w-3.5 h-3.5 text-purple-400" />
               <span>Citation Network</span>
             </button>
 
@@ -333,7 +343,7 @@ export default function Dashboard() {
               <>
                 <button
                   onClick={() => setShowProfileForm(true)}
-                  className="px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-700/80 hover:bg-slate-800 hover:border-slate-600 text-slate-300 text-xs font-medium transition-colors flex items-center gap-2"
+                  className="px-4 py-2.5 rounded-lg bg-[#181820] border border-white/10 hover:bg-[#20202c] hover:border-white/20 text-slate-300 text-xs font-medium transition-colors flex items-center gap-2"
                 >
                   <Sliders className="w-3.5 h-3.5 text-slate-400" />
                   <span>Entity Parameters</span>
@@ -341,7 +351,7 @@ export default function Dashboard() {
 
                 <button 
                   onClick={() => navigate('/chat')}
-                  className="px-4 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium transition-colors shadow-sm flex items-center gap-2"
+                  className="px-4 py-2.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold transition-all shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:shadow-[0_0_25px_rgba(168,85,247,0.45)] flex items-center gap-2 cursor-pointer"
                 >
                   <MessageSquare className="w-3.5 h-3.5" />
                   <span>New Research Query</span>
@@ -351,7 +361,7 @@ export default function Dashboard() {
             ) : (
               <button 
                 onClick={() => navigate('/chat')}
-                className="px-4 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium transition-colors shadow-sm flex items-center gap-2"
+                className="px-4 py-2.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold transition-all shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:shadow-[0_0_25px_rgba(168,85,247,0.45)] flex items-center gap-2 cursor-pointer"
               >
                 <MessageSquare className="w-3.5 h-3.5" />
                 <span>Open Assistant</span>
@@ -653,9 +663,9 @@ export default function Dashboard() {
             {/* Left Column (Main Analytics & Calendar) */}
             <div className="lg:col-span-8 flex flex-col gap-8">
               
-              {/* Risk Scorecard */}
+              {/* Risk Scorecard Container */}
               <Suspense fallback={<SkeletonCard />}>
-                <div className="bg-slate-900/50 border border-slate-800/80 rounded-2xl shadow-sm overflow-hidden relative">
+                <div className="bg-[#12131A]/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl overflow-hidden relative">
                   <RiskScorecard data={scorecard} onMetricClick={handleOpenDrillDown} />
                 </div>
               </Suspense>
@@ -672,10 +682,10 @@ export default function Dashboard() {
                   return (
                     <div 
                       key={corp.code}
-                      className={`p-4 rounded-xl border transition-all duration-200 bg-slate-900/50 flex flex-col justify-between ${
+                      className={`p-4 rounded-xl border transition-all duration-200 bg-[#12131A]/90 backdrop-blur-xl flex flex-col justify-between ${
                         hasAlert 
                           ? 'border-amber-500/50 bg-amber-950/20' 
-                          : 'border-slate-800/80 hover:border-slate-700/80'
+                          : 'border-white/10 hover:border-white/20'
                       }`}
                     >
                       <div className="flex items-start justify-between w-full">
@@ -705,7 +715,7 @@ export default function Dashboard() {
               </div>
 
               {/* Compliance Calendar */}
-              <div className="bg-slate-900/50 border border-slate-800/80 rounded-2xl shadow-sm overflow-hidden">
+              <div className="bg-[#12131A]/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl overflow-hidden">
                 <ComplianceCalendar deadlines={deadlines} onDeadlineClick={handleAnalyzeDeadline} />
               </div>
             </div>
@@ -714,13 +724,13 @@ export default function Dashboard() {
             <div className="lg:col-span-4 flex flex-col gap-6">
               
               {/* Quick Launch Card */}
-              <div className="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-5 shadow-sm space-y-3.5">
+              <div className="bg-[#12131A]/90 backdrop-blur-xl border border-white/10 rounded-2xl p-5 shadow-xl space-y-3.5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <MessageSquare className="w-4 h-4 text-indigo-400" />
+                    <MessageSquare className="w-4 h-4 text-purple-400" />
                     <h3 className="text-xs font-semibold text-white">Suggested Inquiries</h3>
                   </div>
-                  <span className="text-[10px] font-mono text-slate-400 bg-slate-800/80 border border-slate-700/60 px-2 py-0.5 rounded">
+                  <span className="text-[10px] font-mono text-purple-300 bg-purple-500/10 border border-purple-500/20 px-2 py-0.5 rounded">
                     Statutory RAG
                   </span>
                 </div>
@@ -736,23 +746,23 @@ export default function Dashboard() {
                     <button
                       key={idx}
                       onClick={() => navigate('/chat', { state: { initialQuery: samplePrompt } })}
-                      className="w-full text-left p-2.5 rounded-lg bg-slate-950/40 hover:bg-slate-800/80 border border-slate-800/80 hover:border-slate-700 text-[11px] text-slate-300 hover:text-white transition-colors flex items-center justify-between group"
+                      className="w-full text-left p-2.5 rounded-xl bg-[#181820] hover:bg-[#20202c] border border-white/10 hover:border-white/20 text-[11px] text-slate-300 hover:text-white transition-all flex items-center justify-between group cursor-pointer"
                     >
                       <span className="truncate pr-2">{samplePrompt}</span>
-                      <ChevronRight className="w-3 h-3 text-slate-500 group-hover:text-slate-300 shrink-0" />
+                      <ChevronRight className="w-3 h-3 text-slate-500 group-hover:text-purple-300 shrink-0 transition-transform group-hover:translate-x-0.5" />
                     </button>
                   ))}
                 </div>
               </div>
 
               {/* Usage Allocation Card */}
-              <div className="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-5 shadow-sm">
+              <div className="bg-[#12131A]/90 backdrop-blur-xl border border-white/10 rounded-2xl p-5 shadow-xl">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-xs font-semibold text-slate-300 flex items-center gap-2">
-                    <Activity className="w-3.5 h-3.5 text-indigo-400" />
-                    Query Allocation
+                    <Activity className="w-3.5 h-3.5 text-purple-400" />
+                    <span>Query Allocation</span>
                   </h3>
-                  <span className="text-[10px] font-mono bg-slate-800 text-slate-300 px-2 py-0.5 rounded border border-slate-700 uppercase">
+                  <span className="text-[10px] font-mono bg-white/5 text-purple-300 px-2 py-0.5 rounded-full border border-white/10 uppercase">
                     {userRole} Tier
                   </span>
                 </div>
@@ -762,10 +772,10 @@ export default function Dashboard() {
                   <span className="text-xs text-slate-400 font-mono">/ {queryUsage.max} daily allocation</span>
                 </div>
                 
-                <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-2 w-full bg-[#181820] border border-white/10 rounded-full overflow-hidden">
                   <div 
                     className={`h-full rounded-full transition-all duration-500 ${
-                      queryUsage.max && (queryUsage.used / queryUsage.max) * 100 > 80 ? 'bg-amber-500' : 'bg-indigo-500'
+                      queryUsage.max && (queryUsage.used / queryUsage.max) * 100 > 80 ? 'bg-amber-500' : 'bg-gradient-to-r from-purple-500 to-indigo-500'
                     }`} 
                     style={{ width: `${Math.min(((queryUsage.used / (queryUsage.max || 1)) * 100), 100)}%` }} 
                   />
@@ -773,20 +783,20 @@ export default function Dashboard() {
               </div>
 
               {/* Active Audit Threads */}
-              <div className="bg-slate-900/50 border border-slate-800/80 rounded-2xl shadow-sm flex-1 flex flex-col overflow-hidden max-h-[420px]">
-                <div className="p-4 border-b border-slate-800/80 flex items-center justify-between">
+              <div className="bg-[#12131A]/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl flex-1 flex flex-col overflow-hidden max-h-[420px]">
+                <div className="p-4 border-b border-white/10 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <MessageSquare className="w-3.5 h-3.5 text-indigo-400" />
+                    <MessageSquare className="w-3.5 h-3.5 text-purple-400" />
                     <h3 className="text-xs font-semibold text-slate-200">Recent Sessions</h3>
                   </div>
                   <button 
                     onClick={() => navigate('/chat')}
-                    className="text-xs text-indigo-400 hover:text-indigo-300 font-medium"
+                    className="text-xs text-purple-400 hover:text-purple-300 font-medium"
                   >
                     View All
                   </button>
                 </div>
-                <div className="flex-1 divide-y divide-slate-800/50 overflow-y-auto">
+                <div className="flex-1 divide-y divide-white/5 overflow-y-auto">
                   {recentThreads.length === 0 ? (
                     <div className="p-8 text-center text-slate-500 text-xs py-12">
                       No active research sessions found
@@ -796,12 +806,12 @@ export default function Dashboard() {
                       <div 
                         key={thread.id} 
                         onClick={() => navigate(`/chat?id=${thread.id}`)} 
-                        className="p-3.5 hover:bg-slate-800/40 cursor-pointer transition-colors group"
+                        className="p-3.5 hover:bg-white/[0.03] cursor-pointer transition-colors group"
                       >
                         <div className="flex justify-between items-center mb-1">
                           <div className="flex items-center gap-1.5 flex-wrap">
                             {(thread.corpus_tags && thread.corpus_tags.length > 0 ? thread.corpus_tags : [thread.corpus || 'RAG']).map((tag, i) => (
-                              <span key={i} className="text-[9px] font-mono text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-1.5 py-0.5 rounded uppercase font-semibold">
+                              <span key={i} className="text-[9px] font-mono text-purple-300 bg-purple-500/10 border border-purple-500/20 px-1.5 py-0.5 rounded uppercase font-semibold">
                                 {tag}
                               </span>
                             ))}

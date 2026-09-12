@@ -131,17 +131,17 @@ export default function RiskScorecard({ data, onMetricClick }) {
   const activeScores = localScores?.scores || defaultDisplayAxes;
 
   return (
-    <div className="w-full flex flex-col gap-6 text-slate-200 p-6 bg-slate-950/20">
+    <div className="w-full flex flex-col gap-6 text-slate-200 p-6 bg-transparent">
       
       {/* Upper Status Banner Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-slate-900/40 p-4 border border-slate-800 rounded-xl gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-[#16161F] p-4 border border-white/10 rounded-xl gap-2 shadow-sm">
         <div>
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Compliance Health Matrix</h3>
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">Compliance Health Matrix</h3>
           <p className="text-base font-bold mt-0.5 text-white">
             {localScores?.overall_health || 'Evaluating Vector Parameters...'}
           </p>
         </div>
-        <span className="text-xs text-slate-400 bg-slate-950 px-3 py-1.5 rounded-md border border-slate-800 w-max self-start sm:self-center">
+        <span className="text-xs text-slate-400 bg-[#181820] px-3 py-1.5 rounded-lg border border-white/10 w-max self-start sm:self-center font-mono">
           Updated: Live Vector Status
         </span>
       </div>
@@ -149,16 +149,16 @@ export default function RiskScorecard({ data, onMetricClick }) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         
         {/* Form Configuration Input Box */}
-        <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 space-y-4">
+        <div className="bg-[#16161F] border border-white/10 rounded-2xl p-5 space-y-4 shadow-sm">
           <div>
-            <h4 className="text-sm font-bold text-slate-200">Company Vector Parameters</h4>
+            <h4 className="text-sm font-bold text-white">Company Vector Parameters</h4>
             <p className="text-[11px] text-slate-400 mt-0.5">Adjust fields to calculate compliance percentages instantly.</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-3.5">
             <div>
               <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Constitution</label>
-              <select name="business_type" value={formData.business_type} onChange={handleInputChange} className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-300 focus:outline-none focus:border-slate-700">
+              <select name="business_type" value={formData.business_type} onChange={handleInputChange} className="w-full bg-[#181820] border border-white/10 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-purple-500/60 focus:ring-1 focus:ring-purple-500/40 transition-colors">
                 <option value="Proprietorship">Proprietorship</option>
                 <option value="Partnership / LLP">Partnership / LLP</option>
                 <option value="Private Limited">Private Limited</option>
@@ -168,7 +168,7 @@ export default function RiskScorecard({ data, onMetricClick }) {
 
             <div>
               <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Operational Sector</label>
-              <select name="industry" value={formData.industry} onChange={handleInputChange} className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-300 focus:outline-none focus:border-slate-700">
+              <select name="industry" value={formData.industry} onChange={handleInputChange} className="w-full bg-[#181820] border border-white/10 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-purple-500/60 focus:ring-1 focus:ring-purple-500/40 transition-colors">
                 <option value="Fintech">Fintech & Payments</option>
                 <option value="E-Commerce Retail">E-Commerce Retail</option>
                 <option value="Logistics & Supply">Logistics & Supply</option>
@@ -178,7 +178,7 @@ export default function RiskScorecard({ data, onMetricClick }) {
 
             <div>
               <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Annual Turnover</label>
-              <select name="turnover_range" value={formData.turnover_range} onChange={handleInputChange} className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-300 focus:outline-none focus:border-slate-700">
+              <select name="turnover_range" value={formData.turnover_range} onChange={handleInputChange} className="w-full bg-[#181820] border border-white/10 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-purple-500/60 focus:ring-1 focus:ring-purple-500/40 transition-colors">
                 <option value="Under ₹20 Lakhs">Under ₹20 Lakhs</option>
                 <option value="₹20 Lakhs - ₹1 Cr">₹20 Lakhs - ₹1 Cr</option>
                 <option value="₹1Cr - ₹5Cr">₹1Cr - ₹5Cr</option>
@@ -188,7 +188,7 @@ export default function RiskScorecard({ data, onMetricClick }) {
 
             <div>
               <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Cross-Border Funding</label>
-              <select name="has_foreign_funding" value={formData.has_foreign_funding} onChange={handleInputChange} className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-300 focus:outline-none focus:border-slate-700">
+              <select name="has_foreign_funding" value={formData.has_foreign_funding} onChange={handleInputChange} className="w-full bg-[#181820] border border-white/10 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-purple-500/60 focus:ring-1 focus:ring-purple-500/40 transition-colors">
                 <option value="No">No Inflows</option>
                 <option value="Yes">Yes (FDI / Venture Capital)</option>
               </select>
@@ -196,7 +196,7 @@ export default function RiskScorecard({ data, onMetricClick }) {
 
             <div>
               <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">GSTIN Status</label>
-              <select name="gst_registered" value={formData.gst_registered} onChange={handleInputChange} className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-300 focus:outline-none focus:border-slate-700">
+              <select name="gst_registered" value={formData.gst_registered} onChange={handleInputChange} className="w-full bg-[#181820] border border-white/10 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-purple-500/60 focus:ring-1 focus:ring-purple-500/40 transition-colors">
                 <option value="Yes">Active Registered</option>
                 <option value="No">Unregistered / Exempt</option>
               </select>
@@ -205,7 +205,7 @@ export default function RiskScorecard({ data, onMetricClick }) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 px-4 rounded-xl text-xs font-semibold tracking-wide transition-all mt-1 bg-white text-slate-950 hover:bg-slate-200"
+              className="w-full py-2.5 px-4 rounded-xl text-xs font-semibold tracking-wide transition-all mt-1 bg-white hover:bg-slate-200 text-slate-950 shadow-sm"
             >
               {loading ? 'Evaluating Vectors...' : 'Sync with Core Database'}
             </button>
@@ -237,7 +237,7 @@ export default function RiskScorecard({ data, onMetricClick }) {
                 <div
                   key={key}
                   onClick={() => onMetricClick && value?.checks && onMetricClick(key, value.checks)}
-                  className="p-5 rounded-xl border border-slate-800/80 bg-slate-900/30 flex flex-col justify-between cursor-pointer hover:border-slate-700 hover:bg-slate-900/50 transition-all group shadow-md"
+                  className="p-5 rounded-2xl border border-white/10 bg-[#16161F] flex flex-col justify-between cursor-pointer hover:border-purple-500/40 hover:shadow-[0_0_20px_rgba(168,85,247,0.15)] transition-all duration-300 group shadow-sm"
                 >
                   <div className="flex justify-between items-start gap-4">
                     <div className="space-y-1">
@@ -251,7 +251,7 @@ export default function RiskScorecard({ data, onMetricClick }) {
                     {/* SVG Progress Wheel Indicator */}
                     <div className="relative w-16 h-16 flex items-center justify-center flex-shrink-0">
                       <svg className="w-full h-full transform -rotate-90">
-                        <circle cx="32" cy="32" r={radius} className="stroke-slate-800/60" strokeWidth="5" fill="none" />
+                        <circle cx="32" cy="32" r={radius} className="stroke-white/10" strokeWidth="5" fill="none" />
                         <circle
                           cx="32"
                           cy="32"
@@ -269,7 +269,7 @@ export default function RiskScorecard({ data, onMetricClick }) {
                     </div>
                   </div>
 
-                  <div className="mt-4 pt-3 border-t border-slate-800/50 flex items-center justify-between text-xs font-medium">
+                  <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-xs font-medium">
                     <span className="text-slate-400 text-[11px] italic">
                       {displayAxis === 'GST' && 'Indirect audit checks'}
                       {displayAxis === 'RBI' && 'Capital inflow path validation'}

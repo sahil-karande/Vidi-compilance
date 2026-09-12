@@ -21,7 +21,22 @@ function WorkspaceLayout({ children }) {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen w-full bg-[#0D0E12] text-slate-200 font-sans flex flex-col antialiased selection:bg-purple-500/20 selection:text-purple-200">
+    <div className="min-h-screen w-full bg-[#0D0E12] text-slate-200 font-sans flex flex-col antialiased selection:bg-purple-500/20 selection:text-purple-200 relative">
+      {/* Background glow and subtle grid texture across entire app */}
+      <div 
+        className="fixed inset-0 pointer-events-none -z-10"
+        style={{
+          background: 'radial-gradient(circle at 20% 15%, rgba(120, 80, 220, 0.12), transparent 55%), radial-gradient(circle at 80% 60%, rgba(100, 60, 200, 0.06), transparent 50%), #0D0E12'
+        }}
+      />
+      <div 
+        className="fixed inset-0 pointer-events-none -z-10 opacity-[0.03]"
+        style={{
+          backgroundImage: 'linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px)',
+          backgroundSize: '48px 48px'
+        }}
+      />
+
       {/* Sleek Enterprise Top Navbar */}
       <nav className="w-full bg-[#0D0E12]/90 backdrop-blur-md border-b border-white/10 px-6 lg:px-10 py-3 flex items-center justify-between sticky top-0 z-40">
         <div className="flex items-center gap-8">
@@ -31,7 +46,7 @@ function WorkspaceLayout({ children }) {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-base font-bold tracking-tight text-white">RegIQ</span>
-              <span className="text-[10px] text-slate-400 bg-white/5 border border-white/10 px-2 py-0.5 rounded-full font-mono">
+              <span className="text-[10px] text-purple-300 bg-purple-500/10 border border-purple-500/20 px-2 py-0.5 rounded-full font-mono">
                 Compliance Hub
               </span>
             </div>
@@ -40,35 +55,35 @@ function WorkspaceLayout({ children }) {
           <div className="hidden md:flex items-center gap-1 text-xs font-medium text-slate-400">
             <Link
               to="/dashboard"
-              className="hover:text-slate-100 hover:bg-slate-800/60 px-3 py-1.5 rounded-md transition-colors flex items-center gap-2"
+              className="hover:text-slate-100 hover:bg-white/5 px-3 py-1.5 rounded-md transition-colors flex items-center gap-2"
             >
               <svg className="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="9" x="3" y="3" rx="1" /><rect width="7" height="5" x="14" y="3" rx="1" /><rect width="7" height="9" x="14" y="12" rx="1" /><rect width="7" height="5" x="3" y="16" rx="1" /></svg>
               <span>Dashboard</span>
             </Link>
             <Link
               to="/chat"
-              className="hover:text-slate-100 hover:bg-slate-800/60 px-3 py-1.5 rounded-md transition-colors flex items-center gap-2"
+              className="hover:text-slate-100 hover:bg-white/5 px-3 py-1.5 rounded-md transition-colors flex items-center gap-2"
             >
               <svg className="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" /></svg>
               <span>Research Assistant</span>
             </Link>
             <Link
               to="/upload"
-              className="hover:text-slate-100 hover:bg-slate-800/60 px-3 py-1.5 rounded-md transition-colors flex items-center gap-2"
+              className="hover:text-slate-100 hover:bg-white/5 px-3 py-1.5 rounded-md transition-colors flex items-center gap-2"
             >
               <svg className="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" x2="12" y1="3" y2="15" /></svg>
               <span>Document Repository</span>
             </Link>
             <Link
               to="/explorer"
-              className="hover:text-slate-100 hover:bg-slate-800/60 px-3 py-1.5 rounded-md transition-colors flex items-center gap-2"
+              className="hover:text-slate-100 hover:bg-white/5 px-3 py-1.5 rounded-md transition-colors flex items-center gap-2"
             >
               <svg className="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /><line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></svg>
               <span>Citation Network</span>
             </Link>
             <Link
               to="/pricing"
-              className="hover:text-slate-100 hover:bg-slate-800/60 px-3 py-1.5 rounded-md transition-colors flex items-center gap-2"
+              className="hover:text-slate-100 hover:bg-white/5 px-3 py-1.5 rounded-md transition-colors flex items-center gap-2"
             >
               <svg className="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="5" rx="2" /><line x1="2" x2="22" y1="10" y2="10" /></svg>
               <span>Plans & Limits</span>
@@ -80,7 +95,7 @@ function WorkspaceLayout({ children }) {
           {user?.role !== 'pro' && user?.role !== 'enterprise' && (
             <Link
               to="/pricing"
-              className="text-xs font-medium bg-indigo-600/15 hover:bg-indigo-600/25 border border-indigo-500/30 text-indigo-300 hover:text-indigo-200 px-3 py-1.5 rounded-md transition-colors flex items-center gap-1.5"
+              className="text-xs font-medium bg-purple-600/15 hover:bg-purple-600/25 border border-purple-500/30 text-purple-300 hover:text-purple-200 shadow-[0_0_15px_rgba(168,85,247,0.15)] px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5"
             >
               <span>Upgrade Plan</span>
             </Link>
@@ -88,15 +103,15 @@ function WorkspaceLayout({ children }) {
 
           <Link
             to="/settings"
-            className="text-xs text-slate-400 hover:text-slate-200 p-1.5 rounded-md hover:bg-slate-800 transition-colors"
+            className="text-xs text-slate-400 hover:text-slate-200 p-1.5 rounded-md hover:bg-white/5 transition-colors"
             title="Settings"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>
           </Link>
 
           {/* User initials avatar */}
-          <div className="flex items-center gap-2 pl-2 border-l border-slate-800">
-            <div className="w-6 h-6 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px] font-semibold text-slate-300">
+          <div className="flex items-center gap-2 pl-2 border-l border-white/10">
+            <div className="w-6 h-6 rounded-full bg-[#181820] border border-white/10 flex items-center justify-center text-[10px] font-semibold text-slate-300">
               {user?.name ? user.name.charAt(0).toUpperCase() : 'S'}
             </div>
             <span className="text-xs font-medium text-slate-300 hidden lg:inline max-w-[120px] truncate">

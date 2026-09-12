@@ -21,6 +21,15 @@ export default function Login() {
         navigate(from, { replace: true });
       }
     });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        const from = location.state?.from?.pathname || "/dashboard";
+        navigate(from, { replace: true });
+      }
+    });
+
+    return () => subscription?.unsubscribe();
   }, [navigate, location]);
 
   const handleGoogleLogin = async () => {
@@ -48,6 +57,7 @@ export default function Login() {
       email,
       options: {
         shouldCreateUser: true,
+        emailRedirectTo: `${window.location.origin}/dashboard`,
       }
     });
 
@@ -55,7 +65,7 @@ export default function Login() {
       setError(error.message);
     } else {
       setIsOtpSent(true);
-      setMessage('A 6-digit one-time code has been dispatched to your email.');
+      setMessage('A 6-digit code has been dispatched. Enter the code below or click the sign-in link in your email.');
     }
     setLoading(false);
   };

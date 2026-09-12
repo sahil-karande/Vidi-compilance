@@ -54,13 +54,13 @@ export default function ChatThread({ messages, mode = 'plain', onSelectCitation 
                 wordBreak: 'break-word',
                 textAlign: 'left',
                 background: isUser 
-                  ? 'linear-gradient(135deg, #4f46e5 0%, #3730a3 100%)' 
-                  : 'rgba(30, 41, 59, 0.7)',
+                  ? 'linear-gradient(135deg, #9333ea 0%, #7e22ce 100%)' 
+                  : '#12131A',
                 color: '#f8fafc',
-                border: isUser ? 'none' : '1px solid rgba(129, 140, 248, 0.2)',
+                border: isUser ? 'none' : '1px solid rgba(255, 255, 255, 0.1)',
                 boxShadow: isUser 
-                  ? '0 4px 14px rgba(79, 70, 229, 0.3)' 
-                  : '0 4px 12px rgba(0, 0, 0, 0.2)',
+                  ? '0 4px 14px rgba(147, 51, 234, 0.35)' 
+                  : '0 4px 20px rgba(0, 0, 0, 0.5)',
                 boxSizing: 'border-box'
               }}
             >
@@ -89,12 +89,11 @@ export default function ChatThread({ messages, mode = 'plain', onSelectCitation 
                     <button 
                       key={cIdx}
                       type="button"
-                      // 💡 Find your button click map loop or chip mapping inside ChatThread.jsx and ensure it passes the full 'cite' object directly:
                       onClick={() => onSelectCitation(cite)}
                       style={{
-                        background: 'rgba(129, 140, 248, 0.15)',
-                        border: '1px solid rgba(129, 140, 248, 0.4)',
-                        color: '#c7d2fe',
+                        background: 'rgba(168, 85, 247, 0.12)',
+                        border: '1px solid rgba(168, 85, 247, 0.3)',
+                        color: '#d8b4fe',
                         padding: '4px 10px',
                         borderRadius: '6px',
                         fontSize: '11px',
@@ -103,10 +102,16 @@ export default function ChatThread({ messages, mode = 'plain', onSelectCitation 
                         display: 'flex',
                         alignItems: 'center',
                         gap: '4px',
-                        transition: 'background 0.2s'
+                        transition: 'all 0.2s'
                       }}
-                      onMouseEnter={(e) => e.target.style.background = 'rgba(129, 140, 248, 0.3)'}
-                      onMouseLeave={(e) => e.target.style.background = 'rgba(129, 140, 248, 0.15)'}
+                      onMouseEnter={(e) => {
+                        e.target.style.background = 'rgba(168, 85, 247, 0.25)';
+                        e.target.style.borderColor = 'rgba(168, 85, 247, 0.5)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.background = 'rgba(168, 85, 247, 0.12)';
+                        e.target.style.borderColor = 'rgba(168, 85, 247, 0.3)';
+                      }}
                     >
                       📄 {cite.circular_no || cite.source || 'Section Link'}
                     </button>

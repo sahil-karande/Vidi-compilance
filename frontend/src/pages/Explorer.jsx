@@ -596,18 +596,18 @@ export default function Explorer() {
   const activeCorpusColor = selectedNode ? CORPUS_COLORS[getCorpusKey(selectedNode.corpus)] : null;
 
   return (
-    <div className="relative w-full h-[calc(100vh-65px)] bg-[#030712] text-slate-200 flex flex-col overflow-hidden font-sans">
+    <div className="relative w-full h-[calc(100vh-65px)] bg-[#0D0E12] text-slate-200 flex flex-col overflow-hidden font-sans">
       
       {/* ── Top Header Bar ── */}
-      <div className="w-full bg-[#090d16] border-b border-slate-800/80 px-4 md:px-6 py-3 flex flex-wrap items-center justify-between gap-3 z-20">
+      <div className="w-full bg-[#12131A]/90 backdrop-blur-md border-b border-white/10 px-4 md:px-6 py-3 flex flex-wrap items-center justify-between gap-3 z-20">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-indigo-600/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+          <div className="w-8 h-8 rounded-lg bg-purple-600/15 border border-purple-500/30 flex items-center justify-center text-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.2)]">
             <Share2 className="w-4 h-4" />
           </div>
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-sm font-semibold text-white tracking-tight">Regulation Citation Network</h1>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-cyan-300">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300">
                 v0.5 Explorer
               </span>
             </div>
@@ -619,12 +619,12 @@ export default function Explorer() {
 
         {/* View Mode Switcher (Graph vs Mobile List Fallback) */}
         <div className="flex items-center gap-2">
-          <div className="bg-slate-900 border border-slate-800 p-0.5 rounded-xl flex items-center">
+          <div className="bg-[#181820] border border-white/10 p-0.5 rounded-xl flex items-center">
             <button
               onClick={() => setViewMode('graph')}
               className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
                 viewMode === 'graph'
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 shadow-sm'
+                  ? 'bg-purple-600/20 text-purple-300 border border-purple-500/40 shadow-sm'
                   : 'text-slate-400 hover:text-white'
               }`}
               title="Interactive D3 Force Graph"
@@ -636,7 +636,7 @@ export default function Explorer() {
               onClick={() => setViewMode('list')}
               className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
                 viewMode === 'list'
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 shadow-sm'
+                  ? 'bg-purple-600/20 text-purple-300 border border-purple-500/40 shadow-sm'
                   : 'text-slate-400 hover:text-white'
               }`}
               title="Mobile Responsive List View"
@@ -649,13 +649,13 @@ export default function Explorer() {
           {/* Macro Metrics Scorecards */}
           {stats && (
             <div className="hidden xl:flex items-center gap-2 text-xs">
-              <div className="bg-slate-900 border border-slate-800/80 px-2.5 py-1 rounded-lg flex items-center gap-1.5">
-                <Layers className="w-3.5 h-3.5 text-indigo-400" />
+              <div className="bg-[#181820] border border-white/10 px-2.5 py-1 rounded-lg flex items-center gap-1.5">
+                <Layers className="w-3.5 h-3.5 text-purple-400" />
                 <span className="text-slate-400">Nodes:</span>
                 <span className="font-semibold text-white font-mono">{stats.total_nodes}</span>
               </div>
-              <div className="bg-slate-900 border border-slate-800/80 px-2.5 py-1 rounded-lg flex items-center gap-1.5">
-                <TrendingUp className="w-3.5 h-3.5 text-indigo-400" />
+              <div className="bg-[#181820] border border-white/10 px-2.5 py-1 rounded-lg flex items-center gap-1.5">
+                <TrendingUp className="w-3.5 h-3.5 text-purple-400" />
                 <span className="text-slate-400">Citations:</span>
                 <span className="font-semibold text-white font-mono">{stats.total_edges}</span>
               </div>
@@ -665,7 +665,7 @@ export default function Explorer() {
       </div>
 
       {/* ── Filter Bar: Search by Circular Number & Jurisdiction ── */}
-      <div className="w-full bg-slate-950/60 border-b border-slate-800/60 px-4 md:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs z-10 backdrop-blur-md">
+      <div className="w-full bg-[#12131A]/80 border-b border-white/10 px-4 md:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs z-10 backdrop-blur-md">
         
         {/* Corpus Pill Filter */}
         <div className="flex items-center gap-1.5 overflow-x-auto py-1 max-w-full no-scrollbar">
@@ -687,8 +687,8 @@ export default function Explorer() {
                 onClick={() => setSelectedCorpus(c.id)}
                 className={`px-2.5 py-1 rounded-lg font-medium transition-all text-[11px] shrink-0 ${
                   isActive
-                    ? 'bg-slate-800 text-white border border-cyan-400/50 shadow-[0_0_10px_rgba(56,189,248,0.2)]'
-                    : 'bg-slate-900/50 text-slate-400 border border-slate-800/80 hover:bg-slate-800/50 hover:text-slate-200'
+                    ? 'bg-purple-600/20 text-purple-300 border border-purple-500/50 shadow-[0_0_12px_rgba(168,85,247,0.25)]'
+                    : 'bg-[#181820] text-slate-400 border border-white/10 hover:border-white/20 hover:text-slate-200'
                 }`}
               >
                 {c.label}
@@ -706,7 +706,7 @@ export default function Explorer() {
               placeholder="Search circular no. (e.g. DOR.CRE, SEBI)..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="bg-slate-900/80 border border-slate-800 rounded-xl pl-8 pr-7 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 w-full transition-all"
+              className="bg-[#181820] border border-white/10 rounded-xl pl-8 pr-7 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-purple-500/60 focus:ring-1 focus:ring-purple-500/30 w-full transition-all"
             />
             {searchTerm && (
               <button
@@ -719,7 +719,7 @@ export default function Explorer() {
           </div>
 
           {/* Node Density limit (Desktop only) */}
-          <div className="hidden lg:flex items-center gap-1.5 text-[11px] text-slate-400 bg-slate-900/60 border border-slate-800 px-2.5 py-1 rounded-xl">
+          <div className="hidden lg:flex items-center gap-1.5 text-[11px] text-slate-400 bg-[#181820] border border-white/10 px-2.5 py-1 rounded-xl">
             <SlidersHorizontal className="w-3 h-3 text-slate-500" />
             <span>Nodes:</span>
             <select
@@ -727,10 +727,10 @@ export default function Explorer() {
               onChange={(e) => setNodeLimit(Number(e.target.value))}
               className="bg-transparent text-slate-200 focus:outline-none cursor-pointer"
             >
-              <option value={100} className="bg-slate-900">100</option>
-              <option value={250} className="bg-slate-900">250</option>
-              <option value={400} className="bg-slate-900">400</option>
-              <option value={700} className="bg-slate-900">700</option>
+              <option value={100} className="bg-[#16161F]">100</option>
+              <option value={250} className="bg-[#16161F]">250</option>
+              <option value={400} className="bg-[#16161F]">400</option>
+              <option value={700} className="bg-[#16161F]">700</option>
             </select>
           </div>
 
@@ -740,8 +740,8 @@ export default function Explorer() {
               onClick={() => setShowLabels(!showLabels)}
               className={`hidden sm:inline-flex px-2.5 py-1.5 rounded-xl border text-[11px] font-medium transition-all ${
                 showLabels
-                  ? 'bg-cyan-950/30 border-cyan-500/40 text-cyan-400'
-                  : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
+                  ? 'bg-purple-500/20 border-purple-500/40 text-purple-300 shadow-sm'
+                  : 'bg-[#181820] border-white/10 text-slate-400 hover:text-slate-200'
               }`}
             >
               Labels {showLabels ? 'On' : 'Off'}
@@ -755,8 +755,8 @@ export default function Explorer() {
         
         {/* Loading Overlay */}
         {isLoading && (
-          <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-sm z-30 flex flex-col items-center justify-center gap-3">
-            <div className="w-10 h-10 border-2 border-cyan-500/20 border-t-cyan-400 rounded-full animate-spin" />
+          <div className="absolute inset-0 bg-[#0D0E12]/80 backdrop-blur-sm z-30 flex flex-col items-center justify-center gap-3">
+            <div className="w-10 h-10 border-2 border-purple-500/20 border-t-purple-400 rounded-full animate-spin" />
             <p className="text-xs text-slate-300 font-mono tracking-wider animate-pulse">
               Synthesizing Topological Citation Network...
             </p>
@@ -779,34 +779,34 @@ export default function Explorer() {
 
             {/* Floating Zoom & Pan Controls */}
             <div className="absolute bottom-6 left-4 md:left-6 flex flex-col gap-2 z-20">
-              <div className="bg-slate-900/90 backdrop-blur-md border border-slate-800/80 rounded-2xl p-1.5 flex flex-col gap-1 shadow-2xl">
+              <div className="bg-[#12131A]/90 backdrop-blur-md border border-white/10 rounded-2xl p-1.5 flex flex-col gap-1 shadow-2xl">
                 <button
                   onClick={handleZoomIn}
                   title="Zoom In (+)"
-                  className="p-2 hover:bg-slate-800 rounded-xl text-slate-300 hover:text-white transition-colors"
+                  className="p-2 hover:bg-white/5 rounded-xl text-slate-300 hover:text-white transition-colors"
                 >
                   <ZoomIn className="w-4 h-4" />
                 </button>
                 <button
                   onClick={handleZoomOut}
                   title="Zoom Out (-)"
-                  className="p-2 hover:bg-slate-800 rounded-xl text-slate-300 hover:text-white transition-colors"
+                  className="p-2 hover:bg-white/5 rounded-xl text-slate-300 hover:text-white transition-colors"
                 >
                   <ZoomOut className="w-4 h-4" />
                 </button>
                 <button
                   onClick={handleResetZoom}
                   title="Reset & Fit to Screen"
-                  className="p-2 hover:bg-slate-800 rounded-xl text-slate-300 hover:text-white transition-colors"
+                  className="p-2 hover:bg-white/5 rounded-xl text-slate-300 hover:text-white transition-colors"
                 >
                   <RotateCcw className="w-4 h-4" />
                 </button>
-                <div className="w-full h-[1px] bg-slate-800 my-0.5" />
+                <div className="w-full h-[1px] bg-white/10 my-0.5" />
                 <button
                   onClick={handleTogglePhysics}
                   title={isPhysicsRunning ? "Pause Physics Simulation" : "Resume Physics Simulation"}
                   className={`p-2 rounded-xl transition-colors ${
-                    isPhysicsRunning ? 'text-cyan-400 hover:bg-slate-800' : 'text-amber-400 hover:bg-slate-800'
+                    isPhysicsRunning ? 'text-purple-400 hover:bg-white/5' : 'text-amber-400 hover:bg-white/5'
                   }`}
                 >
                   {isPhysicsRunning ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
@@ -816,8 +816,8 @@ export default function Explorer() {
 
             {/* Jurisdiction Legend */}
             <div className="absolute bottom-6 right-6 hidden lg:flex flex-col gap-2 z-20">
-              <div className="bg-slate-900/85 backdrop-blur-md border border-slate-800/80 rounded-2xl p-3 shadow-2xl text-xs space-y-2 max-w-xs">
-                <div className="flex items-center justify-between text-slate-300 font-semibold text-[11px] pb-1 border-b border-slate-800">
+              <div className="bg-[#12131A]/90 backdrop-blur-md border border-white/10 rounded-2xl p-3 shadow-2xl text-xs space-y-2 max-w-xs">
+                <div className="flex items-center justify-between text-slate-300 font-semibold text-[11px] pb-1 border-b border-white/10">
                   <span>Jurisdiction Legend</span>
                   <span className="text-[10px] text-slate-500 font-mono">Radius ∝ Citations</span>
                 </div>
@@ -835,7 +835,7 @@ export default function Explorer() {
             {/* Contextual Floating Tooltip on Hover (Follows Cursor) */}
             {hoveredNode && !selectedNode && tooltipPos.visible && (
               <div 
-                className="absolute z-30 pointer-events-none bg-slate-950/95 backdrop-blur-xl border border-cyan-500/30 rounded-2xl p-3 shadow-[0_10px_30px_rgba(0,0,0,0.8)] max-w-xs space-y-1.5 transform -translate-x-1/2 -translate-y-full mb-3"
+                className="absolute z-30 pointer-events-none bg-[#12131A]/95 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-3 shadow-[0_10px_30px_rgba(0,0,0,0.8)] max-w-xs space-y-1.5 transform -translate-x-1/2 -translate-y-full mb-3"
                 style={{
                   left: Math.max(160, Math.min(tooltipPos.x, (containerRef.current?.clientWidth || 800) - 160)),
                   top: Math.max(120, tooltipPos.y - 12),
@@ -846,7 +846,7 @@ export default function Explorer() {
                     className="w-2 h-2 rounded-full animate-ping"
                     style={{ backgroundColor: CORPUS_COLORS[getCorpusKey(hoveredNode.corpus)]?.base || '#64748b' }}
                   />
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-400 font-bold">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-purple-400 font-bold">
                     {hoveredNode.corpus || 'Statutory'}
                   </span>
                   <span className="text-[9px] text-slate-500 font-mono">
@@ -857,7 +857,7 @@ export default function Explorer() {
                 {hoveredNode.title && (
                   <p className="text-[11px] text-slate-400 line-clamp-2">{hoveredNode.title}</p>
                 )}
-                <div className="text-[9px] text-cyan-300/80 font-mono pt-1 border-t border-slate-800/80 flex items-center justify-between">
+                <div className="text-[9px] text-purple-300/80 font-mono pt-1 border-t border-white/10 flex items-center justify-between">
                   <span>Click node to inspect details</span>
                   <span>→</span>
                 </div>
@@ -872,7 +872,7 @@ export default function Explorer() {
         {viewMode === 'list' && (
           <div className="w-full h-full overflow-y-auto p-4 md:p-6 space-y-3 pb-24">
             <div className="flex items-center justify-between text-xs text-slate-400 pb-1">
-              <span>Found <strong className="text-cyan-400">{filteredNodesList.length}</strong> regulatory circulars</span>
+              <span>Found <strong className="text-purple-400">{filteredNodesList.length}</strong> regulatory circulars</span>
               <span className="text-[11px] text-slate-500">Sorted by citation weight</span>
             </div>
 
@@ -882,7 +882,7 @@ export default function Explorer() {
                 <p className="text-sm">No circulars match your search or filter.</p>
                 <button
                   onClick={() => { setSelectedCorpus('all'); setSearchTerm(''); }}
-                  className="text-xs text-cyan-400 underline hover:text-cyan-300"
+                  className="text-xs text-purple-400 underline hover:text-purple-300"
                 >
                   Reset all filters
                 </button>
@@ -898,10 +898,10 @@ export default function Explorer() {
                     <div
                       key={node.id}
                       onClick={() => setSelectedNode(node)}
-                      className={`p-4 rounded-2xl border transition-all cursor-pointer bg-slate-900/60 backdrop-blur-md hover:bg-slate-800/80 flex flex-col justify-between gap-3 ${
+                      className={`p-4 rounded-2xl border transition-all cursor-pointer bg-[#12131A]/90 backdrop-blur-md hover:bg-[#16161F] flex flex-col justify-between gap-3 ${
                         isSelected 
-                          ? 'border-cyan-400/80 shadow-[0_0_20px_rgba(56,189,248,0.2)] bg-slate-800/90' 
-                          : 'border-slate-800/80 hover:border-slate-700'
+                          ? 'border-purple-500/80 shadow-[0_0_20px_rgba(168,85,247,0.25)] bg-[#16161F]' 
+                          : 'border-white/10 hover:border-purple-500/40'
                       }`}
                     >
                       <div className="space-y-1.5">
@@ -923,8 +923,8 @@ export default function Explorer() {
                         )}
                       </div>
 
-                      <div className="flex items-center justify-between pt-2 border-t border-slate-800/80 text-xs">
-                        <span className="text-[11px] text-cyan-400 flex items-center gap-1 font-medium">
+                      <div className="flex items-center justify-between pt-2 border-t border-white/10 text-xs">
+                        <span className="text-[11px] text-purple-400 flex items-center gap-1 font-medium">
                           Inspect Network <ChevronRight className="w-3.5 h-3.5" />
                         </span>
                         <button
@@ -932,9 +932,9 @@ export default function Explorer() {
                             e.stopPropagation();
                             handleAskAboutCircular(node);
                           }}
-                          className="px-2.5 py-1 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-[11px] font-semibold flex items-center gap-1 transition-all"
+                          className="px-2.5 py-1 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 text-[11px] font-semibold flex items-center gap-1 transition-all"
                         >
-                          <Sparkles className="w-3 h-3 text-cyan-400" />
+                          <Sparkles className="w-3 h-3 text-purple-400" />
                           <span>Ask AI</span>
                         </button>
                       </div>
@@ -951,10 +951,10 @@ export default function Explorer() {
         {/* Desktop: Right Sidebar | Mobile: Sliding Bottom Sheet */}
         {/* ─────────────────────────────────────────────────── */}
         {selectedNode && (
-          <div className="fixed md:absolute inset-x-0 bottom-0 md:inset-x-auto md:top-4 md:right-4 md:bottom-4 md:w-96 max-h-[85vh] md:max-h-none md:max-w-[calc(100vw-2rem)] bg-slate-950/95 backdrop-blur-2xl border-t md:border border-slate-800 rounded-t-3xl md:rounded-3xl p-5 md:p-6 shadow-2xl flex flex-col z-40 animate-in slide-in-from-bottom md:slide-in-from-right duration-300">
+          <div className="fixed md:absolute inset-x-0 bottom-0 md:inset-x-auto md:top-4 md:right-4 md:bottom-4 md:w-96 max-h-[85vh] md:max-h-none md:max-w-[calc(100vw-2rem)] bg-[#12131A]/95 backdrop-blur-2xl border-t md:border border-white/10 rounded-t-3xl md:rounded-3xl p-5 md:p-6 shadow-2xl flex flex-col z-40 animate-in slide-in-from-bottom md:slide-in-from-right duration-300">
             
             {/* Header / Dismiss */}
-            <div className="flex items-start justify-between gap-3 pb-3 border-b border-slate-800/80">
+            <div className="flex items-start justify-between gap-3 pb-3 border-b border-white/10">
               <div className="space-y-1">
                 <span
                   className={`inline-block text-[10px] font-mono uppercase tracking-widest px-2 py-0.5 rounded-full border ${activeCorpusColor?.bg} ${activeCorpusColor?.border} ${activeCorpusColor?.text} font-bold`}
@@ -967,7 +967,7 @@ export default function Explorer() {
               </div>
               <button
                 onClick={() => setSelectedNode(null)}
-                className="p-1.5 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition-colors"
+                className="p-1.5 text-slate-400 hover:text-white rounded-xl hover:bg-white/5 transition-colors"
                 title="Close Drawer"
               >
                 <X className="w-4 h-4" />
@@ -979,14 +979,14 @@ export default function Explorer() {
               
               {/* Metrics Pills */}
               <div className="grid grid-cols-2 gap-2.5">
-                <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-3">
+                <div className="bg-[#16161F] border border-white/10 rounded-2xl p-3">
                   <div className="text-[10px] text-slate-500 uppercase font-mono">Incoming Citations</div>
-                  <div className="text-xl font-black text-cyan-400 font-mono mt-1">
+                  <div className="text-xl font-black text-purple-400 font-mono mt-1">
                     {selectedNode.citation_count || nodeDetails?.total_incoming || 0}
                   </div>
                   <div className="text-[10px] text-slate-500 mt-0.5">Circulars relying on this</div>
                 </div>
-                <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-3">
+                <div className="bg-[#16161F] border border-white/10 rounded-2xl p-3">
                   <div className="text-[10px] text-slate-500 uppercase font-mono">Outgoing References</div>
                   <div className="text-xl font-black text-indigo-400 font-mono mt-1">
                     {selectedNode.outbound_count || nodeDetails?.total_outgoing || 0}
@@ -997,9 +997,9 @@ export default function Explorer() {
 
               {/* Title / Description */}
               {selectedNode.title && (
-                <div className="space-y-1 bg-slate-900/40 border border-slate-800/60 rounded-2xl p-3">
+                <div className="space-y-1 bg-[#16161F] border border-white/10 rounded-2xl p-3">
                   <div className="text-[10px] text-slate-500 uppercase font-mono flex items-center gap-1.5">
-                    <FileText className="w-3 h-3 text-cyan-400" /> Regulatory Subject
+                    <FileText className="w-3 h-3 text-purple-400" /> Regulatory Subject
                   </div>
                   <p className="text-slate-200 text-xs leading-relaxed">{selectedNode.title}</p>
                 </div>
@@ -1024,12 +1024,12 @@ export default function Explorer() {
                           const targetNode = graphData.nodes.find(n => n.id === inc.source);
                           if (targetNode) setSelectedNode(targetNode);
                         }}
-                        className="bg-slate-900/50 hover:bg-slate-800/80 border border-slate-800/60 rounded-xl p-2 cursor-pointer transition-all flex items-center justify-between group"
+                        className="bg-[#16161F] hover:bg-[#181820] border border-white/10 hover:border-purple-500/40 rounded-xl p-2 cursor-pointer transition-all flex items-center justify-between group"
                       >
-                        <span className="text-[11px] text-slate-300 truncate max-w-[200px] group-hover:text-cyan-400">
+                        <span className="text-[11px] text-slate-300 truncate max-w-[200px] group-hover:text-purple-400">
                           {inc.source}
                         </span>
-                        <ArrowRight className="w-3 h-3 text-slate-600 group-hover:text-cyan-400 transition-colors" />
+                        <ArrowRight className="w-3 h-3 text-slate-600 group-hover:text-purple-400 transition-colors" />
                       </div>
                     ))}
                   </div>
@@ -1057,7 +1057,7 @@ export default function Explorer() {
                           const targetNode = graphData.nodes.find(n => n.id === out.target);
                           if (targetNode) setSelectedNode(targetNode);
                         }}
-                        className="bg-slate-900/50 hover:bg-slate-800/80 border border-slate-800/60 rounded-xl p-2 cursor-pointer transition-all flex items-center justify-between group"
+                        className="bg-[#16161F] hover:bg-[#181820] border border-white/10 hover:border-indigo-500/40 rounded-xl p-2 cursor-pointer transition-all flex items-center justify-between group"
                       >
                         <span className="text-[11px] text-slate-300 truncate max-w-[200px] group-hover:text-indigo-400">
                           {out.target}
@@ -1073,12 +1073,12 @@ export default function Explorer() {
             </div>
 
             {/* ── Action Footer: "Ask about this" ── */}
-            <div className="pt-3 border-t border-slate-800/80 space-y-2">
+            <div className="pt-3 border-t border-white/10 space-y-2">
               <button
                 onClick={() => handleAskAboutCircular(selectedNode)}
-                className="w-full bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 hover:from-cyan-400 hover:via-indigo-500 hover:to-purple-500 text-white font-bold py-2.5 px-4 rounded-2xl flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(56,189,248,0.3)] transition-all transform active:scale-95 text-xs"
+                className="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2.5 px-4 rounded-2xl flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:shadow-[0_0_25px_rgba(168,85,247,0.45)] transition-all transform active:scale-95 text-xs"
               >
-                <Sparkles className="w-4 h-4 text-cyan-200" />
+                <Sparkles className="w-4 h-4 text-purple-200" />
                 <span>Ask RegIQ AI about this circular</span>
                 <MessageSquare className="w-3.5 h-3.5 opacity-80 ml-1" />
               </button>

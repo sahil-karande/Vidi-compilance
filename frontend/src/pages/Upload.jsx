@@ -93,9 +93,9 @@ export default function Upload() {
   // Professional Lock State
   if (!isPremium) {
     return (
-      <div className="w-full min-h-[calc(100vh-53px)] bg-[#090d16] text-slate-200 flex flex-col items-center justify-center p-6">
-        <div className="p-8 bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full text-center space-y-4 shadow-xl">
-          <div className="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 mx-auto">
+      <div className="w-full min-h-[calc(100vh-53px)] bg-transparent text-slate-200 flex flex-col items-center justify-center p-6">
+        <div className="p-8 bg-[#12131A]/90 backdrop-blur-xl border border-white/10 rounded-2xl max-w-md w-full text-center space-y-4 shadow-2xl">
+          <div className="w-12 h-12 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400 mx-auto shadow-[0_0_15px_rgba(168,85,247,0.2)]">
             <ShieldAlert className="w-6 h-6" />
           </div>
           <h3 className="text-lg font-bold text-white">Private Document Ingestion</h3>
@@ -105,7 +105,7 @@ export default function Upload() {
           <div className="pt-2">
             <button 
               onClick={() => navigate('/pricing')}
-              className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-lg text-xs transition-colors shadow-sm"
+              className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 bg-purple-600 hover:bg-purple-500 text-white font-semibold rounded-xl text-xs shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:shadow-[0_0_25px_rgba(168,85,247,0.45)] transition-all"
             >
               <span>Upgrade to Pro Plan</span>
             </button>
@@ -119,7 +119,7 @@ export default function Upload() {
     <div className="w-full max-w-5xl mx-auto px-6 py-10 text-slate-100 font-sans">
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-1">
-          <span className="text-xs font-mono font-semibold text-indigo-400 uppercase tracking-wider">
+          <span className="text-xs font-mono font-semibold text-purple-400 uppercase tracking-wider">
             Blended RAG Storage
           </span>
         </div>
@@ -132,7 +132,7 @@ export default function Upload() {
       </div>
 
       {error && (
-        <div className="mb-6 p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-300 text-xs">
+        <div className="mb-6 p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-300 text-xs shadow-lg">
           {error}
         </div>
       )}
@@ -142,10 +142,10 @@ export default function Upload() {
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        className={`border border-dashed rounded-2xl p-10 text-center transition-colors cursor-pointer ${
+        className={`border border-dashed rounded-2xl p-10 text-center transition-all cursor-pointer shadow-xl ${
           isDragging 
-            ? 'border-indigo-500 bg-indigo-950/20' 
-            : 'border-slate-800 bg-slate-900/40 hover:border-slate-700 hover:bg-slate-900/60'
+            ? 'border-purple-500 bg-purple-950/20' 
+            : 'border-white/10 bg-[#12131A]/80 hover:border-purple-500/50 hover:bg-[#16161F]'
         }`}
       >
         <input
@@ -158,7 +158,7 @@ export default function Upload() {
         />
         <label htmlFor="fileInput" className="cursor-pointer block">
           <div className="flex flex-col items-center justify-center space-y-3">
-            <div className={`p-3.5 rounded-xl bg-slate-900 border border-slate-800 text-indigo-400 ${uploading ? 'animate-spin' : ''}`}>
+            <div className={`p-3.5 rounded-xl bg-[#181820] border border-white/10 text-purple-400 ${uploading ? 'animate-spin' : ''}`}>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
@@ -170,7 +170,7 @@ export default function Upload() {
               <p className="text-xs text-slate-500 mt-1">PDF format supported up to 10MB</p>
             </div>
             {!uploading && (
-              <span className="inline-block px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium rounded-lg shadow-sm transition-colors mt-2">
+              <span className="inline-block px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold rounded-xl shadow-[0_0_15px_rgba(168,85,247,0.3)] hover:shadow-[0_0_20px_rgba(168,85,247,0.45)] transition-all mt-2">
                 Select File
               </span>
             )}
@@ -182,30 +182,30 @@ export default function Upload() {
       <div className="mt-10">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-bold tracking-tight text-slate-200">Indexed Private Documents</h2>
-          <span className="text-xs font-mono text-slate-400 px-2.5 py-0.5 bg-slate-900 border border-slate-800 rounded-md">
+          <span className="text-xs font-mono text-purple-300 px-2.5 py-0.5 bg-purple-500/10 border border-purple-500/20 rounded-md">
             {files.length} {files.length === 1 ? 'file' : 'files'}
           </span>
         </div>
 
         {files.length === 0 ? (
-          <div className="text-center p-8 border border-slate-800/80 bg-slate-900/20 rounded-xl text-slate-500 text-xs">
+          <div className="text-center p-8 border border-white/10 bg-[#12131A]/60 rounded-xl text-slate-400 text-xs">
             No private documents uploaded. Uploaded PDFs will be vectorized and indexed for hybrid retrieval.
           </div>
         ) : (
-          <div className="bg-slate-900/40 border border-slate-800/80 rounded-xl overflow-hidden">
+          <div className="bg-[#12131A]/90 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden shadow-xl">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-slate-800 bg-slate-900/60 text-xs font-medium text-slate-400">
+                <tr className="border-b border-white/10 bg-[#16161F] text-xs font-medium text-slate-400">
                   <th className="p-3.5 pl-5">Document Name</th>
                   <th className="p-3.5">Uploaded Date</th>
                   <th className="p-3.5 pr-5 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60 text-xs text-slate-300">
+              <tbody className="divide-y divide-white/5 text-xs text-slate-300">
                 {files.map((file) => (
-                  <tr key={file.id} className="hover:bg-slate-900/50 transition-colors">
+                  <tr key={file.id} className="hover:bg-white/[0.02] transition-colors">
                     <td className="p-3.5 pl-5 font-medium flex items-center space-x-2.5 truncate max-w-xs sm:max-w-md">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-indigo-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-purple-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                       </svg>
                       <span className="truncate">{file.filename}</span>
@@ -218,7 +218,7 @@ export default function Upload() {
                     <td className="p-3.5 pr-5 text-right">
                       <button
                         onClick={() => handleDelete(file.id)}
-                        className="text-slate-500 hover:text-rose-400 p-1 rounded hover:bg-rose-950/20 transition-colors"
+                        className="text-slate-500 hover:text-rose-400 p-1.5 rounded-lg hover:bg-rose-950/30 transition-colors"
                         title="Delete document"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

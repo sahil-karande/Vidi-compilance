@@ -132,7 +132,7 @@ export default function Settings() {
     <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 py-10 text-slate-100 font-sans">
       
       {/* Header */}
-      <div className="mb-8 pb-6 border-b border-slate-800/80">
+      <div className="mb-8 pb-6 border-b border-white/10">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
           Workspace Settings
         </h1>
@@ -142,7 +142,7 @@ export default function Settings() {
       </div>
 
       {/* Tabs Row */}
-      <div className="flex border-b border-slate-800 gap-2 mb-8">
+      <div className="flex border-b border-white/10 gap-2 mb-8">
         {TABS.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -150,10 +150,10 @@ export default function Settings() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 text-xs font-medium border-b-2 transition-colors -mb-px ${
+              className={`flex items-center gap-2 px-4 py-2.5 text-xs font-medium border-b-2 transition-all -mb-px ${
                 isActive 
-                  ? 'border-indigo-500 text-white font-semibold' 
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  ? 'border-purple-500 text-purple-300 font-semibold' 
+                  : 'border-transparent text-slate-400 hover:text-white'
               }`}
             >
               <Icon className="w-3.5 h-3.5" />
@@ -164,7 +164,7 @@ export default function Settings() {
       </div>
 
       {/* Tab Content Box */}
-      <div className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 sm:p-8">
+      <div className="bg-[#12131A]/90 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl">
         
         {/* Profile Tab */}
         {activeTab === 'profile' && (
@@ -175,7 +175,7 @@ export default function Settings() {
             </div>
 
             {saveSuccess && (
-              <div className="p-3 rounded-lg bg-emerald-950/50 border border-emerald-500/30 text-emerald-400 flex items-center gap-2">
+              <div className="p-3 rounded-xl bg-emerald-950/50 border border-emerald-500/30 text-emerald-400 flex items-center gap-2 shadow-lg">
                 <Check className="w-4 h-4" />
                 <span>Company parameters successfully saved.</span>
               </div>
@@ -187,7 +187,7 @@ export default function Settings() {
                 type="text" 
                 value={profileForm.name} 
                 onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
-                className="w-full bg-slate-950 border border-slate-800 focus:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 outline-none"
+                className="w-full bg-[#181820] border border-white/10 focus:border-purple-500/60 focus:ring-1 focus:ring-purple-500/30 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 outline-none transition-all"
               />
             </div>
 
@@ -196,7 +196,7 @@ export default function Settings() {
               <select 
                 value={profileForm.business_type} 
                 onChange={(e) => setProfileForm({ ...profileForm, business_type: e.target.value })}
-                className="w-full bg-slate-950 border border-slate-800 focus:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 outline-none"
+                className="w-full bg-[#181820] border border-white/10 focus:border-purple-500/60 focus:ring-1 focus:ring-purple-500/30 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 outline-none transition-all cursor-pointer"
               >
                 <option value="Private Limited">Private Limited</option>
                 <option value="LLP">LLP</option>
@@ -210,7 +210,7 @@ export default function Settings() {
               <select 
                 value={profileForm.industry} 
                 onChange={(e) => setProfileForm({ ...profileForm, industry: e.target.value })}
-                className="w-full bg-slate-950 border border-slate-800 focus:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 outline-none"
+                className="w-full bg-[#181820] border border-white/10 focus:border-purple-500/60 focus:ring-1 focus:ring-purple-500/30 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 outline-none transition-all cursor-pointer"
               >
                 <option value="Fintech">Fintech</option>
                 <option value="SaaS / Tech Services">SaaS / Tech Services</option>
@@ -224,7 +224,7 @@ export default function Settings() {
               <select 
                 value={profileForm.turnover_range} 
                 onChange={(e) => setProfileForm({ ...profileForm, turnover_range: e.target.value })}
-                className="w-full bg-slate-950 border border-slate-800 focus:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 outline-none"
+                className="w-full bg-[#181820] border border-white/10 focus:border-purple-500/60 focus:ring-1 focus:ring-purple-500/30 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 outline-none transition-all cursor-pointer"
               >
                 <option value="Under ₹20 Lakhs">Under ₹20 Lakhs</option>
                 <option value="₹20 Lakhs - ₹1Cr">₹20 Lakhs - ₹1Cr</option>
@@ -239,7 +239,7 @@ export default function Settings() {
                 <select 
                   value={profileForm.gst_registered} 
                   onChange={(e) => setProfileForm({ ...profileForm, gst_registered: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 focus:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 outline-none"
+                  className="w-full bg-[#181820] border border-white/10 focus:border-purple-500/60 focus:ring-1 focus:ring-purple-500/30 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 outline-none transition-all cursor-pointer"
                 >
                   <option value="Yes">Yes</option>
                   <option value="No">No</option>
@@ -251,7 +251,7 @@ export default function Settings() {
                 <select 
                   value={profileForm.has_foreign_funding} 
                   onChange={(e) => setProfileForm({ ...profileForm, has_foreign_funding: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 focus:border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-100 outline-none"
+                  className="w-full bg-[#181820] border border-white/10 focus:border-purple-500/60 focus:ring-1 focus:ring-purple-500/30 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 outline-none transition-all cursor-pointer"
                 >
                   <option value="No">No</option>
                   <option value="Yes">Yes</option>
@@ -263,7 +263,7 @@ export default function Settings() {
               <button 
                 type="submit" 
                 disabled={isSavingProfile}
-                className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs rounded-lg transition-colors shadow-sm disabled:opacity-50"
+                className="px-5 py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs rounded-xl shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:shadow-[0_0_25px_rgba(168,85,247,0.45)] transition-all disabled:opacity-50"
               >
                 {isSavingProfile ? 'Saving...' : 'Save Parameters'}
               </button>
@@ -274,7 +274,7 @@ export default function Settings() {
         {/* Plan Tab */}
         {activeTab === 'plan' && (
           <div className="space-y-8">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-xl bg-slate-950 border border-slate-800">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-[#16161F] border border-white/10">
               <div>
                 <span className="text-[11px] font-mono uppercase text-slate-500 tracking-wider font-semibold">Active Plan</span>
                 <div className="text-xl font-bold text-white mt-0.5 capitalize">{user?.role || 'Free'} Tier</div>
@@ -307,7 +307,7 @@ export default function Settings() {
                 {AVAILABLE_ALERTS.map((item) => {
                   const isSubscribed = dbAlerts[item.topic]?.is_active || false;
                   return (
-                    <div key={item.id} className="p-4 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-4">
+                    <div key={item.id} className="p-4 rounded-2xl bg-[#16161F] border border-white/10 flex items-center justify-between gap-4">
                       <div>
                         <div className="text-xs font-semibold text-white">{item.title}</div>
                         <div className="text-[11px] text-slate-400 mt-0.5">{item.desc}</div>
@@ -315,10 +315,10 @@ export default function Settings() {
                       <button
                         type="button"
                         onClick={() => handleToggleAlert(item)}
-                        className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                           isSubscribed 
-                            ? 'bg-emerald-950 text-emerald-400 border border-emerald-500/30' 
-                            : 'bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-700'
+                            ? 'bg-purple-500/20 text-purple-300 border border-purple-500/40 shadow-[0_0_12px_rgba(168,85,247,0.2)]' 
+                            : 'bg-[#181820] text-slate-400 hover:text-white border border-white/10'
                         }`}
                       >
                         {isSubscribed ? 'Active' : 'Muted'}
@@ -340,20 +340,20 @@ export default function Settings() {
               <button 
                 type="button"
                 onClick={signOut}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg text-xs font-medium transition-colors flex items-center gap-2"
+                className="px-4 py-2 bg-[#181820] hover:bg-[#20202c] border border-white/10 text-slate-300 hover:text-white rounded-xl text-xs font-medium transition-all flex items-center gap-2"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>Sign Out</span>
               </button>
             </div>
 
-            <div className="pt-6 border-t border-slate-800 space-y-3">
+            <div className="pt-6 border-t border-white/10 space-y-3">
               <h3 className="text-sm font-bold text-rose-400">Danger Zone</h3>
               <p className="text-xs text-slate-400">Permanently delete your account, session logs, and personal documents.</p>
               <button 
                 type="button"
                 onClick={handleDeleteAccount}
-                className="px-4 py-2 bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-500/30 rounded-lg text-xs font-medium transition-colors flex items-center gap-2"
+                className="px-4 py-2 bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-500/30 rounded-xl text-xs font-medium transition-all flex items-center gap-2"
               >
                 <Trash2 className="w-3.5 h-3.5" />
                 <span>Delete Account</span>

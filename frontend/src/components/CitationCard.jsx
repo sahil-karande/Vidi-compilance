@@ -22,10 +22,10 @@ export const CitationChips = ({ citations, onSelect }) => {
             key={index}
             type="button"
             onClick={() => onSelect(cite)}
-            className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 transition-all hover:bg-blue-100 hover:text-blue-800 active:scale-95 dark:border-blue-900 dark:bg-blue-950/40 dark:text-blue-300 dark:hover:bg-blue-900/60"
+            className="inline-flex items-center gap-1.5 rounded-full border border-purple-500/20 bg-purple-500/10 px-3 py-1 text-xs font-medium text-purple-300 transition-all hover:bg-purple-500/20 hover:border-purple-500/40 active:scale-95"
           >
             <svg
-              className="h-3 w-3 flex-shrink-0 text-blue-500"
+              className="h-3 w-3 flex-shrink-0 text-purple-400"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -79,35 +79,35 @@ export const CitationDrawer = ({ citation, onClose }) => {
       }`}
     >
       {/* Dark Translucent Overlay */}
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity" onClick={handleClose} />
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onClick={handleClose} />
 
       {/* Drawer Panel */}
       <div
-        className={`relative flex h-full w-full flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out dark:bg-gray-900 sm:max-w-md md:max-w-lg
+        className={`relative flex h-full w-full flex-col bg-[#12131A] text-slate-200 border-l border-white/10 shadow-2xl transition-transform duration-300 ease-in-out sm:max-w-md md:max-w-lg
           ${isOpen ? 'translate-x-0' : 'translate-x-full'}
-          max-sm:fixed max-sm:bottom-0 max-sm:left-0 max-sm:right-0 max-sm:h-[80vh] max-sm:rounded-t-2xl max-sm:w-full
+          max-sm:fixed max-sm:bottom-0 max-sm:left-0 max-sm:right-0 max-sm:h-[80vh] max-sm:rounded-t-2xl max-sm:w-full max-sm:border-t max-sm:border-l-0
           ${!isOpen && 'max-sm:translate-x-0 max-sm:translate-y-full'}
         `}
       >
         {/* Mobile Swipe Handle */}
         <div className="hidden max-sm:flex w-full justify-center pt-3 pb-1">
-          <div className="h-1.5 w-12 rounded-full bg-gray-300 dark:bg-gray-700" onClick={handleClose} />
+          <div className="h-1.5 w-12 rounded-full bg-slate-700" onClick={handleClose} />
         </div>
 
         {/* Drawer Header */}
-        <div className="flex items-center justify-between border-b border-gray-100 p-4 pt-3 dark:border-gray-800 sm:p-5">
+        <div className="flex items-center justify-between border-b border-white/10 p-4 pt-3 sm:p-5">
           <div className="text-left flex-1 min-w-0 pr-4">
-            <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-blue-700 dark:bg-blue-950/60 dark:text-blue-300">
+            <span className="inline-flex items-center rounded-md bg-purple-500/15 border border-purple-500/30 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-purple-300">
               Grounded Source Document
             </span>
-            <h3 className="mt-1 text-sm font-bold text-gray-900 dark:text-white sm:text-base break-words leading-snug">
+            <h3 className="mt-1 text-sm font-bold text-white sm:text-base break-words leading-snug">
               {drawerHeaderTitle}
             </h3>
           </div>
           
           <button
             onClick={handleClose}
-            className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300 shrink-0 self-start mt-1"
+            className="rounded-lg p-1.5 text-slate-400 hover:bg-white/5 hover:text-white shrink-0 self-start mt-1 transition-colors"
             aria-label="Close panel"
           >
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -118,28 +118,28 @@ export const CitationDrawer = ({ citation, onClose }) => {
 
         {/* Grounded Segment/Chunk Content Block */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-5 text-left">
-          <div className="prose prose-sm max-w-none dark:prose-invert">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">
+          <div className="prose prose-sm max-w-none prose-invert">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
               Verified Regulatory Corpus Text
             </h4>
-            <div className="rounded-xl border border-gray-100 bg-gray-50/70 p-4 font-mono text-xs leading-relaxed text-gray-800 shadow-inner dark:border-gray-800 dark:bg-gray-950/50 dark:text-gray-300 whitespace-pre-wrap">
+            <div className="rounded-xl border border-white/10 bg-[#16161F] p-4 font-mono text-xs leading-relaxed text-slate-300 shadow-inner whitespace-pre-wrap">
               {drawerBodyText}
             </div>
           </div>
           
-          <p className="mt-4 text-[11px] leading-normal text-gray-400 italic">
+          <p className="mt-4 text-[11px] leading-normal text-slate-500 italic">
             Disclaimer: Grounded information parsed directly from public government resources. Always cross-verify final legal declarations via official Gazettes.
           </p>
         </div>
 
         {/* Bottom Actions Area */}
         {citation.url && citation.url !== '#' && (
-          <div className="border-t border-gray-100 p-4 dark:border-gray-800 bg-white dark:bg-gray-900">
+          <div className="border-t border-white/10 p-4 bg-[#12131A]">
             <a
               href={citation.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md transition-all hover:bg-blue-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 active:scale-[0.99]"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-purple-600 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:shadow-[0_0_25px_rgba(168,85,247,0.45)] transition-all hover:bg-purple-500 focus:outline-none active:scale-[0.99]"
             >
               <span>Open Official Regulatory Document</span>
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

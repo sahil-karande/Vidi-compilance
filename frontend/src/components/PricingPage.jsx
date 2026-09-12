@@ -80,7 +80,7 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
           email: userEmail || 'sahil.test@ghrcem.edu'
         },
         theme: {
-          color: '#6366f1'
+          color: '#9333ea'
         }
       };
 
@@ -180,32 +180,32 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
   ];
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 py-12 text-slate-200">
+    <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 py-12 text-slate-200 font-sans">
       
       {/* Sandbox Modal */}
       {showSandboxModal && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-slate-900 border border-indigo-500/50 rounded-2xl p-6 sm:p-8 max-w-md w-full text-center shadow-2xl space-y-4">
-            <span className="inline-block px-2.5 py-1 rounded bg-indigo-500/10 text-indigo-400 text-xs font-semibold font-mono">
+          <div className="bg-[#12131A] border border-purple-500/50 rounded-2xl p-6 sm:p-8 max-w-md w-full text-center shadow-2xl space-y-4">
+            <span className="inline-block px-2.5 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-semibold font-mono">
               DEVELOPMENT SANDBOX MODE
             </span>
             <h3 className="text-lg font-bold text-white">Simulated Payment Gateway</h3>
             
-            <div className="text-left text-xs bg-slate-950/60 p-3.5 rounded-xl border border-slate-800 space-y-1.5 font-mono text-slate-400">
-              <p>Sub ID: <span className="text-indigo-400">{activeSubId}</span></p>
+            <div className="text-left text-xs bg-[#16161F] p-3.5 rounded-xl border border-white/10 space-y-1.5 font-mono text-slate-400">
+              <p>Sub ID: <span className="text-purple-400">{activeSubId}</span></p>
               <p>Account: <span className="text-slate-200">{userEmail || 'dev@regiq.in'}</span></p>
             </div>
 
             <div className="flex gap-3 pt-2">
               <button 
                 onClick={() => setShowSandboxModal(false)}
-                className="flex-1 py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs rounded-lg transition-colors"
+                className="flex-1 py-2.5 px-4 bg-[#181820] hover:bg-[#20202c] border border-white/10 text-slate-300 font-medium text-xs rounded-xl transition-colors"
               >
                 Cancel
               </button>
               <button 
                 onClick={handleSandboxSuccess}
-                className="flex-1 py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs rounded-lg transition-colors shadow-sm"
+                className="flex-1 py-2.5 px-4 bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs rounded-xl transition-all shadow-[0_0_15px_rgba(168,85,247,0.3)] hover:shadow-[0_0_20px_rgba(168,85,247,0.45)]"
               >
                 Simulate Success
               </button>
@@ -216,7 +216,7 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
 
       {/* Header Section */}
       <div className="text-center max-w-2xl mx-auto mb-12 space-y-3">
-        <span className="text-xs font-mono font-semibold text-indigo-400 uppercase tracking-wider">
+        <span className="text-xs font-mono font-semibold text-purple-400 uppercase tracking-wider">
           Transparent Pricing
         </span>
         <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
@@ -227,31 +227,31 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
         </p>
 
         {errorMessage && (
-          <div className="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-300 rounded-lg text-xs">
+          <div className="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-300 rounded-xl text-xs shadow-lg">
             {errorMessage}
           </div>
         )}
 
         {/* Billing Cycle Switcher */}
-        <div className="inline-flex items-center bg-slate-900 border border-slate-800 p-1 rounded-xl gap-1 mt-4">
+        <div className="inline-flex items-center bg-[#181820] border border-white/10 p-1 rounded-xl gap-1 mt-4">
           {['monthly', 'quarterly', 'yearly'].map((cycle) => (
             <button
               key={cycle}
               onClick={() => setBillingCycle(cycle)}
-              className={`px-4 py-2 rounded-lg text-xs font-medium capitalize transition-colors flex items-center gap-1.5 ${
+              className={`px-4 py-2 rounded-lg text-xs font-medium capitalize transition-all flex items-center gap-1.5 ${
                 billingCycle === cycle 
-                  ? 'bg-indigo-600 text-white shadow-sm' 
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-purple-600 text-white shadow-[0_0_15px_rgba(168,85,247,0.3)]' 
+                  : 'text-slate-400 hover:text-white'
               }`}
             >
               <span>{cycle}</span>
               {cycle === 'quarterly' && (
-                <span className="text-[10px] bg-indigo-950 text-indigo-300 px-1.5 py-0.2 rounded font-semibold">
+                <span className="text-[10px] bg-purple-500/20 text-purple-300 px-1.5 py-0.2 rounded font-semibold">
                   -10%
                 </span>
               )}
               {cycle === 'yearly' && (
-                <span className="text-[10px] bg-emerald-950 text-emerald-400 px-1.5 py-0.2 rounded font-semibold">
+                <span className="text-[10px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.2 rounded font-semibold">
                   -25%
                 </span>
               )}
@@ -265,14 +265,14 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
         {plans.map((plan) => (
           <div
             key={plan.name}
-            className={`rounded-2xl p-6 flex flex-col justify-between relative transition-colors ${
+            className={`rounded-2xl p-6 flex flex-col justify-between relative transition-all ${
               plan.popular 
-                ? 'bg-slate-900/90 border-2 border-indigo-500 shadow-xl shadow-indigo-950/20' 
-                : 'bg-slate-900/40 border border-slate-800/80 hover:border-slate-700'
+                ? 'bg-[#16161F] border-2 border-purple-500 shadow-[0_0_35px_rgba(168,85,247,0.2)]' 
+                : 'bg-[#12131A]/90 border border-white/10 hover:border-white/20'
             }`}
           >
             {plan.popular && (
-              <span className="absolute -top-3 right-6 bg-indigo-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
+              <span className="absolute -top-3 right-6 bg-purple-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-[0_0_12px_rgba(168,85,247,0.4)]">
                 Most Popular
               </span>
             )}
@@ -283,7 +283,7 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
                 <p className="text-xs text-slate-400 mt-1 min-h-[36px]">{plan.desc}</p>
               </div>
 
-              <div className="py-2 border-y border-slate-800/60">
+              <div className="py-2 border-y border-white/10">
                 <div className="flex items-baseline gap-1">
                   <span className="text-3xl font-bold tracking-tight text-white">{plan.price}</span>
                   <span className="text-xs text-slate-500">{plan.period}</span>
@@ -297,7 +297,7 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
                   const isCrossed = feat.startsWith('✗');
                   return (
                     <li key={feat} className={`flex items-start gap-2.5 ${isCrossed ? 'text-slate-600' : 'text-slate-300'}`}>
-                      <span className={`font-bold ${isCrossed ? 'text-slate-600' : 'text-indigo-400'}`}>
+                      <span className={`font-bold ${isCrossed ? 'text-slate-600' : 'text-purple-400'}`}>
                         {isCrossed ? '—' : '✓'}
                       </span>
                       <span>{isCrossed ? feat.substring(2) : feat}</span>
@@ -311,12 +311,12 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
               <button
                 onClick={() => !plan.disabled && plan.tier !== 'free' && executeCheckoutSequence(plan.tier, billingCycle)}
                 disabled={plan.tier === 'free' || plan.disabled || (plan.tier === 'pro' && loadingTier !== null)}
-                className={`w-full py-2.5 px-4 rounded-lg text-xs font-medium transition-colors ${
+                className={`w-full py-2.5 px-4 rounded-xl text-xs font-semibold transition-all ${
                   plan.popular 
-                    ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm' 
+                    ? 'bg-purple-600 hover:bg-purple-500 text-white shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:shadow-[0_0_25px_rgba(168,85,247,0.45)]' 
                     : plan.tier === 'free' 
-                    ? 'bg-slate-800/60 text-slate-500 cursor-default border border-slate-700/40' 
-                    : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
+                    ? 'bg-[#181820]/60 text-slate-500 cursor-default border border-white/10' 
+                    : 'bg-[#181820] hover:bg-[#20202c] text-slate-200 hover:text-white border border-white/10'
                 } disabled:opacity-40`}
               >
                 {plan.tier === 'free' ? 'Current Baseline' : (plan.tier === 'pro' && loadingTier !== null) ? 'Connecting Gateway...' : plan.actionText}
