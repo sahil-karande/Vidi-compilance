@@ -21,17 +21,17 @@ function WorkspaceLayout({ children }) {
   const { user } = useAuth();
 
   return (
-    <div className="min-h-screen w-full bg-[#090d16] text-slate-200 font-sans flex flex-col antialiased">
+    <div className="min-h-screen w-full bg-[#0D0E12] text-slate-200 font-sans flex flex-col antialiased selection:bg-purple-500/20 selection:text-purple-200">
       {/* Sleek Enterprise Top Navbar */}
-      <nav className="w-full bg-[#090d16]/95 backdrop-blur-md border-b border-slate-800/80 px-6 lg:px-10 py-2.5 flex items-center justify-between sticky top-0 z-40">
+      <nav className="w-full bg-[#0D0E12]/90 backdrop-blur-md border-b border-white/10 px-6 lg:px-10 py-3 flex items-center justify-between sticky top-0 z-40">
         <div className="flex items-center gap-8">
-          <Link to="/dashboard" className="flex items-center gap-2.5 group">
-            <div className="w-7 h-7 rounded-md bg-indigo-600 flex items-center justify-center text-white text-xs font-bold shadow-sm">
+          <Link to="/dashboard" className="flex items-center gap-2.5 group select-none">
+            <div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center text-slate-950 text-xs font-black shadow-sm transition-transform group-hover:scale-105">
               R
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold tracking-tight text-white">RegIQ</span>
-              <span className="text-[10px] text-slate-400 bg-slate-800/60 border border-slate-700/60 px-1.5 py-0.5 rounded font-mono">
+              <span className="text-base font-bold tracking-tight text-white">RegIQ</span>
+              <span className="text-[10px] text-slate-400 bg-white/5 border border-white/10 px-2 py-0.5 rounded-full font-mono">
                 Compliance Hub
               </span>
             </div>

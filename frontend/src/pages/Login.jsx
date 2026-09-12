@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
-import { ShieldCheck, Sparkles, ArrowRight, ArrowLeft, Mail, KeyRound } from 'lucide-react';
+import { ShieldCheck, ArrowRight, ArrowLeft, Mail, KeyRound, CheckCircle2 } from 'lucide-react';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -38,7 +38,7 @@ export default function Login() {
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
-    if (!email) return setError('Please enter a valid email address.');
+    if (!email) return setError('Please enter a valid business email address.');
     
     setLoading(true);
     setError('');
@@ -55,14 +55,14 @@ export default function Login() {
       setError(error.message);
     } else {
       setIsOtpSent(true);
-      setMessage('A 6-digit one-time password has been dispatched to your email.');
+      setMessage('A 6-digit one-time code has been dispatched to your email.');
     }
     setLoading(false);
   };
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    if (!otp) return setError('Please enter the OTP sent to your email.');
+    if (!otp) return setError('Please enter the 6-digit OTP sent to your email.');
 
     setLoading(true);
     setError('');
@@ -83,76 +83,119 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-[#030712] text-slate-200 px-4 sm:px-6 relative overflow-hidden font-sans">
+    <div className="min-h-screen w-full bg-[#0D0E12] text-slate-200 font-sans flex flex-col antialiased selection:bg-purple-500/20 selection:text-purple-200 overflow-x-hidden relative">
       
-      {/* Ambient Glow Orbs */}
-      <div className="absolute top-1/4 left-1/3 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[160px] pointer-events-none -z-10 animate-pulse-glow" />
-      <div className="absolute bottom-10 right-1/4 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none -z-10" />
+      {/* ── Ambient Radial Background Glow (Identical to Landing page) ── */}
+      <div 
+        className="fixed inset-0 pointer-events-none -z-10"
+        style={{
+          background: 'radial-gradient(circle at 50% 18%, rgba(120, 80, 220, 0.15), transparent 55%), radial-gradient(circle at 80% 65%, rgba(100, 60, 200, 0.08), transparent 50%), #0D0E12'
+        }}
+      />
 
-      {/* Return to Home link */}
-      <button
-        onClick={() => navigate('/')}
-        className="absolute top-6 left-6 text-xs text-slate-400 hover:text-white flex items-center gap-1.5 transition-colors z-20"
-      >
-        <ArrowLeft className="w-4 h-4" /> Return to Home
-      </button>
+      {/* ── Subtle Geometric Grid Texture ── */}
+      <div 
+        className="fixed inset-0 pointer-events-none -z-10 opacity-[0.03]"
+        style={{
+          backgroundImage: 'linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px)',
+          backgroundSize: '48px 48px'
+        }}
+      />
 
-      {/* Login Card */}
-      <div className="max-w-md w-full space-y-6 bg-slate-900/60 backdrop-blur-2xl p-8 sm:p-10 rounded-3xl shadow-2xl border border-slate-800/80 relative z-10">
-        
-        {/* Brand Header */}
-        <div className="text-center space-y-2">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-500 via-indigo-600 to-purple-600 flex items-center justify-center text-white font-black text-lg mx-auto shadow-[0_0_20px_rgba(56,189,248,0.4)]">
-            V
+      {/* ── Top Navigation Bar matching Landing.jsx ── */}
+      <header className="w-full border-b border-white/10 bg-[#0D0E12]/80 backdrop-blur-md px-6 sm:px-12 lg:px-20 py-4 flex items-center justify-between sticky top-0 z-50">
+        <div 
+          onClick={() => navigate('/')} 
+          className="flex items-center gap-2.5 cursor-pointer select-none group"
+        >
+          <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-slate-950 font-black text-sm shadow-md transition-transform group-hover:scale-105">
+            R
           </div>
-          <h2 className="text-2xl font-black text-white tracking-tight">Access RegIQ Matrix</h2>
-          <p className="text-xs text-slate-400">
-            Sign in to your SME compliance workspace.
-          </p>
+          <span className="text-xl font-bold tracking-tight text-white">RegIQ</span>
         </div>
 
-        {error && (
-          <div className="bg-red-950/50 border border-red-500/40 p-3 text-xs text-red-300 rounded-xl leading-relaxed">
-            {error}
-          </div>
-        )}
+        <button 
+          onClick={() => navigate('/')} 
+          className="inline-flex items-center gap-2 text-xs font-medium text-slate-300 hover:text-white px-4 py-2 rounded-lg bg-[#181820] border border-white/10 hover:border-white/20 hover:bg-[#20202c] transition-all duration-200 shadow-sm"
+        >
+          <ArrowLeft className="w-3.5 h-3.5 text-purple-400" />
+          <span>Back to Home</span>
+        </button>
+      </header>
 
-        {message && (
-          <div className="bg-emerald-950/50 border border-emerald-500/40 p-3 text-xs text-emerald-300 rounded-xl leading-relaxed">
-            {message}
-          </div>
-        )}
+      {/* ── Main Authentication Area ── */}
+      <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-12 relative z-10 w-full max-w-md mx-auto">
+        
+        {/* Release Pill Tag */}
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#181820] border border-white/10 text-slate-300 text-xs font-medium mb-6 shadow-sm">
+          <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
+          <span className="text-slate-400 font-normal">SME Compliance Matrix</span>
+          <span className="text-slate-600">•</span>
+          <span className="text-purple-300 font-semibold">Secure Workspace</span>
+        </div>
 
-        {/* Primary Action: Google OAuth */}
-        <div className="space-y-4">
+        {/* Auth Glass Card */}
+        <div className="w-full bg-[#12131A]/90 backdrop-blur-2xl p-8 sm:p-10 rounded-2xl border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.6)] hover:border-purple-500/30 transition-all duration-300 space-y-6">
+          
+          {/* Card Header */}
+          <div className="text-center space-y-2">
+            <div className="w-11 h-11 rounded-xl bg-white flex items-center justify-center text-slate-950 font-black text-base mx-auto shadow-md mb-3">
+              R
+            </div>
+            <h1 className="text-2xl font-extrabold text-white tracking-tight">
+              Access RegIQ Matrix
+            </h1>
+            <p className="text-xs text-slate-400">
+              Sign in to your Indian SME compliance workspace.
+            </p>
+          </div>
+
+          {/* Error Banner */}
+          {error && (
+            <div className="bg-red-950/40 border border-red-500/40 p-3.5 text-xs text-red-300 rounded-xl leading-relaxed">
+              {error}
+            </div>
+          )}
+
+          {/* Success / OTP Dispatched Banner */}
+          {message && (
+            <div className="bg-emerald-950/40 border border-emerald-500/40 p-3.5 text-xs text-emerald-300 rounded-xl leading-relaxed flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+              <span>{message}</span>
+            </div>
+          )}
+
+          {/* Google OAuth Button */}
           <button
             onClick={handleGoogleLogin}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-slate-700/80 rounded-2xl shadow-sm bg-slate-950/60 hover:bg-slate-800/80 text-xs font-bold text-slate-200 hover:text-white transition-all disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-white/10 rounded-xl shadow-sm bg-[#181820] hover:bg-[#20202c] hover:border-white/20 text-xs font-semibold text-white transition-all duration-200 disabled:opacity-50"
           >
-            <svg className="h-4 w-4" viewBox="0 0 24 24">
+            <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24">
               <path fill="#EA4335" d="M12 5.04c1.64 0 3.12.56 4.28 1.67l3.2-3.2C17.52 1.58 14.97 1 12 1 7.35 1 3.4 3.65 1.44 7.5l3.77 2.92C6.1 7.37 8.83 5.04 12 5.04z" />
               <path fill="#4285F4" d="M23.45 12.27c0-.82-.07-1.6-.2-2.37H12v4.51h6.42c-.27 1.44-1.09 2.66-2.32 3.49l3.6 2.79c2.1-1.94 3.75-4.8 3.75-8.43z" />
               <path fill="#FBBC05" d="M5.21 14.58c-.23-.69-.36-1.42-.36-2.18s.13-1.49.36-2.18L1.44 7.5C.52 9.35 0 11.42 0 13.6s.52 4.25 1.44 6.1l3.77-2.92z" />
               <path fill="#34A853" d="M12 23c3.24 0 5.97-1.07 7.96-2.92l-3.6-2.79c-1.2.8-2.73 1.28-4.36 1.28-3.17 0-5.9-2.33-6.86-5.38L1.37 16.1C3.33 19.93 7.28 23 12 23z" />
             </svg>
-            Continue with Google
+            <span>Continue with Google</span>
           </button>
 
-          <div className="relative flex py-2 items-center">
-            <div className="flex-grow border-t border-slate-800"></div>
-            <span className="flex-shrink mx-4 text-[10px] uppercase text-slate-500 font-mono font-bold tracking-widest">
+          {/* Divider */}
+          <div className="relative flex py-1.5 items-center">
+            <div className="flex-grow border-t border-white/10"></div>
+            <span className="flex-shrink mx-4 text-[11px] uppercase text-slate-500 font-medium tracking-wider">
               or use OTP
             </span>
-            <div className="flex-grow border-t border-slate-800"></div>
+            <div className="flex-grow border-t border-white/10"></div>
           </div>
 
-          {/* Email OTP Authentication */}
+          {/* Email OTP Authentication Form */}
           {!isOtpSent ? (
-            <form onSubmit={handleSendOtp} className="space-y-3.5">
+            <form onSubmit={handleSendOtp} className="space-y-4">
               <div>
-                <label htmlFor="email" className="block text-[11px] font-mono text-slate-400 uppercase tracking-wider mb-1.5 font-bold flex items-center gap-1.5">
-                  <Mail className="w-3.5 h-3.5 text-cyan-400" /> Business Email Address
+                <label htmlFor="email" className="block text-xs font-semibold text-slate-300 mb-2 flex items-center gap-1.5">
+                  <Mail className="w-3.5 h-3.5 text-purple-400" />
+                  <span>Business Email Address</span>
                 </label>
                 <input
                   id="email"
@@ -161,23 +204,24 @@ export default function Login() {
                   placeholder="name@company.in"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 bg-slate-950/80 border border-slate-800 rounded-2xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500/60 transition-colors"
+                  className="w-full px-4 py-3 bg-[#181820] border border-white/10 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/60 focus:ring-1 focus:ring-purple-500/40 transition-all"
                 />
               </div>
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 px-4 rounded-2xl text-xs font-bold text-white bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 hover:from-cyan-400 hover:via-indigo-500 hover:to-purple-500 shadow-[0_0_20px_rgba(56,189,248,0.35)] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-3.5 px-4 rounded-xl text-xs font-semibold text-white bg-purple-600 hover:bg-purple-500 border border-purple-500/40 shadow-[0_0_20px_rgba(168,85,247,0.35)] hover:shadow-[0_0_28px_rgba(168,85,247,0.5)] transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
               >
-                <span>Send One-Time Code</span>
-                <ArrowRight className="w-4 h-4" />
+                <span>{loading ? 'Sending code...' : 'Send One-Time Code'}</span>
+                <ArrowRight className="w-3.5 h-3.5 text-purple-200" />
               </button>
             </form>
           ) : (
-            <form onSubmit={handleVerifyOtp} className="space-y-3.5">
+            <form onSubmit={handleVerifyOtp} className="space-y-4">
               <div>
-                <label htmlFor="otp" className="block text-[11px] font-mono text-slate-400 uppercase tracking-wider mb-1.5 font-bold flex items-center gap-1.5">
-                  <KeyRound className="w-3.5 h-3.5 text-cyan-400" /> 6-Digit Verification Code
+                <label htmlFor="otp" className="block text-xs font-semibold text-slate-300 mb-2 flex items-center gap-1.5">
+                  <KeyRound className="w-3.5 h-3.5 text-purple-400" />
+                  <span>6-Digit Verification Code</span>
                 </label>
                 <input
                   id="otp"
@@ -187,36 +231,43 @@ export default function Login() {
                   placeholder="000000"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
-                  className="w-full tracking-widest text-center px-4 py-3 bg-slate-950/80 border border-slate-800 rounded-2xl text-base text-cyan-300 font-mono font-bold focus:outline-none focus:border-cyan-500/60"
+                  className="w-full tracking-[0.4em] text-center px-4 py-3 bg-[#181820] border border-white/10 rounded-xl text-lg text-purple-300 font-mono font-bold focus:outline-none focus:border-purple-500/60 focus:ring-1 focus:ring-purple-500/40 transition-all"
                 />
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <button
                   type="button"
                   onClick={() => setIsOtpSent(false)}
-                  className="w-1/3 py-3 px-3 rounded-2xl text-xs font-semibold text-slate-400 hover:text-white bg-slate-900 border border-slate-800 transition-colors"
+                  className="w-1/3 py-3 px-3 rounded-xl text-xs font-semibold text-slate-300 hover:text-white bg-[#181820] hover:bg-[#20202c] border border-white/10 transition-colors"
                 >
                   Back
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-2/3 py-3 px-4 rounded-2xl text-xs font-bold text-white bg-gradient-to-r from-cyan-500 via-indigo-600 to-purple-600 hover:from-cyan-400 hover:via-indigo-500 hover:to-purple-500 shadow-[0_0_20px_rgba(56,189,248,0.35)] transition-all disabled:opacity-50"
+                  className="w-2/3 py-3 px-4 rounded-xl text-xs font-semibold text-white bg-purple-600 hover:bg-purple-500 border border-purple-500/40 shadow-[0_0_20px_rgba(168,85,247,0.35)] hover:shadow-[0_0_28px_rgba(168,85,247,0.5)] transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  Verify & Enter
+                  <span>{loading ? 'Verifying...' : 'Verify & Enter'}</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-purple-200" />
                 </button>
               </div>
             </form>
           )}
-        </div>
 
-        <div className="text-center pt-2">
-          <p className="text-[10px] text-slate-500 font-mono">
-            Protected by Supabase Auth with Row-Level Tenant Isolation.
-          </p>
-        </div>
+          {/* Security Footnote */}
+          <div className="text-center pt-2 flex items-center justify-center gap-1.5 text-[11px] text-slate-500">
+            <ShieldCheck className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+            <span>Protected by Supabase Auth with Row-Level Tenant Isolation</span>
+          </div>
 
-      </div>
+        </div>
+      </main>
+
+      {/* ── Footer ── */}
+      <footer className="w-full border-t border-white/5 py-4 px-6 text-center text-xs text-slate-500 relative z-10">
+        <p>© 2026 RegIQ. Source-grounded financial compliance assistant for Indian SMEs.</p>
+      </footer>
+
     </div>
   );
 }
