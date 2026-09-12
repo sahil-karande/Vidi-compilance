@@ -298,118 +298,7 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
         </div>
       </div>
 
-      {/* 3. Interactive ROI & CA Advisory Fee Savings Calculator */}
-      <div className="mb-12 bg-gradient-to-br from-[#13141C] via-[#161624] to-[#12131A] border border-purple-500/25 rounded-2xl p-6 sm:p-8 relative overflow-hidden shadow-2xl">
-        <div className="absolute -top-24 -right-24 w-72 h-72 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="flex flex-col lg:flex-row items-stretch justify-between gap-8 relative z-10">
-          
-          {/* Controls */}
-          <div className="flex-1 space-y-6">
-            <div className="flex items-center gap-2">
-              <span className="p-2 rounded-lg bg-purple-500/15 border border-purple-500/25 text-purple-300">
-                <Calculator className="w-4 h-4" />
-              </span>
-              <div>
-                <h3 className="text-base font-bold text-white">Compliance Research & CA Fee Savings Calculator</h3>
-                <p className="text-xs text-slate-400">See how much RegIQ saves your business compared to traditional legal advisory.</p>
-              </div>
-            </div>
-
-            {/* Slider 1: Queries */}
-            <div className="space-y-2 bg-[#181822] p-4 rounded-xl border border-white/5">
-              <div className="flex justify-between items-center text-xs">
-                <span className="text-slate-300 font-medium">Compliance Queries & Notice Researches / Month:</span>
-                <span className="font-mono font-bold text-purple-300 text-sm">{queriesPerMonth} queries</span>
-              </div>
-              <input 
-                type="range" 
-                min="4" 
-                max="40" 
-                step="2"
-                value={queriesPerMonth} 
-                onChange={(e) => setQueriesPerMonth(Number(e.target.value))}
-                className="w-full accent-purple-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"
-              />
-              <div className="flex justify-between text-[10px] text-slate-500">
-                <span>4 (Solo Freelancer)</span>
-                <span>20 (Growing SME)</span>
-                <span>40+ (Multi-entity Enterprise)</span>
-              </div>
-            </div>
-
-            {/* Slider 2: CA Hourly Rate */}
-            <div className="space-y-2 bg-[#181822] p-4 rounded-xl border border-white/5">
-              <div className="flex justify-between items-center text-xs">
-                <span className="text-slate-300 font-medium">Average CA / Legal Retainer Cost per Inquiry:</span>
-                <span className="font-mono font-bold text-emerald-400 text-sm">₹{caHourlyRate.toLocaleString()}</span>
-              </div>
-              <input 
-                type="range" 
-                min="500" 
-                max="3500" 
-                step="250"
-                value={caHourlyRate} 
-                onChange={(e) => setCaHourlyRate(Number(e.target.value))}
-                className="w-full accent-purple-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"
-              />
-              <div className="flex justify-between text-[10px] text-slate-500">
-                <span>₹500 / simple query</span>
-                <span>₹1,500 / standard notice</span>
-                <span>₹3,500+ / senior partner</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Real-time Computed Value Display */}
-          <div className="w-full lg:w-80 bg-[#191928] border border-purple-500/30 rounded-2xl p-6 flex flex-col justify-between space-y-4 shadow-xl">
-            <div className="space-y-3">
-              <span className="text-[11px] font-mono uppercase font-bold text-purple-400 tracking-wider flex items-center gap-1.5">
-                <TrendingUp className="w-3.5 h-3.5" />
-                Monthly Value Realized
-              </span>
-              
-              <div>
-                <div className="text-3xl font-extrabold text-white tracking-tight">
-                  ₹{estimatedSavings.toLocaleString()}
-                </div>
-                <div className="text-xs text-emerald-400 font-medium mt-0.5">
-                  Est. Advisory Fees Saved / Month
-                </div>
-              </div>
-
-              <div className="pt-3 border-t border-white/10 space-y-2 text-xs">
-                <div className="flex justify-between text-slate-300">
-                  <span className="flex items-center gap-1.5 text-slate-400">
-                    <Clock className="w-3.5 h-3.5 text-purple-400" />
-                    Hours Reclaimed:
-                  </span>
-                  <span className="font-bold text-white">~{hoursReclaimed} hrs/mo</span>
-                </div>
-                <div className="flex justify-between text-slate-300">
-                  <span className="flex items-center gap-1.5 text-slate-400">
-                    <Zap className="w-3.5 h-3.5 text-amber-400" />
-                    Pro Return on Investment:
-                  </span>
-                  <span className="font-bold text-emerald-400">{roiMultiplier}x ROI</span>
-                </div>
-              </div>
-            </div>
-
-            <button
-              onClick={() => executeCheckoutSequence('pro', billingCycle)}
-              className="w-full py-2.5 px-4 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all shadow-[0_0_15px_rgba(168,85,247,0.3)] hover:shadow-[0_0_20px_rgba(168,85,247,0.45)] flex items-center justify-center gap-2"
-            >
-              <span>Claim Savings with Pro</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-
-        </div>
-      </div>
-
-      {/* 4. Tier Cards Grid */}
+      {/* 3. Tier Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
         {plans.map((plan) => (
           <div
@@ -557,7 +446,7 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
         ))}
       </div>
 
-      {/* 5. Annual Founder & CA Power Pack Tray (Shown on Yearly) */}
+      {/* 4. Annual Founder & CA Power Pack Tray (Shown on Yearly) */}
       {billingCycle === 'yearly' && (
         <div className="mt-8 p-6 bg-[#13131D] border border-emerald-500/25 rounded-2xl shadow-xl">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
@@ -602,8 +491,8 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
         </div>
       )}
 
-      {/* 6. Instant Notice Pass (₹99 One-Shot Micro Pass) */}
-      <div className="mt-12 bg-gradient-to-r from-[#141520] via-[#1b172e] to-[#141520] border border-purple-500/35 rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
+      {/* 5. Instant Notice Pass (₹99 One-Shot Micro Pass) */}
+      <div className="mt-10 bg-gradient-to-r from-[#141520] via-[#1b172e] to-[#141520] border border-purple-500/35 rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
         <div className="space-y-2 text-left max-w-xl">
           <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-purple-500/15 border border-purple-500/30 text-purple-300 text-[11px] font-bold">
             <Zap className="w-3 h-3 text-purple-400" />
@@ -635,6 +524,117 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
             <span>{loadingTier === 'notice_pass' ? 'Connecting Gateway...' : 'Get Instant Notice Pass (₹99)'}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
+        </div>
+      </div>
+
+      {/* 6. Interactive ROI & CA Advisory Fee Savings Calculator (Placed Below the Plans & Notice Pass) */}
+      <div className="mt-14 bg-gradient-to-br from-[#13141C] via-[#161624] to-[#12131A] border border-purple-500/25 rounded-2xl p-6 sm:p-8 relative overflow-hidden shadow-2xl">
+        <div className="absolute -top-24 -right-24 w-72 h-72 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="flex flex-col lg:flex-row items-stretch justify-between gap-8 relative z-10">
+          
+          {/* Controls */}
+          <div className="flex-1 space-y-6">
+            <div className="flex items-center gap-2">
+              <span className="p-2 rounded-lg bg-purple-500/15 border border-purple-500/25 text-purple-300">
+                <Calculator className="w-4 h-4" />
+              </span>
+              <div>
+                <h3 className="text-base font-bold text-white">Compliance Research & CA Fee Savings Calculator</h3>
+                <p className="text-xs text-slate-400">See how much RegIQ saves your business compared to traditional legal advisory.</p>
+              </div>
+            </div>
+
+            {/* Slider 1: Queries */}
+            <div className="space-y-2 bg-[#181822] p-4 rounded-xl border border-white/5">
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-slate-300 font-medium">Compliance Queries & Notice Researches / Month:</span>
+                <span className="font-mono font-bold text-purple-300 text-sm">{queriesPerMonth} queries</span>
+              </div>
+              <input 
+                type="range" 
+                min="4" 
+                max="40" 
+                step="2"
+                value={queriesPerMonth} 
+                onChange={(e) => setQueriesPerMonth(Number(e.target.value))}
+                className="w-full accent-purple-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"
+              />
+              <div className="flex justify-between text-[10px] text-slate-500">
+                <span>4 (Solo Freelancer)</span>
+                <span>20 (Growing SME)</span>
+                <span>40+ (Multi-entity Enterprise)</span>
+              </div>
+            </div>
+
+            {/* Slider 2: CA Hourly Rate */}
+            <div className="space-y-2 bg-[#181822] p-4 rounded-xl border border-white/5">
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-slate-300 font-medium">Average CA / Legal Retainer Cost per Inquiry:</span>
+                <span className="font-mono font-bold text-emerald-400 text-sm">₹{caHourlyRate.toLocaleString()}</span>
+              </div>
+              <input 
+                type="range" 
+                min="500" 
+                max="3500" 
+                step="250"
+                value={caHourlyRate} 
+                onChange={(e) => setCaHourlyRate(Number(e.target.value))}
+                className="w-full accent-purple-500 cursor-pointer h-1.5 bg-slate-800 rounded-lg"
+              />
+              <div className="flex justify-between text-[10px] text-slate-500">
+                <span>₹500 / simple query</span>
+                <span>₹1,500 / standard notice</span>
+                <span>₹3,500+ / senior partner</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Real-time Computed Value Display */}
+          <div className="w-full lg:w-80 bg-[#191928] border border-purple-500/30 rounded-2xl p-6 flex flex-col justify-between space-y-4 shadow-xl">
+            <div className="space-y-3">
+              <span className="text-[11px] font-mono uppercase font-bold text-purple-400 tracking-wider flex items-center gap-1.5">
+                <TrendingUp className="w-3.5 h-3.5" />
+                Monthly Value Realized
+              </span>
+              
+              <div>
+                <div className="text-3xl font-extrabold text-white tracking-tight">
+                  ₹{estimatedSavings.toLocaleString()}
+                </div>
+                <div className="text-xs text-emerald-400 font-medium mt-0.5">
+                  Est. Advisory Fees Saved / Month
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-white/10 space-y-2 text-xs">
+                <div className="flex justify-between text-slate-300">
+                  <span className="flex items-center gap-1.5 text-slate-400">
+                    <Clock className="w-3.5 h-3.5 text-purple-400" />
+                    Hours Reclaimed:
+                  </span>
+                  <span className="font-bold text-white">~{hoursReclaimed} hrs/mo</span>
+                </div>
+                <div className="flex justify-between text-slate-300">
+                  <span className="flex items-center gap-1.5 text-slate-400">
+                    <Zap className="w-3.5 h-3.5 text-amber-400" />
+                    Pro Return on Investment:
+                  </span>
+                  <span className="font-bold text-emerald-400">{roiMultiplier}x ROI</span>
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={() => executeCheckoutSequence('pro', billingCycle)}
+              className="w-full py-2.5 px-4 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all shadow-[0_0_15px_rgba(168,85,247,0.3)] hover:shadow-[0_0_20px_rgba(168,85,247,0.45)] flex items-center justify-center gap-2"
+            >
+              <span>Claim Savings with Pro</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
         </div>
       </div>
 
