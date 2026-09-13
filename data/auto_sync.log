@@ -66,3 +66,4 @@
 2026-09-13 23:58:01.210 | INFO     | pipeline.auto_sync:run_delta_sync:183 - Discovered 0 new regulatory updates across monitored authorities.
 2026-09-13 23:58:01.231 | INFO     | pipeline.auto_sync:run_delta_sync:234 - Delta sync finished. New documents added: 0. Total tracked: 1392
 2026-09-13 23:58:01.233 | INFO     | app.main:_run_scheduled_sync:75 - [auto-sync] Scheduled sync finished: 0 new documents ingested.
+2026-09-14 00:30:15.911 | INFO     | app.main:lifespan:91 - [lifespan] Vidi backend shutdown.
