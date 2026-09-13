@@ -18,6 +18,7 @@ export default function ChatThread({ messages, mode = 'plain', onSelectCitation 
         return (
           <div
             key={msg.id || index}
+            className="animate-message-enter"
             style={{
               display: 'flex',
               flexDirection: 'column',

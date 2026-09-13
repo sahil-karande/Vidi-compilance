@@ -3,7 +3,7 @@
  * Unified Navigation Links Hub with Premium UI Support & Billing Matrix
  */
 
-import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Link, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import { AuthGuard } from './components/AuthGuard';
 import Landing from './pages/Landing';
@@ -20,6 +20,7 @@ import BackgroundOrbs from './components/BackgroundOrbs';
 // Premium Enterprise Navigation Layout
 function WorkspaceLayout({ children }) {
   const { user } = useAuth();
+  const location = useLocation();
 
   return (
     <div className="min-h-screen w-full bg-[#0D0E12] text-slate-200 font-sans flex flex-col antialiased selection:bg-purple-500/20 selection:text-purple-200 relative overflow-x-hidden">
@@ -112,8 +113,8 @@ function WorkspaceLayout({ children }) {
         </div>
       </nav>
 
-      {/* Page Body Full Screen */}
-      <main className="flex-1 w-full flex flex-col">
+      {/* Page Body Full Screen with Smooth Page Entrance Animation */}
+      <main key={location.pathname} className="flex-1 w-full flex flex-col animate-page-enter">
         {children}
       </main>
     </div>

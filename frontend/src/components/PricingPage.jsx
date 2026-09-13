@@ -232,10 +232,10 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
   ];
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-10 text-slate-200 font-sans">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-10 text-slate-200 font-sans animate-fade-in">
       
       {/* 1. Student / CA Intern Announcement Banner */}
-      <div className="flex flex-wrap items-center justify-center gap-2.5 px-4 py-2 mb-8 rounded-full bg-[#161622] border border-purple-500/30 text-xs text-purple-200 w-fit mx-auto shadow-md backdrop-blur-md">
+      <div className="flex flex-wrap items-center justify-center gap-2.5 px-4 py-2 mb-8 rounded-full bg-[#161622] border border-purple-500/30 text-xs text-purple-200 w-fit mx-auto shadow-md backdrop-blur-md animate-fade-in-down">
         <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 font-bold text-[10px] uppercase tracking-wider">
           <GraduationCap className="w-3 h-3" />
           CA Trainee & Student Pass
@@ -250,7 +250,7 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
       </div>
 
       {/* 2. Header Section */}
-      <div className="text-center max-w-2xl mx-auto mb-10 space-y-3">
+      <div className="text-center max-w-2xl mx-auto mb-10 space-y-3 animate-fade-in-up delay-75">
         <span className="text-xs font-mono font-semibold text-purple-400 uppercase tracking-wider">
           Transparent Pricing
         </span>
@@ -262,7 +262,7 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
         </p>
 
         {errorMessage && (
-          <div className="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-300 rounded-xl text-xs shadow-lg">
+          <div className="p-3 bg-rose-500/10 border border-rose-500/30 text-rose-300 rounded-xl text-xs shadow-lg animate-fade-in">
             {errorMessage}
           </div>
         )}
@@ -279,14 +279,14 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
               onClick={() => setBillingCycle(item.id)}
               className={`px-4 py-2 rounded-lg text-xs font-medium capitalize transition-all flex items-center gap-1.5 ${
                 billingCycle === item.id 
-                  ? 'bg-purple-600 text-white shadow-[0_0_15px_rgba(168,85,247,0.3)]' 
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-purple-600 text-white shadow-md font-semibold' 
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
               }`}
             >
               <span>{item.label}</span>
               {item.badge && (
-                <span className={`text-[10px] px-1.5 py-0.5 rounded font-semibold ${
-                  item.id === 'yearly' 
+                <span className={`text-[9px] font-mono px-1.5 py-0.2 rounded font-bold ${
+                  item.badge.includes('SAVE') 
                     ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' 
                     : 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
                 }`}>
@@ -299,11 +299,11 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
       </div>
 
       {/* 3. Tier Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch animate-fade-in-up delay-150">
         {plans.map((plan) => (
           <div
             key={plan.name}
-            className={`rounded-2xl p-6 flex flex-col justify-between relative transition-all ${
+            className={`rounded-2xl p-6 flex flex-col justify-between relative transition-all duration-300 hover-lift ${
               plan.popular 
                 ? 'bg-[#16161F] border-2 border-purple-500 shadow-[0_0_35px_rgba(168,85,247,0.2)]' 
                 : 'bg-[#12131A]/90 border border-white/10 hover:border-white/20'

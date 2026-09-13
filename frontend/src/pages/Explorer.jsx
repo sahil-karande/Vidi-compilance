@@ -596,7 +596,7 @@ export default function Explorer() {
   const activeCorpusColor = selectedNode ? CORPUS_COLORS[getCorpusKey(selectedNode.corpus)] : null;
 
   return (
-    <div className="relative w-full h-[calc(100vh-65px)] bg-[#0D0E12] text-slate-200 flex flex-col overflow-hidden font-sans">
+    <div className="relative w-full h-[calc(100vh-65px)] bg-[#0D0E12] text-slate-200 flex flex-col overflow-hidden font-sans animate-fade-in">
       
       {/* ── Top Header Bar ── */}
       <div className="w-full bg-[#12131A]/90 backdrop-blur-md border-b border-white/10 px-4 md:px-6 py-3 flex flex-wrap items-center justify-between gap-3 z-20">

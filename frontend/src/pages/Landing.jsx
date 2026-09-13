@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BackgroundOrbs from '../components/BackgroundOrbs';
 import IntroSplash from '../components/IntroSplash';
+import RevealOnScroll from '../components/RevealOnScroll';
 import { 
   ShieldCheck, 
   ArrowRight, 
@@ -29,6 +30,7 @@ export default function Landing() {
   const [billingCycle, setBillingCycle] = useState('monthly');
   const [activeTab, setActiveTab] = useState('query');
   const [flippedCards, setFlippedCards] = useState({});
+  // eslint-disable-next-line no-unused-vars
   const [copiedLink, setCopiedLink] = useState(false);
 
   const toggleCardFlip = (code) => {
@@ -38,6 +40,7 @@ export default function Landing() {
     }));
   };
 
+  // eslint-disable-next-line no-unused-vars
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href);
     setCopiedLink(true);
@@ -58,23 +61,20 @@ export default function Landing() {
       {/* ── Top Navigation Bar (Exact NoteDeck style) ── */}
       <header className="w-full border-b border-white/10 bg-[#0D0E12]/80 backdrop-blur-md px-6 sm:px-12 lg:px-20 py-4 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-10">
-          <div 
-            onClick={() => navigate('/')} 
-            className="flex items-center gap-2.5 cursor-pointer select-none group"
-          >
+          <div className="flex items-center gap-2.5 select-none cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
             <img 
               src="/vidi_icon_only.png" 
               alt="Vidi Logo" 
-              className="w-8 h-8 rounded-lg object-contain shadow-md transition-transform group-hover:scale-105" 
+              className="w-7 h-7 rounded-lg object-contain shadow-sm" 
             />
-            <span className="text-xl font-bold tracking-tight text-white">Vidi</span>
+            <span className="text-lg font-bold tracking-tight text-white">Vidi</span>
           </div>
 
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-400">
-            <a href="#features" className="hover:text-white transition-colors">Features</a>
-            <a href="#workflow" className="hover:text-white transition-colors">Workflow</a>
-            <a href="#corpora" className="hover:text-white transition-colors">Coverage</a>
-            <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
+          <nav className="hidden md:flex items-center gap-8 text-xs font-medium text-slate-400">
+            <a href="#features" className="hover:text-slate-200 transition-colors">Features</a>
+            <a href="#workflow" className="hover:text-slate-200 transition-colors">How it works</a>
+            <a href="#corpora" className="hover:text-slate-200 transition-colors">Monitored acts</a>
+            <a href="#pricing" className="hover:text-slate-200 transition-colors">Pricing</a>
           </nav>
         </div>
 
@@ -98,44 +98,53 @@ export default function Landing() {
       <main className="flex-1 w-full px-6 sm:px-12 lg:px-20 pt-20 pb-28 flex flex-col items-center text-center relative z-10 max-w-6xl mx-auto">
         
         {/* Release Tag Pill */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#181820] border border-white/10 text-slate-300 text-xs font-medium mb-8 shadow-sm">
-          <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
-          <span className="text-slate-400 font-normal">Grounded Indian Legaltech</span>
-          <span className="text-slate-600">•</span>
-          <span className="text-purple-300 font-semibold">Zero Hallucination RAG</span>
-        </div>
+        <RevealOnScroll delay={50} direction="down">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#181820] border border-white/10 text-slate-300 text-xs font-medium mb-8 shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+            <span className="text-slate-400 font-normal">Grounded Indian Legaltech</span>
+            <span className="text-slate-600">•</span>
+            <span className="text-purple-300 font-semibold">Zero Hallucination RAG</span>
+          </div>
+        </RevealOnScroll>
 
         {/* Hero Title (NoteDeck typography) */}
-        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white max-w-4xl leading-[1.08] mb-6">
-          Indian compliance,<br />
-          now intelligent.
-        </h1>
+        <RevealOnScroll delay={150}>
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white max-w-4xl leading-[1.08] mb-6">
+            Indian compliance,<br />
+            now intelligent.
+          </h1>
+        </RevealOnScroll>
 
         {/* Hero Subtitle */}
-        <p className="text-base sm:text-lg text-slate-400 max-w-2xl leading-relaxed mb-10">
-          RegIQ instantly transforms complex statutory circulars across GST, RBI, SEBI, and MCA into plain-language answers verified with clause-level citations.
-        </p>
+        <RevealOnScroll delay={250}>
+          <p className="text-base sm:text-lg text-slate-400 max-w-2xl leading-relaxed mb-10">
+            Vidi instantly transforms complex statutory circulars across GST, RBI, SEBI, and MCA into plain-language answers verified with clause-level citations.
+          </p>
+        </RevealOnScroll>
 
-        {/* Hero Action Buttons (NoteDeck styling: Dark Glass + Soft White) */}
-        <div className="flex flex-col sm:flex-row items-center gap-4 justify-center w-full max-w-md mb-20">
-          <button 
-            onClick={() => navigate('/login')} 
-            className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-[#181820] hover:bg-[#20202c] border border-white/15 text-white font-semibold text-sm transition-all duration-300 shadow-lg hover:border-purple-500/40 hover:shadow-[0_0_25px_rgba(168,85,247,0.2)] hover:scale-[1.02] flex items-center justify-center gap-2"
-          >
-            <span>Start Learning Smarter</span>
-            <ArrowRight className="w-4 h-4 text-purple-400" />
-          </button>
+        {/* Hero Action Buttons */}
+        <RevealOnScroll delay={350}>
+          <div className="flex flex-col sm:flex-row items-center gap-4 justify-center w-full max-w-md mb-20">
+            <button 
+              onClick={() => navigate('/login')} 
+              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-[#181820] hover:bg-[#20202c] border border-white/15 text-white font-semibold text-sm transition-all duration-300 shadow-lg hover:border-purple-500/40 hover:shadow-[0_0_25px_rgba(168,85,247,0.2)] hover:scale-[1.02] flex items-center justify-center gap-2"
+            >
+              <span>Start Learning Smarter</span>
+              <ArrowRight className="w-4 h-4 text-purple-400" />
+            </button>
 
-          <button 
-            onClick={() => navigate('/login')}
-            className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-100 hover:bg-white text-slate-950 font-semibold text-sm transition-all duration-300 hover:scale-[1.02] shadow-sm flex items-center justify-center gap-2"
-          >
-            <span>Try as Guest</span>
-          </button>
-        </div>
+            <button 
+              onClick={() => navigate('/login')}
+              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-100 hover:bg-white text-slate-950 font-semibold text-sm transition-all duration-300 hover:scale-[1.02] shadow-sm flex items-center justify-center gap-2"
+            >
+              <span>Try as Guest</span>
+            </button>
+          </div>
+        </RevealOnScroll>
 
         {/* ── Interactive Product Preview Window (NoteDeck Dark Card Style) ── */}
-        <div className="w-full max-w-5xl rounded-2xl bg-[#13131A] border border-white/10 shadow-2xl overflow-hidden text-left mb-28">
+        <RevealOnScroll delay={450} duration={850} className="w-full max-w-5xl mb-28">
+          <div className="w-full rounded-2xl bg-[#13131A] border border-white/10 shadow-2xl overflow-hidden text-left">
           
           {/* Window Header */}
           <div className="px-5 py-3.5 border-b border-white/10 bg-[#0E0F14] flex items-center justify-between">
@@ -237,165 +246,190 @@ export default function Landing() {
 
           </div>
         </div>
+        </RevealOnScroll>
 
         {/* ── Features Section (Exact NoteDeck style cards with hover lift) ── */}
         <div id="features" className="w-full pt-12 pb-24 text-left space-y-12">
-          <div className="max-w-xl space-y-2">
-            <span className="text-xs font-mono font-semibold text-purple-400 uppercase tracking-wider">
-              Platform Features
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-              Instant AI answers, zero hallucination.
-            </h2>
-            <p className="text-sm text-slate-400">
-              From dense 60-page RBI master directions to weekly CBIC gazettes, our pipeline extracts the key clauses and builds your audit trail in seconds.
-            </p>
-          </div>
+          <RevealOnScroll delay={50}>
+            <div className="max-w-xl space-y-2">
+              <span className="text-xs font-mono font-semibold text-purple-400 uppercase tracking-wider">
+                Platform Features
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                Instant AI answers, zero hallucination.
+              </h2>
+              <p className="text-sm text-slate-400">
+                From dense 60-page RBI master directions to weekly CBIC gazettes, our pipeline extracts the key clauses and builds your audit trail in seconds.
+              </p>
+            </div>
+          </RevealOnScroll>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             
-            <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 hover:-translate-y-1 hover:border-white/20 transition-all duration-300 space-y-3 group">
-              <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-2">
-                <FileText className="w-5 h-5" />
+            <RevealOnScroll delay={50}>
+              <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 hover:-translate-y-1 hover:border-white/20 transition-all duration-300 space-y-3 group h-full">
+                <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-2">
+                  <FileText className="w-5 h-5" />
+                </div>
+                <h3 className="text-base font-bold text-white">Clause-Level Citations</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Every generated statement links directly to official circular numbers, statutory clauses, gazette publication dates, and government portal URLs.
+                </p>
               </div>
-              <h3 className="text-base font-bold text-white">Clause-Level Citations</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Every generated statement links directly to official circular numbers, statutory clauses, gazette publication dates, and government portal URLs.
-              </p>
-            </div>
+            </RevealOnScroll>
 
-            <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 hover:-translate-y-1 hover:border-white/20 transition-all duration-300 space-y-3 group">
-              <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-2">
-                <Share2 className="w-5 h-5" />
+            <RevealOnScroll delay={150}>
+              <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 hover:-translate-y-1 hover:border-white/20 transition-all duration-300 space-y-3 group h-full">
+                <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-2">
+                  <Share2 className="w-5 h-5" />
+                </div>
+                <h3 className="text-base font-bold text-white">Citation Graph Network</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Interactive D3 force-directed topological graph mapping 1,400+ regulatory circulars and cross-statutory citations across Indian financial jurisprudence.
+                </p>
               </div>
-              <h3 className="text-base font-bold text-white">Citation Graph Network</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Interactive D3 force-directed topological graph mapping 1,400+ regulatory circulars and cross-statutory citations across Indian financial jurisprudence.
-              </p>
-            </div>
+            </RevealOnScroll>
 
-            <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 hover:-translate-y-1 hover:border-white/20 transition-all duration-300 space-y-3 group">
-              <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-2">
-                <Calendar className="w-5 h-5" />
+            <RevealOnScroll delay={250}>
+              <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 hover:-translate-y-1 hover:border-white/20 transition-all duration-300 space-y-3 group h-full">
+                <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-2">
+                  <Calendar className="w-5 h-5" />
+                </div>
+                <h3 className="text-base font-bold text-white">Filing Obligations Calendar</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Automated statutory deadlines for GSTR-1, GSTR-3B, MCA Form 11, and RBI FLA returns, complete with penalty clauses and one-click RAG analysis.
+                </p>
               </div>
-              <h3 className="text-base font-bold text-white">Filing Obligations Calendar</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Automated statutory deadlines for GSTR-1, GSTR-3B, MCA Form 11, and RBI FLA returns, complete with penalty clauses and one-click RAG analysis.
-              </p>
-            </div>
+            </RevealOnScroll>
 
-            <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 hover:-translate-y-1 hover:border-white/20 transition-all duration-300 space-y-3 group">
-              <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-2">
-                <Cpu className="w-5 h-5" />
+            <RevealOnScroll delay={100}>
+              <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 hover:-translate-y-1 hover:border-white/20 transition-all duration-300 space-y-3 group h-full">
+                <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-2">
+                  <Cpu className="w-5 h-5" />
+                </div>
+                <h3 className="text-base font-bold text-white">LangGraph Routing</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Multi-corpus classification with automated conditional retry loops, ensuring cross-regulatory inquiries retrieve the highest-scoring candidate documents.
+                </p>
               </div>
-              <h3 className="text-base font-bold text-white">LangGraph Routing</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Multi-corpus classification with automated conditional retry loops, ensuring cross-regulatory inquiries retrieve the highest-scoring candidate documents.
-              </p>
-            </div>
+            </RevealOnScroll>
 
-            <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 hover:-translate-y-1 hover:border-white/20 transition-all duration-300 space-y-3 group">
-              <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-2">
-                <Building2 className="w-5 h-5" />
+            <RevealOnScroll delay={200}>
+              <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 hover:-translate-y-1 hover:border-white/20 transition-all duration-300 space-y-3 group h-full">
+                <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-2">
+                  <Building2 className="w-5 h-5" />
+                </div>
+                <h3 className="text-base font-bold text-white">Corporate Risk Scorecard</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Calculates real-time compliance health across 4 regulatory axes based on your corporate constitution, operational sector, and turnover.
+                </p>
               </div>
-              <h3 className="text-base font-bold text-white">Corporate Risk Scorecard</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Calculates real-time compliance health across 4 regulatory axes based on your corporate constitution, operational sector, and turnover.
-              </p>
-            </div>
+            </RevealOnScroll>
 
-            <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 hover:-translate-y-1 hover:border-white/20 transition-all duration-300 space-y-3 group">
-              <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-2">
-                <Database className="w-5 h-5" />
+            <RevealOnScroll delay={300}>
+              <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 hover:-translate-y-1 hover:border-white/20 transition-all duration-300 space-y-3 group h-full">
+                <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-2">
+                  <Database className="w-5 h-5" />
+                </div>
+                <h3 className="text-base font-bold text-white">Private Document Ingestion</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Blend your internal company agreements, tax notices, and board resolutions with official statutory Indian regulatory databases.
+                </p>
               </div>
-              <h3 className="text-base font-bold text-white">Private Document Ingestion</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Blend your internal company agreements, tax notices, and board resolutions with official statutory Indian regulatory databases.
-              </p>
-            </div>
+            </RevealOnScroll>
 
           </div>
         </div>
 
         {/* ── Workflow Section (Exact NoteDeck style: 1. Upload, 2. Generate, 3. Master) ── */}
         <div id="workflow" className="w-full pt-10 pb-24 border-t border-white/10 text-left space-y-12">
-          <div className="max-w-xl space-y-2">
-            <span className="text-xs font-mono font-semibold text-purple-400 uppercase tracking-wider">
-              How It Works
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-              A frictionless workflow.
-            </h2>
-            <p className="text-sm text-slate-400">
-              Get grounded answers with verifiable official citations in three simple steps.
-            </p>
-          </div>
+          <RevealOnScroll delay={50}>
+            <div className="max-w-xl space-y-2">
+              <span className="text-xs font-mono font-semibold text-purple-400 uppercase tracking-wider">
+                How It Works
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                A frictionless workflow.
+              </h2>
+              <p className="text-sm text-slate-400">
+                Get grounded answers with verifiable official citations in three simple steps.
+              </p>
+            </div>
+          </RevealOnScroll>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 space-y-3">
-              <div className="text-3xl font-extrabold text-white font-mono">01</div>
-              <h3 className="text-lg font-bold text-white">Specify Your Query</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Ask about compliance rules, thresholds, penalties, or filing dates in simple plain language.
-              </p>
-            </div>
+            <RevealOnScroll delay={50}>
+              <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 space-y-3 h-full hover-lift">
+                <div className="text-3xl font-extrabold text-white font-mono">01</div>
+                <h3 className="text-lg font-bold text-white">Specify Your Query</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Ask about compliance rules, thresholds, penalties, or filing dates in simple plain language.
+                </p>
+              </div>
+            </RevealOnScroll>
 
-            <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 space-y-3">
-              <div className="text-3xl font-extrabold text-white font-mono">02</div>
-              <h3 className="text-lg font-bold text-white">Multi-Corpus Retrieval</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Our pipeline searches isolated ChromaDB vector stores across RBI, SEBI, GST, MCA, and FEMA.
-              </p>
-            </div>
+            <RevealOnScroll delay={150}>
+              <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 space-y-3 h-full hover-lift">
+                <div className="text-3xl font-extrabold text-white font-mono">02</div>
+                <h3 className="text-lg font-bold text-white">Multi-Corpus Retrieval</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Our pipeline searches isolated ChromaDB vector stores across RBI, SEBI, GST, MCA, and FEMA.
+                </p>
+              </div>
+            </RevealOnScroll>
 
-            <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 space-y-3">
-              <div className="text-3xl font-extrabold text-white font-mono">03</div>
-              <h3 className="text-lg font-bold text-white">Verified Ground Truth</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Receive answers with clause-level citations, direct government source links, and PDF audit exports.
-              </p>
-            </div>
+            <RevealOnScroll delay={250}>
+              <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 space-y-3 h-full hover-lift">
+                <div className="text-3xl font-extrabold text-white font-mono">03</div>
+                <h3 className="text-lg font-bold text-white">Verified Ground Truth</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Receive answers with clause-level citations, direct government source links, and PDF audit exports.
+                </p>
+              </div>
+            </RevealOnScroll>
           </div>
         </div>
 
         {/* ── Monitored Corpora Strip: Interactive 3D Flip Flashcards ── */}
         <div id="corpora" className="w-full pt-10 pb-24 border-t border-white/10 text-left space-y-8">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-            <div className="max-w-xl space-y-2">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-mono font-semibold text-purple-400 uppercase tracking-wider">
-                  Interactive Flashcards
-                </span>
-                <span className="text-[11px] bg-purple-500/10 text-purple-300 border border-purple-500/20 px-2 py-0.5 rounded-full font-mono">
-                  Click card to flip
-                </span>
+          <RevealOnScroll delay={50}>
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+              <div className="max-w-xl space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-mono font-semibold text-purple-400 uppercase tracking-wider">
+                    Interactive Flashcards
+                  </span>
+                  <span className="text-[11px] bg-purple-500/10 text-purple-300 border border-purple-500/20 px-2 py-0.5 rounded-full font-mono">
+                    Click card to flip
+                  </span>
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                  Monitored Indian statutory frameworks.
+                </h2>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                Monitored Indian statutory frameworks.
-              </h2>
-            </div>
 
-            {/* Quick Actions: Flip All / Reset */}
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  const allFlipped = { RBI: true, SEBI: true, MCA: true, GST: true, FEMA: true };
-                  setFlippedCards(allFlipped);
-                }}
-                className="text-xs font-medium text-slate-400 hover:text-white px-3 py-1.5 rounded-lg border border-white/10 hover:border-white/20 bg-[#13131A] transition-colors"
-              >
-                Flip all
-              </button>
-              <button
-                type="button"
-                onClick={() => setFlippedCards({})}
-                className="text-xs font-medium text-slate-400 hover:text-white px-3 py-1.5 rounded-lg border border-white/10 hover:border-white/20 bg-[#13131A] transition-colors"
-              >
-                Reset
-              </button>
+              {/* Quick Actions: Flip All / Reset */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const allFlipped = { RBI: true, SEBI: true, MCA: true, GST: true, FEMA: true };
+                    setFlippedCards(allFlipped);
+                  }}
+                  className="text-xs font-medium text-slate-400 hover:text-white px-3 py-1.5 rounded-lg border border-white/10 hover:border-white/20 bg-[#13131A] transition-colors"
+                >
+                  Flip all
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFlippedCards({})}
+                  className="text-xs font-medium text-slate-400 hover:text-white px-3 py-1.5 rounded-lg border border-white/10 hover:border-white/20 bg-[#13131A] transition-colors"
+                >
+                  Reset
+                </button>
+              </div>
             </div>
-          </div>
+          </RevealOnScroll>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {[
@@ -439,114 +473,115 @@ export default function Landing() {
                 act: 'FEMA 1999',
                 circulars: '180+ Circulars'
               },
-            ].map((c) => {
+            ].map((c, idx) => {
               const isFlipped = !!flippedCards[c.code];
               return (
-                <div
-                  key={c.code}
-                  onClick={() => toggleCardFlip(c.code)}
-                  className="group perspective-1000 h-72 cursor-pointer select-none"
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      toggleCardFlip(c.code);
-                    }
-                  }}
-                  title={`Click to flip ${c.code} card`}
-                >
+                <RevealOnScroll key={c.code} delay={idx * 80} className="h-full">
                   <div
-                    className={`relative w-full h-full transition-transform duration-500 transform-style-3d ${
-                      isFlipped ? 'rotate-y-180' : ''
-                    }`}
+                    onClick={() => toggleCardFlip(c.code)}
+                    className="group perspective-1000 h-72 cursor-pointer select-none"
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleCardFlip(c.code);
+                      }
+                    }}
+                    title={`Click to flip ${c.code} card`}
                   >
-                    {/* ── Front Face: Acronym Flashcard ── */}
-                    <div className="absolute inset-0 w-full h-full backface-hidden rounded-2xl bg-[#13131A] border border-white/10 p-5 flex flex-col justify-between group-hover:border-purple-500/40 group-hover:shadow-[0_0_25px_rgba(168,85,247,0.12)] transition-all">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20">
-                          {c.category}
-                        </span>
-                        <div className="flex items-center gap-1 text-[11px] text-slate-400 group-hover:text-purple-300 transition-colors">
-                          <RotateCw className="w-3.5 h-3.5 transition-transform duration-500 group-hover:rotate-180" />
-                          <span className="text-[10px]">Flip</span>
-                        </div>
-                      </div>
-
-                      <div className="space-y-1 my-auto text-center py-2">
-                        <div className="text-4xl sm:text-5xl font-black font-mono tracking-wider text-white group-hover:text-purple-200 transition-colors">
-                          {c.code}
-                        </div>
-                        <div className="text-xs font-semibold text-slate-300">
-                          {c.title}
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between pt-3 border-t border-white/5 text-[11px] text-slate-500">
-                        <span className="font-mono text-[10px]">{c.act}</span>
-                        <span className="text-purple-400 font-medium group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
-                          Click to flip ↺
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* ── Back Face: Framework Details & Clean Dual Actions ── */}
-                    <div className="absolute inset-0 w-full h-full backface-hidden rotate-y-180 rounded-2xl bg-[#161622] border border-purple-500/30 p-5 flex flex-col justify-between shadow-[0_0_30px_rgba(168,85,247,0.2)]">
-                      {/* Back Header: Full Title without truncation */}
-                      <div className="flex items-start gap-2">
-                        <span className="text-xs font-mono font-bold text-white bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2 py-0.5 rounded shrink-0">
-                          {c.code}
-                        </span>
-                        <span className="text-xs text-slate-200 font-semibold leading-tight">
-                          {c.title}
-                        </span>
-                      </div>
-
-                      {/* Framework Details */}
-                      <div className="space-y-2.5 my-auto py-2 text-left">
-                        <div className="text-xs text-slate-300 leading-snug font-normal">
-                          {c.desc}
-                        </div>
-                        <div className="flex flex-wrap gap-1.5 pt-0.5">
-                          <span className="text-[10px] font-mono bg-purple-500/10 text-purple-300 border border-purple-500/20 px-2 py-0.5 rounded">
-                            {c.act}
+                    <div
+                      className={`relative w-full h-full transition-transform duration-500 transform-style-3d ${
+                        isFlipped ? 'rotate-y-180' : ''
+                      }`}
+                    >
+                      {/* ── Front Face: Acronym Flashcard ── */}
+                      <div className="absolute inset-0 w-full h-full backface-hidden rounded-2xl bg-[#13131A] border border-white/10 p-5 flex flex-col justify-between group-hover:border-purple-500/40 group-hover:shadow-[0_0_25px_rgba(168,85,247,0.12)] transition-all">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20">
+                            {c.category}
                           </span>
-                          <span className="text-[10px] font-mono bg-white/5 text-slate-400 border border-white/10 px-2 py-0.5 rounded">
-                            {c.circulars}
+                          <div className="flex items-center gap-1 text-[11px] text-slate-400 group-hover:text-purple-300 transition-colors">
+                            <RotateCw className="w-3.5 h-3.5 transition-transform duration-500 group-hover:rotate-180" />
+                            <span className="text-[10px]">Flip</span>
+                          </div>
+                        </div>
+
+                        <div className="space-y-1 my-auto text-center py-2">
+                          <div className="text-4xl sm:text-5xl font-black font-mono tracking-wider text-white group-hover:text-purple-200 transition-colors">
+                            {c.code}
+                          </div>
+                          <div className="text-xs font-semibold text-slate-300">
+                            {c.title}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between pt-3 border-t border-white/5 text-[11px] text-slate-500">
+                          <span className="font-mono text-[10px]">{c.act}</span>
+                          <span className="text-purple-400 font-medium group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
+                            Click to flip ↺
                           </span>
                         </div>
                       </div>
 
-                      {/* Bottom Action Controls: Dedicated Flip Back + Ask AI */}
-                      <div className="flex items-center gap-2 pt-2 border-t border-white/10">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleCardFlip(c.code);
-                          }}
-                          className="flex-1 py-2 px-2.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-slate-300 hover:text-white text-xs font-medium flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                          title="Flip back to acronym"
-                        >
-                          <RotateCw className="w-3.5 h-3.5 text-purple-400" />
-                          <span>Flip back</span>
-                        </button>
+                      {/* ── Back Face: Framework Details & Clean Dual Actions ── */}
+                      <div className="absolute inset-0 w-full h-full backface-hidden rotate-y-180 rounded-2xl bg-[#161622] border border-purple-500/30 p-5 flex flex-col justify-between shadow-[0_0_30px_rgba(168,85,247,0.2)]">
+                        {/* Back Header */}
+                        <div className="flex items-start gap-2">
+                          <span className="text-xs font-mono font-bold text-white bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2 py-0.5 rounded shrink-0">
+                            {c.code}
+                          </span>
+                          <span className="text-xs text-slate-200 font-semibold leading-tight">
+                            {c.title}
+                          </span>
+                        </div>
 
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(`/chat?corpus=${c.code}`);
-                          }}
-                          className="flex-1 py-2 px-2.5 rounded-lg bg-white hover:bg-slate-100 text-slate-950 font-semibold text-xs transition-all flex items-center justify-center gap-1 shadow-sm active:scale-[0.98] cursor-pointer"
-                        >
-                          <span>Ask {c.code}</span>
-                          <ArrowRight className="w-3.5 h-3.5" />
-                        </button>
+                        {/* Framework Details */}
+                        <div className="space-y-2.5 my-auto py-2 text-left">
+                          <div className="text-xs text-slate-300 leading-snug font-normal">
+                            {c.desc}
+                          </div>
+                          <div className="flex flex-wrap gap-1.5 pt-0.5">
+                            <span className="text-[10px] font-mono bg-purple-500/10 text-purple-300 border border-purple-500/20 px-2 py-0.5 rounded">
+                              {c.act}
+                            </span>
+                            <span className="text-[10px] font-mono bg-white/5 text-slate-400 border border-white/10 px-2 py-0.5 rounded">
+                              {c.circulars}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Bottom Action Controls */}
+                        <div className="flex items-center gap-2 pt-2 border-t border-white/10">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleCardFlip(c.code);
+                            }}
+                            className="flex-1 py-2 px-2.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-slate-300 hover:text-white text-xs font-medium flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                            title="Flip back to acronym"
+                          >
+                            <RotateCw className="w-3.5 h-3.5 text-purple-400" />
+                            <span>Flip back</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/chat?corpus=${c.code}`);
+                            }}
+                            className="flex-1 py-2 px-2.5 rounded-lg bg-white hover:bg-slate-100 text-slate-950 font-semibold text-xs transition-all flex items-center justify-center gap-1 shadow-sm active:scale-[0.98] cursor-pointer"
+                          >
+                            <span>Ask {c.code}</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                </RevealOnScroll>
               );
             })}
           </div>
@@ -554,242 +589,258 @@ export default function Landing() {
 
         {/* ── Pricing Section (Exact NoteDeck style pricing cards) ── */}
         <div id="pricing" className="w-full pt-10 pb-24 border-t border-white/10 text-center space-y-10">
-          <div className="max-w-xl mx-auto space-y-3">
-            <span className="text-xs font-mono font-semibold text-purple-400 uppercase tracking-wider">
-              Transparent Pricing
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-              Find the plan that's right for you
-            </h2>
-            <p className="text-sm text-slate-400">
-              Start for free, or unlock unlimited queries and personal document blending.
-            </p>
+          <RevealOnScroll delay={50}>
+            <div className="max-w-xl mx-auto space-y-3">
+              <span className="text-xs font-mono font-semibold text-purple-400 uppercase tracking-wider">
+                Transparent Pricing
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                Find the plan that's right for you
+              </h2>
+              <p className="text-sm text-slate-400">
+                Start for free, or unlock unlimited queries and personal document blending.
+              </p>
 
-            {/* NoteDeck Capsule Billing Switcher */}
-            <div className="inline-flex items-center bg-slate-900 border border-white/10 rounded-full p-1 gap-2 mt-4">
-              <button
-                onClick={() => setBillingCycle('monthly')}
-                className={`px-4 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                  billingCycle === 'monthly' ? 'bg-white text-slate-950 font-semibold' : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                Monthly
-              </button>
-              <button
-                onClick={() => setBillingCycle('yearly')}
-                className={`px-4 py-1.5 rounded-full text-xs font-medium transition-colors flex items-center gap-1.5 ${
-                  billingCycle === 'yearly' ? 'bg-white text-slate-950 font-semibold' : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                <span>Yearly</span>
-                <span className="bg-emerald-500/20 text-emerald-400 text-[10px] px-2 py-0.5 rounded-full font-bold">
-                  Save 25%
-                </span>
-              </button>
+              {/* NoteDeck Capsule Billing Switcher */}
+              <div className="inline-flex items-center bg-slate-900 border border-white/10 rounded-full p-1 gap-2 mt-4">
+                <button
+                  onClick={() => setBillingCycle('monthly')}
+                  className={`px-4 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                    billingCycle === 'monthly' ? 'bg-white text-slate-950 font-semibold' : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  Monthly
+                </button>
+                <button
+                  onClick={() => setBillingCycle('yearly')}
+                  className={`px-4 py-1.5 rounded-full text-xs font-medium transition-colors flex items-center gap-1.5 ${
+                    billingCycle === 'yearly' ? 'bg-white text-slate-950 font-semibold' : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <span>Yearly</span>
+                  <span className="bg-emerald-500/20 text-emerald-400 text-[10px] px-2 py-0.5 rounded-full font-bold">
+                    Save 25%
+                  </span>
+                </button>
+              </div>
             </div>
-          </div>
+          </RevealOnScroll>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left items-stretch">
             
             {/* Free Plan */}
-            <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 flex flex-col justify-between space-y-6 hover:-translate-y-1 transition-transform duration-300">
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-lg font-bold text-white">Free</h3>
-                  <p className="text-xs text-slate-400 mt-1">Essential compliance monitoring for local SMEs.</p>
+            <RevealOnScroll delay={50} className="h-full">
+              <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 flex flex-col justify-between space-y-6 hover:-translate-y-1 transition-transform duration-300 h-full">
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-lg font-bold text-white">Free</h3>
+                    <p className="text-xs text-slate-400 mt-1">Essential compliance monitoring for local SMEs.</p>
+                  </div>
+                  <div className="text-3xl font-extrabold text-white">₹0</div>
+                  <ul className="space-y-2.5 text-xs text-slate-300">
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-slate-400 shrink-0" />
+                      <span>20 queries / day allocation</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-slate-400 shrink-0" />
+                      <span>All 4 core regulatory corpora</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-slate-400 shrink-0" />
+                      <span>Persistent chat history logs</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-slate-400 shrink-0" />
+                      <span>Plain / Legal toggle filters</span>
+                    </li>
+                  </ul>
                 </div>
-                <div className="text-3xl font-extrabold text-white">₹0</div>
-                <ul className="space-y-2.5 text-xs text-slate-300">
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-slate-400 shrink-0" />
-                    <span>20 queries / day allocation</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-slate-400 shrink-0" />
-                    <span>All 4 core regulatory corpora</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-slate-400 shrink-0" />
-                    <span>Persistent chat history logs</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-slate-400 shrink-0" />
-                    <span>Plain / Legal toggle filters</span>
-                  </li>
-                </ul>
+                <button 
+                  onClick={() => navigate('/login')}
+                  className="w-full py-3 rounded-xl bg-slate-900 border border-white/10 hover:bg-slate-800 text-white text-xs font-semibold transition-colors"
+                >
+                  Get Started
+                </button>
               </div>
-              <button 
-                onClick={() => navigate('/login')}
-                className="w-full py-3 rounded-xl bg-slate-900 border border-white/10 hover:bg-slate-800 text-white text-xs font-semibold transition-colors"
-              >
-                Get Started
-              </button>
-            </div>
+            </RevealOnScroll>
 
             {/* Pro Plan (Featured NoteDeck Style) */}
-            <div className="p-8 rounded-2xl bg-[#161622] border-2 border-purple-500 shadow-[0_0_30px_rgba(168,85,247,0.25)] flex flex-col justify-between space-y-6 relative hover:-translate-y-1.5 transition-transform duration-300">
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-purple-400 text-slate-950 text-[11px] font-bold px-3 py-0.5 rounded-full shadow-sm uppercase tracking-wider">
-                Most Popular
-              </span>
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-lg font-bold text-white">Pro</h3>
-                  <p className="text-xs text-slate-400 mt-1">Complete automated compliance intelligence for expanding teams.</p>
+            <RevealOnScroll delay={150} className="h-full">
+              <div className="p-8 rounded-2xl bg-[#161622] border-2 border-purple-500 shadow-[0_0_30px_rgba(168,85,247,0.25)] flex flex-col justify-between space-y-6 relative hover:-translate-y-1.5 transition-transform duration-300 h-full">
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-purple-400 text-slate-950 text-[11px] font-bold px-3 py-0.5 rounded-full shadow-sm uppercase tracking-wider">
+                  Most Popular
+                </span>
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-lg font-bold text-white">Pro</h3>
+                    <p className="text-xs text-slate-400 mt-1">Complete automated compliance intelligence for expanding teams.</p>
+                  </div>
+                  {billingCycle === 'yearly' ? (
+                    <div className="space-y-1.5">
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-3xl font-extrabold text-white">₹4,488</span>
+                        <span className="text-xs text-slate-400 font-medium">/ year</span>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                          -25% OFF
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs">
+                        <span className="text-purple-300 font-semibold bg-purple-500/15 px-2 py-0.5 rounded border border-purple-500/30">
+                          ₹374 / month
+                        </span>
+                        <span className="text-slate-500 line-through">₹5,988</span>
+                        <span className="text-emerald-400 font-medium">Save ₹1,500/yr</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-1">
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-3xl font-extrabold text-white">₹499</span>
+                        <span className="text-xs text-slate-400">/ month</span>
+                      </div>
+                      <div className="text-xs text-slate-400">
+                        Standard monthly entry lease · ₹5,988/yr
+                      </div>
+                    </div>
+                  )}
+                  <ul className="space-y-2.5 text-xs text-slate-200">
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-purple-400 shrink-0" />
+                      <span>Unlimited regulatory queries</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-purple-400 shrink-0" />
+                      <span>Interactive Compliance Risk Scorecard</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-purple-400 shrink-0" />
+                      <span>Statutory Compliance Calendar</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-purple-400 shrink-0" />
+                      <span>Personal doc upload + RAG blending</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-purple-400 shrink-0" />
+                      <span>Server-side automated PDF exports</span>
+                    </li>
+                  </ul>
                 </div>
-                {billingCycle === 'yearly' ? (
-                  <div className="space-y-1.5">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-3xl font-extrabold text-white">₹4,488</span>
-                      <span className="text-xs text-slate-400 font-medium">/ year</span>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                        -25% OFF
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs">
-                      <span className="text-purple-300 font-semibold bg-purple-500/15 px-2 py-0.5 rounded border border-purple-500/30">
-                        ₹374 / month
-                      </span>
-                      <span className="text-slate-500 line-through">₹5,988</span>
-                      <span className="text-emerald-400 font-medium">Save ₹1,500/yr</span>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-1">
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-3xl font-extrabold text-white">₹499</span>
-                      <span className="text-xs text-slate-400">/ month</span>
-                    </div>
-                    <div className="text-xs text-slate-400">
-                      Standard monthly entry lease · ₹5,988/yr
-                    </div>
-                  </div>
-                )}
-                <ul className="space-y-2.5 text-xs text-slate-200">
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-purple-400 shrink-0" />
-                    <span>Unlimited regulatory queries</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-purple-400 shrink-0" />
-                    <span>Interactive Compliance Risk Scorecard</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-purple-400 shrink-0" />
-                    <span>Statutory Compliance Calendar</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-purple-400 shrink-0" />
-                    <span>Personal doc upload + RAG blending</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-purple-400 shrink-0" />
-                    <span>Server-side automated PDF exports</span>
-                  </li>
-                </ul>
+                <button 
+                  onClick={() => navigate('/login')}
+                  className="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold transition-colors shadow-md"
+                >
+                  Upgrade to Pro
+                </button>
               </div>
-              <button 
-                onClick={() => navigate('/login')}
-                className="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold transition-colors shadow-md"
-              >
-                Upgrade to Pro
-              </button>
-            </div>
+            </RevealOnScroll>
 
             {/* Enterprise Plan */}
-            <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 flex flex-col justify-between space-y-6 hover:-translate-y-1 transition-transform duration-300">
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-lg font-bold text-white">Enterprise</h3>
-                  <p className="text-xs text-slate-400 mt-1">Dedicated scale parameters, SLAs, and custom on-premise vectors.</p>
+            <RevealOnScroll delay={250} className="h-full">
+              <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 flex flex-col justify-between space-y-6 hover:-translate-y-1 transition-transform duration-300 h-full">
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-lg font-bold text-white">Enterprise</h3>
+                    <p className="text-xs text-slate-400 mt-1">Dedicated scale parameters, SLAs, and custom on-premise vectors.</p>
+                  </div>
+                  <div className="text-3xl font-extrabold text-white">Custom</div>
+                  <ul className="space-y-2.5 text-xs text-slate-300">
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-slate-400 shrink-0" />
+                      <span>Unlimited runtime access</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-slate-400 shrink-0" />
+                      <span>Custom ERP / DMS integrations</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-slate-400 shrink-0" />
+                      <span>Dedicated ChromaDB vector nodes</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-slate-400 shrink-0" />
+                      <span>Priority SLA line support</span>
+                    </li>
+                  </ul>
                 </div>
-                <div className="text-3xl font-extrabold text-white">Custom</div>
-                <ul className="space-y-2.5 text-xs text-slate-300">
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-slate-400 shrink-0" />
-                    <span>Unlimited runtime access</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-slate-400 shrink-0" />
-                    <span>Custom ERP / DMS integrations</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-slate-400 shrink-0" />
-                    <span>Dedicated ChromaDB vector nodes</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="w-4 h-4 text-slate-400 shrink-0" />
-                    <span>Priority SLA line support</span>
-                  </li>
-                </ul>
+                <button 
+                  onClick={() => navigate('/login')}
+                  className="w-full py-3 rounded-xl bg-slate-900 border border-white/10 hover:bg-slate-800 text-white text-xs font-semibold transition-colors"
+                >
+                  Contact Sales
+                </button>
               </div>
-              <button 
-                onClick={() => navigate('/login')}
-                className="w-full py-3 rounded-xl bg-slate-900 border border-white/10 hover:bg-slate-800 text-white text-xs font-semibold transition-colors"
-              >
-                Contact Sales
-              </button>
-            </div>
+            </RevealOnScroll>
 
           </div>
         </div>
 
         {/* ── Testimonials (Exact NoteDeck style) ── */}
         <div className="w-full pt-10 pb-24 border-t border-white/10 text-left space-y-8">
-          <div className="max-w-xl space-y-2">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              Don't just take our word for it.
-            </h2>
-          </div>
+          <RevealOnScroll delay={50}>
+            <div className="max-w-xl space-y-2">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                Don't just take our word for it.
+              </h2>
+            </div>
+          </RevealOnScroll>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs">
-            <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 space-y-4">
-              <p className="text-slate-300 text-sm leading-relaxed italic">
-                "RegIQ is our secret weapon for monthly compliance audits. What used to take hours of searching government portals now takes seconds."
-              </p>
-              <div className="flex items-center gap-3 pt-2">
-                <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center font-bold text-white text-xs">
-                  CA
-                </div>
-                <div>
-                  <div className="font-semibold text-white">Rajesh Mehta, FCA</div>
-                  <div className="text-slate-500 text-[11px]">Senior Tax Partner, Mumbai</div>
+            <RevealOnScroll delay={100}>
+              <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 space-y-4 hover-lift">
+                <p className="text-slate-300 text-sm leading-relaxed italic">
+                  "Vidi is our secret weapon for monthly compliance audits. What used to take hours of searching government portals now takes seconds."
+                </p>
+                <div className="flex items-center gap-3 pt-2">
+                  <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center font-bold text-white text-xs">
+                    CA
+                  </div>
+                  <div>
+                    <div className="font-semibold text-white">Rajesh Mehta, FCA</div>
+                    <div className="text-slate-500 text-[11px]">Senior Tax Partner, Mumbai</div>
+                  </div>
                 </div>
               </div>
-            </div>
+            </RevealOnScroll>
 
-            <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 space-y-4">
-              <p className="text-slate-300 text-sm leading-relaxed italic">
-                "The best regulatory research tool on the market. The quality of the cited circulars and statutory clauses is consistently 100% accurate."
-              </p>
-              <div className="flex items-center gap-3 pt-2">
-                <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center font-bold text-white text-xs">
-                  VP
-                </div>
-                <div>
-                  <div className="font-semibold text-white">Ananya Sen</div>
-                  <div className="text-slate-500 text-[11px]">VP Compliance, Bengaluru Fintech</div>
+            <RevealOnScroll delay={200}>
+              <div className="p-8 rounded-2xl bg-[#13131A] border border-white/10 space-y-4 hover-lift">
+                <p className="text-slate-300 text-sm leading-relaxed italic">
+                  "The best regulatory research tool on the market. The quality of the cited circulars and statutory clauses is consistently 100% accurate."
+                </p>
+                <div className="flex items-center gap-3 pt-2">
+                  <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center font-bold text-white text-xs">
+                    VP
+                  </div>
+                  <div>
+                    <div className="font-semibold text-white">Ananya Sen</div>
+                    <div className="text-slate-500 text-[11px]">VP Compliance, Bengaluru Fintech</div>
+                  </div>
                 </div>
               </div>
-            </div>
+            </RevealOnScroll>
           </div>
         </div>
 
         {/* ── Final Call to Action ── */}
-        <div className="w-full rounded-2xl bg-[#13131A] border border-white/10 p-12 lg:p-16 text-center space-y-6 shadow-2xl">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-            Start automating compliance research today.
-          </h2>
-          <p className="text-sm text-slate-400 max-w-md mx-auto leading-relaxed">
-            Free tier includes 20 daily queries across GST, RBI, SEBI, and MCA. No credit card required.
-          </p>
-          <button 
-            onClick={() => navigate('/login')}
-            className="px-6 py-3.5 rounded-xl bg-white hover:bg-slate-200 text-slate-950 font-semibold text-sm transition-all shadow-md inline-flex items-center gap-2"
-          >
-            <span>Create Free Account</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
-        </div>
+        <RevealOnScroll delay={100}>
+          <div className="w-full rounded-2xl bg-[#13131A] border border-white/10 p-12 lg:p-16 text-center space-y-6 shadow-2xl">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+              Start automating compliance research today.
+            </h2>
+            <p className="text-sm text-slate-400 max-w-md mx-auto leading-relaxed">
+              Free tier includes 20 daily queries across GST, RBI, SEBI, and MCA. No credit card required.
+            </p>
+            <button 
+              onClick={() => navigate('/login')}
+              className="px-6 py-3.5 rounded-xl bg-white hover:bg-slate-200 text-slate-950 font-semibold text-sm transition-all shadow-md inline-flex items-center gap-2"
+            >
+              <span>Create Free Account</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        </RevealOnScroll>
 
       </main>
 

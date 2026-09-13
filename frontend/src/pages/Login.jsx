@@ -132,10 +132,10 @@ export default function Login() {
       </header>
 
       {/* ── Main Authentication Area ── */}
-      <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-12 relative z-10 w-full max-w-md mx-auto">
+      <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-12 relative z-10 w-full max-w-md mx-auto animate-page-enter">
         
         {/* Release Pill Tag */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#181820] border border-white/10 text-slate-300 text-xs font-medium mb-6 shadow-sm">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#181820] border border-white/10 text-slate-300 text-xs font-medium mb-6 shadow-sm animate-fade-in">
           <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
           <span className="text-slate-400 font-normal">SME Compliance Matrix</span>
           <span className="text-slate-600">•</span>
@@ -143,7 +143,7 @@ export default function Login() {
         </div>
 
         {/* Auth Glass Card */}
-        <div className="w-full bg-[#12131A]/90 backdrop-blur-2xl p-8 sm:p-10 rounded-2xl border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.6)] hover:border-purple-500/30 transition-all duration-300 space-y-6">
+        <div className="w-full bg-[#12131A]/90 backdrop-blur-2xl p-8 sm:p-10 rounded-2xl border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.6)] hover:border-purple-500/30 transition-all duration-300 space-y-6 animate-fade-in-scale">
           
           {/* Card Header */}
           <div className="text-center space-y-2">

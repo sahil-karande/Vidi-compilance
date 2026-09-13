@@ -129,7 +129,7 @@ export default function Settings() {
   ];
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 py-10 text-slate-100 font-sans">
+    <div className="w-full max-w-7xl mx-auto px-6 lg:px-12 py-10 text-slate-100 font-sans animate-fade-in">
       
       {/* Header */}
       <div className="mb-8 pb-6 border-b border-white/10">
@@ -164,11 +164,11 @@ export default function Settings() {
       </div>
 
       {/* Tab Content Box */}
-      <div className="bg-[#12131A]/90 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl">
+      <div key={activeTab} className="bg-[#12131A]/90 backdrop-blur-xl border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl animate-fade-in-up">
         
         {/* Profile Tab */}
         {activeTab === 'profile' && (
-          <form onSubmit={handleProfileSave} className="max-w-xl space-y-5 text-xs">
+          <form onSubmit={handleProfileSave} className="max-w-xl space-y-5 text-xs animate-fade-in">
             <div>
               <h3 className="text-sm font-bold text-white mb-1">Entity Details</h3>
               <p className="text-xs text-slate-400">These parameters configure your automated risk scorecard and compliance calendar.</p>

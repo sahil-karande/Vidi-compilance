@@ -664,20 +664,20 @@ export default function Dashboard() {
           </div>
         ) : (
           /* ── Full Dashboard View ── */
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full animate-fade-in">
             
             {/* Left Column (Main Analytics & Calendar) */}
             <div className="lg:col-span-8 flex flex-col gap-8">
               
               {/* Risk Scorecard Container */}
               <Suspense fallback={<SkeletonCard />}>
-                <div className="bg-[#12131A]/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl overflow-hidden relative">
+                <div className="bg-[#12131A]/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-xl overflow-hidden relative animate-fade-in-up hover-lift">
                   <RiskScorecard data={scorecard} onMetricClick={handleOpenDrillDown} />
                 </div>
               </Suspense>
 
               {/* Dynamic Corpus Tracker Badging Panels */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-fade-in-up delay-100">
                 {[
                   { code: 'GST', label: 'Goods & Services', color: 'border-emerald-500/30 text-emerald-400' },
                   { code: 'RBI', label: 'Reserve Bank', color: 'border-sky-500/30 text-sky-400' },

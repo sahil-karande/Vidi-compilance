@@ -116,7 +116,7 @@ export default function Upload() {
   }
 
   return (
-    <div className="w-full max-w-5xl mx-auto px-6 py-10 text-slate-100 font-sans">
+    <div className="w-full max-w-5xl mx-auto px-6 py-10 text-slate-100 font-sans animate-fade-in">
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-1">
           <span className="text-xs font-mono font-semibold text-purple-400 uppercase tracking-wider">
@@ -132,7 +132,7 @@ export default function Upload() {
       </div>
 
       {error && (
-        <div className="mb-6 p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-300 text-xs shadow-lg">
+        <div className="mb-6 p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-300 text-xs shadow-lg animate-fade-in">
           {error}
         </div>
       )}
@@ -142,7 +142,7 @@ export default function Upload() {
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        className={`border border-dashed rounded-2xl p-10 text-center transition-all cursor-pointer shadow-xl ${
+        className={`border border-dashed rounded-2xl p-10 text-center transition-all cursor-pointer shadow-xl animate-fade-in-up delay-75 hover-lift ${
           isDragging 
             ? 'border-purple-500 bg-purple-950/20' 
             : 'border-white/10 bg-[#12131A]/80 hover:border-purple-500/50 hover:bg-[#16161F]'
@@ -179,7 +179,7 @@ export default function Upload() {
       </div>
 
       {/* Document Inventory Table */}
-      <div className="mt-10">
+      <div className="mt-10 animate-fade-in-up delay-150">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-bold tracking-tight text-slate-200">Indexed Private Documents</h2>
           <span className="text-xs font-mono text-purple-300 px-2.5 py-0.5 bg-purple-500/10 border border-purple-500/20 rounded-md">
