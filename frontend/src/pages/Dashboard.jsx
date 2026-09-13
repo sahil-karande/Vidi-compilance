@@ -29,14 +29,14 @@ const RiskScorecard = lazy(() => import('../components/RiskScorecard'));
 
 function SkeletonCard() {
   return (
-    <div className="w-full bg-slate-900/40 backdrop-blur-md border border-slate-800/80 rounded-2xl p-6 animate-pulse space-y-4">
+    <div className="w-full bg-[#12131A]/90 backdrop-blur-md border border-white/10 rounded-2xl p-6 animate-pulse space-y-4">
       <div className="flex items-center justify-between">
-        <div className="h-4 bg-slate-800 rounded w-1/3 shadow-[0_0_10px_rgba(51,65,85,0.5)]"></div>
-        <div className="h-6 bg-slate-800 rounded-full w-12"></div>
+        <div className="h-4 bg-white/10 rounded w-1/3 shadow-[0_0_10px_rgba(168,85,247,0.2)]"></div>
+        <div className="h-6 bg-purple-500/20 rounded-full w-12"></div>
       </div>
       <div className="space-y-2">
-        <div className="h-3 bg-slate-800 rounded w-full"></div>
-        <div className="h-3 bg-cyan-950/40 rounded w-5/6"></div>
+        <div className="h-3 bg-white/10 rounded w-full"></div>
+        <div className="h-3 bg-purple-950/40 rounded w-5/6"></div>
       </div>
     </div>
   );
@@ -392,11 +392,11 @@ export default function Dashboard() {
             
             {/* Left Column: Scope & Jurisdictional Radar */}
             <div className="lg:col-span-5 flex flex-col gap-6">
-              <div className="bg-slate-900/40 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 lg:p-8 shadow-2xl flex flex-col justify-between h-full space-y-6">
+              <div className="bg-[#12131A]/90 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 lg:p-8 shadow-2xl flex flex-col justify-between h-full space-y-6">
                 <div>
                   <div className="flex items-center gap-2.5 mb-2">
-                    <Compass className="w-5 h-5 text-cyan-400" />
-                    <span className="text-xs font-mono font-bold tracking-widest text-cyan-400 uppercase">
+                    <Compass className="w-5 h-5 text-purple-400" />
+                    <span className="text-xs font-mono font-bold tracking-widest text-purple-400 uppercase">
                       Corporate Parameterization
                     </span>
                   </div>
@@ -415,7 +415,7 @@ export default function Dashboard() {
                   </div>
                   
                   {[
-                    { code: "RBI", name: "Reserve Bank of India", desc: "Banking regulations, NBFC norms & lending caps", active: true, color: "text-sky-400 border-sky-500/30 bg-sky-500/10" },
+                    { code: "RBI", name: "Reserve Bank of India", desc: "Banking regulations, NBFC norms & lending caps", active: true, color: "text-purple-400 border-purple-500/30 bg-purple-500/10" },
                     { code: "MCA", name: "Ministry of Corporate Affairs", desc: "Companies Act 2013, LLP rules, Director KYC", active: formData.business_type === "Private Limited" || formData.business_type === "LLP", color: "text-amber-400 border-amber-500/30 bg-amber-500/10" },
                     { code: "GST", name: "Goods & Services Tax Network", desc: "Monthly outward GSTR-1, GSTR-3B & Invoicing", active: formData.gst_registered === "Yes", color: "text-emerald-400 border-emerald-500/30 bg-emerald-500/10" },
                     { code: "SEBI", name: "Securities & Exchange Board", desc: "Fundraising, venture capital & securities laws", active: formData.industry === "Fintech" || formData.turnover_range === "Above ₹5Cr", color: "text-purple-400 border-purple-500/30 bg-purple-500/10" },
@@ -426,7 +426,7 @@ export default function Dashboard() {
                       className={`p-3.5 rounded-2xl border transition-all duration-300 flex items-start justify-between gap-3 ${
                         auth.active 
                           ? `${auth.color} shadow-[0_0_20px_rgba(0,0,0,0.4)]`
-                          : 'border-slate-800/60 bg-slate-950/40 opacity-40'
+                          : 'border-white/5 bg-white/[0.02] opacity-40'
                       }`}
                     >
                       <div className="space-y-0.5">
@@ -443,8 +443,8 @@ export default function Dashboard() {
                   ))}
                 </div>
 
-                <div className="p-4 rounded-2xl bg-cyan-950/30 border border-cyan-500/20 text-xs text-slate-300 flex items-center gap-3">
-                  <ShieldCheck className="w-5 h-5 text-cyan-400 shrink-0" />
+                <div className="p-4 rounded-2xl bg-purple-950/30 border border-purple-500/20 text-xs text-slate-300 flex items-center gap-3">
+                  <ShieldCheck className="w-5 h-5 text-purple-400 shrink-0" />
                   <span>All inputs remain encrypted and isolated within your tenant workspace.</span>
                 </div>
               </div>
@@ -452,10 +452,10 @@ export default function Dashboard() {
 
             {/* Right Column: Parameter Configuration Form */}
             <div className="lg:col-span-7">
-              <div className="bg-slate-900/40 backdrop-blur-2xl border border-slate-800/80 rounded-3xl p-6 lg:p-8 shadow-2xl relative overflow-hidden">
-                <div className="flex items-center justify-between pb-6 border-b border-slate-800/80">
+              <div className="bg-[#12131A]/90 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 lg:p-8 shadow-2xl relative overflow-hidden">
+                <div className="flex items-center justify-between pb-6 border-b border-white/10">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+                    <div className="w-10 h-10 rounded-2xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400">
                       <Briefcase className="w-5 h-5" />
                     </div>
                     <div>
@@ -490,11 +490,11 @@ export default function Dashboard() {
                             onClick={() => setFormData({ ...formData, business_type: c.id })}
                             className={`p-4 rounded-2xl border cursor-pointer transition-all duration-200 flex items-start gap-3 ${
                               isSelected
-                                ? 'bg-indigo-950/40 border-indigo-500/60 shadow-[0_0_20px_rgba(99,102,241,0.2)] text-white'
-                                : 'bg-slate-950/60 border-slate-800 hover:border-slate-700 text-slate-300'
+                                ? 'bg-purple-950/40 border-purple-500/60 shadow-[0_0_20px_rgba(168,85,247,0.2)] text-white'
+                                : 'bg-[#16161F] border-white/10 hover:border-white/20 text-slate-300'
                             }`}
                           >
-                            <div className={`p-2 rounded-xl ${isSelected ? 'bg-indigo-500 text-white' : 'bg-slate-900 text-slate-400'}`}>
+                            <div className={`p-2 rounded-xl ${isSelected ? 'bg-purple-600 text-white' : 'bg-[#181820] text-slate-400'}`}>
                               <Icon className="w-4 h-4" />
                             </div>
                             <div className="space-y-1">
@@ -522,8 +522,8 @@ export default function Dashboard() {
                             onClick={() => setFormData({ ...formData, industry: ind })}
                             className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all border ${
                               isSelected
-                                ? 'bg-cyan-950/50 border-cyan-500/60 text-cyan-300 shadow-[0_0_15px_rgba(56,189,248,0.2)]'
-                                : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                                ? 'bg-purple-950/50 border-purple-500/60 text-purple-300 shadow-[0_0_15px_rgba(168,85,247,0.2)]'
+                                : 'bg-[#16161F] border-white/10 text-slate-400 hover:text-slate-200 hover:bg-[#181820]'
                             }`}
                           >
                             {ind}
@@ -548,7 +548,7 @@ export default function Dashboard() {
                             className={`p-3 rounded-2xl border cursor-pointer text-center transition-all ${
                               isSelected
                                 ? 'bg-amber-950/40 border-amber-500/60 text-white shadow-[0_0_15px_rgba(245,158,11,0.2)]'
-                                : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                                : 'bg-[#16161F] border-white/10 text-slate-400 hover:text-slate-200 hover:bg-[#181820]'
                             }`}
                           >
                             <div className="font-bold text-xs">{tier.label}</div>
@@ -563,12 +563,12 @@ export default function Dashboard() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
                     
                     {/* GST Registration */}
-                    <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
+                    <div className="p-4 rounded-2xl bg-[#16161F] border border-white/10 flex items-center justify-between">
                       <div>
                         <div className="font-bold text-slate-200">Registered for GST?</div>
                         <div className="text-[10px] text-slate-500">Activates CBIC monthly compliance</div>
                       </div>
-                      <div className="flex bg-slate-900 rounded-xl p-1 border border-slate-800">
+                      <div className="flex bg-[#181820] rounded-xl p-1 border border-white/10">
                         {["Yes", "No"].map((v) => (
                           <button
                             type="button"
@@ -587,12 +587,12 @@ export default function Dashboard() {
                     </div>
 
                     {/* FDI Foreign Funding */}
-                    <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
+                    <div className="p-4 rounded-2xl bg-[#16161F] border border-white/10 flex items-center justify-between">
                       <div>
                         <div className="font-bold text-slate-200">Foreign Funding (FDI)?</div>
                         <div className="text-[10px] text-slate-500">Triggers FEMA & FC-GPR tracking</div>
                       </div>
-                      <div className="flex bg-slate-900 rounded-xl p-1 border border-slate-800">
+                      <div className="flex bg-[#181820] rounded-xl p-1 border border-white/10">
                         {["Yes", "No"].map((v) => (
                           <button
                             type="button"
@@ -609,7 +609,6 @@ export default function Dashboard() {
                         ))}
                       </div>
                     </div>
-
                   </div>
 
                   {/* Submit Button */}
@@ -617,7 +616,7 @@ export default function Dashboard() {
                     <button
                       type="submit"
                       disabled={isSubmittingProfile}
-                      className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-3 rounded-xl transition-colors shadow-sm disabled:opacity-50 flex items-center justify-center gap-2 text-xs tracking-wide"
+                      className="w-full bg-purple-600 hover:bg-purple-500 text-white font-medium py-3 rounded-xl transition-colors shadow-sm disabled:opacity-50 flex items-center justify-center gap-2 text-xs tracking-wide"
                     >
                       {isSubmittingProfile ? (
                         <>
@@ -829,30 +828,32 @@ export default function Dashboard() {
         {/* Drill-Down Modal */}
         {drillDownCategory && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity" onClick={() => setDrillDownCategory(null)} />
-            <div className="relative w-full max-w-xl bg-slate-900 border border-slate-700/80 shadow-2xl rounded-2xl p-6 overflow-hidden flex flex-col max-h-[85vh]">
-              <div className="flex justify-between items-center border-b border-slate-800 pb-4 mb-4">
-                <h3 className="text-sm font-semibold text-slate-100 flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-indigo-400" />
+            <div className="absolute inset-0 bg-black/75 backdrop-blur-md transition-opacity" onClick={() => setDrillDownCategory(null)} />
+            <div className="relative w-full max-w-xl bg-[#12131A] border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.8)] rounded-2xl p-6 overflow-hidden flex flex-col max-h-[85vh]">
+              <div className="flex justify-between items-center border-b border-white/10 pb-4 mb-4">
+                <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+                  <div className="p-1 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-400">
+                    <ShieldCheck className="w-4 h-4" />
+                  </div>
                   <span>{drillDownCategory} Compliance Review</span>
                 </h3>
                 <button 
                   onClick={() => setDrillDownCategory(null)} 
-                  className="text-slate-400 hover:text-slate-200 text-xs font-medium px-2 py-1 rounded hover:bg-slate-800 transition-colors"
+                  className="text-slate-400 hover:text-white text-xs font-semibold px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-colors"
                 >
                   Close
                 </button>
               </div>
-              <div className="flex-1 overflow-y-auto flex flex-col gap-2.5 pr-1">
+              <div className="flex-1 overflow-y-auto flex flex-col gap-2.5 pr-1 custom-scrollbar">
                 {drillDownChecks.length === 0 ? (
                   <p className="text-xs text-slate-500 text-center py-8">No specific compliance checks registered for this category.</p>
                 ) : (
                   drillDownChecks.map((check, idx) => (
-                    <div key={check.id || idx} className="p-3.5 rounded-xl bg-slate-950/50 border border-slate-800/80">
+                    <div key={check.id || idx} className="p-4 rounded-xl bg-[#161622] border border-white/10 hover:border-purple-500/30 transition-all">
                       <div className="flex items-start gap-3">
                         <div className={`mt-1 h-2 w-2 rounded-full shrink-0 ${check.passed ? 'bg-emerald-400' : 'bg-rose-400'}`} />
                         <div>
-                          <h4 className="text-xs font-semibold text-slate-200">{check.name || check.title || "Compliance Check"}</h4>
+                          <h4 className="text-xs font-semibold text-slate-100">{check.name || check.title || "Compliance Check"}</h4>
                           <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">{check.description || check.desc || "Standard statutory guideline applies."}</p>
                         </div>
                       </div>
