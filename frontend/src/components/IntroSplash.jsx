@@ -72,14 +72,14 @@ export default function IntroSplash({ onComplete }) {
             }`}
           />
 
-          {/* Central Monogram Badge */}
-          <div 
-            className={`w-12 h-12 rounded-xl bg-white flex items-center justify-center text-slate-950 font-black text-xl shadow-[0_0_30px_rgba(168,85,247,0.7)] relative z-10 transition-all duration-500 ease-out ${
+          {/* Central Logo Image */}
+          <img 
+            src="/vidi_icon_only.png"
+            alt="Vidi Logo"
+            className={`w-14 h-14 rounded-2xl object-contain shadow-[0_0_35px_rgba(124,58,237,0.8)] relative z-10 transition-all duration-500 ease-out ${
               stage >= 1 ? 'scale-100 opacity-100' : 'scale-75 opacity-0'
             }`}
-          >
-            R
-          </div>
+          />
         </div>
 
         {/* 2. Brand Name (Dedicated row, clean spacing) */}
@@ -89,7 +89,7 @@ export default function IntroSplash({ onComplete }) {
               stage >= 2 ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
             }`}
           >
-            RegIQ
+            Vidi
           </h1>
           <span 
             className={`text-xs font-mono font-medium px-2.5 py-0.5 rounded-full bg-purple-500/15 border border-purple-500/30 text-purple-300 transition-all duration-500 delay-100 ease-out ${

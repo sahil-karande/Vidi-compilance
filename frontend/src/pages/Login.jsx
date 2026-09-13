@@ -114,10 +114,12 @@ export default function Login() {
           onClick={() => navigate('/')} 
           className="flex items-center gap-2.5 cursor-pointer select-none group"
         >
-          <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-slate-950 font-black text-sm shadow-md transition-transform group-hover:scale-105">
-            R
-          </div>
-          <span className="text-xl font-bold tracking-tight text-white">RegIQ</span>
+          <img 
+            src="/vidi_icon_only.png" 
+            alt="Vidi Logo" 
+            className="w-8 h-8 rounded-lg object-contain shadow-md transition-transform group-hover:scale-105" 
+          />
+          <span className="text-xl font-bold tracking-tight text-white">Vidi</span>
         </div>
 
         <button 
@@ -145,11 +147,13 @@ export default function Login() {
           
           {/* Card Header */}
           <div className="text-center space-y-2">
-            <div className="w-11 h-11 rounded-xl bg-white flex items-center justify-center text-slate-950 font-black text-base mx-auto shadow-md mb-3">
-              R
-            </div>
+            <img 
+              src="/vidi_icon_only.png" 
+              alt="Vidi Logo" 
+              className="w-12 h-12 rounded-xl object-contain mx-auto shadow-lg mb-3" 
+            />
             <h1 className="text-2xl font-extrabold text-white tracking-tight">
-              Access RegIQ Matrix
+              Access Vidi Matrix
             </h1>
             <p className="text-xs text-slate-400">
               Sign in to your Indian SME compliance workspace.
@@ -271,7 +275,7 @@ export default function Login() {
 
       {/* ── Footer ── */}
       <footer className="w-full border-t border-white/5 py-4 px-6 text-center text-xs text-slate-500 relative z-10">
-        <p>© 2026 RegIQ. Source-grounded financial compliance assistant for Indian SMEs.</p>
+        <p>© 2026 Vidi. Source-grounded financial compliance assistant for Indian SMEs.</p>
       </footer>
 
     </div>

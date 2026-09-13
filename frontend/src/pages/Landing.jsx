@@ -62,10 +62,12 @@ export default function Landing() {
             onClick={() => navigate('/')} 
             className="flex items-center gap-2.5 cursor-pointer select-none group"
           >
-            <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center text-slate-950 font-black text-sm shadow-md transition-transform group-hover:scale-105">
-              R
-            </div>
-            <span className="text-xl font-bold tracking-tight text-white">RegIQ</span>
+            <img 
+              src="/vidi_icon_only.png" 
+              alt="Vidi Logo" 
+              className="w-8 h-8 rounded-lg object-contain shadow-md transition-transform group-hover:scale-105" 
+            />
+            <span className="text-xl font-bold tracking-tight text-white">Vidi</span>
           </div>
 
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-400">
@@ -794,7 +796,12 @@ export default function Landing() {
       {/* ── Footer (Exact NoteDeck style) ── */}
       <footer className="w-full border-t border-white/10 px-6 sm:px-12 lg:px-20 py-10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 bg-[#0A0B0E]">
         <div className="flex items-center gap-2">
-          <span className="font-bold text-white text-sm">RegIQ</span>
+          <img 
+            src="/vidi_icon_only.png" 
+            alt="Vidi Logo" 
+            className="w-4 h-4 rounded-sm object-contain" 
+          />
+          <span className="font-bold text-white text-sm">Vidi</span>
           <span>•</span>
           <span>© {new Date().getFullYear()} Regulatory Intelligence System. All rights reserved.</span>
         </div>

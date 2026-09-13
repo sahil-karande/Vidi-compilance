@@ -38,7 +38,7 @@ export default function ChatThread({ messages, mode = 'plain', onSelectCitation 
                 alignSelf: isUser ? 'flex-end' : 'flex-start'
               }}
             >
-              {isUser ? 'You' : 'RegIQ Engine'}
+              {isUser ? 'You' : 'VIDI ENGINE'}
             </span>
 
             {/* Bubble Content */}

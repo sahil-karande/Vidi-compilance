@@ -9,23 +9,23 @@ from typing import List, Optional
 
 class ScorecardPayload(BaseModel):
     business_type: str = Field(
-        ..., 
+        default="Private Limited", 
         description="Constitution format: e.g., 'Proprietorship', 'Partnership / LLP', 'Private Limited', 'Public Limited'"
     )
     industry: str = Field(
-        ..., 
+        default="Fintech", 
         description="SME Operational domain category matching active tracking rules"
     )
     turnover_range: str = Field(
-        ..., 
+        default="₹1Cr - ₹5Cr", 
         description="Annual structural revenue turnover bracket: e.g., 'Under ₹20 Lakhs', '₹1Cr - ₹5Cr'"
     )
     has_foreign_funding: str = Field(
-        ..., 
+        default="No", 
         description="String binary matching cross-border inflow: strictly 'Yes' or 'No'"
     )
     gst_registered: str = Field(
-        ..., 
+        default="Yes", 
         description="Active GSTIN registration lookup status: strictly 'Yes' or 'No'"
     )
 

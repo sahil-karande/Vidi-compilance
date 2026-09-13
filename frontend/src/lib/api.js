@@ -224,6 +224,36 @@ export const chatAPI = {
   deleteDocument: async (docId) => {
     const response = await api.delete(`/api/upload/${docId}`);
     return response.data;
+  },
+
+  getUnreadAlerts: async () => {
+    try {
+      const response = await api.get('/api/alerts/unread');
+      return response.data || [];
+    } catch (err) {
+      console.warn('[Vidi Alerts Core] Could not fetch unread alerts:', err);
+      return [];
+    }
+  },
+
+  getAlerts: async () => {
+    try {
+      const response = await api.get('/api/alerts');
+      return response.data || [];
+    } catch (err) {
+      console.warn('[Vidi Alerts Core] Could not fetch alerts:', err);
+      return [];
+    }
+  },
+
+  acknowledgeAlerts: async (alertIds) => {
+    try {
+      const response = await api.post('/api/alerts/acknowledge', { alert_ids: alertIds });
+      return response.data;
+    } catch (err) {
+      console.warn('[Vidi Alerts Core] Could not acknowledge alerts:', err);
+      return null;
+    }
   }
 };
 

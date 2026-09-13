@@ -30,11 +30,13 @@ function WorkspaceLayout({ children }) {
       <nav className="w-full bg-[#0D0E12]/90 backdrop-blur-md border-b border-white/10 px-6 lg:px-10 py-3 flex items-center justify-between sticky top-0 z-40">
         <div className="flex items-center gap-8">
           <Link to="/dashboard" className="flex items-center gap-2.5 group select-none">
-            <div className="w-7 h-7 rounded-lg bg-white flex items-center justify-center text-slate-950 text-xs font-black shadow-sm transition-transform group-hover:scale-105">
-              R
-            </div>
+            <img 
+              src="/vidi_icon_only.png" 
+              alt="Vidi Logo" 
+              className="w-7 h-7 rounded-lg object-contain shadow-sm transition-transform group-hover:scale-105" 
+            />
             <div className="flex items-center gap-2">
-              <span className="text-base font-bold tracking-tight text-white">RegIQ</span>
+              <span className="text-base font-bold tracking-tight text-white">Vidi</span>
               <span className="text-[10px] text-purple-300 bg-purple-500/10 border border-purple-500/20 px-2 py-0.5 rounded-full font-mono">
                 Compliance Hub
               </span>

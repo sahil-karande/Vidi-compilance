@@ -82,15 +82,16 @@ class RAGGenerator:
     """
 
     SYSTEM_PROMPT_BASE = (
-        "You are RegIQ, an advanced, authoritative regulatory compliance AI assistant for Indian SMEs.\n"
-        "Your core duty is to provide hyper-accurate, grounded answers using ONLY the text provided in the 'Context' section below.\n\n"
-        "CRITICAL RULES:\n"
-        "1. If the context does not contain the answer to the user's question, you MUST reply EXACTLY with: \n"
+        "You are Vidi, an authoritative, advanced regulatory compliance AI assistant for Indian businesses and SMEs.\n"
+        "Your core duty is to provide grounded, highly accurate, and actionable compliance answers using the statutory text, rules, and circulars provided in the 'Context' section below.\n\n"
+        "COMPLIANCE RULES:\n"
+        "1. Ground your response firmly in the provided context and statutory provisions. Reference citations using [Source X] (e.g., [Source 1]).\n"
+        "2. If the user asks about a specific state (e.g., Maharashtra) or condition, explain the applicable statutory rules (such as standard normal category state thresholds of ₹40 Lakhs for suppliers of goods under GST Council decisions / Section 22(1) vs ₹20 Lakhs for services / ₹1.5 Cr for composition) and invoicing requirements (e.g., GSTR-1, GSTR-3B, e-invoicing).\n"
+        "3. If specific state-level nuances are not differentiated in the retrieved circulars, state the standard national provisions and clarify that Maharashtra adheres to normal category state rules.\n"
+        "4. Do not invent non-existent circular numbers, section clauses, or dates.\n"
+        "5. Only if the provided context contains zero relevant regulatory information should you reply with: \n"
         "    \"I could not find this in the available regulatory documents.\"\n"
-        "    Do not attempt to use external knowledge, pre-trained facts, or extrapolate.\n"
-        "2. Do not invent circular numbers, section clauses, notification dates, or URLs under any circumstances.\n"
-        "3. Every factual claim or rule state MUST explicitly reference its source chunk index or citation details (e.g., [Source 1]).\n"
-        "4. If the user asks a follow-up question, use the conversation history to understand context (e.g., specific state, penalty, or compliance date referenced earlier).\n"
+        "6. If the user asks a follow-up question, use the conversation history to maintain context.\n"
     )
 
     PLAIN_MODE_INSTRUCTIONS = (
@@ -249,12 +250,12 @@ class RAGGenerator:
         if not gemini_key:
             raise ValueError("GEMINI_API_KEY is not configured.")
 
-        logger.info("[generator][failover] Invoking Google Gemini 2.5 Flash fallback engine...")
+        logger.info("[generator][failover] Invoking Google Gemini 1.5 Flash fallback engine...")
         import google.generativeai as genai
         genai.configure(api_key=gemini_key)
 
         model = genai.GenerativeModel(
-            model_name="gemini-2.5-flash",
+            model_name="gemini-1.5-flash",
             system_instruction=full_system_prompt
         )
 
@@ -332,7 +333,8 @@ class RAGGenerator:
                 llm = ChatGroq(
                     groq_api_key=self.api_key,
                     model_name=self.model,
-                    temperature=0.0
+                    temperature=0.0,
+                    max_tokens=1500
                 )
 
                 qa_prompt = PromptTemplate(
@@ -417,6 +419,7 @@ class RAGGenerator:
                 messages=messages,
                 model=self.model,
                 temperature=0.0,
+                max_tokens=1500,
             )
             answer_text = chat_completion.choices[0].message.content.strip()
 

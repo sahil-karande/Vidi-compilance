@@ -127,7 +127,13 @@ export default function Dashboard() {
           }
         };
 
-        const activePayload = user?.business_profile || formData;
+        const activePayload = {
+          business_type: user?.business_profile?.business_type || formData?.business_type || "Private Limited",
+          industry: user?.business_profile?.industry || formData?.industry || "Fintech",
+          turnover_range: user?.business_profile?.turnover_range || formData?.turnover_range || "₹1Cr - ₹5Cr",
+          has_foreign_funding: user?.business_profile?.has_foreign_funding || formData?.has_foreign_funding || "No",
+          gst_registered: user?.business_profile?.gst_registered || formData?.gst_registered || "Yes"
+        };
 
         try {
           activeAlerts = await chatAPI.getUnreadAlerts().catch(() => []);
