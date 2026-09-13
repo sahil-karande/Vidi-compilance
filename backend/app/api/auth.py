@@ -5,10 +5,11 @@ Fixed: Atomic Upsert to eliminate duplicate key value unique constraint violatio
 """
 
 import os
+import time
 import datetime
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Dict, Tuple
 
 from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -20,8 +21,11 @@ from app.config import settings
 from app.models.user import User, UserRole
 
 # ─────────────────────────────────────────────────────────────
-#  Configuration Matrix
+#  Configuration Matrix & Fast In-Memory Session Cache
 # ─────────────────────────────────────────────────────────────
+
+_user_cache: Dict[str, Tuple[User, float]] = {}  # user_id -> (User, timestamp)
+CACHE_TTL_SECONDS = 30.0
 
 JWT_AUDIENCE = "authenticated"
 bearer_scheme = HTTPBearer(auto_error=False)
@@ -147,6 +151,11 @@ def get_current_user(credentials: Optional[HTTPAuthorizationCredentials] = Depen
     user_id = payload.get("sub") or "dev-user-id"
     email = payload.get("email") or "test@vidi.in"
 
+    # 1. Fast in-memory cache check (prevents Supabase connection choke on parallel hits)
+    cached = _user_cache.get(user_id)
+    if cached and (time.time() - cached[1] < CACHE_TTL_SECONDS):
+        return cached[0]
+
     # Fetch dynamic profile from Supabase profiles matrix
     admin_client = get_supabase_admin()
     try:
@@ -209,13 +218,15 @@ def get_current_user(credentials: Optional[HTTPAuthorizationCredentials] = Depen
     except Exception as usage_err:
         logger.warning(f"[auth] Usage tracking layer exception bypassed to prevent downtime: {usage_err}")
 
-    return User(
+    resolved_user = User(
         user_id=user_id,
         email=email,
         name=user_name,
         role=resolved_role,
         business_profile=biz_profile,
     )
+    _user_cache[user_id] = (resolved_user, time.time())
+    return resolved_user
 
 
 def get_optional_user(credentials: Optional[HTTPAuthorizationCredentials] = Depends(bearer_scheme)) -> Optional[User]:

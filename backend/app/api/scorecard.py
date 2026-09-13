@@ -133,10 +133,15 @@ def analyze_with_llm_fallback(profile: ScorecardPayload, rule_results: Dict[str,
     m_p = rule_results["mca"]["base_score"]
 
     avg_score = (g_p + r_p + s_p + m_p) / 4
-    health_msg = f"{int(avg_score)}% - Balanced Posture Rating" if avg_score >= 75 else f"{int(avg_score)}% - Remediation Priorities Recommended"
+    if avg_score >= 80:
+        health_msg = f"{int(avg_score)}% - Stable Active Posture"
+    elif avg_score >= 60:
+        health_msg = f"{int(avg_score)}% - Moderate Compliance Alert"
+    else:
+        health_msg = f"{int(avg_score)}% - Remediation Priorities Recommended"
 
     # Construct clean response using standardized schemas
-    fallback_response = ScorecardResponse(
+    response = ScorecardResponse(
         overall_status=health_msg,
         scores={
             "gst": AxisScoreDetail(percentage=g_p, status=assign_label(g_p), checks=rule_results["gst"]["checks"]),
@@ -146,48 +151,38 @@ def analyze_with_llm_fallback(profile: ScorecardPayload, rule_results: Dict[str,
         }
     )
 
-    if not GROQ_API_KEY:
-        logger.warning("[scorecard] Groq API key missing. Returning structural rule base matrix directly.")
-        return fallback_response
+    # Optional fast LLM enhancement with tight 0.8s timeout to avoid dashboard stalls
+    if GROQ_API_KEY:
+        try:
+            with httpx.Client(timeout=0.8) as client:
+                headers = {
+                    "Authorization": f"Bearer {GROQ_API_KEY}",
+                    "Content-Type": "application/json"
+                }
+                body = {
+                    "model": "llama3-8b-8192",
+                    "messages": [
+                        {
+                            "role": "system",
+                            "content": "You are the operational posture engine for RegIQ. Respond ONLY with a single clean string. Do not output code blocks, JSON formatting, or explanations."
+                        },
+                        {
+                            "role": "user",
+                            "content": f"Evaluate context parameters: Type={profile.business_type}, Sector={profile.industry}, Turnover={profile.turnover_range}. Current calculated compliance matrices list scores as: GST={g_p}, RBI={r_p}, SEBI={s_p}, MCA={m_p}. Generate a dynamic description string matching exactly this summary format: '82% - Stable Active Posture'."
+                        }
+                    ],
+                    "temperature": 0.2,
+                    "max_tokens": 30
+                }
+                res = client.post("https://api.groq.com/openai/v1/chat/completions", json=body, headers=headers)
+                if res.status_code == 200:
+                    text_res = res.json()["choices"][0]["message"]["content"].strip().replace('"', '')
+                    if "%" in text_res:
+                        response.overall_status = text_res
+        except Exception:
+            pass
 
-    try:
-        # Utilize httpx synchronously to target Groq's chat completions endpoint endpoint
-        with httpx.Client() as client:
-            headers = {
-                "Authorization": f"Bearer {GROQ_API_KEY}",
-                "Content-Type": "application/json"
-            }
-            body = {
-                "model": "llama3-8b-8192",
-                "messages": [
-                    {
-                        "role": "system",
-                        "content": "You are the operational posture engine for RegIQ. Respond ONLY with a single clean string. Do not output code blocks, JSON formatting, or explanations."
-                    },
-                    {
-                        "role": "user",
-                        "content": f"Evaluate context parameters: Type={profile.business_type}, Sector={profile.industry}, Turnover={profile.turnover_range}. Current calculated compliance matrices list scores as: GST={g_p}, RBI={r_p}, SEBI={s_p}, MCA={m_p}. Generate a dynamic description string matching exactly this summary format: '82% - Stable Active Posture'."
-                    }
-                ],
-                "temperature": 0.2,
-                "max_tokens": 30
-            }
-            
-            response = client.post("https://api.groq.com/openai/v1/chat/completions", json=body, headers=headers, timeout=5.0)
-            
-            if response.status_code == 200:
-                res_data = response.json()
-                text_res = res_data["choices"][0]["message"]["content"].strip().replace('"', '')
-                if "%" in text_res:
-                    fallback_response.overall_status = text_res
-                    logger.info(f"[scorecard] Groq telemetry calibrated status to: {text_res}")
-            else:
-                logger.error(f"[scorecard] Groq API error response: {response.text}")
-
-        return fallback_response
-    except Exception as e:
-        logger.error(f"[scorecard] Groq inference fallback pass encountered an issue: {e}")
-        return fallback_response
+    return response
 
 
 # --- GET Router Method to handle initial Dashboard Page hydration ---
