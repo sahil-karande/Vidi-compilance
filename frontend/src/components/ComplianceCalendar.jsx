@@ -158,7 +158,7 @@ export default function ComplianceCalendar({ deadlines = [], onDeadlineClick }) 
     <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 w-full text-slate-200 font-sans relative">
       
       {/* 1. INTERACTIVE SYSTEM MONTH GRID */}
-      <div className="xl:col-span-2 bg-[#12131A]/95 backdrop-blur-xl rounded-2xl border border-white/10 p-5 sm:p-6 flex flex-col shadow-xl">
+      <div className="xl:col-span-2 bg-[#12131A]/95 backdrop-blur-xl rounded-2xl border border-white/10 p-5 sm:p-6 flex flex-col shadow-xl self-start">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
           <div className="flex items-center gap-2.5">
             <div className="p-2 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400">
@@ -215,10 +215,10 @@ export default function ComplianceCalendar({ deadlines = [], onDeadlineClick }) 
           <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
         </div>
 
-        {/* Matrix Mapping */}
-        <div className="grid grid-cols-7 gap-2 flex-1">
+        {/* Matrix Mapping - Uniform, clean, compact cell heights */}
+        <div className="grid grid-cols-7 gap-2">
           {Array.from({ length: firstDayIndex }).map((_, i) => (
-            <div key={`empty-${i}`} className="min-h-[104px] bg-white/[0.01] rounded-xl border border-white/[0.03]"></div>
+            <div key={`empty-${i}`} className="h-[88px] sm:h-[94px] bg-white/[0.01] rounded-xl border border-white/[0.03]"></div>
           ))}
           
           {Array.from({ length: daysInMonth }).map((_, i) => {
@@ -238,7 +238,7 @@ export default function ComplianceCalendar({ deadlines = [], onDeadlineClick }) 
                     setSelectedDateStr(isSelected ? null : currentDayStr);
                   }
                 }}
-                className={`min-h-[104px] p-2 border rounded-xl flex flex-col justify-between transition-all relative select-none ${
+                className={`h-[88px] sm:h-[94px] p-2 border rounded-xl flex flex-col gap-1 transition-all relative select-none ${
                   cellDeadlines.length > 0 ? 'cursor-pointer hover:border-purple-400/50 hover:bg-[#191924]' : 'bg-[#15151E]'
                 } ${
                   isSelected 
@@ -248,8 +248,8 @@ export default function ComplianceCalendar({ deadlines = [], onDeadlineClick }) 
                     : 'border-white/10'
                 }`}
               >
-                {/* Top Row: Date Number and Notice Indicator */}
-                <div className="flex items-center justify-between">
+                {/* Top Row: Date Number and Notice Count Indicator */}
+                <div className="flex items-center justify-between shrink-0">
                   <span className={`text-[12px] font-bold ${
                     isSelected ? 'text-purple-300 font-black' : isToday ? 'text-purple-400 font-extrabold' : 'text-slate-400'
                   }`}>
@@ -257,15 +257,15 @@ export default function ComplianceCalendar({ deadlines = [], onDeadlineClick }) 
                   </span>
                   
                   {cellDeadlines.length > 0 && (
-                    <span className="inline-flex items-center gap-1 text-[9px] font-bold text-slate-400 bg-white/5 px-1.5 py-0.5 rounded-full border border-white/10">
+                    <span className="inline-flex items-center gap-1 text-[9px] font-bold text-slate-400 bg-white/5 px-1.5 py-0.2 rounded-full border border-white/10">
                       <span className="h-1.5 w-1.5 rounded-full bg-purple-400 animate-pulse"></span>
                       {cellDeadlines.length}
                     </span>
                   )}
                 </div>
                 
-                {/* Middle/Bottom Area: Notice Badges Clearly Legible */}
-                <div className="flex flex-col gap-1.5 mt-1 overflow-visible">
+                {/* Badges directly below date number */}
+                <div className="flex flex-col gap-1 overflow-hidden mt-0.5">
                   {cellDeadlines.map(dl => {
                     const badge = getNoticeBadge(dl);
                     return (
@@ -278,16 +278,14 @@ export default function ComplianceCalendar({ deadlines = [], onDeadlineClick }) 
                         }}
                         onMouseEnter={(e) => handleNoticeMouseEnter(e, dl)}
                         onMouseLeave={handleNoticeMouseLeave}
-                        className={`text-[10px] leading-tight px-1.5 py-1 rounded-md border flex items-center justify-between font-medium transition-all shadow-sm ${badge.badgeClass}`}
+                        className={`text-[9.5px] leading-tight px-1.5 py-0.5 rounded-md border flex items-center gap-1 font-medium transition-all shadow-sm ${badge.badgeClass}`}
                       >
-                        <div className="flex items-center gap-1 min-w-0 truncate">
-                          <span className="text-[8.5px] font-black uppercase tracking-wider px-1 py-0.2 rounded bg-black/40 border border-white/10 shrink-0">
-                            {badge.code}
-                          </span>
-                          <span className="font-semibold truncate text-[10px]">
-                            {badge.label}
-                          </span>
-                        </div>
+                        <span className="text-[8px] font-black uppercase tracking-wider px-1 py-0.2 rounded bg-black/40 border border-white/10 shrink-0">
+                          {badge.code}
+                        </span>
+                        <span className="font-semibold truncate text-[9.5px]">
+                          {badge.label}
+                        </span>
                       </div>
                     );
                   })}
