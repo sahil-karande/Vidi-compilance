@@ -6,7 +6,7 @@ Orchestrates API modules, handles global exception layers, and cleans up pre-fli
 
 import asyncio
 from contextlib import asynccontextmanager
-from datetime import datetime
+from datetime import datetime, timedelta
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -61,22 +61,53 @@ async def _warmup_rag_pipeline():
     except Exception as e:
         logger.warning(f"[lifespan] Warmup completed with notice: {e}")
 
+def _get_next_sync_datetime(last_run: datetime | None = None) -> datetime:
+    """
+    Calculates the exact next execution timestamp at 02:30 AM IST (inside the 1:00 AM - 4:00 AM low-firewall window)
+    on alternate days (every 48 hours).
+    """
+    now = datetime.now()
+    if last_run is None:
+        target = now.replace(hour=2, minute=30, second=0, microsecond=0)
+        if now >= target:
+            target += timedelta(days=1)
+        return target
+    else:
+        target = last_run + timedelta(days=2)
+        target = target.replace(hour=2, minute=30, second=0, microsecond=0)
+        while target <= now:
+            target += timedelta(days=2)
+        return target
+
 async def _run_scheduled_sync():
-    """Periodically checks and synchronizes newly issued regulatory circulars (runs every 12 hours)."""
-    await asyncio.sleep(60)  # Wait 1 minute after server start before first background sync check
+    """
+    Automated Regulatory Sync Engine:
+    Executes on alternate days (every 48 hours) precisely at 02:30 AM (between 1:00 AM and 4:00 AM IST)
+    when portal firewalls, rate limits, and server loads across RBI, SEBI, FEMA, MCA, and GST are lowest.
+    """
+    last_run: datetime | None = None
     while True:
+        next_run = _get_next_sync_datetime(last_run)
+        delay = (next_run - datetime.now()).total_seconds()
+        hours = int(delay // 3600)
+        mins = int((delay % 3600) // 60)
+        logger.info(
+            f"[auto-sync] Next regulatory delta sync scheduled for {next_run.strftime('%Y-%m-%d %H:%M:%S')} "
+            f"(in {hours}h {mins}m) [Alternate Days / 1:00 AM - 4:00 AM Low-Firewall Window]."
+        )
+        await asyncio.sleep(max(1.0, delay))
+
+        last_run = datetime.now()
         try:
-            logger.info("[auto-sync] Running scheduled regulatory delta sync...")
+            logger.info("[auto-sync] Entering low-firewall window (01:00 AM - 04:00 AM). Starting automated delta sync for RBI, SEBI, FEMA, MCA, GST...")
             loop = asyncio.get_running_loop()
             def _sync():
                 from pipeline.auto_sync import run_delta_sync
                 return run_delta_sync()
             result = await loop.run_in_executor(None, _sync)
-            logger.info(f"[auto-sync] Scheduled sync finished: {result.get('new_documents_added', 0)} new documents ingested.")
+            logger.info(f"[auto-sync] Scheduled sync complete: {result.get('new_documents_added', 0)} new documents ingested.")
         except Exception as err:
             logger.warning(f"[auto-sync] Scheduled sync notice: {err}")
-        # Wait 12 hours between runs
-        await asyncio.sleep(12 * 3600)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

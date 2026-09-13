@@ -2,8 +2,8 @@ name: Automated Regulatory Delta Sync
 
 on:
   schedule:
-    # Runs daily at 02:00 UTC (07:30 AM IST)
-    - cron: '0 2 * * *'
+    # Runs on alternate days at 21:00 UTC (02:30 AM IST, during the 1:00 AM - 4:00 AM low-firewall window)
+    - cron: '0 21 */2 * *'
   workflow_dispatch: # Allows manual on-demand execution via GitHub Actions dashboard
 
 jobs:

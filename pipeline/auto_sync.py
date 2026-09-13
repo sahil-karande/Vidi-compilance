@@ -150,6 +150,62 @@ def fetch_latest_sebi_circulars() -> List[Dict[str, str]]:
         logger.warning(f"Could not connect to live SEBI/AMFI portal: {e}")
     return items
 
+def fetch_latest_fema_notifications() -> List[Dict[str, str]]:
+    """Fetches latest FEMA (Foreign Exchange Management Act) notifications from RBI FED."""
+    url = "https://www.rbi.org.in/scripts/BS_FemaNotifications.aspx"
+    items = []
+    try:
+        resp = requests.get(url, headers=HEADERS, timeout=15)
+        if resp.status_code == 200:
+            soup = BeautifulSoup(resp.text, "html.parser")
+            for link in soup.find_all("a", href=True):
+                href = link["href"]
+                text = link.get_text(strip=True)
+                if (".pdf" in href.lower() or "notification" in href.lower() or "fema" in href.lower()) and len(text) > 10:
+                    full_url = href if href.startswith("http") else f"https://www.rbi.org.in/scripts/{href}"
+                    items.append({
+                        "corpus": "fema",
+                        "title": text,
+                        "url": full_url,
+                        "identifier": hashlib.sha256(full_url.encode()).hexdigest()[:16]
+                    })
+    except Exception as e:
+        logger.warning(f"Could not connect to live FEMA portal: {e}")
+    return items
+
+def fetch_latest_mca_notifications() -> List[Dict[str, str]]:
+    """Fetches latest corporate circulars and notifications from MCA (Ministry of Corporate Affairs)."""
+    # MCA endpoint - accessible during 1:00 AM - 4:00 AM low-firewall window
+    url = "https://www.mca.gov.in/content/mca/global/en/acts-rules/ebooks/notifications.html"
+    items = []
+    try:
+        session = requests.Session()
+        session.headers.update(HEADERS)
+        session.headers.update({
+            "Referer": "https://www.mca.gov.in/",
+            "Sec-Fetch-Dest": "document",
+            "Sec-Fetch-Mode": "navigate",
+        })
+        resp = session.get(url, timeout=15)
+        if resp.status_code == 200:
+            soup = BeautifulSoup(resp.text, "html.parser")
+            for link in soup.find_all("a", href=True):
+                href = link["href"]
+                text = link.get_text(strip=True)
+                if (".pdf" in href.lower() or "notification" in href.lower() or "circular" in href.lower()) and len(text) > 8:
+                    full_url = href if href.startswith("http") else f"https://www.mca.gov.in{href}"
+                    items.append({
+                        "corpus": "mca",
+                        "title": text,
+                        "url": full_url,
+                        "identifier": hashlib.sha256(full_url.encode()).hexdigest()[:16]
+                    })
+        else:
+            logger.info(f"MCA portal status: {resp.status_code} (firewall active outside 1-4 AM window).")
+    except Exception as e:
+        logger.warning(f"Could not connect to live MCA portal: {e}")
+    return items
+
 def run_delta_sync() -> Dict[str, Any]:
     """
     Executes an incremental delta sync across all regulatory bodies:
@@ -162,11 +218,13 @@ def run_delta_sync() -> Dict[str, Any]:
     ledger = load_sync_ledger()
     new_docs_found = []
 
-    # 1. Query portals
+    # 1. Query portals (RBI, SEBI, FEMA, MCA, GST)
     portal_fetchers = [
         ("rbi", fetch_latest_rbi_notifications),
-        ("gst", fetch_latest_gst_notifications),
         ("sebi", fetch_latest_sebi_circulars),
+        ("fema", fetch_latest_fema_notifications),
+        ("mca", fetch_latest_mca_notifications),
+        ("gst", fetch_latest_gst_notifications),
     ]
 
     for corpus_name, fetcher in portal_fetchers:
