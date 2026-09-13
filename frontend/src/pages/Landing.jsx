@@ -63,10 +63,6 @@ export default function Landing() {
   const heroHeaderOpacity = Math.max(0, Math.min(1, 1 - scrollY / 260));
   const heroHeaderTranslateY = -Math.min(50, scrollY * 0.25);
 
-  // Dynamic scroll opacity for interactive preview window: stays 1 until scroll passes ~280px, then smoothly fades out
-  const previewCardOpacity = scrollY < 280 ? 1 : Math.max(0, Math.min(1, 1 - (scrollY - 280) / 360));
-  const previewCardTranslateY = scrollY < 280 ? 0 : -Math.min(45, (scrollY - 280) * 0.18);
-
   const toggleCardFlip = (code) => {
     setFlippedCards(prev => ({
       ...prev,
@@ -174,7 +170,7 @@ export default function Landing() {
 
           {/* Hero Action Buttons */}
           <RevealOnScroll delay={420} enabled={heroEntered}>
-            <div className="flex flex-col sm:flex-row items-center gap-4 justify-center w-full max-w-md mb-20">
+            <div className="flex flex-col sm:flex-row items-center gap-4 justify-center w-full max-w-md mb-12">
               <button 
                 onClick={() => navigate('/login')} 
                 className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-[#181820] hover:bg-[#20202c] border border-white/15 text-white font-semibold text-sm transition-all duration-300 shadow-lg hover:border-purple-500/40 hover:shadow-[0_0_25px_rgba(168,85,247,0.2)] hover:scale-[1.02] flex items-center justify-center gap-2"
@@ -193,18 +189,9 @@ export default function Landing() {
           </RevealOnScroll>
         </div>
 
-        {/* ── Interactive Product Preview Window (NoteDeck Dark Card Style) with scroll fade-out ── */}
-        <div
-          style={{
-            opacity: previewCardOpacity,
-            transform: `translateY(${previewCardTranslateY}px)`,
-            pointerEvents: previewCardOpacity < 0.05 ? 'none' : 'auto',
-            willChange: 'opacity, transform',
-          }}
-          className="w-full max-w-5xl mb-28 flex justify-center transition-opacity duration-150"
-        >
-          <RevealOnScroll delay={540} duration={850} enabled={heroEntered} className="w-full">
-            <div className="w-full rounded-2xl bg-[#13131A] border border-white/10 shadow-2xl overflow-hidden text-left">
+        {/* ── Interactive Product Preview Window (NoteDeck Dark Card Style) ── */}
+        <RevealOnScroll delay={540} duration={850} enabled={heroEntered} className="w-full max-w-5xl mb-14">
+          <div className="w-full rounded-2xl bg-[#13131A] border border-white/10 shadow-2xl overflow-hidden text-left">
             
             {/* Window Header */}
             <div className="px-5 py-3.5 border-b border-white/10 bg-[#0E0F14] flex items-center justify-between">
@@ -307,10 +294,9 @@ export default function Landing() {
             </div>
           </div>
           </RevealOnScroll>
-        </div>
 
         {/* ── Features Section (Exact NoteDeck style cards with hover lift) ── */}
-        <div id="features" className="w-full pt-12 pb-24 text-left space-y-12">
+        <div id="features" className="w-full pt-2 pb-20 text-left space-y-12">
           <RevealOnScroll delay={50}>
             <div className="max-w-xl space-y-2">
               <span className="text-xs font-mono font-semibold text-purple-400 uppercase tracking-wider">

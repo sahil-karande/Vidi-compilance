@@ -12,8 +12,8 @@ export default function RevealOnScroll({
   delay = 0,
   duration = 700,
   direction = 'up', // 'up' | 'down' | 'left' | 'right'
-  threshold = 0.1,
-  rootMargin = '-60px 0px -60px 0px',
+  threshold = 0.05,
+  rootMargin = '0px 0px -40px 0px',
   once = false,
   fadeOnLeave = true,
   enabled = true,
@@ -30,7 +30,7 @@ export default function RevealOnScroll({
     // Check immediate visibility on mount (for above-the-fold content)
     const rect = el.getBoundingClientRect();
     const windowHeight = window.innerHeight || document.documentElement.clientHeight;
-    if (rect.top < windowHeight - 40 && rect.bottom > 60) {
+    if (rect.top < windowHeight && rect.bottom > 0) {
       const timer = setTimeout(() => {
         setStatus('visible');
       }, delay || 40);
@@ -45,8 +45,8 @@ export default function RevealOnScroll({
             observer.unobserve(el);
           }
         } else if (!once && fadeOnLeave) {
-          // If element scrolled above viewport top
-          if (entry.boundingClientRect.top < 60) {
+          // Element left viewport: check if it exited out the top or bottom
+          if (entry.boundingClientRect.bottom <= 0) {
             setStatus('hidden-top');
           } else {
             setStatus('hidden-bottom');
