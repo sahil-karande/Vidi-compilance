@@ -17,6 +17,7 @@ import Explorer from './pages/Explorer';
 import PricingPage from './components/PricingPage'; // <-- Import updated Pricing Page Component
 import BackgroundOrbs from './components/BackgroundOrbs';
 import PwaInstallPrompt, { PwaNavButton } from './components/PwaInstallPrompt';
+import { PwaProvider } from './context/PwaContext';
 
 // Premium Enterprise Navigation Layout
 function WorkspaceLayout({ children }) {
@@ -128,89 +129,91 @@ function WorkspaceLayout({ children }) {
 export default function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        {/* Global PWA Install Notification Prompt for Desktop & Mobile */}
-        <PwaInstallPrompt />
+      <PwaProvider>
+        <BrowserRouter>
+          {/* Global PWA Install Notification Prompt for Desktop & Mobile */}
+          <PwaInstallPrompt />
 
-        <Routes>
-          {/* Public Routing Interfaces */}
-          <Route path="/" element={<Landing />} />
-          <Route path="/login" element={<Login />} />
+          <Routes>
+            {/* Public Routing Interfaces */}
+            <Route path="/" element={<Landing />} />
+            <Route path="/login" element={<Login />} />
 
-          {/* Protected SME Workspace Components Wrapped in the premium Layout */}
-          <Route
-            path="/dashboard"
-            element={
-              <AuthGuard>
-                <WorkspaceLayout>
-                  <Dashboard />
-                </WorkspaceLayout>
-              </AuthGuard>
-            }
-          />
-          <Route
-            path="/chat"
-            element={
-              <AuthGuard>
-                <WorkspaceLayout>
-                  <Chat />
-                </WorkspaceLayout>
-              </AuthGuard>
-            }
-          />
-          <Route
-            path="/explorer"
-            element={
-              <AuthGuard>
-                <WorkspaceLayout>
-                  <Explorer />
-                </WorkspaceLayout>
-              </AuthGuard>
-            }
-          />
-          <Route
-            path="/upload"
-            element={
-              <AuthGuard>
-                <WorkspaceLayout>
-                  <Upload />
-                </WorkspaceLayout>
-              </AuthGuard>
-            }
-          />
-          <Route
-            path="/pricing"
-            element={
-              <AuthGuard>
-                <WorkspaceLayout>
-                  {/* Dynamic user prefill contextual hook routing wrapper */}
-                  <PricingRoutingWrapper />
-                </WorkspaceLayout>
-              </AuthGuard>
-            }
-          />
-          <Route
-            path="/settings"
-            element={
-              <AuthGuard>
-                <WorkspaceLayout>
-                  <Settings />
-                </WorkspaceLayout>
-              </AuthGuard>
-            }
-          />
-          <Route
-            path="/test-auth"
-            element={
-              <AuthGuard>
-                <TestAuth />
-              </AuthGuard>
-            }
-          />
+            {/* Protected SME Workspace Components Wrapped in the premium Layout */}
+            <Route
+              path="/dashboard"
+              element={
+                <AuthGuard>
+                  <WorkspaceLayout>
+                    <Dashboard />
+                  </WorkspaceLayout>
+                </AuthGuard>
+              }
+            />
+            <Route
+              path="/chat"
+              element={
+                <AuthGuard>
+                  <WorkspaceLayout>
+                    <Chat />
+                  </WorkspaceLayout>
+                </AuthGuard>
+              }
+            />
+            <Route
+              path="/explorer"
+              element={
+                <AuthGuard>
+                  <WorkspaceLayout>
+                    <Explorer />
+                  </WorkspaceLayout>
+                </AuthGuard>
+              }
+            />
+            <Route
+              path="/upload"
+              element={
+                <AuthGuard>
+                  <WorkspaceLayout>
+                    <Upload />
+                  </WorkspaceLayout>
+                </AuthGuard>
+              }
+            />
+            <Route
+              path="/pricing"
+              element={
+                <AuthGuard>
+                  <WorkspaceLayout>
+                    {/* Dynamic user prefill contextual hook routing wrapper */}
+                    <PricingRoutingWrapper />
+                  </WorkspaceLayout>
+                </AuthGuard>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <AuthGuard>
+                  <WorkspaceLayout>
+                    <Settings />
+                  </WorkspaceLayout>
+                </AuthGuard>
+              }
+            />
+            <Route
+              path="/test-auth"
+              element={
+                <AuthGuard>
+                  <TestAuth />
+                </AuthGuard>
+              }
+            />
 
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </BrowserRouter>
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </BrowserRouter>
+      </PwaProvider>
     </AuthProvider>
   );
 }

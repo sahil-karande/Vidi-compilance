@@ -14,8 +14,15 @@
     <meta name="apple-mobile-web-app-title" content="Vidi" />
     <meta name="application-name" content="Vidi" />
     <meta name="msapplication-TileColor" content="#0D0E12" />
-    <meta name="description" content="Vidi — Real-time AI-powered Indian financial, tax, and corporate compliance intelligence engine." />
     <title>Vidi — Indian Compliance Intelligence &amp; Legal AI</title>
+    <script>
+      // Capture beforeinstallprompt immediately before React bundle execution
+      window.addEventListener('beforeinstallprompt', function(e) {
+        e.preventDefault();
+        window.__vidi_deferred_prompt = e;
+        window.dispatchEvent(new Event('vidi_prompt_captured'));
+      });
+    </script>
   </head>
   <body>
     <div id="root"></div>
