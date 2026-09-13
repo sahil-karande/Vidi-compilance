@@ -46,15 +46,16 @@ export default function PwaInstallPrompt() {
     isInstallable,
     isInstalled,
     isIOS,
+    isAndroid,
+    isDesktop,
     showBanner,
-    showIOSModal,
-    hasNativePrompt,
+    showGuideModal,
     promptInstall,
     dismissBanner,
-    closeIOSModal
+    closeGuideModal
   } = usePwaInstall();
 
-  if (isInstalled || (!showBanner && !showIOSModal)) {
+  if (isInstalled || (!showBanner && !showGuideModal)) {
     return null;
   }
 
@@ -63,10 +64,10 @@ export default function PwaInstallPrompt() {
       {/* 1. FLOATING DESKTOP BANNER (Bottom-Right Floating Card) */}
       {showBanner && isInstallable && (
         <aside
-          aria-label="PWA install prompt"
-          className="hidden md:flex fixed bottom-6 right-6 z-50 max-w-sm w-full bg-[#13141B]/95 backdrop-blur-xl 
-          border border-purple-500/30 rounded-2xl p-4 shadow-[0_20px_50px_rgba(0,0,0,0.8),0_0_25px_rgba(168,85,247,0.15)] 
-          animate-in fade-in slide-in-from-bottom-5 duration-300 flex-col gap-3"
+          aria-label="App install prompt"
+          className="hidden md:flex fixed bottom-6 right-6 z-[10001] max-w-sm w-full bg-[#13141B]/95 backdrop-blur-xl 
+          border border-purple-500/40 rounded-2xl p-4 shadow-[0_20px_50px_rgba(0,0,0,0.8),0_0_30px_rgba(168,85,247,0.25)] 
+          animate-in fade-in slide-in-from-bottom-5 duration-500 flex-col gap-3"
         >
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
@@ -98,14 +99,14 @@ export default function PwaInstallPrompt() {
               onClick={promptInstall}
               className="flex-1 inline-flex items-center justify-center gap-2 py-2 px-3.5 rounded-xl text-xs font-semibold 
               bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 
-              text-white shadow-[0_4px_16px_rgba(147,51,234,0.4)] transition-all active:scale-95"
+              text-white shadow-[0_4px_16px_rgba(147,51,234,0.4)] transition-all active:scale-95 cursor-pointer"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Install App</span>
             </button>
             <button
               onClick={dismissBanner}
-              className="py-2 px-3 rounded-xl text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-white/5 transition-colors"
+              className="py-2 px-3 rounded-xl text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-white/5 transition-colors cursor-pointer"
             >
               Not now
             </button>
@@ -116,10 +117,10 @@ export default function PwaInstallPrompt() {
       {/* 2. MOBILE BOTTOM INSTALL BANNER (Thumb-friendly mobile bottom bar) */}
       {showBanner && isInstallable && (
         <aside
-          aria-label="PWA mobile install prompt"
-          className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#13141B]/95 backdrop-blur-2xl 
-          border-t border-purple-500/30 px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] 
-          shadow-[0_-10px_35px_rgba(0,0,0,0.8)] animate-in slide-in-from-bottom duration-300"
+          aria-label="App mobile install prompt"
+          className="md:hidden fixed bottom-0 left-0 right-0 z-[10001] bg-[#13141B]/95 backdrop-blur-2xl 
+          border-t border-purple-500/40 px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] 
+          shadow-[0_-10px_35px_rgba(0,0,0,0.9)] animate-in slide-in-from-bottom duration-500"
         >
           <div className="flex items-center justify-between gap-3 mb-2.5">
             <div className="flex items-center gap-2.5 min-w-0">
@@ -148,7 +149,7 @@ export default function PwaInstallPrompt() {
             onClick={promptInstall}
             className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-bold 
             bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 
-            text-white shadow-[0_4px_16px_rgba(147,51,234,0.4)] active:scale-98 transition-all"
+            text-white shadow-[0_4px_16px_rgba(147,51,234,0.4)] active:scale-98 transition-all cursor-pointer"
           >
             <Download className="w-4 h-4" />
             <span>Install Vidi on this Device</span>
@@ -156,24 +157,28 @@ export default function PwaInstallPrompt() {
         </aside>
       )}
 
-      {/* 3. STEP-BY-STEP INSTALL GUIDE MODAL (For iOS Safari or Browsers needing manual 'Add to Home Screen') */}
-      {showIOSModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
+      {/* 3. STEP-BY-STEP INSTALL GUIDE MODAL */}
+      {showGuideModal && (
+        <div 
+          className="fixed inset-0 z-[10002] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
+          onClick={closeGuideModal}
+        >
           <div
             className="w-full max-w-md bg-[#13141B] border border-purple-500/30 rounded-2xl p-6 shadow-2xl relative"
             role="dialog"
             aria-modal="true"
             aria-labelledby="modal-title"
+            onClick={(e) => e.stopPropagation()}
           >
             <button
-              onClick={closeIOSModal}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg hover:bg-white/10"
+              onClick={closeGuideModal}
+              className="absolute top-4 right-4 text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
 
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-xl bg-purple-600/20 border border-purple-500/40 p-2 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-purple-600/20 border border-purple-500/40 p-2 flex items-center justify-center shrink-0">
                 <img src="/vidi_icon_only.png" alt="Vidi Icon" className="w-full h-full object-contain" />
               </div>
               <div>
@@ -181,62 +186,157 @@ export default function PwaInstallPrompt() {
                   Install Vidi on your Device
                 </h3>
                 <p className="text-xs text-slate-400">
-                  Follow these quick steps to add Vidi to your home screen or desktop
+                  {isIOS 
+                    ? 'Add Vidi directly to your iPhone / iPad Home Screen' 
+                    : isAndroid 
+                    ? 'Add Vidi directly to your Android device' 
+                    : 'Add Vidi directly to your desktop or taskbar'}
                 </p>
               </div>
             </div>
 
-            <div className="space-y-3 my-4">
-              {/* Step 1 */}
-              <div className="flex items-start gap-3 bg-white/5 border border-white/5 p-3 rounded-xl">
-                <div className="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-300 flex items-center justify-center shrink-0 font-mono font-bold text-xs">
-                  1
+            {/* iOS Safari Guide */}
+            {isIOS && (
+              <div className="space-y-3 my-4">
+                <div className="flex items-start gap-3 bg-white/5 border border-white/5 p-3 rounded-xl">
+                  <div className="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-300 flex items-center justify-center shrink-0 font-mono font-bold text-xs">
+                    1
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-slate-200">
+                      Tap the <strong className="text-white">Share</strong> button in Safari
+                    </p>
+                    <p className="text-[11px] text-slate-400 mt-0.5 flex items-center gap-1.5">
+                      Look for <Share className="w-3.5 h-3.5 text-blue-400 inline" /> in Safari's bottom toolbar.
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs font-medium text-slate-200">
-                    Tap the <strong className="text-white">Share</strong> icon in your browser toolbar
-                  </p>
-                  <p className="text-[11px] text-slate-400 mt-0.5 flex items-center gap-1.5">
-                    Look for <Share className="w-3.5 h-3.5 text-blue-400 inline" /> at the bottom or top bar of Safari/Chrome.
-                  </p>
-                </div>
-              </div>
 
-              {/* Step 2 */}
-              <div className="flex items-start gap-3 bg-white/5 border border-white/5 p-3 rounded-xl">
-                <div className="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-300 flex items-center justify-center shrink-0 font-mono font-bold text-xs">
-                  2
+                <div className="flex items-start gap-3 bg-white/5 border border-white/5 p-3 rounded-xl">
+                  <div className="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-300 flex items-center justify-center shrink-0 font-mono font-bold text-xs">
+                    2
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-slate-200">
+                      Scroll down and tap <strong className="text-white">"Add to Home Screen"</strong>
+                    </p>
+                    <p className="text-[11px] text-slate-400 mt-0.5 flex items-center gap-1.5">
+                      Look for <PlusSquare className="w-3.5 h-3.5 text-purple-400 inline" /> <span className="italic">"Add to Home Screen"</span>
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-xs font-medium text-slate-200">
-                    Scroll down and choose <strong className="text-white">"Add to Home Screen"</strong>
-                  </p>
-                  <p className="text-[11px] text-slate-400 mt-0.5 flex items-center gap-1.5">
-                    Tap <PlusSquare className="w-3.5 h-3.5 text-purple-400 inline" /> <span className="italic">"Add to Home Screen"</span>
-                  </p>
-                </div>
-              </div>
 
-              {/* Step 3 */}
-              <div className="flex items-start gap-3 bg-white/5 border border-white/5 p-3 rounded-xl">
-                <div className="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-300 flex items-center justify-center shrink-0 font-mono font-bold text-xs">
-                  3
-                </div>
-                <div>
-                  <p className="text-xs font-medium text-slate-200">
-                    Tap <strong className="text-white">Add</strong> in the top right corner
-                  </p>
-                  <p className="text-[11px] text-slate-400 mt-0.5">
-                    Vidi will now launch instantly from your screen like a native app.
-                  </p>
+                <div className="flex items-start gap-3 bg-white/5 border border-white/5 p-3 rounded-xl">
+                  <div className="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-300 flex items-center justify-center shrink-0 font-mono font-bold text-xs">
+                    3
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-slate-200">
+                      Tap <strong className="text-white">Add</strong> in the top right corner
+                    </p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">
+                      Vidi will now launch instantly from your screen like a native app.
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
+
+            {/* Android Guide */}
+            {isAndroid && (
+              <div className="space-y-3 my-4">
+                <div className="flex items-start gap-3 bg-white/5 border border-white/5 p-3 rounded-xl">
+                  <div className="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-300 flex items-center justify-center shrink-0 font-mono font-bold text-xs">
+                    1
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-slate-200">
+                      Tap the <strong className="text-white">Menu (⋮)</strong> icon in Chrome
+                    </p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">
+                      Located in the top-right corner of your browser.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 bg-white/5 border border-white/5 p-3 rounded-xl">
+                  <div className="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-300 flex items-center justify-center shrink-0 font-mono font-bold text-xs">
+                    2
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-slate-200">
+                      Select <strong className="text-white">"Install app"</strong> or <strong className="text-white">"Add to Home screen"</strong>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 bg-white/5 border border-white/5 p-3 rounded-xl">
+                  <div className="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-300 flex items-center justify-center shrink-0 font-mono font-bold text-xs">
+                    3
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-slate-200">
+                      Confirm <strong className="text-white">Install</strong>
+                    </p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">
+                      Vidi will be added to your app drawer and home screen.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Desktop Guide (Chrome / Edge / Firefox / Safari) */}
+            {isDesktop && (
+              <div className="space-y-3 my-4">
+                <div className="flex items-start gap-3 bg-white/5 border border-white/5 p-3 rounded-xl">
+                  <div className="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-300 flex items-center justify-center shrink-0 font-mono font-bold text-xs">
+                    1
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-slate-200">
+                      Check your browser's <strong className="text-white">Address Bar</strong>
+                    </p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">
+                      Look for the <strong className="text-purple-300">Install icon</strong> (a computer monitor with an arrow or a ⊕ symbol) on the right side of the URL bar.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 bg-white/5 border border-white/5 p-3 rounded-xl">
+                  <div className="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-300 flex items-center justify-center shrink-0 font-mono font-bold text-xs">
+                    2
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-slate-200">
+                      Or open the browser <strong className="text-white">Menu (⋮ / ⋯)</strong>
+                    </p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">
+                      Click Menu ➔ <strong className="text-purple-300">"Install Vidi..."</strong> or <strong className="text-purple-300">"Save and share" ➔ "Install page as app"</strong>.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3 bg-white/5 border border-white/5 p-3 rounded-xl">
+                  <div className="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-300 flex items-center justify-center shrink-0 font-mono font-bold text-xs">
+                    3
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-slate-200">
+                      Click <strong className="text-white">Install</strong>
+                    </p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">
+                      Vidi will open in its own clean window and be pinned to your desktop and taskbar.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="mt-5 flex justify-end">
               <button
-                onClick={closeIOSModal}
-                className="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all shadow-[0_4px_16px_rgba(147,51,234,0.3)]"
+                onClick={closeGuideModal}
+                className="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all shadow-[0_4px_16px_rgba(147,51,234,0.3)] cursor-pointer"
               >
                 Got It
               </button>
