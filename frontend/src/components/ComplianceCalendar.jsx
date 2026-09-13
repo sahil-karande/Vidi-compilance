@@ -2,9 +2,14 @@ import  { useState } from 'react';
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, MessageSquare, AlertCircle } from 'lucide-react';
 
 export default function ComplianceCalendar({ deadlines = [], onDeadlineClick }) {
-  // Pin standard operational viewpoint to July 2026 for consistency with active timeline
-  const [currentDate, setCurrentDate] = useState(new Date(2026, 6, 1)); 
+  // Dynamically initialize to current real-time month, year, and day
+  const [currentDate, setCurrentDate] = useState(new Date()); 
   const [selectedAuthority, setSelectedAuthority] = useState('ALL');
+
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+  const resetToToday = () => setCurrentDate(new Date());
 
   if (!deadlines || deadlines.length === 0) {
     return (
@@ -62,6 +67,13 @@ export default function ComplianceCalendar({ deadlines = [], onDeadlineClick }) 
             <h3 className="text-base font-bold text-slate-100">{monthsStr[month]} {year}</h3>
           </div>
           <div className="flex items-center gap-1.5">
+            <button 
+              onClick={resetToToday} 
+              className="px-2.5 py-1 text-[11px] font-semibold rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border border-white/10 transition"
+              title="Jump to Current Month"
+            >
+              Today
+            </button>
             <button onClick={prevMonth} className="p-1.5 hover:bg-white/5 rounded-xl border border-white/10 transition text-slate-400 hover:text-slate-200">
               <ChevronLeft className="h-4 w-4" />
             </button>
@@ -88,7 +100,7 @@ export default function ComplianceCalendar({ deadlines = [], onDeadlineClick }) 
             
             // Filter deadlines mapping strictly to exact year-month-day calendar cell
             const cellDeadlines = deadlines.filter(d => d.due_date.split('T')[0] === currentDayStr);
-            const isToday = currentDayStr === '2026-07-04';
+            const isToday = currentDayStr === todayStr;
 
             return (
               <div 

@@ -23,7 +23,8 @@ from app.api import (
     calendar, 
     upload, 
     billing,
-    graph
+    graph,
+    pipeline_sync
 )
 
 async def _warmup_rag_pipeline():
@@ -60,14 +61,34 @@ async def _warmup_rag_pipeline():
     except Exception as e:
         logger.warning(f"[lifespan] Warmup completed with notice: {e}")
 
+async def _run_scheduled_sync():
+    """Periodically checks and synchronizes newly issued regulatory circulars (runs every 12 hours)."""
+    await asyncio.sleep(60)  # Wait 1 minute after server start before first background sync check
+    while True:
+        try:
+            logger.info("[auto-sync] Running scheduled regulatory delta sync...")
+            loop = asyncio.get_running_loop()
+            def _sync():
+                from pipeline.auto_sync import run_delta_sync
+                return run_delta_sync()
+            result = await loop.run_in_executor(None, _sync)
+            logger.info(f"[auto-sync] Scheduled sync finished: {result.get('new_documents_added', 0)} new documents ingested.")
+        except Exception as err:
+            logger.warning(f"[auto-sync] Scheduled sync notice: {err}")
+        # Wait 12 hours between runs
+        await asyncio.sleep(12 * 3600)
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Non-blocking async background warmup so server binds and serves health check immediately
     warmup_task = asyncio.create_task(_warmup_rag_pipeline())
+    sync_task = asyncio.create_task(_run_scheduled_sync())
     yield
     if not warmup_task.done():
         warmup_task.cancel()
-    logger.info("[lifespan] RegIQ backend shutdown.")
+    if not sync_task.done():
+        sync_task.cancel()
+    logger.info("[lifespan] Vidi backend shutdown.")
 
 # ─────────────────────────────────────────────────────────────
 #  FastAPI App Initialization
@@ -169,4 +190,7 @@ app.include_router(upload.router, prefix="/api", tags=["Pro Upload"])
 app.include_router(billing.router, prefix="/api", tags=["Billing"])
 
 # D3 Citation Graph & Topological Explorer
-app.include_router(graph.router, prefix="/api", tags=["Regulation Graph"])
+app.include_router(graph.router, prefix="/api", tags=["Regulation Graph"])
+
+# Automated Regulatory Pipeline Sync
+app.include_router(pipeline_sync.router, prefix="/api", tags=["Pipeline Sync"])

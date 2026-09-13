@@ -1,0 +1,68 @@
+2026-09-13 23:54:18.784 | INFO     | __main__:run_delta_sync:161 - Starting automated regulatory delta synchronization cycle...
+2026-09-13 23:54:24.553 | INFO     | __main__:run_delta_sync:183 - Discovered 60 new regulatory updates across monitored authorities.
+2026-09-13 23:54:26.056 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new RBI document: Notifications
+2026-09-13 23:54:28.873 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new RBI document: Master Circulars
+2026-09-13 23:54:30.396 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new RBI document: Draft Notifications/Guidelines
+2026-09-13 23:54:31.676 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new RBI document: Index To RBI Circulars
+2026-09-13 23:54:34.274 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new RBI document: Standalone Circulars
+2026-09-13 23:54:37.804 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new RBI document: Circulars Withdrawn
+2026-09-13 23:54:39.064 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new RBI document: Notifications
+2026-09-13 23:54:40.222 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new RBI document: Index To RBI Circulars
+2026-09-13 23:54:43.643 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new RBI document: RBI’s Vision and Values(652 KB)
+2026-09-13 23:54:44.747 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new RBI document: Accessibility Statement(133 KB)
+2026-09-13 23:54:46.298 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new GST document: 101st Constitutional Amendment Act, 2016
+2026-09-13 23:54:47.540 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new GST document: First Discussion Paper on GST
+2026-09-13 23:54:50.346 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new GST document: CEA report on Revenue Neutral Rates
+2026-09-13 23:54:51.835 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new GST document: Comments of the DoR on the First Discussion Paper on GST
+2026-09-13 23:54:54.086 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Updated Guidelines on Transmission of Units
+2026-09-13 23:54:55.929 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Attachment 1 to AMFI BP cir 110 dt. 31-Jan-24-SEBILetter.pdf
+2026-09-13 23:54:58.048 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Attachment 2 to AMFI BP cir 110 dt. 31-Jan-24-Form T1.pdf
+2026-09-13 23:54:59.752 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Attachment 3 to AMFI BP cir 110 dt. 31-Jan-24-Form T2.pdf
+2026-09-13 23:55:03.690 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Attachment 4 to AMFI BP cir 110 dt. 31-Jan-24-Form T3.pdf
+2026-09-13 23:55:06.416 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Attachment 5 to AMFI BP cir 110 dt. 31-Jan-24-Form T4.pdf
+2026-09-13 23:55:08.862 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Attachment 6 to AMFI BP cir 110 dt. 31-Jan-24-Form T5.pdf
+2026-09-13 23:55:11.026 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Attachment 7 to AMFI BP cir 110 dt. 31-Jan-24-Annexure-I a.pdf
+2026-09-13 23:55:12.218 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Attachment 8 to AMFI BP cir 110 dt. 31-Jan-24-Annexure-I b.pdf
+2026-09-13 23:55:13.360 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Attachment 9 to AMFI BP cir 110 dt. 31-Jan-24-Annexure-II.pdf
+2026-09-13 23:55:14.695 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Attachment 10 to AMFI BP cir 110 dt. 31-Jan-24-Annexure-III.pdf
+2026-09-13 23:55:16.628 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Attachment 11 to AMFI BP cir 110 dt. 31-Jan-24-Annexure-IV.pdf
+2026-09-13 23:55:18.872 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Attachment 12 to AMFI BP cir 110 dt. 31-Jan-24-Annexure-V.pdf
+2026-09-13 23:55:21.050 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Attachment 13 to AMFI BP cir 110 dt. 31-Jan-24-Annexure VI.pdf
+2026-09-13 23:55:23.077 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Attachment 14 to AMFI BP cir 110 dt. 31-Jan-24-MF-NominationForm.pdf
+2026-09-13 23:55:24.097 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Updated Table 1 and Table 3 of AMFI Best Practices Guidelines Circular No.93 / 2021-22 dated July 24, 2021 on Prudential norms for Liquidity Risk Management for Open-ended Debt Schemes
+2026-09-13 23:55:25.982 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Changes to Table 2 of Annexure 1 of AMFI Best Practices Guidelines Circular No.93 dt. 24-Jul-21 on Prudential norms for LRM for Open-ended Debt Schemes
+2026-09-13 23:55:27.639 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Attachements : Annexure I-AMFI BP Guidelines Cir No.93b dt.15-Jun-23-AMFI Email to dated 23-Mar-23 to SEBI.pdf
+2026-09-13 23:55:29.800 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Annexure II-AMFI BP Guidelines Circ No.93b dt.15-Jun-23-SEBI Letter dt. 08-Jun-23-reg AMFI BP Guidelines-Prudential norms for LRM for OES.pdf
+2026-09-13 23:55:31.345 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Tier-1 benchmarks for open ended debt schemes as per the Potential Risk Class matrix
+2026-09-13 23:55:32.185 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Attachment : 18a. PRC Tier I Benchmarks by NSE and CRISIL.xlsx
+2026-09-13 23:55:33.486 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Standardization of process for Mitigating Risks of Co-mingling of funds at the level of Payment Aggregator & Payment Gateways
+2026-09-13 23:55:34.639 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Standardization of Process for Validation of Email ID, Mobile Number, Bank Mandate & Two Factor Authentication for Redemptions for Non-Demat folios
+2026-09-13 23:55:35.563 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Swing Pricing Framework for normal times
+2026-09-13 23:55:36.578 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: SEBI circular dated 27-10-2021 on Guiding Principles for bringing uniformity in Benchmarks of Mutual Fund Schemes - Addition of Nifty Manufacturing index in List of 1st tier benchmarks for open ended Equity Schemes
+2026-09-13 23:55:39.834 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Attachment : 14a. Method_NIFTY_Equity_Indices.pdf
+2026-09-13 23:55:41.773 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Attachment : 14b. Factsheet_Nifty_India_Manufacturing_Index.pdf
+2026-09-13 23:55:43.304 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: SEBI circular dated 27-10-2021 on Guiding Principles for bringing uniformity in Benchmarks of Mutual Fund Schemes - Addition of Nifty Housing index in List of 1st tier benchmarks for open ended Equity Schemes
+2026-09-13 23:55:44.369 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Attachment : 13a. Nifty Press Release for launch of Housing Index.pdf
+2026-09-13 23:55:45.914 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Attachment : 13b. Factsheet_Nifty Housing Index.pdf
+2026-09-13 23:55:48.901 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Attachment : 13c. Methodology Document - NSE Indices.pdf
+2026-09-13 23:55:50.710 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: SEBI circular dated October 27, 2021 on Guiding Principles for bringing uniformity in Benchmarks of Mutual Fund Schemes - list of benchmark indices intended to used by AMCs as 1st tier benchmarks in respect of Equity , Thematic & Sectoral Funds
+2026-09-13 23:55:51.806 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: List of 1st tier benchmark indices - Change in the Index for Dynamic Asset Allocation / Balanced Advantage Fund - Proposed by CRISIL & IISL
+2026-09-13 23:55:52.894 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Prudential norms for Liquidity Risk Management for Open-ended Debt Schemes – Clarifications / Amendments
+2026-09-13 23:55:54.711 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: SEBI circular dated October 27, 2021 on Guiding Principles for bringing uniformity in Benchmarks of Mutual Fund Schemes - list of benchmark indices intended to used by AMCs as 1st tier benchmarks
+2026-09-13 23:55:56.401 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: SEBI circular dated October 27, 2021 on Guiding Principles for bringing uniformity in Benchmarks of Mutual Fund Schemes - list of benchmark indices intended to used by AMCs as 1st tier benchmarks
+2026-09-13 23:55:57.296 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Attachment : 8a. Collated PRC Benchmarks_080721.xlsx
+2026-09-13 23:55:58.923 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: SEBI circular dated October 27, 2021 on Guiding Principles for bringing uniformity in Benchmarks of Mutual Fund Schemes - list of benchmark indices intended to used by AMCs as 1st tier benchmarks
+2026-09-13 23:56:00.308 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Attachment : 7a. Collated Tier 1 BM_080721.xlsx
+2026-09-13 23:56:01.323 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Prudential norms for Liquidity Risk Management for Open-ended Debt Schemes
+2026-09-13 23:56:02.342 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Valuation of AT-1 Bonds and Tier 2 Bonds
+2026-09-13 23:56:04.062 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Updated Guidelines on Transmission of Units and standard formats of Transmission Request Forms supporting documents to be uniformly adopted by all AMCs
+2026-09-13 23:56:06.090 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: IST Valuations - TAT & Go Live Date
+2026-09-13 23:56:08.520 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Various guidelines on 1) Valuation of Money Market & Debt Securities 2) Polling process for Money Market and debt securities 3) Valuation of upfront fee on trades 4) Investment by MFs in partly paid debentures pursuant to SEBI Circular No. SEBI/ HO/ IMD/ DF4/ CIR/ P/ 2019/ 102 dated 24-Sep-2019
+2026-09-13 23:56:10.213 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Liquid Fund Exit Load SEBI Letter No. SEBI/HO/IMD/DF2/0W/P/2019/271771/1 dated October 15, 2019
+2026-09-13 23:56:11.515 | INFO     | __main__:run_delta_sync:211 - Successfully retrieved and ingested new SEBI document: Attachment : 1a. SEBI's Letter to AMFI dt. 15-Oct-2019.pdf
+2026-09-13 23:57:50.544 | WARNING  | __main__:run_delta_sync:227 - Vector indexing pipeline notice: cannot import name 'run_chunker' from 'pipeline.chunker' (C:\Users\Sahil Karande\OneDrive\Desktop\Projects\Vidi\pipeline\chunker.py)
+2026-09-13 23:57:50.562 | INFO     | __main__:run_delta_sync:234 - Delta sync finished. New documents added: 60. Total tracked: 1392
+2026-09-13 23:57:54.604 | INFO     | pipeline.auto_sync:run_delta_sync:161 - Starting automated regulatory delta synchronization cycle...
+2026-09-13 23:58:01.210 | INFO     | pipeline.auto_sync:run_delta_sync:183 - Discovered 0 new regulatory updates across monitored authorities.
+2026-09-13 23:58:01.231 | INFO     | pipeline.auto_sync:run_delta_sync:234 - Delta sync finished. New documents added: 0. Total tracked: 1392
+2026-09-13 23:58:01.233 | INFO     | app.main:_run_scheduled_sync:75 - [auto-sync] Scheduled sync finished: 0 new documents ingested.

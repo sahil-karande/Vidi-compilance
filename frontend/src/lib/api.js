@@ -192,11 +192,15 @@ export const chatAPI = {
     // eslint-disable-next-line no-unused-vars
     } catch (err) {
       printFallbackWarning('getCalendarDeadlines');
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, '0');
       return [
-        { id: 'dl-1', authority: 'GST', title: 'GSTR-1 Outward Filing', description: 'Mandatory declaration of monthly outward supplies for businesses with regular registration profiles.', due_date: '2026-07-11T23:59:59Z', priority: 'HIGH' },
-        { id: 'dl-2', authority: 'GST', title: 'GSTR-3B Summary Remittance', description: 'Monthly summary returns mapping inward tax credits directly against payment execution paths.', due_date: '2026-07-20T23:59:59Z', priority: 'CRITICAL' },
-        { id: 'dl-3', authority: 'MCA', title: 'Form 11 (LLP Annual Summary)', description: 'Statutory declaration outlining partner profiles and capitalization changes logged over the fiscal period.', due_date: '2026-07-30T23:59:59Z', priority: 'LOW' },
-        { id: 'dl-4', authority: 'RBI', title: 'FLA Return Submission', description: 'Annual Return on Foreign Assets and Liabilities matching cross-border venture structures.', due_date: '2026-07-15T23:59:59Z', priority: 'HIGH' }
+        { id: 'dl-1', authority: 'Income Tax', title: 'TDS Monthly Remittance', description: 'Statutory remittance of tax deducted at source for contractor and vendor invoices.', due_date: `${y}-${m}-07T23:59:59Z`, priority: 'HIGH' },
+        { id: 'dl-2', authority: 'GST', title: 'GSTR-1 Outward Filing', description: 'Mandatory declaration of monthly outward supplies for businesses with regular registration profiles.', due_date: `${y}-${m}-11T23:59:59Z`, priority: 'HIGH' },
+        { id: 'dl-3', authority: 'Income Tax', title: 'Advance Tax Installment', description: 'Quarterly estimated corporate advance tax installment.', due_date: `${y}-${m}-15T23:59:59Z`, priority: 'HIGH' },
+        { id: 'dl-4', authority: 'GST', title: 'GSTR-3B Summary Remittance', description: 'Monthly summary returns mapping inward tax credits directly against payment execution paths.', due_date: `${y}-${m}-20T23:59:59Z`, priority: 'CRITICAL' },
+        { id: 'dl-5', authority: 'MCA', title: 'DIR-3 KYC / ROC Annual Filing', description: 'Annual statutory declaration outlining director credentials and corporate filing parameters.', due_date: `${y}-${m}-30T23:59:59Z`, priority: 'CRITICAL' }
       ];
     }
   },
