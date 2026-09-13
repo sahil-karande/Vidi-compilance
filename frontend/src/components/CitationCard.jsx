@@ -122,7 +122,7 @@ export const CitationDrawer = ({ citation, onClose }) => {
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
               Verified Regulatory Corpus Text
             </h4>
-            <div className="rounded-xl border border-white/10 bg-[#16161F] p-4 font-mono text-xs leading-relaxed text-slate-300 shadow-inner whitespace-pre-wrap">
+            <div className="rounded-xl border border-white/10 bg-[#16161F] p-3 sm:p-4 font-mono text-xs leading-relaxed text-slate-300 shadow-inner whitespace-pre-wrap overflow-x-auto">
               {drawerBodyText}
             </div>
           </div>

@@ -43,14 +43,17 @@ export default function ChatThread({ messages, mode = 'plain', onSelectCitation 
 
             {/* Bubble Content */}
             <div
+              className={`w-full transition-all box-border ${
+                isUser 
+                  ? 'max-w-[88%] sm:max-w-[75%]' 
+                  : 'max-w-full sm:max-w-[92%] md:max-w-[88%]'
+              }`}
               style={{
-                padding: '16px',
+                padding: '14px 16px',
                 borderRadius: isUser ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
-                maxWidth: '75%',
-                width: 'auto',
                 fontSize: '14px',
                 lineHeight: '1.6',
-                whiteSpace: isUser ? 'pre-wrap' : 'normal', // Let AnswerText handle the structural flow for engine blocks
+                whiteSpace: isUser ? 'pre-wrap' : 'normal',
                 wordBreak: 'break-word',
                 textAlign: 'left',
                 background: isUser 

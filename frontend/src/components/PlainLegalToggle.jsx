@@ -72,8 +72,9 @@ export default function PlainLegalToggle({ mode = MODE_PLAIN, onModeChange }) {
 
   return (
     <div style={styles.wrapper}>
-      {/* Mode labels */}
+      {/* Mode label: Plain */}
       <span
+        className="hidden sm:inline"
         style={{
           ...styles.modeLabel,
           color: !isLegal ? '#fff' : '#666',
@@ -101,8 +102,9 @@ export default function PlainLegalToggle({ mode = MODE_PLAIN, onModeChange }) {
         />
       </button>
 
-      {/* Mode labels */}
+      {/* Mode label: Legal */}
       <span
+        className="hidden sm:inline"
         style={{
           ...styles.modeLabel,
           color: isLegal ? '#fff' : '#666',
@@ -113,7 +115,7 @@ export default function PlainLegalToggle({ mode = MODE_PLAIN, onModeChange }) {
       </span>
 
       {/* Info icon + tooltip */}
-      <div style={styles.infoWrapper}>
+      <div style={styles.infoWrapper} className="hidden sm:block">
         <button
           style={styles.infoButton}
           onMouseEnter={() => setShowTooltip(true)}
@@ -150,12 +152,15 @@ export default function PlainLegalToggle({ mode = MODE_PLAIN, onModeChange }) {
       </div>
 
       {/* Active mode indicator chip */}
-      <span style={{
-        ...styles.activeChip,
-        background: isLegal ? 'rgba(60,52,137,0.15)' : 'rgba(29,158,117,0.15)',
-        color: isLegal ? '#8B85D4' : '#1D9E75',
-        border: `1px solid ${isLegal ? 'rgba(60,52,137,0.3)' : 'rgba(29,158,117,0.3)'}`,
-      }}>
+      <span
+        className="hidden md:inline-flex"
+        style={{
+          ...styles.activeChip,
+          background: isLegal ? 'rgba(60,52,137,0.15)' : 'rgba(29,158,117,0.15)',
+          color: isLegal ? '#8B85D4' : '#1D9E75',
+          border: `1px solid ${isLegal ? 'rgba(60,52,137,0.3)' : 'rgba(29,158,117,0.3)'}`,
+        }}
+      >
         {isLegal ? '⚖ Legal mode' : '✦ Plain mode'}
       </span>
     </div>
@@ -286,43 +291,96 @@ function renderTableBlock(tableLines, key) {
     <div
       key={key}
       style={{
-        overflowX: 'auto',
         margin: '14px 0',
-        borderRadius: '8px',
-        border: '1px solid rgba(255, 255, 255, 0.12)',
-        background: '#0e1017',
+        width: '100%',
+        maxWidth: '100%',
+        boxSizing: 'border-box',
       }}
     >
-      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', textAlign: 'left' }}>
-        {hasDivider && headerCells.length > 0 && (
-          <thead>
-            <tr style={{ background: 'rgba(255, 255, 255, 0.05)', borderBottom: '1px solid rgba(255, 255, 255, 0.15)' }}>
-              {headerCells.map((cell, cIdx) => (
-                <th key={cIdx} style={{ padding: '9px 12px', fontWeight: 700, color: '#f8fafc' }}>
-                  {renderInlineMarkdown(cell)}
-                </th>
-              ))}
-            </tr>
-          </thead>
-        )}
-        <tbody>
-          {(hasDivider ? rows : [headerCells, ...rows]).map((row, rIdx) => (
-            <tr
-              key={rIdx}
-              style={{
-                borderBottom: rIdx < rows.length - 1 ? '1px solid rgba(255, 255, 255, 0.06)' : 'none',
-                background: rIdx % 2 === 1 ? 'rgba(255, 255, 255, 0.02)' : 'transparent',
-              }}
-            >
-              {row.map((cell, cIdx) => (
-                <td key={cIdx} style={{ padding: '8px 12px', color: '#cbd5e1', verticalAlign: 'top', lineHeight: '1.55' }}>
-                  {renderInlineMarkdown(cell)}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div
+        style={{
+          overflowX: 'auto',
+          WebkitOverflowScrolling: 'touch',
+          borderRadius: '8px',
+          border: '1px solid rgba(255, 255, 255, 0.12)',
+          background: '#0e1017',
+          width: '100%',
+          maxWidth: '100%',
+          boxSizing: 'border-box',
+        }}
+      >
+        <table
+          style={{
+            width: '100%',
+            minWidth: '440px',
+            borderCollapse: 'collapse',
+            fontSize: '13px',
+            textAlign: 'left',
+          }}
+        >
+          {hasDivider && headerCells.length > 0 && (
+            <thead>
+              <tr style={{ background: 'rgba(255, 255, 255, 0.06)', borderBottom: '1px solid rgba(255, 255, 255, 0.15)' }}>
+                {headerCells.map((cell, cIdx) => (
+                  <th
+                    key={cIdx}
+                    style={{
+                      padding: '10px 14px',
+                      fontWeight: 700,
+                      color: '#f8fafc',
+                      whiteSpace: 'nowrap',
+                      fontSize: '12px',
+                      letterSpacing: '0.02em',
+                    }}
+                  >
+                    {renderInlineMarkdown(cell)}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+          )}
+          <tbody>
+            {(hasDivider ? rows : [headerCells, ...rows]).map((row, rIdx) => (
+              <tr
+                key={rIdx}
+                style={{
+                  borderBottom: rIdx < rows.length - 1 ? '1px solid rgba(255, 255, 255, 0.06)' : 'none',
+                  background: rIdx % 2 === 1 ? 'rgba(255, 255, 255, 0.02)' : 'transparent',
+                }}
+              >
+                {row.map((cell, cIdx) => (
+                  <td
+                    key={cIdx}
+                    style={{
+                      padding: '9px 14px',
+                      color: '#cbd5e1',
+                      verticalAlign: 'top',
+                      lineHeight: '1.55',
+                      minWidth: '100px',
+                      fontSize: '12.5px',
+                    }}
+                  >
+                    {renderInlineMarkdown(cell)}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div
+        className="sm:hidden"
+        style={{
+          fontSize: '10px',
+          color: '#64748b',
+          textAlign: 'right',
+          marginTop: '4px',
+          paddingRight: '4px',
+          letterSpacing: '0.02em',
+        }}
+      >
+        ← Scroll table horizontally →
+      </div>
     </div>
   );
 }
@@ -478,6 +536,30 @@ export function AnswerText({ text = '', mode = MODE_PLAIN }) {
         <div key={`bul-${i}`} style={{ ...answerStyles.bulletRow, marginBottom: '6px' }}>
           <span style={{ ...answerStyles.bulletDot, color: isLegal ? '#8B85D4' : '#1D9E75' }}>•</span>
           <div style={{ flex: 1, lineHeight: '1.6' }}>{renderInlineMarkdown(content)}</div>
+        </div>
+      );
+      i++;
+      continue;
+    }
+
+    // Blockquote: > text
+    if (trimmed.startsWith('>')) {
+      const quoteContent = trimmed.replace(/^>\s*/, '');
+      elements.push(
+        <div
+          key={`quote-${i}`}
+          style={{
+            borderLeft: `3px solid ${isLegal ? '#8B85D4' : '#a855f7'}`,
+            padding: '8px 12px',
+            margin: '8px 0 10px',
+            fontStyle: 'italic',
+            color: '#cbd5e1',
+            background: 'rgba(168, 85, 247, 0.08)',
+            borderRadius: '0 8px 8px 0',
+            lineHeight: '1.6',
+          }}
+        >
+          {renderInlineMarkdown(quoteContent)}
         </div>
       );
       i++;
