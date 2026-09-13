@@ -2,35 +2,38 @@ import { useEffect, useRef, useState } from 'react';
 
 /**
  * RevealOnScroll
- * High-performance IntersectionObserver wrapper for scroll-driven fade in / fade up transitions.
+ * High-performance IntersectionObserver wrapper for scroll-driven fade in / fade out transitions.
  * When in viewport: fades in and glides to normal position.
- * When scrolling past: smoothly fades up/out.
+ * When scrolling past top or bottom: smoothly fades out.
  */
 export default function RevealOnScroll({
   children,
   className = '',
   delay = 0,
   duration = 700,
+  direction = 'up', // 'up' | 'down' | 'left' | 'right'
   threshold = 0.1,
-  rootMargin = '0px 0px -50px 0px',
+  rootMargin = '-60px 0px -60px 0px',
   once = false,
   fadeOnLeave = true,
+  enabled = true,
 }) {
   const [status, setStatus] = useState('hidden-bottom'); // 'hidden-bottom' | 'visible' | 'hidden-top'
   const ref = useRef(null);
 
   useEffect(() => {
+    if (!enabled) return;
+
     const el = ref.current;
     if (!el) return;
 
     // Check immediate visibility on mount (for above-the-fold content)
     const rect = el.getBoundingClientRect();
     const windowHeight = window.innerHeight || document.documentElement.clientHeight;
-    if (rect.top < windowHeight && rect.bottom > 0) {
-      // Small timeout allows initial render paint so transition can be seen smoothly
+    if (rect.top < windowHeight - 40 && rect.bottom > 60) {
       const timer = setTimeout(() => {
         setStatus('visible');
-      }, 50);
+      }, delay || 40);
       return () => clearTimeout(timer);
     }
 
@@ -43,7 +46,7 @@ export default function RevealOnScroll({
           }
         } else if (!once && fadeOnLeave) {
           // If element scrolled above viewport top
-          if (entry.boundingClientRect.top < 0) {
+          if (entry.boundingClientRect.top < 60) {
             setStatus('hidden-top');
           } else {
             setStatus('hidden-bottom');
@@ -58,17 +61,25 @@ export default function RevealOnScroll({
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [threshold, rootMargin, once, fadeOnLeave]);
+  }, [threshold, rootMargin, once, fadeOnLeave, enabled, delay]);
 
-  let transform = 'translateY(0)';
+  let transform = 'translateY(0) translateX(0)';
   let opacity = 1;
 
   if (status === 'hidden-bottom') {
-    transform = 'translateY(36px)';
+    if (direction === 'down') {
+      transform = 'translateY(-28px)';
+    } else if (direction === 'left') {
+      transform = 'translateX(-32px)';
+    } else if (direction === 'right') {
+      transform = 'translateX(32px)';
+    } else {
+      transform = 'translateY(32px)';
+    }
     opacity = 0;
   } else if (status === 'hidden-top') {
-    transform = 'translateY(-20px)';
-    opacity = 0.2;
+    transform = 'translateY(-32px)';
+    opacity = 0;
   }
 
   return (

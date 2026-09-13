@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export default function IntroSplash({ onComplete }) {
+export default function IntroSplash({ onComplete, onStartDissolve }) {
   const [stage, setStage] = useState(0); // 0: init, 1: logo in, 2: brand in, 3: progress in, 4: exit dissolve
   const [fadingOut, setFadingOut] = useState(false);
 
@@ -12,10 +12,11 @@ export default function IntroSplash({ onComplete }) {
     const t4 = setTimeout(() => {                    // Start dissolve
       setFadingOut(true);
       setStage(4);
-    }, 2300);
+      if (onStartDissolve) onStartDissolve();
+    }, 2200);
     const t5 = setTimeout(() => {                    // Completely unmount
       if (onComplete) onComplete();
-    }, 2800);
+    }, 2700);
 
     return () => {
       clearTimeout(t1);
@@ -24,13 +25,14 @@ export default function IntroSplash({ onComplete }) {
       clearTimeout(t4);
       clearTimeout(t5);
     };
-  }, [onComplete]);
+  }, [onComplete, onStartDissolve]);
 
   const handleSkip = () => {
     setFadingOut(true);
+    if (onStartDissolve) onStartDissolve();
     setTimeout(() => {
       if (onComplete) onComplete();
-    }, 400);
+    }, 350);
   };
 
   return (

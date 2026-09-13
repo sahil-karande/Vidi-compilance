@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BackgroundOrbs from '../components/BackgroundOrbs';
 import IntroSplash from '../components/IntroSplash';
@@ -27,11 +27,45 @@ import {
 export default function Landing() {
   const navigate = useNavigate();
   const [showIntro, setShowIntro] = useState(true);
+  const [heroEntered, setHeroEntered] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
   const [billingCycle, setBillingCycle] = useState('monthly');
   const [activeTab, setActiveTab] = useState('query');
   const [flippedCards, setFlippedCards] = useState({});
   // eslint-disable-next-line no-unused-vars
   const [copiedLink, setCopiedLink] = useState(false);
+
+  // High-performance scroll tracking for smooth hero fade-out on scroll down
+  useEffect(() => {
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrollY(window.scrollY);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Ensure hero enters if intro splash is skipped or unmounted
+  useEffect(() => {
+    if (!showIntro && !heroEntered) {
+      setHeroEntered(true);
+    }
+  }, [showIntro, heroEntered]);
+
+  // Dynamic scroll opacity & translation for Hero Header
+  // Starts at 1, fades smoothly to 0 as user scrolls down to ~260px, floats gently upward
+  const heroHeaderOpacity = Math.max(0, Math.min(1, 1 - scrollY / 260));
+  const heroHeaderTranslateY = -Math.min(50, scrollY * 0.25);
+
+  // Dynamic scroll opacity for interactive preview window: stays 1 until scroll passes ~280px, then smoothly fades out
+  const previewCardOpacity = scrollY < 280 ? 1 : Math.max(0, Math.min(1, 1 - (scrollY - 280) / 360));
+  const previewCardTranslateY = scrollY < 280 ? 0 : -Math.min(45, (scrollY - 280) * 0.18);
 
   const toggleCardFlip = (code) => {
     setFlippedCards(prev => ({
@@ -52,7 +86,13 @@ export default function Landing() {
       
       {/* ── Cinematic Opening Animation Sequence ── */}
       {showIntro && (
-        <IntroSplash onComplete={() => setShowIntro(false)} />
+        <IntroSplash 
+          onStartDissolve={() => setHeroEntered(true)}
+          onComplete={() => {
+            setShowIntro(false);
+            setHeroEntered(true);
+          }} 
+        />
       )}
 
       {/* ── 3 Big Animated Floating Purple Circles with Intensity Pulses & Fade ── */}
@@ -97,156 +137,177 @@ export default function Landing() {
       {/* ── Main Hero Section (Exact NoteDeck style) ── */}
       <main className="flex-1 w-full px-6 sm:px-12 lg:px-20 pt-20 pb-28 flex flex-col items-center text-center relative z-10 max-w-6xl mx-auto">
         
-        {/* Release Tag Pill */}
-        <RevealOnScroll delay={50} direction="down">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#181820] border border-white/10 text-slate-300 text-xs font-medium mb-8 shadow-sm">
-            <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
-            <span className="text-slate-400 font-normal">Grounded Indian Legaltech</span>
-            <span className="text-slate-600">•</span>
-            <span className="text-purple-300 font-semibold">Zero Hallucination RAG</span>
-          </div>
-        </RevealOnScroll>
-
-        {/* Hero Title (NoteDeck typography) */}
-        <RevealOnScroll delay={150}>
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white max-w-4xl leading-[1.08] mb-6">
-            Indian compliance,<br />
-            now intelligent.
-          </h1>
-        </RevealOnScroll>
-
-        {/* Hero Subtitle */}
-        <RevealOnScroll delay={250}>
-          <p className="text-base sm:text-lg text-slate-400 max-w-2xl leading-relaxed mb-10">
-            Vidi instantly transforms complex statutory circulars across GST, RBI, SEBI, and MCA into plain-language answers verified with clause-level citations.
-          </p>
-        </RevealOnScroll>
-
-        {/* Hero Action Buttons */}
-        <RevealOnScroll delay={350}>
-          <div className="flex flex-col sm:flex-row items-center gap-4 justify-center w-full max-w-md mb-20">
-            <button 
-              onClick={() => navigate('/login')} 
-              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-[#181820] hover:bg-[#20202c] border border-white/15 text-white font-semibold text-sm transition-all duration-300 shadow-lg hover:border-purple-500/40 hover:shadow-[0_0_25px_rgba(168,85,247,0.2)] hover:scale-[1.02] flex items-center justify-center gap-2"
-            >
-              <span>Start Learning Smarter</span>
-              <ArrowRight className="w-4 h-4 text-purple-400" />
-            </button>
-
-            <button 
-              onClick={() => navigate('/login')}
-              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-100 hover:bg-white text-slate-950 font-semibold text-sm transition-all duration-300 hover:scale-[1.02] shadow-sm flex items-center justify-center gap-2"
-            >
-              <span>Try as Guest</span>
-            </button>
-          </div>
-        </RevealOnScroll>
-
-        {/* ── Interactive Product Preview Window (NoteDeck Dark Card Style) ── */}
-        <RevealOnScroll delay={450} duration={850} className="w-full max-w-5xl mb-28">
-          <div className="w-full rounded-2xl bg-[#13131A] border border-white/10 shadow-2xl overflow-hidden text-left">
-          
-          {/* Window Header */}
-          <div className="px-5 py-3.5 border-b border-white/10 bg-[#0E0F14] flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-2.5 h-2.5 rounded-full bg-slate-700" />
-              <div className="w-2.5 h-2.5 rounded-full bg-slate-700" />
-              <div className="w-2.5 h-2.5 rounded-full bg-slate-700" />
-              <span className="text-[11px] font-mono text-slate-400 ml-2">app.regiq.in/research</span>
+        {/* ── Hero Header (Pill, Title, Subtitle, CTAs) with scroll fade-out & entrance animation ── */}
+        <div 
+          style={{
+            opacity: heroHeaderOpacity,
+            transform: `translateY(${heroHeaderTranslateY}px)`,
+            pointerEvents: heroHeaderOpacity < 0.05 ? 'none' : 'auto',
+            willChange: 'opacity, transform',
+          }}
+          className="flex flex-col items-center text-center w-full transition-opacity duration-150"
+        >
+          {/* Release Tag Pill */}
+          <RevealOnScroll delay={60} direction="down" enabled={heroEntered}>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#181820] border border-white/10 text-slate-300 text-xs font-medium mb-8 shadow-sm">
+              <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+              <span className="text-slate-400 font-normal">Grounded Indian Legaltech</span>
+              <span className="text-slate-600">•</span>
+              <span className="text-purple-300 font-semibold">Zero Hallucination RAG</span>
             </div>
+          </RevealOnScroll>
 
-            {/* Interactive Preview Tabs */}
-            <div className="hidden sm:flex items-center gap-1 bg-[#181822] p-1 rounded-lg border border-white/10 text-xs">
+          {/* Hero Title (NoteDeck typography) */}
+          <RevealOnScroll delay={180} enabled={heroEntered}>
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white max-w-4xl leading-[1.08] mb-6">
+              Indian compliance,<br />
+              now intelligent.
+            </h1>
+          </RevealOnScroll>
+
+          {/* Hero Subtitle */}
+          <RevealOnScroll delay={300} enabled={heroEntered}>
+            <p className="text-base sm:text-lg text-slate-400 max-w-2xl leading-relaxed mb-10">
+              Vidi instantly transforms complex statutory circulars across GST, RBI, SEBI, and MCA into plain-language answers verified with clause-level citations.
+            </p>
+          </RevealOnScroll>
+
+          {/* Hero Action Buttons */}
+          <RevealOnScroll delay={420} enabled={heroEntered}>
+            <div className="flex flex-col sm:flex-row items-center gap-4 justify-center w-full max-w-md mb-20">
               <button 
-                onClick={() => setActiveTab('query')}
-                className={`px-3 py-1 rounded-md transition-colors ${activeTab === 'query' ? 'bg-[#252535] text-white font-medium' : 'text-slate-400 hover:text-slate-200'}`}
+                onClick={() => navigate('/login')} 
+                className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-[#181820] hover:bg-[#20202c] border border-white/15 text-white font-semibold text-sm transition-all duration-300 shadow-lg hover:border-purple-500/40 hover:shadow-[0_0_25px_rgba(168,85,247,0.2)] hover:scale-[1.02] flex items-center justify-center gap-2"
               >
-                RAG Inspector
+                <span>Start Learning Smarter</span>
+                <ArrowRight className="w-4 h-4 text-purple-400" />
               </button>
+
               <button 
-                onClick={() => setActiveTab('citations')}
-                className={`px-3 py-1 rounded-md transition-colors ${activeTab === 'citations' ? 'bg-[#252535] text-white font-medium' : 'text-slate-400 hover:text-slate-200'}`}
+                onClick={() => navigate('/login')}
+                className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-100 hover:bg-white text-slate-950 font-semibold text-sm transition-all duration-300 hover:scale-[1.02] shadow-sm flex items-center justify-center gap-2"
               >
-                Verified Citations (3)
-              </button>
-              <button 
-                onClick={() => setActiveTab('trace')}
-                className={`px-3 py-1 rounded-md transition-colors ${activeTab === 'trace' ? 'bg-[#252535] text-white font-medium' : 'text-slate-400 hover:text-slate-200'}`}
-              >
-                LangGraph State
+                <span>Try as Guest</span>
               </button>
             </div>
-          </div>
-
-          {/* Window Body */}
-          <div className="p-6 sm:p-8 space-y-6">
-            
-            {/* Simulated User Question */}
-            <div className="flex items-start gap-3">
-              <div className="w-7 h-7 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-semibold text-slate-300 shrink-0">
-                U
-              </div>
-              <div className="bg-[#181820] border border-white/10 rounded-xl px-4 py-3 max-w-xl text-xs text-slate-200 leading-relaxed">
-                What is the threshold limit for mandatory GST registration for goods suppliers in Maharashtra, and what are the invoicing compliance requirements?
-              </div>
-            </div>
-
-            {/* Simulated AI Response */}
-            <div className="flex items-start gap-3">
-              <div className="w-7 h-7 rounded-lg bg-purple-600 flex items-center justify-center text-xs font-semibold text-white shrink-0 shadow-md">
-                R
-              </div>
-              <div className="space-y-4 flex-1">
-                <div className="bg-[#16161F] border border-white/10 rounded-xl p-5 space-y-3 text-xs leading-relaxed text-slate-300">
-                  <div className="flex items-center gap-2 pb-2 border-b border-white/5">
-                    <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-500/30">
-                      Grounded • 98.4% Confidence
-                    </span>
-                    <span className="text-slate-600">•</span>
-                    <span className="text-[11px] text-slate-400 font-mono">Corpus: GST (CBIC Master Portal)</span>
-                  </div>
-
-                  <p>
-                    Under <strong>Section 22(1) of the Central Goods and Services Tax (CGST) Act, 2017</strong> read with <strong>Notification No. 10/2019 – Central Tax</strong>:
-                  </p>
-
-                  <ul className="list-disc pl-5 space-y-1.5 text-slate-300">
-                    <li>
-                      <strong>Threshold Limit:</strong> For businesses engaged exclusively in the intra-state supply of goods in Maharashtra (normal category state), the aggregate turnover threshold for mandatory registration is <strong>₹40 Lakhs</strong> in a financial year.
-                    </li>
-                    <li>
-                      <strong>Service Providers:</strong> If your entity supplies taxable services or mixed supplies, the threshold remains <strong>₹20 Lakhs</strong>.
-                    </li>
-                    <li>
-                      <strong>E-Invoicing Applicability:</strong> If your aggregate annual turnover exceeds ₹5 Crores in any preceding fiscal year, generating e-invoices with an IRN (Invoice Reference Number) is mandatory.
-                    </li>
-                  </ul>
-                </div>
-
-                {/* Citation Cards Strip */}
-                <div className="flex flex-wrap gap-2.5 pt-1">
-                  <div className="px-3 py-1.5 rounded-lg bg-[#181820] border border-white/10 text-[11px] flex items-center gap-2 text-slate-300 hover:border-white/20 transition-colors cursor-pointer">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                    <span>Notification No. 10/2019-CT</span>
-                    <span className="text-slate-500 text-[10px] font-mono">p. 2</span>
-                  </div>
-                  <div className="px-3 py-1.5 rounded-lg bg-[#181820] border border-white/10 text-[11px] flex items-center gap-2 text-slate-300 hover:border-white/20 transition-colors cursor-pointer">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                    <span>CGST Act 2017, Sec 22</span>
-                    <span className="text-slate-500 text-[10px] font-mono">cl. 1</span>
-                  </div>
-                  <div className="px-3 py-1.5 rounded-lg bg-[#181820] border border-white/10 text-[11px] flex items-center gap-2 text-slate-300 hover:border-white/20 transition-colors cursor-pointer">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                    <span>Circular No. 160/16/2021-GST</span>
-                    <span className="text-slate-500 text-[10px] font-mono">p. 4</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
+          </RevealOnScroll>
         </div>
-        </RevealOnScroll>
+
+        {/* ── Interactive Product Preview Window (NoteDeck Dark Card Style) with scroll fade-out ── */}
+        <div
+          style={{
+            opacity: previewCardOpacity,
+            transform: `translateY(${previewCardTranslateY}px)`,
+            pointerEvents: previewCardOpacity < 0.05 ? 'none' : 'auto',
+            willChange: 'opacity, transform',
+          }}
+          className="w-full max-w-5xl mb-28 flex justify-center transition-opacity duration-150"
+        >
+          <RevealOnScroll delay={540} duration={850} enabled={heroEntered} className="w-full">
+            <div className="w-full rounded-2xl bg-[#13131A] border border-white/10 shadow-2xl overflow-hidden text-left">
+            
+            {/* Window Header */}
+            <div className="px-5 py-3.5 border-b border-white/10 bg-[#0E0F14] flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-slate-700" />
+                <div className="w-2.5 h-2.5 rounded-full bg-slate-700" />
+                <div className="w-2.5 h-2.5 rounded-full bg-slate-700" />
+                <span className="text-[11px] font-mono text-slate-400 ml-2">app.regiq.in/research</span>
+              </div>
+
+              {/* Interactive Preview Tabs */}
+              <div className="hidden sm:flex items-center gap-1 bg-[#181822] p-1 rounded-lg border border-white/10 text-xs">
+                <button 
+                  onClick={() => setActiveTab('query')}
+                  className={`px-3 py-1 rounded-md transition-colors ${activeTab === 'query' ? 'bg-[#252535] text-white font-medium' : 'text-slate-400 hover:text-slate-200'}`}
+                >
+                  RAG Inspector
+                </button>
+                <button 
+                  onClick={() => setActiveTab('citations')}
+                  className={`px-3 py-1 rounded-md transition-colors ${activeTab === 'citations' ? 'bg-[#252535] text-white font-medium' : 'text-slate-400 hover:text-slate-200'}`}
+                >
+                  Verified Citations (3)
+                </button>
+                <button 
+                  onClick={() => setActiveTab('trace')}
+                  className={`px-3 py-1 rounded-md transition-colors ${activeTab === 'trace' ? 'bg-[#252535] text-white font-medium' : 'text-slate-400 hover:text-slate-200'}`}
+                >
+                  LangGraph State
+                </button>
+              </div>
+            </div>
+
+            {/* Window Body */}
+            <div className="p-6 sm:p-8 space-y-6">
+              
+              {/* Simulated User Question */}
+              <div className="flex items-start gap-3">
+                <div className="w-7 h-7 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-semibold text-slate-300 shrink-0">
+                  U
+                </div>
+                <div className="bg-[#181820] border border-white/10 rounded-xl px-4 py-3 max-w-xl text-xs text-slate-200 leading-relaxed">
+                  What is the threshold limit for mandatory GST registration for goods suppliers in Maharashtra, and what are the invoicing compliance requirements?
+                </div>
+              </div>
+
+              {/* Simulated AI Response */}
+              <div className="flex items-start gap-3">
+                <div className="w-7 h-7 rounded-lg bg-purple-600 flex items-center justify-center text-xs font-semibold text-white shrink-0 shadow-md">
+                  R
+                </div>
+                <div className="space-y-4 flex-1">
+                  <div className="bg-[#16161F] border border-white/10 rounded-xl p-5 space-y-3 text-xs leading-relaxed text-slate-300">
+                    <div className="flex items-center gap-2 pb-2 border-b border-white/5">
+                      <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-500/30">
+                        Grounded • 98.4% Confidence
+                      </span>
+                      <span className="text-slate-600">•</span>
+                      <span className="text-[11px] text-slate-400 font-mono">Corpus: GST (CBIC Master Portal)</span>
+                    </div>
+
+                    <p>
+                      Under <strong>Section 22(1) of the Central Goods and Services Tax (CGST) Act, 2017</strong> read with <strong>Notification No. 10/2019 – Central Tax</strong>:
+                    </p>
+
+                    <ul className="list-disc pl-5 space-y-1.5 text-slate-300">
+                      <li>
+                        <strong>Threshold Limit:</strong> For businesses engaged exclusively in the intra-state supply of goods in Maharashtra (normal category state), the aggregate turnover threshold for mandatory registration is <strong>₹40 Lakhs</strong> in a financial year.
+                      </li>
+                      <li>
+                        <strong>Service Providers:</strong> If your entity supplies taxable services or mixed supplies, the threshold remains <strong>₹20 Lakhs</strong>.
+                      </li>
+                      <li>
+                        <strong>E-Invoicing Applicability:</strong> If your aggregate annual turnover exceeds ₹5 Crores in any preceding fiscal year, generating e-invoices with an IRN (Invoice Reference Number) is mandatory.
+                      </li>
+                    </ul>
+                  </div>
+
+                  {/* Citation Cards Strip */}
+                  <div className="flex flex-wrap gap-2.5 pt-1">
+                    <div className="px-3 py-1.5 rounded-lg bg-[#181820] border border-white/10 text-[11px] flex items-center gap-2 text-slate-300 hover:border-white/20 transition-colors cursor-pointer">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                      <span>Notification No. 10/2019-CT</span>
+                      <span className="text-slate-500 text-[10px] font-mono">p. 2</span>
+                    </div>
+                    <div className="px-3 py-1.5 rounded-lg bg-[#181820] border border-white/10 text-[11px] flex items-center gap-2 text-slate-300 hover:border-white/20 transition-colors cursor-pointer">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                      <span>CGST Act 2017, Sec 22</span>
+                      <span className="text-slate-500 text-[10px] font-mono">cl. 1</span>
+                    </div>
+                    <div className="px-3 py-1.5 rounded-lg bg-[#181820] border border-white/10 text-[11px] flex items-center gap-2 text-slate-300 hover:border-white/20 transition-colors cursor-pointer">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                      <span>Circular No. 160/16/2021-GST</span>
+                      <span className="text-slate-500 text-[10px] font-mono">p. 4</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          </RevealOnScroll>
+        </div>
 
         {/* ── Features Section (Exact NoteDeck style cards with hover lift) ── */}
         <div id="features" className="w-full pt-12 pb-24 text-left space-y-12">
