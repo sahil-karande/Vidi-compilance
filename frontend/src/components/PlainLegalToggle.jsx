@@ -167,53 +167,340 @@ export default function PlainLegalToggle({ mode = MODE_PLAIN, onModeChange }) {
 //  Use this in Chat.jsx to display the answer text
 // ─────────────────────────────────────────────────────────────
 
+function renderInlineMarkdown(str) {
+  if (!str) return null;
+
+  // Split by linebreaks (<br> or <br/>)
+  const brParts = str.split(/(<br\s*\/?>)/gi);
+  if (brParts.length > 1) {
+    return brParts.map((bp, bIdx) => {
+      if (/<br\s*\/?>/i.test(bp)) {
+        return <br key={bIdx} />;
+      }
+      return renderInlineTokens(bp);
+    });
+  }
+
+  return renderInlineTokens(str);
+}
+
+function renderInlineTokens(str) {
+  if (!str) return null;
+
+  // Split by markdown bold-italic (***), bold (**), italic (*), code (`), and citations ([Source X])
+  const tokenRegex = /(\*\*\*[^*]+?\*\*\*|\*\*[^*]+?\*\*|\*[^*]+?\*|`[^`]+?`|\[Source\s*\d+\])/g;
+  const parts = str.split(tokenRegex);
+
+  return parts.map((part, idx) => {
+    if (!part) return null;
+
+    if (part.startsWith('***') && part.endsWith('***') && part.length >= 6) {
+      return (
+        <strong key={idx} style={{ fontWeight: 700, fontStyle: 'italic', color: '#ffffff' }}>
+          {part.slice(3, -3)}
+        </strong>
+      );
+    }
+
+    if (part.startsWith('**') && part.endsWith('**') && part.length >= 4) {
+      return (
+        <strong key={idx} style={{ fontWeight: 700, color: '#ffffff' }}>
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+
+    if (part.startsWith('*') && part.endsWith('*') && part.length >= 2) {
+      return (
+        <em key={idx} style={{ fontStyle: 'italic', color: '#cbd5e1' }}>
+          {part.slice(1, -1)}
+        </em>
+      );
+    }
+
+    if (part.startsWith('`') && part.endsWith('`') && part.length >= 2) {
+      return (
+        <code
+          key={idx}
+          style={{
+            background: 'rgba(255, 255, 255, 0.1)',
+            padding: '2px 5px',
+            borderRadius: '4px',
+            fontFamily: 'monospace',
+            fontSize: '12px',
+            color: '#d8b4fe',
+          }}
+        >
+          {part.slice(1, -1)}
+        </code>
+      );
+    }
+
+    if (/^\[Source\s*\d+\]$/i.test(part)) {
+      return (
+        <span
+          key={idx}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            fontSize: '11px',
+            fontWeight: 600,
+            color: '#c084fc',
+            background: 'rgba(192, 132, 252, 0.15)',
+            border: '1px solid rgba(192, 132, 252, 0.3)',
+            padding: '1px 6px',
+            borderRadius: '4px',
+            marginLeft: '4px',
+            marginRight: '2px',
+            verticalAlign: 'baseline',
+          }}
+        >
+          {part}
+        </span>
+      );
+    }
+
+    return part;
+  });
+}
+
+function renderTableBlock(tableLines, key) {
+  if (!tableLines || tableLines.length < 2) return null;
+
+  const headerCells = tableLines[0]
+    .split('|')
+    .slice(1, -1)
+    .map((c) => c.trim());
+
+  const hasDivider = /^(\|\s*[-:]+\s*)+\|$/.test(tableLines[1].trim());
+  const rowLines = hasDivider ? tableLines.slice(2) : tableLines.slice(1);
+
+  const rows = rowLines.map((line) =>
+    line
+      .split('|')
+      .slice(1, -1)
+      .map((c) => c.trim())
+  );
+
+  return (
+    <div
+      key={key}
+      style={{
+        overflowX: 'auto',
+        margin: '14px 0',
+        borderRadius: '8px',
+        border: '1px solid rgba(255, 255, 255, 0.12)',
+        background: '#0e1017',
+      }}
+    >
+      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', textAlign: 'left' }}>
+        {hasDivider && headerCells.length > 0 && (
+          <thead>
+            <tr style={{ background: 'rgba(255, 255, 255, 0.05)', borderBottom: '1px solid rgba(255, 255, 255, 0.15)' }}>
+              {headerCells.map((cell, cIdx) => (
+                <th key={cIdx} style={{ padding: '9px 12px', fontWeight: 700, color: '#f8fafc' }}>
+                  {renderInlineMarkdown(cell)}
+                </th>
+              ))}
+            </tr>
+          </thead>
+        )}
+        <tbody>
+          {(hasDivider ? rows : [headerCells, ...rows]).map((row, rIdx) => (
+            <tr
+              key={rIdx}
+              style={{
+                borderBottom: rIdx < rows.length - 1 ? '1px solid rgba(255, 255, 255, 0.06)' : 'none',
+                background: rIdx % 2 === 1 ? 'rgba(255, 255, 255, 0.02)' : 'transparent',
+              }}
+            >
+              {row.map((cell, cIdx) => (
+                <td key={cIdx} style={{ padding: '8px 12px', color: '#cbd5e1', verticalAlign: 'top', lineHeight: '1.55' }}>
+                  {renderInlineMarkdown(cell)}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 export function AnswerText({ text = '', mode = MODE_PLAIN }) {
   const isLegal = mode === MODE_LEGAL;
 
   if (!text) return null;
 
-  // Split into lines for rendering
-  const lines = text.split('\n').filter(Boolean);
+  const rawLines = text.split('\n');
+  const elements = [];
+  let i = 0;
+
+  while (i < rawLines.length) {
+    const rawLine = rawLines[i];
+    const trimmed = rawLine.trim();
+
+    // Empty line
+    if (!trimmed) {
+      elements.push(<div key={`sp-${i}`} style={{ height: '8px' }} />);
+      i++;
+      continue;
+    }
+
+    // Code Block ``` ... ```
+    if (trimmed.startsWith('```')) {
+      const codeLines = [];
+      i++;
+      while (i < rawLines.length && !rawLines[i].trim().startsWith('```')) {
+        codeLines.push(rawLines[i]);
+        i++;
+      }
+      if (i < rawLines.length) i++; // skip closing ```
+      elements.push(
+        <pre
+          key={`code-${i}`}
+          style={{
+            background: '#090a0f',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '8px',
+            padding: '12px 14px',
+            fontFamily: 'monospace',
+            fontSize: '12px',
+            color: '#e2e8f0',
+            overflowX: 'auto',
+            margin: '12px 0',
+          }}
+        >
+          {codeLines.join('\n')}
+        </pre>
+      );
+      continue;
+    }
+
+    // Table Block | ... |
+    if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
+      const tableLines = [];
+      while (i < rawLines.length && rawLines[i].trim().startsWith('|') && rawLines[i].trim().endsWith('|')) {
+        tableLines.push(rawLines[i]);
+        i++;
+      }
+      elements.push(renderTableBlock(tableLines, `table-${i}`));
+      continue;
+    }
+
+    // Horizontal Dividers
+    if (trimmed === '---' || trimmed === '***' || trimmed === '___') {
+      elements.push(
+        <hr
+          key={`hr-${i}`}
+          style={{
+            border: 'none',
+            borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+            margin: '14px 0',
+          }}
+        />
+      );
+      i++;
+      continue;
+    }
+
+    // Markdown Headings (e.g. "### Title", "## Title", "# Title")
+    if (/^#{1,4}\s+/.test(trimmed)) {
+      const content = trimmed.replace(/^#{1,4}\s+/, '');
+      elements.push(
+        <div key={`h-${i}`} style={answerStyles.heading}>
+          {renderInlineMarkdown(content)}
+        </div>
+      );
+      i++;
+      continue;
+    }
+
+    // Standalone Bold Headings
+    const isStandaloneBold =
+      (trimmed.startsWith('**') && trimmed.endsWith('**') && !trimmed.slice(2, -2).includes('**')) ||
+      (trimmed.startsWith('**') && trimmed.endsWith(':**'));
+    if (isStandaloneBold) {
+      const inner =
+        trimmed.startsWith('**') && trimmed.endsWith(':**')
+          ? trimmed.slice(2, -3) + ':'
+          : trimmed.slice(2, -2);
+      elements.push(
+        <div key={`bh-${i}`} style={answerStyles.heading}>
+          {renderInlineMarkdown(inner)}
+        </div>
+      );
+      i++;
+      continue;
+    }
+
+    // Sub-bullet / Nested bullet
+    const isSubBullet =
+      rawLine.startsWith('  -') ||
+      rawLine.startsWith('    -') ||
+      trimmed.startsWith('- -') ||
+      trimmed.startsWith('• -') ||
+      trimmed.startsWith('*-');
+    if (isSubBullet) {
+      const cleanContent = trimmed.replace(/^[-•*]\s*[-•*]\s*/, '').replace(/^[-•*]\s*/, '');
+      elements.push(
+        <div key={`sub-${i}`} style={{ ...answerStyles.bulletRow, marginLeft: '20px', marginBottom: '5px' }}>
+          <span style={{ ...answerStyles.bulletDot, color: isLegal ? '#8B85D4' : '#a855f7', fontSize: '13px' }}>–</span>
+          <div style={{ flex: 1, lineHeight: '1.6' }}>{renderInlineMarkdown(cleanContent)}</div>
+        </div>
+      );
+      i++;
+      continue;
+    }
+
+    // Numbered List Item
+    const numberMatch = trimmed.match(/^(\d+)\.\s+(.*)/);
+    if (numberMatch) {
+      const num = numberMatch[1];
+      const content = numberMatch[2];
+      elements.push(
+        <div key={`num-${i}`} style={{ ...answerStyles.bulletRow, marginBottom: '6px' }}>
+          <span style={{ ...answerStyles.bulletDot, color: isLegal ? '#8B85D4' : '#1D9E75', minWidth: '18px' }}>
+            {num}.
+          </span>
+          <div style={{ flex: 1, lineHeight: '1.6' }}>{renderInlineMarkdown(content)}</div>
+        </div>
+      );
+      i++;
+      continue;
+    }
+
+    // Regular Bullet Item
+    const bulletMatch = trimmed.match(/^([•\-*])\s+(.*)/);
+    if (bulletMatch) {
+      const content = bulletMatch[2];
+      elements.push(
+        <div key={`bul-${i}`} style={{ ...answerStyles.bulletRow, marginBottom: '6px' }}>
+          <span style={{ ...answerStyles.bulletDot, color: isLegal ? '#8B85D4' : '#1D9E75' }}>•</span>
+          <div style={{ flex: 1, lineHeight: '1.6' }}>{renderInlineMarkdown(content)}</div>
+        </div>
+      );
+      i++;
+      continue;
+    }
+
+    // Regular Paragraph
+    elements.push(
+      <p key={`p-${i}`} style={isLegal ? answerStyles.legalPara : answerStyles.plainPara}>
+        {renderInlineMarkdown(trimmed)}
+      </p>
+    );
+    i++;
+  }
 
   return (
-    <div style={{
-      ...answerStyles.base,
-      ...(isLegal ? answerStyles.legal : answerStyles.plain),
-    }}>
-      {lines.map((line, i) => {
-        const isBullet = line.trim().startsWith('•') ||
-                         line.trim().startsWith('-') ||
-                         line.trim().startsWith('*');
-        const isNumbered = /^\d+\./.test(line.trim());
-        const isHeading = line.trim().startsWith('**') && line.trim().endsWith('**');
-
-        if (isHeading) {
-          return (
-            <p key={i} style={answerStyles.heading}>
-              {line.replace(/\*\*/g, '')}
-            </p>
-          );
-        }
-
-        if (isBullet || isNumbered) {
-          return (
-            <div key={i} style={answerStyles.bulletRow}>
-              <span style={answerStyles.bulletDot}>
-                {isNumbered ? line.match(/^\d+\./)[0] : '•'}
-              </span>
-              <span>
-                {line.replace(/^[•\-*]\s*/, '').replace(/^\d+\.\s*/, '')}
-              </span>
-            </div>
-          );
-        }
-
-        return (
-          <p key={i} style={isLegal ? answerStyles.legalPara : answerStyles.plainPara}>
-            {line}
-          </p>
-        );
-      })}
+    <div
+      style={{
+        ...answerStyles.base,
+        ...(isLegal ? answerStyles.legal : answerStyles.plain),
+      }}
+    >
+      {elements}
     </div>
   );
 }
@@ -222,16 +509,16 @@ const answerStyles = {
   base: {
     fontSize: 14,
     lineHeight: 1.65,
-    color: '#e0e0e0',
+    color: '#e2e8f0',
   },
   plain: {
-    fontFamily: 'sans-serif',
+    fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
   },
   legal: {
     fontFamily: 'Georgia, serif',
     fontSize: 13.5,
     lineHeight: 1.8,
-    color: '#d4d4d4',
+    color: '#cbd5e1',
   },
   plainPara: {
     margin: '0 0 8px',
@@ -241,10 +528,12 @@ const answerStyles = {
     textAlign: 'justify',
   },
   heading: {
-    fontWeight: 600,
-    color: '#fff',
-    margin: '12px 0 6px',
-    fontSize: 14,
+    fontWeight: 700,
+    color: '#ffffff',
+    margin: '16px 0 8px',
+    fontSize: '15px',
+    lineHeight: '1.5',
+    letterSpacing: '-0.01em',
   },
   bulletRow: {
     display: 'flex',
