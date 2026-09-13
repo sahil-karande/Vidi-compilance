@@ -16,6 +16,7 @@ import Upload from './pages/Upload';
 import Explorer from './pages/Explorer';
 import PricingPage from './components/PricingPage'; // <-- Import updated Pricing Page Component
 import BackgroundOrbs from './components/BackgroundOrbs';
+import PwaInstallPrompt, { PwaNavButton } from './components/PwaInstallPrompt';
 
 // Premium Enterprise Navigation Layout
 function WorkspaceLayout({ children }) {
@@ -84,6 +85,9 @@ function WorkspaceLayout({ children }) {
         </div>
 
         <div className="flex items-center gap-3">
+          {/* PWA Quick Install Action Button */}
+          <PwaNavButton />
+
           {user?.role !== 'pro' && user?.role !== 'enterprise' && (
             <Link
               to="/pricing"
@@ -125,6 +129,9 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        {/* Global PWA Install Notification Prompt for Desktop & Mobile */}
+        <PwaInstallPrompt />
+
         <Routes>
           {/* Public Routing Interfaces */}
           <Route path="/" element={<Landing />} />

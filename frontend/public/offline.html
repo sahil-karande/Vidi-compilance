@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#3C3489" />
+  <title>Vidi — Offline</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: #0D0E12;
+      color: #E2E8F0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .background-orb {
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, rgba(13, 14, 18, 0) 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      filter: blur(40px);
+    }
+    .card {
+      position: relative;
+      z-index: 10;
+      background: rgba(24, 24, 32, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 40px 32px;
+      max-width: 440px;
+      width: 100%;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+    }
+    .icon-wrapper {
+      width: 64px;
+      height: 64px;
+      background: rgba(168, 85, 247, 0.12);
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+    .icon-wrapper img {
+      width: 36px;
+      height: 36px;
+      object-contain: contain;
+    }
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+    }
+    p {
+      font-size: 0.925rem;
+      color: #94A3B8;
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      color: #FCA5A5;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      margin-bottom: 18px;
+    }
+    .btn-retry {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #7E22CE 0%, #9333EA 100%);
+      color: #FFFFFF;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 0.925rem;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      box-shadow: 0 4px 14px rgba(147, 51, 234, 0.35);
+      transition: all 0.2s ease;
+    }
+    .btn-retry:hover {
+      background: linear-gradient(135deg, #6B21A8 0%, #7E22CE 100%);
+      box-shadow: 0 6px 20px rgba(147, 51, 234, 0.45);
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+  <div class="background-orb"></div>
+  <div class="card">
+    <div class="icon-wrapper">
+      <img src="/vidi_icon_only.png" alt="Vidi" />
+    </div>
+    <div class="badge">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path><path d="M10.71 5.05A16 16 0 0 1 22.58 9"></path><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><line x1="12" y1="20" x2="12.01" y2="20"></line></svg>
+      <span>No Internet Connection</span>
+    </div>
+    <h1>You are currently offline</h1>
+    <p>Vidi needs a connection to query real-time Indian regulatory frameworks and legal databases. Please check your network and reconnect.</p>
+    <button class="btn-retry" onclick="window.location.reload()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M3 22v-6h6"></path><path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path></svg>
+      Retry Connection
+    </button>
+  </div>
+</body>
+</html>

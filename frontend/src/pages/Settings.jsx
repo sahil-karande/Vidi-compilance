@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
+import { usePwaInstall } from '../hooks/usePwaInstall';
 import PricingPage from '../components/PricingPage';
 import { chatAPI } from '../lib/api';
 import { 
@@ -10,7 +11,11 @@ import {
   LogOut, 
   Check, 
   Building2,
-  Trash2
+  Trash2,
+  Smartphone,
+  Download,
+  Wifi,
+  RefreshCw
 } from 'lucide-react';
 
 // Map our UI list directly to official backend ALERT_TOPICS
@@ -23,6 +28,8 @@ const AVAILABLE_ALERTS = [
 
 export default function Settings() {
   const { signOut, user, updateUserProfile } = useAuth() || {};
+  const { isInstallable, isInstalled, isStandalone, promptInstall } = usePwaInstall();
+  const [cacheStatus, setCacheStatus] = useState({ cleared: false, checking: false, cachedCount: 0 });
   const [activeTab, setActiveTab] = useState('profile');
   const [loadingAlerts, setLoadingAlerts] = useState(false);
   const [isSavingProfile, setIsSavingProfile] = useState(false);
@@ -125,6 +132,7 @@ export default function Settings() {
     { id: 'profile', label: 'Company Profile', icon: Building2 },
     { id: 'plan', label: 'Plan & Billing', icon: CreditCard },
     { id: 'alerts', label: 'Regulatory Alerts', icon: Bell },
+    { id: 'app', label: 'Desktop & Mobile App', icon: Smartphone },
     { id: 'account', label: 'Account Security', icon: User }
   ];
 
@@ -328,6 +336,94 @@ export default function Settings() {
                 })}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Desktop & Mobile App Tab */}
+        {activeTab === 'app' && (
+          <div className="max-w-2xl space-y-6">
+            <div>
+              <h3 className="text-base font-bold text-white">Desktop & Mobile Application</h3>
+              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                Vidi operates as an installable application on macOS, Windows, Linux, Android, and iOS. 
+                Enjoy fast startup and dedicated desktop or mobile window mode.
+              </p>
+            </div>
+
+            {/* Installation Status Card */}
+            <div className="p-5 rounded-2xl bg-[#16161F] border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center p-2 shrink-0">
+                  <img src="/vidi_icon_only.png" alt="Vidi Icon" className="w-full h-full object-contain" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-semibold text-white">Application Status</span>
+                    {isInstalled || isStandalone ? (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                        Installed (Standalone)
+                      </span>
+                    ) : (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                        Web Browser Mode
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    {isInstalled || isStandalone 
+                      ? 'Running inside dedicated standalone window.' 
+                      : 'You can install this site as an app on your screen for desktop or mobile.'}
+                  </p>
+                </div>
+              </div>
+
+              {!isInstalled && !isStandalone && (
+                <button
+                  type="button"
+                  onClick={promptInstall}
+                  className="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white rounded-xl text-xs font-semibold transition-all shadow-[0_4px_16px_rgba(147,51,234,0.3)] flex items-center justify-center gap-2 shrink-0"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Install App</span>
+                </button>
+              )}
+            </div>
+
+            {/* Offline Cache & Service Worker Card */}
+            <div className="p-5 rounded-2xl bg-[#16161F] border border-white/10 space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <Wifi className="w-4 h-4 text-purple-400" />
+                  <h4 className="text-xs font-bold text-white uppercase tracking-wider">Offline Cache & Service Worker</h4>
+                </div>
+                <span className="text-[11px] text-emerald-400 font-mono flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  Active (vidi-pwa-v1)
+                </span>
+              </div>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                Critical core interfaces, fonts, icons, and stylesheets are cached locally. If your network connection drops, 
+                Vidi serves the offline fallback interface seamlessly.
+              </p>
+              <div className="pt-2 flex items-center justify-between border-t border-white/5">
+                <span className="text-xs text-slate-400">Clear cached assets and reload fresh copies:</span>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    if ('caches' in window) {
+                      const keys = await caches.keys();
+                      await Promise.all(keys.map(k => caches.delete(k)));
+                      setCacheStatus({ cleared: true, checking: false, cachedCount: 0 });
+                      setTimeout(() => setCacheStatus({ cleared: false, checking: false, cachedCount: 0 }), 3000);
+                    }
+                  }}
+                  className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5"
+                >
+                  <RefreshCw className="w-3 h-3 text-slate-400" />
+                  <span>{cacheStatus.cleared ? 'Cache Purged!' : 'Purge PWA Cache'}</span>
+                </button>
+              </div>
+            </div>
           </div>
         )}
 

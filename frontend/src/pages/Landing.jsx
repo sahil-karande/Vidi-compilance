@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import BackgroundOrbs from '../components/BackgroundOrbs';
 import IntroSplash from '../components/IntroSplash';
 import RevealOnScroll from '../components/RevealOnScroll';
+import { PwaNavButton } from '../components/PwaInstallPrompt';
+import Footer from '../components/Footer';
 import { 
   ShieldCheck, 
   ArrowRight, 
@@ -115,6 +117,7 @@ export default function Landing() {
         </div>
 
         <div className="flex items-center gap-3">
+          <PwaNavButton />
           <button 
             onClick={() => navigate('/login')} 
             className="text-sm font-medium text-slate-300 hover:text-white px-4 py-2 rounded-lg bg-slate-900 border border-white/10 hover:bg-slate-800 transition-all"
@@ -891,25 +894,8 @@ export default function Landing() {
 
       </main>
 
-      {/* ── Footer (Exact NoteDeck style) ── */}
-      <footer className="w-full border-t border-white/10 px-6 sm:px-12 lg:px-20 py-10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 bg-[#0A0B0E]">
-        <div className="flex items-center gap-2">
-          <img 
-            src="/vidi_icon_only.png" 
-            alt="Vidi Logo" 
-            className="w-4 h-4 rounded-sm object-contain" 
-          />
-          <span className="font-bold text-white text-sm">Vidi</span>
-          <span>•</span>
-          <span>© {new Date().getFullYear()} Regulatory Intelligence System. All rights reserved.</span>
-        </div>
-        <div className="flex items-center gap-6 text-xs text-slate-400">
-          <a href="#features" className="hover:text-white transition-colors">Features</a>
-          <a href="#workflow" className="hover:text-white transition-colors">Workflow</a>
-          <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
-          <span onClick={() => navigate('/login')} className="hover:text-white cursor-pointer transition-colors">Sign In</span>
-        </div>
-      </footer>
+      {/* ── Footer ── */}
+      <Footer />
     </div>
   );
 }

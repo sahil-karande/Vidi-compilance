@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import BackgroundOrbs from '../components/BackgroundOrbs';
+import Footer from '../components/Footer';
 import { ShieldCheck, ArrowRight, ArrowLeft, Mail, KeyRound, CheckCircle2 } from 'lucide-react';
 
 export default function Login() {
@@ -274,9 +275,7 @@ export default function Login() {
       </main>
 
       {/* ── Footer ── */}
-      <footer className="w-full border-t border-white/5 py-4 px-6 text-center text-xs text-slate-500 relative z-10">
-        <p>© 2026 Vidi. Source-grounded financial compliance assistant for Indian SMEs.</p>
-      </footer>
+      <Footer className="relative z-10" />
 
     </div>
   );
