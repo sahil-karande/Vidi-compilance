@@ -111,14 +111,26 @@ async def _run_scheduled_sync():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Non-blocking async background warmup so server binds and serves health check immediately
-    warmup_task = asyncio.create_task(_warmup_rag_pipeline())
-    sync_task = asyncio.create_task(_run_scheduled_sync())
-    yield
-    if not warmup_task.done():
-        warmup_task.cancel()
-    if not sync_task.done():
-        sync_task.cancel()
+    import os
+    env = os.getenv("ENVIRONMENT", "development")
+    
+    if env == "production":
+        # Skip eager warmup on Render free tier (512MB RAM) — models lazy-load on first request
+        logger.info("[lifespan] Production mode: skipping eager model warmup to conserve memory.")
+        sync_task = asyncio.create_task(_run_scheduled_sync())
+        yield
+        if not sync_task.done():
+            sync_task.cancel()
+    else:
+        # Non-blocking async background warmup so server binds and serves health check immediately
+        warmup_task = asyncio.create_task(_warmup_rag_pipeline())
+        sync_task = asyncio.create_task(_run_scheduled_sync())
+        yield
+        if not warmup_task.done():
+            warmup_task.cancel()
+        if not sync_task.done():
+            sync_task.cancel()
+    
     logger.info("[lifespan] Vidi backend shutdown.")
 
 # ─────────────────────────────────────────────────────────────
