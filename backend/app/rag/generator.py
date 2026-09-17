@@ -175,6 +175,8 @@ class RAGGenerator:
             )
             context_str += chunk_header
 
+            chunk_corpus = getattr(chunk, "corpus", None) or metadata.get("corpus", "gst")
+
             citations.append({
                 "id": idx,
                 "source": source_doc,
@@ -182,7 +184,8 @@ class RAGGenerator:
                 "date": date,
                 "section": section,
                 "url": url,
-                "snippet": text
+                "snippet": text,
+                "corpus": str(chunk_corpus)
             })
 
             if LANGCHAIN_AVAILABLE and Document is not None:

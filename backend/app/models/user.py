@@ -91,7 +91,7 @@ class Citation(BaseModel):
     A single source citation attached to an LLM-generated answer.
     Populated from ChromaDB chunk metadata.
     """
-    corpus: Corpus
+    corpus: str = "gst"
     circular_no: str = "unknown"
     date: str = "unknown"
     title: str = ""

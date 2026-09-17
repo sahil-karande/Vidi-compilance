@@ -203,11 +203,12 @@ def clear_cache():
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
+    logger.exception(f"Unhandled server error on {request.method} {request.url.path}: {exc}")
     return JSONResponse(
         status_code=500,
         content={
             "error": "Internal server error",
-            "detail": str(exc) if settings.environment == "development" else "An error occurred",
+            "detail": str(exc),
         },
     )
 

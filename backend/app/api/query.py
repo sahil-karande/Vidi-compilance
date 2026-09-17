@@ -416,7 +416,9 @@ async def query(
 
         if isinstance(cit, dict):
             meta_block = cit.get("metadata", {}) or {} if isinstance(cit.get("metadata"), dict) else cit
-            current_chunk_corpus = meta_block.get("corpus", corpus_str)
+            raw_corpus = cit.get("corpus") or meta_block.get("corpus") or corpus_str
+            clean_corpus = str(raw_corpus).split(",")[0].strip().lower()
+            current_chunk_corpus = clean_corpus if clean_corpus in ["gst", "rbi", "sebi", "mca", "fema", "user_docs"] else ("rbi" if "rbi" in str(raw_corpus).lower() else "gst")
             
             text_snippet = (
                 cit.get("text") or cit.get("snippet") or cit.get("page_content") or cit.get("content") or
