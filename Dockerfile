@@ -1,9 +1,9 @@
 # ─────────────────────────────────────────────────────────────
 #  Vidi — Backend Dockerfile
-#  Multi-stage build: keeps final image lean
+#  Build context: project root (set Root Directory to blank in Render)
 # ─────────────────────────────────────────────────────────────
 
-FROM python:3.11.17-slim AS base
+FROM python:3.11-slim AS base
 
 # System deps needed for PyMuPDF, pytesseract, and sentence-transformers
 RUN apt-get update && apt-get install -y \
@@ -20,11 +20,12 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Install Python dependencies first (cached layer)
-COPY requirements.txt .
+COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
-COPY app/ ./app/
+# Copy application code + pipeline module (needed by upload.py, pipeline_sync.py)
+COPY backend/app/ ./app/
+COPY pipeline/ ./pipeline/
 
 # Create data directory
 RUN mkdir -p /app/data
@@ -37,5 +38,5 @@ USER regiquser
 # Expose FastAPI port
 EXPOSE 8000
 
-# Start server
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
+# Start server — PORT is injected by Render at runtime
+CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 1
