@@ -152,7 +152,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.allowed_origins_list,  # Set ALLOWED_ORIGINS in env (comma-separated) — defaults to localhost in dev
+    allow_origins=["*"],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -204,11 +204,17 @@ def clear_cache():
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     logger.exception(f"Unhandled server error on {request.method} {request.url.path}: {exc}")
+    origin = request.headers.get("origin") or "*"
     return JSONResponse(
         status_code=500,
         content={
             "error": "Internal server error",
             "detail": str(exc),
+        },
+        headers={
+            "Access-Control-Allow-Origin": origin,
+            "Access-Control-Allow-Methods": "*",
+            "Access-Control-Allow-Headers": "*",
         },
     )
 

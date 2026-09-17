@@ -27,8 +27,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY backend/app/ ./app/
 COPY pipeline/ ./pipeline/
 
-# Create data directory
-RUN mkdir -p /app/data
+# Create data and vectordb directories
+RUN mkdir -p /app/data /app/vectordb
 
 # Non-root user for security
 RUN adduser --disabled-password --gecos "" regiquser

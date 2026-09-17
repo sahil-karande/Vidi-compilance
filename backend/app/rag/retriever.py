@@ -36,10 +36,43 @@ from app.rag.rewriter import expand_query
 
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
 
-VECTORDB_DIR = Path(settings.vectordb_dir)
-if not VECTORDB_DIR.is_absolute():
-    project_root = Path(__file__).parent.parent.parent.parent
-    VECTORDB_DIR = project_root / "vectordb"
+def _resolve_vectordb_dir() -> Path:
+    cfg_val = getattr(settings, "vectordb_dir", "./vectordb")
+    cfg_path = Path(cfg_val)
+    if cfg_path.is_absolute() and cfg_path.exists():
+        return cfg_path
+
+    # Check parent directories for existing vectordb folder
+    here = Path(__file__).resolve()
+    for parent in here.parents:
+        if parent == Path("/"):
+            continue
+        candidate = parent / "vectordb"
+        if candidate.exists() and candidate.is_dir():
+            return candidate
+
+    # In Docker container (WORKDIR /app)
+    app_candidate = Path("/app/vectordb")
+    try:
+        app_candidate.mkdir(parents=True, exist_ok=True)
+        return app_candidate
+    except Exception:
+        pass
+
+    # Current working directory
+    cwd_candidate = Path.cwd() / "vectordb"
+    try:
+        cwd_candidate.mkdir(parents=True, exist_ok=True)
+        return cwd_candidate
+    except Exception:
+        pass
+
+    import tempfile
+    tmp = Path(tempfile.gettempdir()) / "vidi_vectordb"
+    tmp.mkdir(parents=True, exist_ok=True)
+    return tmp
+
+VECTORDB_DIR = _resolve_vectordb_dir()
 
 DEFAULT_TOP_K = 5
 RRF_K = 60  # Reciprocal Rank Fusion constant
