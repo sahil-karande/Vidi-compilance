@@ -134,7 +134,7 @@ class RAGGenerator:
             self.client = None
             logger.warning("[generator] Groq API Key missing from configuration context.")
             
-        self.model = "openai/gpt-oss-120b"
+        self.model = "qwen/qwen3.8-27b"
 
     def _format_context(self, chunks: List[Any]) -> Tuple[str, List[Dict[str, Any]], List[Any]]:
         """
@@ -310,19 +310,22 @@ class RAGGenerator:
         Generates grounded response using ConversationalRetrievalChain with thread memory.
         Falls back to direct Groq client with structured history if needed.
         """
-        if not chunks:
-            return {
-                "answer": "I could not find this in the available regulatory documents.",
-                "citations": [],
-                "mode": mode
-            }
+        if chunks:
+            context_text, citations, documents = self._format_context(chunks)
+        else:
+            context_text = (
+                "No direct circular excerpts were indexed in the local database for this specific query. "
+                "Provide an authoritative, clear, and comprehensive answer based on Indian financial regulations, "
+                "RBI circulars, NPCI guidelines, and statutory economic frameworks."
+            )
+            citations = []
+            documents = []
 
-        context_text, citations, documents = self._format_context(chunks)
         mode_instruction = self.PLAIN_MODE_INSTRUCTIONS if mode.lower() == "plain" else self.LEGAL_MODE_INSTRUCTIONS
         full_system_prompt = f"{self.SYSTEM_PROMPT_BASE}\n{mode_instruction}"
 
-        # ── Primary Execution: LangChain ConversationalRetrievalChain ──
-        if LANGCHAIN_AVAILABLE and self.api_key:
+        # ── Primary Execution: LangChain ConversationalRetrievalChain (when documents exist) ──
+        if chunks and LANGCHAIN_AVAILABLE and self.api_key:
             try:
                 retriever = PrecomputedChunkRetriever(documents=documents)
                 memory = self._build_memory(chat_history)
