@@ -140,8 +140,8 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],      # Open configuration to completely eliminate local pre-flight blocker errors
-    allow_credentials=False,  # Set to False explicitly when wildcards are active 
+    allow_origins=settings.allowed_origins_list,  # Set ALLOWED_ORIGINS in env (comma-separated) — defaults to localhost in dev
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
