@@ -119,7 +119,7 @@ function WorkspaceLayout({ children }) {
       </nav>
 
       {/* Page Body Full Screen with Smooth Page Entrance Animation */}
-      <main key={location.pathname} className="flex-1 w-full flex flex-col animate-page-enter">
+      <main className="flex-1 w-full flex flex-col">
         {children}
       </main>
     </div>
