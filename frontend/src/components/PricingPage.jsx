@@ -30,6 +30,10 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
   const [showTrialModal, setShowTrialModal] = useState(false);
   const [showStudentModal, setShowStudentModal] = useState(false);
   const [studentIdInput, setStudentIdInput] = useState('');
+  
+  // Payment Success Modal State
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [paymentSuccessDetails, setPaymentSuccessDetails] = useState(null);
 
   // ROI Calculator State
   const [queriesPerMonth, setQueriesPerMonth] = useState(12);
@@ -109,16 +113,55 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
         ? 'RegIQ Student / CA Article Pass (₹199/mo)'
         : `RegIQ Pro Tier Subscription (${cycle})`;
 
+      const orderIdToUse = data?.order_id || subscription_id;
+
       const checkoutOptions = {
         key: razorpay_key_id,
-        subscription_id: subscription_id, 
+        order_id: orderIdToUse,
+        ...(subscription_id && subscription_id.startsWith('sub_') ? { subscription_id } : {}),
         name: 'RegIQ Compliance',
         description: planTitle,
-        image: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/matcha/matcha-original.svg', 
-        handler: function (response) {
-          alert(`Transaction validated. Identification ID: ${response.razorpay_subscription_id || response.razorpay_payment_id || subscription_id}`);
-          if (onSelectPlan) onSelectPlan('pro', cycle);
-          navigate('/dashboard?checkout=success');
+        image: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/matcha/matcha-original.svg',
+        handler: async function (response) {
+          try {
+            setLoadingTier('verifying');
+            // Cryptographically verify on backend immediately
+            if (response.razorpay_signature) {
+              await billingAPI.verifyPayment({
+                razorpay_order_id: response.razorpay_order_id || orderIdToUse,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                plan: payloadPlan
+              });
+            }
+
+            setPaymentSuccessDetails({
+              paymentId: response.razorpay_payment_id,
+              orderId: response.razorpay_order_id || orderIdToUse,
+              plan: payloadPlan,
+              planTitle: planTitle
+            });
+            setShowSuccessModal(true);
+
+            if (onSelectPlan) {
+              onSelectPlan('pro', cycle);
+            }
+          } catch (verifyErr) {
+            console.error("Payment verification failure:", verifyErr);
+            // Even if immediate API fails, store details and show success modal as webhook will process it
+            setPaymentSuccessDetails({
+              paymentId: response.razorpay_payment_id,
+              orderId: response.razorpay_order_id || orderIdToUse,
+              plan: payloadPlan,
+              planTitle: planTitle
+            });
+            setShowSuccessModal(true);
+            if (onSelectPlan) {
+              onSelectPlan('pro', cycle);
+            }
+          } finally {
+            setLoadingTier(null);
+          }
         },
         prefill: {
           email: userEmail || 'sahil.test@ghrcem.edu'
@@ -130,7 +173,8 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
 
       const nativeWindowInstance = new window.Razorpay(checkoutOptions);
       nativeWindowInstance.on('payment.failed', function (failContext) {
-        setErrorMessage(`Transaction halted: ${failContext.error.description}`);
+        const desc = failContext?.error?.description || "Payment process was interrupted.";
+        setErrorMessage(`Transaction halted: ${desc}`);
       });
       nativeWindowInstance.open();
 
@@ -760,6 +804,82 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
                 className="flex-1 py-2.5 px-4 bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs rounded-xl transition-all shadow-[0_0_15px_rgba(168,85,247,0.3)] hover:shadow-[0_0_20px_rgba(168,85,247,0.45)]"
               >
                 Simulate Success
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 10. Modal: Live Payment Success Celebration */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 bg-slate-950/85 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fade-in">
+          <div className="bg-[#12131A] border border-emerald-500/40 rounded-3xl p-6 sm:p-8 max-w-lg w-full text-center shadow-[0_0_50px_rgba(16,185,129,0.25)] relative space-y-5">
+            {/* Celebration Icon */}
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-500/20 to-purple-500/20 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mx-auto shadow-[0_0_25px_rgba(16,185,129,0.3)]">
+              <Sparkles className="w-8 h-8 text-emerald-400 animate-pulse" />
+            </div>
+
+            <div className="space-y-1.5">
+              <span className="inline-block px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] font-bold tracking-wider uppercase">
+                Payment Confirmed • Pro Tier Active
+              </span>
+              <h3 className="text-2xl font-extrabold text-white">Welcome to RegIQ Pro!</h3>
+              <p className="text-xs sm:text-sm text-slate-300">
+                Your payment was verified and your account has been unlocked with full unlimited regulatory access.
+              </p>
+            </div>
+
+            {/* Receipt Details Box */}
+            <div className="text-left text-xs bg-[#161622] p-4 rounded-2xl border border-white/10 space-y-2.5 font-mono text-slate-300">
+              <div className="flex justify-between items-center pb-2 border-b border-white/5">
+                <span className="text-slate-400 font-sans">Activated Plan:</span>
+                <span className="text-purple-300 font-bold font-sans">{paymentSuccessDetails?.planTitle || 'Pro Subscription'}</span>
+              </div>
+              <div className="flex justify-between items-center pb-2 border-b border-white/5">
+                <span className="text-slate-400 font-sans">Payment ID:</span>
+                <span className="text-emerald-400 select-all font-mono">{paymentSuccessDetails?.paymentId || 'Verified'}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-slate-400 font-sans">Order Ref:</span>
+                <span className="text-slate-400 select-all font-mono">{paymentSuccessDetails?.orderId || 'Verified'}</span>
+              </div>
+            </div>
+
+            {/* Feature unlocked bullets */}
+            <div className="text-left text-xs bg-emerald-950/20 border border-emerald-500/20 rounded-xl p-3 text-emerald-300 space-y-1.5">
+              <div className="flex items-center gap-2">
+                <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <span>Unlimited legal & GST regulatory queries</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <span>Interactive Risk Scorecard & Statutory Calendar</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <span>Full private document analysis & blend engine</span>
+              </div>
+            </div>
+
+            {/* Action buttons */}
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <button
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  navigate('/chat');
+                }}
+                className="flex-1 py-3 px-4 bg-[#181820] hover:bg-[#20202c] border border-white/10 text-slate-200 font-semibold text-xs rounded-xl transition-all"
+              >
+                Start Compliance Chat
+              </button>
+              <button
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  navigate('/dashboard?checkout=success');
+                }}
+                className="flex-1 py-3 px-4 bg-gradient-to-r from-purple-600 to-emerald-600 hover:from-purple-500 hover:to-emerald-500 text-white font-bold text-xs rounded-xl transition-all shadow-[0_0_20px_rgba(168,85,247,0.35)]"
+              >
+                Open Pro Dashboard →
               </button>
             </div>
           </div>

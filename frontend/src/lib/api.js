@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { supabase } from './supabaseClient';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
@@ -261,10 +261,14 @@ export const chatAPI = {
   }
 };
 
-// ── 💳 NEW MODULE: Billing Integration Layer ──
+// ── 💳 BILLING INTEGRATION LAYER ──
 export const billingAPI = {
   createSubscription: async (planCycle) => {
-    const response = await api.post('/billing/create-subscription', { plan: planCycle });
+    const response = await api.post('/api/billing/create-subscription', { plan: planCycle });
+    return response.data;
+  },
+  verifyPayment: async (paymentData) => {
+    const response = await api.post('/api/billing/verify-payment', paymentData);
     return response.data;
   }
 };

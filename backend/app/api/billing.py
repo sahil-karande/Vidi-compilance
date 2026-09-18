@@ -86,15 +86,81 @@ async def create_subscription(
         razorpay_order = razorpay_client.order.create(data=order_data)
         
         return {
+            "order_id": razorpay_order["id"],
             "subscription_id": razorpay_order["id"],  # Maps cleanly into checkout options
             "razorpay_key_id": RAZORPAY_KEY_ID,
             "plan": plan_lower,
+            "amount": amount_map[plan_lower],
+            "currency": "INR",
             "status": razorpay_order.get("status", "created")
         }
 
     except Exception as live_auth_error:
         logger.error(f"[billing] Live Razorpay transaction creation failed: {live_auth_error}")
         raise HTTPException(status_code=500, detail=f"Razorpay Gateway Error: {str(live_auth_error)}")
+
+
+class VerifyPaymentRequest(BaseModel):
+    razorpay_order_id: str
+    razorpay_payment_id: str
+    razorpay_signature: str
+    plan: Optional[str] = "pro"
+
+
+@router.post("/verify-payment")
+async def verify_payment(
+    payload: VerifyPaymentRequest,
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Verifies Razorpay payment signature directly upon frontend checkout completion
+    and immediately upgrades the user's role to 'pro' in Supabase without delay.
+    """
+    if current_user.user_id == "anonymous-guest":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required to verify payment and activate subscription."
+        )
+
+    if not razorpay_client:
+        raise HTTPException(status_code=500, detail="Razorpay gateway integration is not configured.")
+
+    try:
+        # Cryptographically verify the payment signature using Razorpay HMAC-SHA256
+        razorpay_client.utility.verify_payment_signature({
+            "razorpay_order_id": payload.razorpay_order_id,
+            "razorpay_payment_id": payload.razorpay_payment_id,
+            "razorpay_signature": payload.razorpay_signature
+        })
+        logger.info(f"[billing] Payment signature verified successfully for order: {payload.razorpay_order_id}")
+    except Exception as sig_err:
+        logger.error(f"[billing] Payment signature verification failed: {sig_err}")
+        raise HTTPException(status_code=400, detail="Invalid payment signature. Verification failed.")
+
+    # Mutate user role in Supabase profiles and invalidate auth cache
+    try:
+        from app.api.auth import get_supabase_admin, _user_cache
+        supabase = get_supabase_admin()
+        user_id = current_user.user_id
+        
+        target_role = "pro"
+        db_response = supabase.table("profiles").update({"role": target_role}).eq("user_id", user_id).execute()
+        
+        # Invalidate in-memory user cache so subsequent queries immediately recognise Pro tier
+        _user_cache.pop(user_id, None)
+        
+        logger.info(f"[billing] Upgraded user {user_id} to {target_role} after verified payment {payload.razorpay_payment_id}")
+        return {
+            "status": "success",
+            "message": "Payment verified and account upgraded to Pro!",
+            "role": target_role,
+            "order_id": payload.razorpay_order_id,
+            "payment_id": payload.razorpay_payment_id,
+            "plan": payload.plan
+        }
+    except Exception as db_err:
+        logger.error(f"[billing] Failed to update profile role in Supabase: {db_err}")
+        raise HTTPException(status_code=500, detail="Database update error while activating subscription.")
 
 
 @router.post("/webhook")
@@ -143,11 +209,14 @@ async def razorpay_webhook(
             
             try:
                 # Dynamically fetch the admin client instance
-                from app.api.auth import get_supabase_admin
+                from app.api.auth import get_supabase_admin, _user_cache
                 supabase = get_supabase_admin()
                 
                 # Mutate the user role property inside the profiles context table
                 db_response = supabase.table("profiles").update({"role": "pro"}).eq("user_id", user_id).execute()
+                
+                # Invalidate in-memory cache
+                _user_cache.pop(user_id, None)
                 
                 logger.info(f"Database role upgraded successfully for user {user_id}: {db_response.data}")
                 return {"status": "success", "action": "tier_upgraded"}
