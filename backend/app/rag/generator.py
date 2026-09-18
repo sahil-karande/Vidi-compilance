@@ -378,7 +378,24 @@ class RAGGenerator:
                 }
 
             except Exception as chain_err:
-                logger.warning(f"[generator] ConversationalRetrievalChain notice ({chain_err}) -> proceeding to resilient Groq conversation fallback.")
+                err_str = str(chain_err)
+                logger.warning(f"[generator] ConversationalRetrievalChain error ({err_str}) -> attempting Gemini failover before Groq direct fallback.")
+                # If it's a rate-limit, try Gemini immediately before falling through
+                if any(code in err_str for code in ("429", "rate_limit", "RateLimitError", "quota")):
+                    logger.info("[generator] 429 detected in chain — waiting 2s before Gemini failover...")
+                    await asyncio.sleep(2)
+                    try:
+                        return await self._generate_with_gemini(
+                            query=query,
+                            context_text=context_text,
+                            full_system_prompt=full_system_prompt,
+                            citations=citations,
+                            mode=mode,
+                            chat_history=chat_history,
+                        )
+                    except Exception as chain_gemini_err:
+                        logger.warning(f"[generator] Gemini failover from chain also failed: {chain_gemini_err} -> falling through to Groq direct client.")
+                # Otherwise fall through to resilient Groq direct client path
 
         # ── Resilient Fallback: AsyncGroq with thread history ──
         if not self.client:
@@ -449,7 +466,15 @@ class RAGGenerator:
             }
 
         except Exception as e:
-            logger.warning(f"[generator] Primary Groq LLM error: {e} -> Attempting Google Gemini 2.5 Flash failover...")
+            err_msg = str(e)
+            is_rate_limit = any(code in err_msg for code in ("429", "rate_limit", "RateLimitError", "quota"))
+            logger.warning(f"[generator] Primary Groq LLM error ({'rate-limit' if is_rate_limit else 'error'}): {e} -> Attempting Google Gemini 2.5 Flash failover...")
+
+            # Wait briefly before hitting Gemini to avoid thundering-herd on both providers
+            if is_rate_limit:
+                logger.info("[generator] Groq 429 — waiting 2s before Gemini failover...")
+                await asyncio.sleep(2)
+
             try:
                 return await self._generate_with_gemini(
                     query=query,
@@ -460,16 +485,23 @@ class RAGGenerator:
                     chat_history=chat_history,
                 )
             except Exception as gemini_err:
-                logger.error(f"[generator] Gemini failover also failed: {gemini_err}")
-                err_msg = str(e)
-                if "429" in err_msg:
+                gemini_msg = str(gemini_err)
+                is_gemini_rate_limit = any(code in gemini_msg for code in ("429", "rate_limit", "RESOURCE_EXHAUSTED", "quota"))
+                logger.error(f"[generator] Gemini failover also failed ({'rate-limit' if is_gemini_rate_limit else 'error'}): {gemini_err}")
+
+                if is_rate_limit or is_gemini_rate_limit:
                     return {
-                        "answer": "⚠️ **Service Capacity Limit.** The compliance engine is currently experiencing high load. Please retry in a few moments.",
+                        "answer": (
+                            "⚠️ **High Demand — Please Retry in 30 Seconds.**\n\n"
+                            "The compliance engine is handling heavy load right now. "
+                            "Both AI providers have reached their request limits momentarily. "
+                            "Please wait a moment and send your question again."
+                        ),
                         "citations": [],
                         "mode": mode
                     }
                 return {
-                    "answer": f"An error occurred while generating your compliance response: {err_msg}.",
+                    "answer": f"An error occurred while generating your compliance response. Please try again.",
                     "citations": [],
                     "mode": mode
                 }
