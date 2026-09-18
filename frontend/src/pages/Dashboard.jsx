@@ -16,6 +16,7 @@ import {
   TrendingUp,
   ShieldCheck,
   CheckCircle2,
+  Check,
   AlertCircle,
   Share2,
   Sliders,
