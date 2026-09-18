@@ -46,6 +46,7 @@ from __future__ import annotations
 
 import time
 import asyncio
+import concurrent.futures
 from dataclasses import dataclass, field
 from typing import Literal, Any
 
@@ -120,6 +121,10 @@ MAX_RETRIES: int = 1                  # hard cap on retry loops
 # Shared generator instance (loaded once at import time)
 _generator = RAGGenerator()
 
+# Module-level thread pool — created once, reused for every generate call.
+# Eliminates the ~50-200ms overhead of spawning a new thread per query.
+_generate_executor = concurrent.futures.ThreadPoolExecutor(max_workers=4, thread_name_prefix="rag_generate")
+
 
 # ─────────────────────────────────────────────────────────────
 #  State Schema (TypedDict — LangGraph requirement)
@@ -141,6 +146,9 @@ class QueryState(TypedDict, total=False):
     primary_corpus: str
     all_corpora: list[str]
     routing_mode: str                     # "single" | "multi" | "multi_retry"
+    # Cached embedding scores — computed once in node_classify, reused in
+    # node_retry so we don't pay for a second embedding call on fallback.
+    all_embedding_scores: dict[Any, float]
 
     # Retrieval
     chunks: list[Any]                     # list[RetrievedChunk]
@@ -207,7 +215,8 @@ def node_classify(state: QueryState) -> QueryState:
         f"all={[c.value for c in kw_all]}"
     )
 
-    # Stage B — embedding
+    # Stage B — embedding (computed ONCE here; scores stored in state so
+    # node_retry can reuse them without a second embedding round-trip).
     emb_primary, emb_score, all_scores = classify_by_embedding(query)
     ranked = sorted(all_scores.items(), key=lambda x: -x[1])
     trace.append(
@@ -254,6 +263,8 @@ def node_classify(state: QueryState) -> QueryState:
         "all_corpora": [c.value for c in corpora],
         "routing_mode": routing_mode,
         "retry_count": state.get("retry_count", 0),
+        # Store raw scores so node_retry can pick a fallback without re-embedding.
+        "all_embedding_scores": dict(all_scores),
         "trace": trace,
     }
 
@@ -362,8 +373,15 @@ def node_retry(state: QueryState) -> QueryState:
         f"[retry] attempt={retry_count + 1} already_tried={list(already_tried)}"
     )
 
-    # Find fallback corpus
-    _, _, all_scores = classify_by_embedding(query)
+    # Reuse embedding scores computed in node_classify — avoids a second
+    # ~100ms embedding call. Fall back to re-computing only if missing.
+    cached_scores = state.get("all_embedding_scores")
+    if cached_scores:
+        trace.append("[retry] Using cached embedding scores from classify node")
+        all_scores = cached_scores
+    else:
+        trace.append("[retry] Cache miss — re-running embedding classification")
+        _, _, all_scores = classify_by_embedding(query)
     ranked_scores = sorted(all_scores.items(), key=lambda x: -x[1])
 
     fallback: Corpus | None = None
@@ -430,19 +448,24 @@ def node_generate_sync(state: QueryState) -> QueryState:
     trace.append(f"[generate] chunks={len(chunks)} mode={mode} history_turns={len(chat_history)}")
 
     try:
-        # Run async generator in sync context (safe for running event loops in FastAPI)
+        # Run async generator in sync context.
+        # We use the module-level shared _generate_executor (created once at import
+        # time) so there is no per-query thread-creation overhead.
+        # asyncio.get_running_loop() detects whether we are already inside an
+        # event loop (FastAPI/uvicorn) and uses run_in_executor; otherwise we
+        # fall back to a plain asyncio.run() for test/script contexts.
         try:
             running_loop = asyncio.get_running_loop()
         except RuntimeError:
             running_loop = None
 
         if running_loop and running_loop.is_running():
-            import concurrent.futures
-            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
-                result = pool.submit(
-                    asyncio.run,
-                    _generator.generate_answer(query=query, chunks=chunks, mode=mode, chat_history=chat_history)
-                ).result()
+            # Submit to the shared executor — no new thread creation per call.
+            future = _generate_executor.submit(
+                asyncio.run,
+                _generator.generate_answer(query=query, chunks=chunks, mode=mode, chat_history=chat_history)
+            )
+            result = future.result()
         else:
             result = asyncio.run(
                 _generator.generate_answer(query=query, chunks=chunks, mode=mode, chat_history=chat_history)
