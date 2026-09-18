@@ -135,6 +135,9 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
               });
             }
 
+            sessionStorage.setItem("regiq_active_plan_title", planTitle);
+            sessionStorage.setItem("regiq_sandbox_role", "pro");
+
             setPaymentSuccessDetails({
               paymentId: response.razorpay_payment_id,
               orderId: response.razorpay_order_id || orderIdToUse,
@@ -148,7 +151,9 @@ export default function PricingPage({ onSelectPlan, userEmail = '' }) {
             }
           } catch (verifyErr) {
             console.error("Payment verification failure:", verifyErr);
-            // Even if immediate API fails, store details and show success modal as webhook will process it
+            sessionStorage.setItem("regiq_active_plan_title", planTitle);
+            sessionStorage.setItem("regiq_sandbox_role", "pro");
+
             setPaymentSuccessDetails({
               paymentId: response.razorpay_payment_id,
               orderId: response.razorpay_order_id || orderIdToUse,

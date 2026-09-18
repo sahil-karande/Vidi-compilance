@@ -313,9 +313,19 @@ export default function Dashboard() {
               <span className="text-slate-400 font-mono text-[11px]">RBI • SEBI • MCA • CBIC • FEMA</span>
             </div>
 
-            <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-white">
-              Welcome back, {user?.name || 'Sahil Karande'}
-            </h1>
+            <div className="flex flex-wrap items-center gap-3">
+              <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-white">
+                Welcome back, {user?.name || 'Sahil Karande'}
+              </h1>
+              <span className={`text-[11px] font-semibold px-3 py-1 rounded-full border shadow-sm flex items-center gap-1.5 ${
+                userRole === 'pro' || userRole === 'enterprise'
+                  ? 'bg-gradient-to-r from-purple-500/20 to-emerald-500/20 border-purple-500/40 text-purple-200'
+                  : 'bg-white/5 border-white/10 text-slate-400'
+              }`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${userRole === 'pro' || userRole === 'enterprise' ? 'bg-emerald-400 animate-pulse' : 'bg-slate-400'}`} />
+                <span>{user?.planTitle || (userRole === 'pro' ? 'Pro Member' : 'Free Tier')}</span>
+              </span>
+            </div>
 
             <p className="text-xs text-slate-400 max-w-2xl leading-relaxed">
               Real-time statutory intelligence workspace. Query circulars, verify clause citations, and track filing obligations across Indian regulatory bodies.
@@ -747,31 +757,76 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* Usage Allocation Card */}
-              <div className="bg-[#12131A]/90 backdrop-blur-xl border border-white/10 rounded-2xl p-5 shadow-xl">
-                <div className="flex items-center justify-between mb-3">
+              {/* Usage Allocation & Capabilities Card */}
+              <div className="bg-[#12131A]/90 backdrop-blur-xl border border-white/10 rounded-2xl p-5 shadow-xl space-y-3">
+                <div className="flex items-center justify-between">
                   <h3 className="text-xs font-semibold text-slate-300 flex items-center gap-2">
                     <Activity className="w-3.5 h-3.5 text-purple-400" />
-                    <span>Query Allocation</span>
+                    <span>Plan Opportunities</span>
                   </h3>
-                  <span className="text-[10px] font-mono bg-white/5 text-purple-300 px-2 py-0.5 rounded-full border border-white/10 uppercase">
-                    {userRole} Tier
+                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full border uppercase ${
+                    userRole === 'pro' || userRole === 'enterprise' 
+                      ? 'bg-purple-500/15 text-purple-300 border-purple-500/30' 
+                      : 'bg-white/5 text-slate-400 border-white/10'
+                  }`}>
+                    {user?.planTitle || `${userRole} Tier`}
                   </span>
                 </div>
-                
-                <div className="mb-2 flex justify-between items-baseline">
-                  <span className="text-2xl font-bold text-white font-mono">{queryUsage.used}</span>
-                  <span className="text-xs text-slate-400 font-mono">/ {queryUsage.max} daily allocation</span>
-                </div>
-                
-                <div className="h-2 w-full bg-[#181820] border border-white/10 rounded-full overflow-hidden">
-                  <div 
-                    className={`h-full rounded-full transition-all duration-500 ${
-                      queryUsage.max && (queryUsage.used / queryUsage.max) * 100 > 80 ? 'bg-amber-500' : 'bg-gradient-to-r from-purple-500 to-indigo-500'
-                    }`} 
-                    style={{ width: `${Math.min(((queryUsage.used / (queryUsage.max || 1)) * 100), 100)}%` }} 
-                  />
-                </div>
+
+                {userRole === 'pro' || userRole === 'enterprise' ? (
+                  <>
+                    <div className="flex justify-between items-baseline pt-1">
+                      <span className="text-xl font-bold text-white font-mono flex items-center gap-1.5">
+                        <span className="text-emerald-400">∞</span> Unlimited
+                      </span>
+                      <span className="text-[11px] text-emerald-400 font-medium">Pro Access Active</span>
+                    </div>
+                    
+                    <div className="text-[11px] text-slate-400 space-y-1.5 pt-1 border-t border-white/5 font-sans">
+                      <div className="flex items-center gap-1.5 text-slate-300">
+                        <Check className="w-3 h-3 text-emerald-400 shrink-0" />
+                        <span>All 4 regulatory corpora (GST, RBI, SEBI, MCA)</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-slate-300">
+                        <Check className="w-3 h-3 text-emerald-400 shrink-0" />
+                        <span>Private Document Ingestion & Vector RAG</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-slate-300">
+                        <Check className="w-3 h-3 text-emerald-400 shrink-0" />
+                        <span>Interactive Scorecard & Compliance Calendar</span>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex justify-between items-baseline pt-1">
+                      <span className="text-2xl font-bold text-white font-mono">{queryUsage.used}</span>
+                      <span className="text-xs text-slate-400 font-mono">/ {queryUsage.max} daily quota</span>
+                    </div>
+                    
+                    <div className="h-1.5 w-full bg-[#181820] border border-white/10 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full rounded-full transition-all duration-500 ${
+                          queryUsage.max && (queryUsage.used / queryUsage.max) * 100 > 80 ? 'bg-amber-500' : 'bg-gradient-to-r from-purple-500 to-indigo-500'
+                        }`} 
+                        style={{ width: `${Math.min(((queryUsage.used / (queryUsage.max || 1)) * 100), 100)}%` }} 
+                      />
+                    </div>
+
+                    <div className="text-[11px] text-amber-300/80 bg-amber-950/20 border border-amber-500/20 p-2 rounded-xl space-y-1">
+                      <div className="font-semibold text-amber-200">Free Tier Limitations:</div>
+                      <div>• Private document upload locked</div>
+                      <div>• Daily cap of 20 queries</div>
+                    </div>
+
+                    <button 
+                      onClick={() => navigate('/pricing')}
+                      className="w-full py-2 px-3 bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs rounded-xl transition-all shadow-[0_0_15px_rgba(168,85,247,0.25)]"
+                    >
+                      Unlock All Pro Privileges →
+                    </button>
+                  </>
+                )}
               </div>
 
               {/* Active Audit Threads */}

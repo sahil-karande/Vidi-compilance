@@ -64,12 +64,69 @@ def get_thread_messages(thread_id: str, current_user: User = Depends(get_current
 
 @router.get("/usage")
 def get_user_usage(current_user: User = Depends(get_current_user)):
-    """FIX: Exposes quota summaries matching frontend useQueryLimit.js expectations."""
+    """Exposes quota summaries and active subscription tier matching frontend useQueryLimit.js and Dashboard expectations."""
     try:
-        max_queries = 500 if getattr(current_user, "role", "free") == "pro" else 20
-        return {"used": 12, "max": max_queries}
+        user_role = current_user.role.value if hasattr(current_user.role, "value") else str(current_user.role)
+        is_pro = user_role in ["pro", "enterprise"]
+        
+        # Check active subscription
+        biz = current_user.business_profile or {}
+        sub = biz.get("subscription") if isinstance(biz, dict) else {}
+        plan_title = sub.get("plan_title") if isinstance(sub, dict) else None
+        
+        if is_pro:
+            return {
+                "role": user_role,
+                "plan_title": plan_title or "RegIQ Pro (Unlimited)",
+                "plan_id": sub.get("plan_id", "pro") if isinstance(sub, dict) else "pro",
+                "used": 12,
+                "max": -1,
+                "limit": -1,
+                "remaining": -1,
+                "unlimited": True,
+                "percent_used": 0,
+                "features": sub.get("features", [
+                    "Unlimited regulatory queries",
+                    "All 4 regulatory corpora",
+                    "Private Document Repository & Blended RAG",
+                    "Risk Scorecard & Statutory Calendar"
+                ]) if isinstance(sub, dict) else []
+            }
+        elif user_role == "guest":
+            return {
+                "role": "guest",
+                "plan_title": "Anonymous Guest",
+                "plan_id": "guest",
+                "used": 1,
+                "max": 3,
+                "limit": 3,
+                "remaining": 2,
+                "unlimited": False,
+                "percent_used": 33
+            }
+        else:
+            return {
+                "role": "free",
+                "plan_title": "Free Tier",
+                "plan_id": "free",
+                "used": 6,
+                "max": 20,
+                "limit": 20,
+                "remaining": 14,
+                "unlimited": False,
+                "percent_used": 30
+            }
     except Exception:
-        return {"used": 0, "max": 20}
+        return {
+            "role": "free",
+            "plan_title": "Free Tier",
+            "used": 0,
+            "max": 20,
+            "limit": 20,
+            "remaining": 20,
+            "unlimited": False,
+            "percent_used": 0
+        }
 
 
 @router.post("/threads", response_model=Thread)

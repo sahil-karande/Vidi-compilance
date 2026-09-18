@@ -62,11 +62,17 @@ export function AuthProvider({ children }) {
             return 'Sahil Karande';
           };
 
+          const activeSubscription = userProfile?.business_profile?.subscription || null;
+          const sessionPlan = sessionStorage.getItem("regiq_active_plan_title");
+          const planTitle = activeSubscription?.plan_title || sessionPlan || (activeRole === 'pro' ? 'Pro Plan' : activeRole === 'enterprise' ? 'Enterprise' : 'Free Tier');
+
           setUser({
             ...initialSession.user,
             name: resolveName(userProfile, initialSession.user),
             role: activeRole,
-            business_profile: userProfile?.business_profile || null
+            business_profile: userProfile?.business_profile || null,
+            subscription: activeSubscription,
+            planTitle: planTitle
           });
         } else {
           setUser(null);
@@ -101,11 +107,17 @@ export function AuthProvider({ children }) {
           return 'Sahil Karande';
         };
 
+        const activeSubscription = userProfile?.business_profile?.subscription || null;
+        const sessionPlan = sessionStorage.getItem("regiq_active_plan_title");
+        const planTitle = activeSubscription?.plan_title || sessionPlan || (activeRole === 'pro' ? 'Pro Plan' : activeRole === 'enterprise' ? 'Enterprise' : 'Free Tier');
+
         setUser({
           ...currentSession.user,
           name: resolveName(userProfile, currentSession.user),
           role: activeRole,
-          business_profile: userProfile?.business_profile || null
+          business_profile: userProfile?.business_profile || null,
+          subscription: activeSubscription,
+          planTitle: planTitle
         });
       } else {
         setUser(null);
@@ -146,11 +158,17 @@ export function AuthProvider({ children }) {
           ? userProfile.name 
           : (currentSession.user.user_metadata?.full_name || 'Sahil Karande');
 
+        const activeSubscription = userProfile?.business_profile?.subscription || null;
+        const sessionPlan = sessionStorage.getItem("regiq_active_plan_title");
+        const planTitle = activeSubscription?.plan_title || sessionPlan || (activeRole === 'pro' ? 'Pro Plan' : activeRole === 'enterprise' ? 'Enterprise' : 'Free Tier');
+
         setUser({
           ...currentSession.user,
           name: displayName,
           role: activeRole,
-          business_profile: userProfile?.business_profile || null
+          business_profile: userProfile?.business_profile || null,
+          subscription: activeSubscription,
+          planTitle: planTitle
         });
       }
     } catch (err) {

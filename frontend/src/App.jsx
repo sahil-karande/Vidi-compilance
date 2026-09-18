@@ -89,13 +89,28 @@ function WorkspaceLayout({ children }) {
           {/* PWA Quick Install Action Button */}
           <PwaNavButton />
 
-          {user?.role !== 'pro' && user?.role !== 'enterprise' && (
+          {/* Active Subscription Badge or Upgrade Action */}
+          {user?.role === 'pro' || user?.role === 'enterprise' ? (
             <Link
-              to="/pricing"
-              className="text-xs font-medium bg-purple-600/15 hover:bg-purple-600/25 border border-purple-500/30 text-purple-300 hover:text-purple-200 shadow-[0_0_15px_rgba(168,85,247,0.15)] px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5"
+              to="/settings"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gradient-to-r from-purple-500/15 to-emerald-500/15 border border-purple-500/30 hover:border-purple-500/50 text-[11px] font-semibold text-purple-200 shadow-[0_0_12px_rgba(168,85,247,0.15)] transition-all"
+              title="Click to view subscription details"
             >
-              <span>Upgrade Plan</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="truncate max-w-[150px]">{user?.planTitle || 'Pro Member'}</span>
             </Link>
+          ) : (
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/5 text-slate-400 border border-white/10 hidden sm:inline">
+                Free Tier
+              </span>
+              <Link
+                to="/pricing"
+                className="text-xs font-medium bg-purple-600 hover:bg-purple-500 text-white shadow-[0_0_15px_rgba(168,85,247,0.25)] px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5"
+              >
+                <span>Upgrade Plan</span>
+              </Link>
+            </div>
           )}
 
           <Link

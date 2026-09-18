@@ -107,6 +107,86 @@ class VerifyPaymentRequest(BaseModel):
     plan: Optional[str] = "pro"
 
 
+def get_plan_details(plan_key: str) -> dict:
+    """Helper to return plan metadata, display names, and opportunities."""
+    clean_key = (plan_key or "monthly").lower()
+    plan_map = {
+        "monthly": {
+            "title": "Pro Monthly Pass",
+            "price_inr": 499,
+            "period": "Monthly",
+            "tier": "pro",
+            "features": [
+                "Unlimited legal & GST statutory queries",
+                "All 4 regulatory corpora (GST, RBI, SEBI, MCA, FEMA)",
+                "Private PDF Document Ingestion & Blended RAG",
+                "Interactive Compliance Risk Scorecard",
+                "Statutory Compliance Calendar",
+                "Automated Push Alerts",
+                "Server-side PDF Exports"
+            ]
+        },
+        "quarterly": {
+            "title": "Pro Quarterly Pass",
+            "price_inr": 1347,
+            "period": "Quarterly",
+            "tier": "pro",
+            "features": [
+                "Unlimited statutory queries",
+                "All 4 regulatory corpora",
+                "Private Document Repository & Vector RAG",
+                "Interactive Risk Scorecard & Calendar",
+                "Server-side PDF Exports"
+            ]
+        },
+        "yearly": {
+            "title": "Pro Annual Pass",
+            "price_inr": 4488,
+            "period": "Annual",
+            "tier": "pro",
+            "features": [
+                "Unlimited queries across all corpora",
+                "Priority RAG pipeline blending",
+                "Private Document Repository",
+                "Interactive Risk Scorecard & Calendar",
+                "VIP Legal Engineer Support"
+            ]
+        },
+        "notice_pass": {
+            "title": "Instant Notice Pass",
+            "price_inr": 99,
+            "period": "One-Time Pass",
+            "tier": "pro",
+            "features": [
+                "Deep Assessment Notice Analysis",
+                "Full Statutory Corpus Blending",
+                "Penalty & Interest Defense Strategy",
+                "Exportable PDF Assessment Report",
+                "All Pro privileges for Notice Review"
+            ]
+        },
+        "student_monthly": {
+            "title": "CA Article & Student Pass",
+            "price_inr": 199,
+            "period": "Monthly",
+            "tier": "pro",
+            "features": [
+                "Full Pro capabilities at 60% subsidy",
+                "Unlimited regulatory queries",
+                "All 4 statutory corpora",
+                "Risk Scorecard & Statutory Calendar"
+            ]
+        }
+    }
+    return plan_map.get(clean_key, {
+        "title": "RegIQ Pro Active",
+        "price_inr": 499,
+        "period": "Monthly",
+        "tier": "pro",
+        "features": ["Unlimited statutory queries", "All regulatory corpora", "Private document RAG"]
+    })
+
+
 @router.post("/verify-payment")
 async def verify_payment(
     payload: VerifyPaymentRequest,
@@ -114,7 +194,7 @@ async def verify_payment(
 ):
     """
     Verifies Razorpay payment signature directly upon frontend checkout completion
-    and immediately upgrades the user's role to 'pro' in Supabase without delay.
+    and immediately upgrades the user's role to 'pro' with stored plan details in Supabase.
     """
     if current_user.user_id == "anonymous-guest":
         raise HTTPException(
@@ -137,26 +217,53 @@ async def verify_payment(
         logger.error(f"[billing] Payment signature verification failed: {sig_err}")
         raise HTTPException(status_code=400, detail="Invalid payment signature. Verification failed.")
 
-    # Mutate user role in Supabase profiles and invalidate auth cache
+    # Mutate user role and persist subscription metadata in Supabase profiles
     try:
         from app.api.auth import get_supabase_admin, _user_cache
+        from datetime import timezone
         supabase = get_supabase_admin()
         user_id = current_user.user_id
         
         target_role = "pro"
-        db_response = supabase.table("profiles").update({"role": target_role}).eq("user_id", user_id).execute()
+        plan_info = get_plan_details(payload.plan or "monthly")
+
+        # Fetch existing business profile to safely preserve existing fields
+        profile_res = supabase.table("profiles").select("business_profile").eq("user_id", user_id).execute()
+        existing_biz = (profile_res.data[0].get("business_profile") or {}) if profile_res.data else {}
+        if not isinstance(existing_biz, dict):
+            existing_biz = {}
+
+        # Embed subscription details
+        existing_biz["subscription"] = {
+            "plan_id": (payload.plan or "monthly").lower(),
+            "plan_title": plan_info["title"],
+            "period": plan_info["period"],
+            "price_inr": plan_info["price_inr"],
+            "features": plan_info["features"],
+            "payment_id": payload.razorpay_payment_id,
+            "order_id": payload.razorpay_order_id,
+            "status": "active",
+            "activated_at": datetime.now(timezone.utc).isoformat()
+        }
+
+        db_response = supabase.table("profiles").update({
+            "role": target_role,
+            "business_profile": existing_biz
+        }).eq("user_id", user_id).execute()
         
         # Invalidate in-memory user cache so subsequent queries immediately recognise Pro tier
         _user_cache.pop(user_id, None)
         
-        logger.info(f"[billing] Upgraded user {user_id} to {target_role} after verified payment {payload.razorpay_payment_id}")
+        logger.info(f"[billing] Upgraded user {user_id} to {target_role} with plan '{plan_info['title']}' after payment {payload.razorpay_payment_id}")
         return {
             "status": "success",
-            "message": "Payment verified and account upgraded to Pro!",
+            "message": f"Payment verified and upgraded to {plan_info['title']}!",
             "role": target_role,
+            "plan": payload.plan,
+            "plan_title": plan_info["title"],
+            "features": plan_info["features"],
             "order_id": payload.razorpay_order_id,
-            "payment_id": payload.razorpay_payment_id,
-            "plan": payload.plan
+            "payment_id": payload.razorpay_payment_id
         }
     except Exception as db_err:
         logger.error(f"[billing] Failed to update profile role in Supabase: {db_err}")
@@ -210,16 +317,41 @@ async def razorpay_webhook(
             try:
                 # Dynamically fetch the admin client instance
                 from app.api.auth import get_supabase_admin, _user_cache
+                from datetime import timezone
                 supabase = get_supabase_admin()
                 
-                # Mutate the user role property inside the profiles context table
-                db_response = supabase.table("profiles").update({"role": "pro"}).eq("user_id", user_id).execute()
+                plan_key = notes.get("plan_type", "monthly")
+                plan_info = get_plan_details(plan_key)
+                
+                # Fetch existing profile
+                profile_res = supabase.table("profiles").select("business_profile").eq("user_id", user_id).execute()
+                existing_biz = (profile_res.data[0].get("business_profile") or {}) if profile_res.data else {}
+                if not isinstance(existing_biz, dict):
+                    existing_biz = {}
+
+                existing_biz["subscription"] = {
+                    "plan_id": plan_key.lower(),
+                    "plan_title": plan_info["title"],
+                    "period": plan_info["period"],
+                    "price_inr": plan_info["price_inr"],
+                    "features": plan_info["features"],
+                    "payment_id": entity.get("id"),
+                    "order_id": entity.get("order_id"),
+                    "status": "active",
+                    "activated_at": datetime.now(timezone.utc).isoformat()
+                }
+
+                # Mutate user role and business_profile
+                db_response = supabase.table("profiles").update({
+                    "role": "pro",
+                    "business_profile": existing_biz
+                }).eq("user_id", user_id).execute()
                 
                 # Invalidate in-memory cache
                 _user_cache.pop(user_id, None)
                 
-                logger.info(f"Database role upgraded successfully for user {user_id}: {db_response.data}")
-                return {"status": "success", "action": "tier_upgraded"}
+                logger.info(f"Database role upgraded successfully for user {user_id} with plan {plan_info['title']}: {db_response.data}")
+                return {"status": "success", "action": "tier_upgraded", "plan": plan_info["title"]}
                 
             except Exception as db_err:
                 logger.error(f"Failed to execute database profile update: {db_err}")

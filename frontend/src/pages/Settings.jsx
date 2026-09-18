@@ -15,7 +15,10 @@ import {
   Smartphone,
   Download,
   Wifi,
-  RefreshCw
+  RefreshCw,
+  Sparkles,
+  Lock,
+  ShieldCheck
 } from 'lucide-react';
 
 // Map our UI list directly to official backend ALERT_TOPICS
@@ -282,16 +285,90 @@ export default function Settings() {
         {/* Plan Tab */}
         {activeTab === 'plan' && (
           <div className="space-y-8">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-[#16161F] border border-white/10">
-              <div>
-                <span className="text-[11px] font-mono uppercase text-slate-500 tracking-wider font-semibold">Active Plan</span>
-                <div className="text-xl font-bold text-white mt-0.5 capitalize">{user?.role || 'Free'} Tier</div>
+            <div className="p-6 rounded-2xl bg-[#16161F] border border-white/10 space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-white/5">
+                <div>
+                  <span className="text-[11px] font-mono uppercase text-slate-500 tracking-wider font-semibold">Active Subscription Plan</span>
+                  <div className="text-xl sm:text-2xl font-bold text-white mt-0.5 flex items-center gap-2.5">
+                    <span>{user?.planTitle || (user?.role === 'pro' ? 'RegIQ Pro Active' : 'Free Tier')}</span>
+                    {user?.role === 'pro' && (
+                      <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-medium">
+                        Verified via Razorpay
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="sm:text-right">
+                  <span className="text-[11px] font-mono uppercase text-slate-500 tracking-wider font-semibold">Status</span>
+                  <div className="text-xs font-medium text-emerald-400 mt-1 flex items-center sm:justify-end gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span>Active Account</span>
+                  </div>
+                </div>
               </div>
-              <div className="text-right">
-                <span className="text-[11px] font-mono uppercase text-slate-500 tracking-wider font-semibold">Status</span>
-                <div className="text-xs font-medium text-emerald-400 mt-0.5 flex items-center gap-1.5 justify-end">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                  <span>Active Workspace</span>
+
+              {/* Opportunities & Limitations Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                {/* Available Opportunities */}
+                <div className="p-4 rounded-xl bg-purple-950/10 border border-purple-500/20 space-y-2.5">
+                  <div className="font-semibold text-purple-300 flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-purple-400" />
+                    <span>Your Unlocked Opportunities</span>
+                  </div>
+                  <ul className="space-y-1.5 text-slate-300">
+                    <li className="flex items-center gap-2">
+                      <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <span>{user?.role === 'pro' ? 'Unlimited legal & statutory queries' : '20 queries / day allocation'}</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <span>All 4 regulatory corpora (GST, RBI, SEBI, MCA)</span>
+                    </li>
+                    {user?.role === 'pro' && (
+                      <>
+                        <li className="flex items-center gap-2">
+                          <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                          <span>Private Document Ingestion & Vector RAG Blending</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                          <span>Interactive Risk Scorecard & Compliance Calendar</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                          <span>Automated Statutory Circular Push Alerts</span>
+                        </li>
+                      </>
+                    )}
+                  </ul>
+                </div>
+
+                {/* Limitations */}
+                <div className="p-4 rounded-xl bg-[#181820] border border-white/5 space-y-2.5">
+                  <div className="font-semibold text-slate-300 flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-slate-400" />
+                    <span>{user?.role === 'pro' ? 'Pro Tier Privileges' : 'Current Tier Limitations'}</span>
+                  </div>
+                  {user?.role === 'pro' ? (
+                    <p className="text-slate-400 leading-relaxed">
+                      You are enjoying unrestricted access to all RegIQ intelligence engines, vector search pipelines, and automated statutory monitoring.
+                    </p>
+                  ) : (
+                    <ul className="space-y-1.5 text-slate-400">
+                      <li className="flex items-center gap-2">
+                        <Lock className="w-3 h-3 text-amber-400 shrink-0" />
+                        <span>Private company document ingestion is locked</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <Lock className="w-3 h-3 text-amber-400 shrink-0" />
+                        <span>Queries capped at 20 per 24 hours</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <Lock className="w-3 h-3 text-amber-400 shrink-0" />
+                        <span>Real-time circular email and push alerts muted</span>
+                      </li>
+                    </ul>
+                  )}
                 </div>
               </div>
             </div>
