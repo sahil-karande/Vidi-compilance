@@ -28,10 +28,17 @@ export default function Chat() {
   const navigate = useNavigate(); 
   const { usage, limit, refreshUsage } = useQueryLimit();
 
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem('vidi_chat_messages');
+      return saved ? JSON.parse(saved) : [];
+    } catch { return []; }
+  });
   const [input, setInput] = useState('');
   const [threads, setThreads] = useState([]);
-  const [activeThreadId, setActiveThreadId] = useState(null);
+  const [activeThreadId, setActiveThreadId] = useState(() => {
+    try { return sessionStorage.getItem('vidi_active_thread') || null; } catch { return null; }
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [isExporting, setIsExporting] = useState(false); // Local state tracker for generating file arrays
   const [isSidebarLoading, setIsSidebarLoading] = useState(true);
@@ -41,9 +48,28 @@ export default function Chat() {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [errorState, setErrorState] = useState(null); 
 
-  const [lastQuery, setLastQuery] = useState('');
+  const [lastQuery, setLastQuery] = useState(() => {
+    try { return sessionStorage.getItem('vidi_last_query') || ''; } catch { return ''; }
+  });
   const { mode: ragMode, setMode: setRagMode } = useLegalMode();
   const messagesEndRef = useRef(null);
+
+  // ── Persist chat state to sessionStorage on change ──
+  useEffect(() => {
+    try { sessionStorage.setItem('vidi_chat_messages', JSON.stringify(messages)); } catch {}
+  }, [messages]);
+
+  useEffect(() => {
+    try {
+      if (activeThreadId) sessionStorage.setItem('vidi_active_thread', activeThreadId);
+      else sessionStorage.removeItem('vidi_active_thread');
+    } catch {}
+  }, [activeThreadId]);
+
+  useEffect(() => {
+    try { sessionStorage.setItem('vidi_last_query', lastQuery); } catch {}
+  }, [lastQuery]);
+
 
   const handleSelectThread = async (threadId) => {
     if (!threadId || isLoading) return;
@@ -70,6 +96,12 @@ export default function Chat() {
     setLastQuery('');
     setErrorState(null);
     setIsMobileSidebarOpen(false);
+    // Clear persisted session so new chat starts fresh
+    try {
+      sessionStorage.removeItem('vidi_chat_messages');
+      sessionStorage.removeItem('vidi_active_thread');
+      sessionStorage.removeItem('vidi_last_query');
+    } catch {}
   };
 
   const handleDeleteThread = async (e, threadId) => {
